@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd"
+                   logicalFilePath="axon-tokenEntry">
+
+    <!-- Axon needs this sequence for id generation, create only once -->
+    <changeSet id="create_hibernateSquence" author="thielc">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="HIBERNATE_SEQUENCE" />
+            </not>
+        </preConditions>
+        <createSequence sequenceName="HIBERNATE_SEQUENCE"/>
+    </changeSet>
+
+    <changeSet author="FxAxon" id="create_tokenEntry">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="TOKEN_ENTRY"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="TOKEN_ENTRY">
+            <column name="PROCESSOR_NAME" type="VARCHAR(255)"/>
+            <column name="SEGMENT" type="BIGINT"/>
+            <column name="TOKEN_TYPE" type="VARCHAR(255)"/>
+            <column name="TIMESTAMP" type="VARCHAR(255)"/>
+            <column name="OWNER" type="VARCHAR(255)"/>
+            <column name="TOKEN" type="OID"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add_primaryKey" author="thielc">
+        <addNotNullConstraint tableName="TOKEN_ENTRY" columnName="PROCESSOR_NAME" columnDataType="VARCHAR(255)"/>
+        <addNotNullConstraint tableName="TOKEN_ENTRY" columnName="SEGMENT" columnDataType="BIGINT"/>
+        <addPrimaryKey tableName="TOKEN_ENTRY" columnNames="PROCESSOR_NAME, SEGMENT" constraintName="TOKEN_ENTRY_PK"/>
+    </changeSet>
+
+    <changeSet id="function_process_token_entry_on_delete" author="thielc" dbms="postgresql">
+        <createProcedure>
+            CREATE OR REPLACE FUNCTION process_token_entry_on_delete() RETURNS TRIGGER AS $token_entry$
+            BEGIN
+                PERFORM lo_unlink(OLD.token);
+                RETURN NULL; -- result is ignored since this is an AFTER trigger
+            END;
+            $token_entry$ LANGUAGE plpgsql;
+        </createProcedure>
+    </changeSet>
+
+
+    <changeSet id="trigger_token_entry_on_delete" author="thielc" dbms="postgresql">
+        <sql splitStatements="false">
+            CREATE TRIGGER token_entry_on_delete
+                AFTER DELETE ON token_entry
+                FOR EACH ROW
+                WHEN (OLD.token IS NOT NULL)
+            EXECUTE PROCEDURE process_token_entry_on_delete();
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

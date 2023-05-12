@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: db
+    environment:
+      - POSTGRES_USER=quizmania
+      - POSTGRES_PASSWORD=quizmania
+    ports:
+      - '5432:5432'
+  axonserver:
+    image: axoniq/axonserver:4.6.9-jdk-17-dev
+    hostname: axonserver
+#    volumes:
+#      - axonserver-data:/data
+#      - axonserver-events:/eventdata
+#      - axonserver-config:/config:ro
+    ports:
+      - '8024:8024'
+      - '8124:8124'
+      - '8224:8224'

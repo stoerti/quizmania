@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <include file="axon-tokenEntry.xml" relativeToChangelogFile="true" />
+
+    <changeSet id="001_create_game" author="thielc">
+        <createTable tableName="GAME">
+            <column name="GAME_ID" type="UUID" >
+                <constraints primaryKey="true" primaryKeyName="GAME_PK" />
+            </column>
+            <column name="NAME" type="VARCHAR(255)" />
+            <column name="CREATOR" type="VARCHAR(255)" />
+            <column name="MODERATOR" type="VARCHAR(255)" />
+            <column name="STATUS" type="VARCHAR(50)" />
+            <column name="MAX_PLAYERS" type="NUMBER" />
+            <column name="NUM_QUESTIONS" type="NUMBER" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001_create_game_user" author="thielc">
+        <createTable tableName="GAME_USER">
+            <column name="GAME_ID" type="UUID" />
+            <column name="GAME_USER_ID" type="UUID" >
+                <constraints primaryKey="true" primaryKeyName="GAME_USER_PK" />
+            </column>
+            <column name="USERNAME" type="VARCHAR(255)" />
+            <column name="POINTS" type="NUMBER" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001_create_question" author="thielc">
+        <createTable tableName="GAME_QUESTION">
+            <column name="GAME_QUESTION_ID" type="UUID" >
+                <constraints primaryKey="true" primaryKeyName="GAME_QUESTION_PK" />
+            </column>
+            <column name="GAME_ID" type="UUID" />
+            <column name="QUESTION_NUMBER" type="NUMBER" />
+            <column name="QUESTION_PHRASE" type="VARCHAR(1000)" />
+            <column name="CORRECT_ANSWER" type="VARCHAR(400)" />
+            <column name="OPEN" type="BOOLEAN" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001_create_question_answer_options" author="thielc">
+        <createTable tableName="GAME_QUESTION_ANSWER_OPTIONS">
+            <column name="GAME_QUESTION_ID" type="UUID" />
+            <column name="ANSWER_OPTION" type="VARCHAR(400)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="001_create_question_user_answer" author="thielc">
+        <createTable tableName="USER_ANSWER">
+            <column name="USER_ANSWER_ID" type="UUID" >
+                <constraints primaryKey="true" primaryKeyName="USER_ANSWER_PK" />
+            </column>
+            <column name="GAME_QUESTION_ID" type="UUID" />
+            <column name="GAME_USER_ID" type="UUID" />
+            <column name="ANSWER" type="VARCHAR(400)" />
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

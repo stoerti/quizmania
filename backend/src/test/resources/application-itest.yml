@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:latest:///spring_boot_testcontainers?TC_DAEMON=true
+    generate-unique-name: true
+    hikari:
+      minimum-idle: 1
