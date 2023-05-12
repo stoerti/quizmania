@@ -42,10 +42,11 @@ class GameJPAEventListener(
                 it.questions.add(
                     GameQuestionEntity(
                         gameQuestionId = event.gameQuestionId,
-                        questionNumber = event.questionNumber,
-                        questionPhrase = event.questionPhrase,
+                        questionNumber = event.gameQuestionNumber,
+                        questionPhrase = event.question.phrase,
                         open = true,
-                        answerOptions = event.answers.toMutableList()
+                        correctAnswer = event.question.correctAnswer,
+                        answerOptions = if (event.question is ChoiceQuestion) event.question.answerOptions.toMutableList() else mutableListOf()
                     )
                 )
             }
@@ -73,7 +74,6 @@ class GameJPAEventListener(
         gameRepository.findByIdOrNull(event.gameId)?.let { gameEntity ->
             gameEntity.questions.find { it.gameQuestionId == event.gameQuestionId }?.let { question ->
                 question.open = false
-                question.correctAnswer = event.correctAnswer
             }
             event.points.forEach { entry ->
                 gameEntity.users.find { user -> user.gameUserId == entry.key }?.let {

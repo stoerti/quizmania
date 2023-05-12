@@ -51,6 +51,7 @@ class HappyPathITest : AbstractSpringIntegrationTest() {
 
         gameController.answerQuestion(gameId, USERNAME, AnswerDto(game.questions[0].id, "Banone"))
         gameController.answerQuestion(gameId, OTHER_USERNAME, AnswerDto(game.questions[0].id, "Banone"))
+        gameController.askNextQuestion(gameId)
 
         Awaitility.await()
             .atMost(10, TimeUnit.SECONDS)

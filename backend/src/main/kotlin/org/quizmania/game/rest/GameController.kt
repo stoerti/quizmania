@@ -143,7 +143,7 @@ class GameController(
     }
 
     @PostMapping("/{gameId}/ask-next-question")
-    fun astNextQuestion(
+    fun askNextQuestion(
         @PathVariable("gameId") gameId: UUID): ResponseEntity<Void> {
         gameRepository.findByIdOrNull(gameId)?.let {
             commandGateway.sendAndWait<Void>(AskNextQuestionCommand(gameId = gameId))

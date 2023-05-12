@@ -21,7 +21,7 @@ internal class GameAggregate {
     private var gameStatus: GameStatus = GameStatus.CREATED
 
     private var users: MutableList<User> = mutableListOf()
-    private var askedQuestions: MutableList<Question> = mutableListOf()
+    private var askedQuestions: MutableList<GameQuestion> = mutableListOf()
 
     constructor() {}
 
@@ -89,9 +89,13 @@ internal class GameAggregate {
             QuestionAskedEvent(
                 gameId = gameId,
                 gameQuestionId = UUID.randomUUID(),
-                questionNumber = 1,
-                questionPhrase = "Was ist gelb und schießt durch den Wald?",
-                answers = listOf("Banone", "Hagenutte", "Nuschel", "Gürkin")
+                gameQuestionNumber = 1,
+                ChoiceQuestion(
+                    id = UUID.randomUUID(),
+                    phrase = "Was ist gelb und schießt durch den Wald?",
+                    correctAnswer = "Banone",
+                    answerOptions = listOf("Banone", "Hagenutte", "Nuschel", "Gürkin")
+                )
             )
         )
     }
@@ -103,14 +107,15 @@ internal class GameAggregate {
             throw GameAlreadyEndedException(gameId)
         }
 
-        val question = askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
+        val gameQuestion =
+            askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
         val user = users.findByUsername(command.username) ?: throw GameException(gameId, "User not found")
 
-        if (!question.open) {
+        if (!gameQuestion.open) {
             throw QuestionAlreadyClosedException(gameId, command.gameQuestionId)
         }
 
-        if (question.userAnswers.find { it.gameUserId == user.gameUserId } != null) {
+        if (gameQuestion.userAnswers.find { it.gameUserId == user.gameUserId } != null) {
             throw GameException(gameId, "Question already answered")
         }
 
@@ -125,19 +130,19 @@ internal class GameAggregate {
         )
 
         // after QuestionAnsweredEvent is applied, the user-answer is actually in the list
-        if (users.size == question.userAnswers.size) {
+        if (users.size == gameQuestion.userAnswers.size) {
             val points =
-                question.userAnswers.filter { it.answer == question.correctAnswer }.associate { it.gameUserId to 1 }
+                gameQuestion.userAnswers.filter { it.answer == gameQuestion.question.correctAnswer }
+                    .associate { it.gameUserId to 1 }
             AggregateLifecycle.apply(
                 QuestionClosedEvent(
                     gameId = gameId,
-                    gameQuestionId = question.gameQuestionId,
-                    correctAnswer = question.correctAnswer,
+                    gameQuestionId = gameQuestion.id,
                     points = points
                 )
             )
 
-            if ( this.askedQuestions.size >= this.config.numQuestions ) {
+            if (this.askedQuestions.size >= this.config.numQuestions) {
                 AggregateLifecycle.apply(
                     GameEndedEvent(
                         gameId = gameId
@@ -162,9 +167,13 @@ internal class GameAggregate {
             QuestionAskedEvent(
                 gameId = gameId,
                 gameQuestionId = UUID.randomUUID(),
-                questionNumber = askedQuestions.size + 1, // nhext index
-                questionPhrase = "Was ist gelb und schießt durch den Wald?",
-                answers = listOf("Banone", "Hagenutte", "Nuschel", "Gürkin")
+                gameQuestionNumber = askedQuestions.size + 1, // next index,
+                ChoiceQuestion(
+                    id = UUID.randomUUID(),
+                    phrase = "Was ist gelb und schießt durch den Wald?",
+                    correctAnswer = "Banone",
+                    answerOptions = listOf("Banone", "Hagenutte", "Nuschel", "Gürkin")
+                )
             )
         )
 
@@ -207,12 +216,12 @@ internal class GameAggregate {
     fun on(event: QuestionAskedEvent) {
         this.questionsAsked++
         this.askedQuestions.add(
-            Question(
-                gameQuestionId = event.gameQuestionId,
-                questionNumber = event.questionNumber,
-                questionPhrase = event.questionPhrase,
-                answers = event.answers,
-                correctAnswer = "Banone"
+            GameQuestion(
+                id = event.gameQuestionId,
+                number = event.gameQuestionNumber,
+                open = true,
+                question = event.question,
+                userAnswers = mutableListOf()
             )
         )
     }
@@ -228,8 +237,8 @@ internal class GameAggregate {
     }
 }
 
-fun MutableList<Question>.findById(gameQuestionId: UUID): Question? {
-    return this.find { it.gameQuestionId == gameQuestionId }
+fun MutableList<GameQuestion>.findById(gameQuestionId: UUID): GameQuestion? {
+    return this.find { it.id == gameQuestionId }
 }
 
 fun MutableList<User>.findById(gameUserId: UUID): User? {
@@ -249,14 +258,12 @@ data class User(
     val username: String,
 )
 
-data class Question(
-    val gameQuestionId: UUID,
-    val questionNumber: Int,
-    val questionPhrase: String,
-    val answers: List<String>,
-    val correctAnswer: String,
-    var open: Boolean = true,
-    var userAnswers: MutableList<UserAnswer> = mutableListOf()
+data class GameQuestion(
+    val id: UUID,
+    val number: Int,
+    val question: Question,
+    var open: Boolean,
+    var userAnswers: MutableList<UserAnswer>
 )
 
 data class UserAnswer(

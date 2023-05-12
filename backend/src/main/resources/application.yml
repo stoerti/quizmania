@@ -18,8 +18,7 @@ spring:
 
 logging:
   level:
-#    org.springframework: DEBUG
-    org.springframework.web.socket: DEBUG
+    org.quizmania: DEBUG
 
 axon:
   serializer:
