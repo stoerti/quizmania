@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.0.4"
     id("io.spring.dependency-management") version "1.1.0"
     id("io.freefair.lombok") version "5.3.3.3"
+    id("jacoco")
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
     kotlin("plugin.jpa") version "1.7.22"
@@ -71,3 +72,16 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks.withType<JacocoReport> {
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.required.set(true)
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+}
+
