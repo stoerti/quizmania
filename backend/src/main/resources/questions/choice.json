@@ -1,0 +1,37 @@
+[
+  {
+    "id": "d37b5ae9-6c02-4b68-bf7f-e7cba625ab61",
+    "type": "CHOICE",
+    "phrase": "Was ist gelb und schießt durch den Wald?",
+    "correctAnswer": "Banone",
+    "answerOptions": ["Banone", "Gürkin", "Hagenutte", "Nuschel"]
+  },
+  {
+    "id": "98a495c8-3886-4109-b8c5-61dbc60ef880",
+    "type": "CHOICE",
+    "phrase": "Wie heißt die Hauptstadt von Deutschland?",
+    "correctAnswer": "Berlin",
+    "answerOptions": ["Hamburg", "Berlin", "München", "Frankfurt"]
+  },
+  {
+    "id": "b659bd3f-01d6-44db-8d51-4d85aa8bc76b",
+    "type": "CHOICE",
+    "phrase": "Was ist der größte Planet des Sonnensystems?",
+    "correctAnswer": "Jupiter",
+    "answerOptions": ["Mars", "Jupiter", "Venus", "Pluto"]
+  },
+  {
+    "id": "1ad5b74f-a89b-4fe6-8ca5-8d46e4cbe07f",
+    "type": "CHOICE",
+    "phrase": "Wo wurde die Currywurst erfunden?",
+    "correctAnswer": "Berlin",
+    "answerOptions": ["Hamburg", "Berlin", "Dortmund", "Frankfurt"]
+  },
+  {
+    "id": "14f73bc2-a672-429c-8097-538100c1eeae",
+    "type": "CHOICE",
+    "phrase": "An welchem Fluss liegt Hamburg?",
+    "correctAnswer": "Elbe",
+    "answerOptions": ["Donau", "Weser", "Spree", "Elbe"]
+  }
+]

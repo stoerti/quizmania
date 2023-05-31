@@ -1,0 +1,32 @@
+[
+  {
+    "id": "827906c4-f931-44ed-9678-6b77ccde2d39",
+    "type": "FREE_INPUT",
+    "phrase": "Wie viele Tore fielen in der Bundesligasaison 2021/22?",
+    "correctAnswer": "954"
+  },
+  {
+    "id": "713aedb6-7015-4e23-98a6-036a8e9c2d4a",
+    "type": "FREE_INPUT",
+    "phrase": "Wie hoch ist der Burj Khalifa in Metern?",
+    "correctAnswer": "828"
+  },
+  {
+    "id": "2a2affc7-bc0c-4ab4-b764-8a5a149471f2",
+    "type": "FREE_INPUT",
+    "phrase": "Aus wie vielen Knochen besteht ein erwachsener Mensch?",
+    "correctAnswer": "208"
+  },
+  {
+    "id": "a8d30065-fbe4-4d2f-8e95-e91d865d0e19",
+    "type": "FREE_INPUT",
+    "phrase": "Wie viele Jahre dauerte der hundertjährige Krieg?",
+    "correctAnswer": "116"
+  },
+  {
+    "id": "92b5539a-7fc0-4963-bef5-7f1dc8771d11",
+    "type": "FREE_INPUT",
+    "phrase": "Wie viele Städte mit dem Namen Berlin gibt es in den USA?",
+    "correctAnswer": "31"
+  }
+]

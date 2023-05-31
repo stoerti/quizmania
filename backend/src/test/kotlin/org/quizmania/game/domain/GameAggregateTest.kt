@@ -1,0 +1,170 @@
+package org.quizmania.game.domain
+
+import org.axonframework.test.aggregate.AggregateTestFixture
+import org.axonframework.test.matchers.Matchers
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.whenever
+import org.quizmania.game.*
+import org.quizmania.game.GameCommandFixtures.Companion.answerQuestion
+import org.quizmania.game.GameCommandFixtures.Companion.startGame
+import org.quizmania.game.GameEventFixtures.Companion.gameCanceled
+import org.quizmania.game.GameEventFixtures.Companion.gameCreated
+import org.quizmania.game.GameEventFixtures.Companion.gameStarted
+import org.quizmania.game.GameEventFixtures.Companion.questionAnswered
+import org.quizmania.game.GameEventFixtures.Companion.questionAsked
+import org.quizmania.game.GameEventFixtures.Companion.userAdded
+import org.quizmania.game.GameEventFixtures.Companion.userRemoved
+import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
+import org.quizmania.game.QuestionFixtures.Companion.estimateQuestion
+import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
+import org.quizmania.game.api.*
+import org.quizmania.question.QuestionService
+import java.util.*
+
+class GameAggregateTest {
+
+    private lateinit var fixture: AggregateTestFixture<GameAggregate>
+    private lateinit var questionService: QuestionService
+
+    @BeforeEach
+    fun before() {
+        this.questionService = Mockito.mock(QuestionService::class.java)
+
+        this.fixture = AggregateTestFixture(GameAggregate::class.java)
+        this.fixture.registerInjectableResource(questionService)
+    }
+
+    @Test
+    fun createGame_ok() {
+        fixture.givenNoPriorActivity()
+            .`when`(GameCommandFixtures.createGame())
+            .expectEvents(gameCreated())
+    }
+
+    @Test
+    fun addUser_ok() {
+        fixture.registerIgnoredField(UserAddedEvent::class.java, "gameUserId")
+        fixture.given(gameCreated())
+            .`when`(GameCommandFixtures.addUser(USERNAME_1))
+            .expectEvents(userAdded(USERNAME_1))
+    }
+
+    @Test
+    fun addUser_alreadyRegistered() {
+        fixture.given(gameCreated(), userAdded(USERNAME_1))
+            .`when`(GameCommandFixtures.addUser(USERNAME_1))
+            .expectException(Matchers.matches<Exception> { it.message == "User already exists in game" })
+    }
+
+    @Test
+    fun addUser_gameAlreadyFull() {
+        fixture.given(gameCreated(USERNAME_1, GameConfig(maxPlayers = 2)), userAdded(USERNAME_1), userAdded(USERNAME_2))
+            .`when`(GameCommandFixtures.addUser("Another user"))
+            .expectException(Matchers.matches<Exception> { it.message == "Game is already full" })
+    }
+
+    @Test
+    fun removeUser_ok() {
+        fixture.given(gameCreated(), userAdded(USERNAME_1, GAME_USER_1), userAdded(USERNAME_2, GAME_USER_2))
+            .`when`(GameCommandFixtures.removeUser(USERNAME_2))
+            .expectEvents(userRemoved(USERNAME_2, GAME_USER_2))
+    }
+
+    @Test
+    fun removeUser_ok_and_gameEnded() {
+        fixture.given(gameCreated(), userAdded(USERNAME_1, GAME_USER_1))
+            .`when`(GameCommandFixtures.removeUser(USERNAME_1))
+            .expectEvents(userRemoved(USERNAME_1, GAME_USER_1), gameCanceled())
+    }
+
+    @Test
+    fun startGame_ok() {
+        val question = choiceQuestion()
+        whenever(questionService.findRandomQuestion(any(), any())).thenReturn(question)
+
+        fixture.registerIgnoredField(QuestionAskedEvent::class.java, "gameQuestionId")
+        fixture.given(gameCreated(), userAdded(USERNAME_1, GAME_USER_1), userAdded(USERNAME_2, GAME_USER_2))
+            .`when`(startGame())
+            .expectEvents(gameStarted(), questionAsked(UUID.randomUUID(), 1, question))
+    }
+
+    @Test
+    fun answerQuestion_ok() {
+        val question = choiceQuestion()
+
+        fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "userAnswerId")
+        fixture.given(
+            gameCreated(),
+            userAdded(USERNAME_1, GAME_USER_1),
+            userAdded(USERNAME_2, GAME_USER_2),
+            gameStarted(),
+            questionAsked(GAME_QUESTION_1, 1, question)
+        )
+            .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_1, "Answer 1"))
+            .expectEvents(questionAnswered(GAME_QUESTION_1, GAME_USER_1, UUID.randomUUID(), "Answer 1"))
+    }
+
+    @Test
+    fun answerChoiceQuestion_complete_ok() {
+        val question = choiceQuestion()
+
+        fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "userAnswerId")
+        fixture.given(
+            gameCreated(),
+            userAdded(USERNAME_1, GAME_USER_1),
+            userAdded(USERNAME_2, GAME_USER_2),
+            gameStarted(),
+            questionAsked(GAME_QUESTION_1, 1, question),
+            questionAnswered(GAME_QUESTION_1, GAME_USER_1, UUID.randomUUID(), "Answer 1")
+        )
+            .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2"))
+            .expectEvents(
+                questionAnswered(GAME_QUESTION_1, GAME_USER_2, UUID.randomUUID(), "Answer 2"),
+                QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_USER_1 to 10))
+            )
+    }
+
+    @Test
+    fun answerFreeInputQuestion_complete_ok() {
+        val question = freeInputQuestion()
+
+        fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "userAnswerId")
+        fixture.given(
+            gameCreated(),
+            userAdded(USERNAME_1, GAME_USER_1),
+            userAdded(USERNAME_2, GAME_USER_2),
+            gameStarted(),
+            questionAsked(GAME_QUESTION_1, 1, question),
+            questionAnswered(GAME_QUESTION_1, GAME_USER_1, UUID.randomUUID(), "Answer 1")
+        )
+            .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2"))
+            .expectEvents(
+                questionAnswered(GAME_QUESTION_1, GAME_USER_2, UUID.randomUUID(), "Answer 2"),
+                QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_USER_1 to 10))
+            )
+    }
+
+    @Test
+    fun answerEstimateQuestion_complete_ok() {
+        val question = estimateQuestion()
+
+        fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "userAnswerId")
+        fixture.given(
+            gameCreated(),
+            userAdded(USERNAME_1, GAME_USER_1),
+            userAdded(USERNAME_2, GAME_USER_2),
+            gameStarted(),
+            questionAsked(GAME_QUESTION_1, 1, question),
+            questionAnswered(GAME_QUESTION_1, GAME_USER_1, UUID.randomUUID(), "80")
+        )
+            .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_2, "150"))
+            .expectEvents(
+                questionAnswered(GAME_QUESTION_1, GAME_USER_2, UUID.randomUUID(), "150"),
+                QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_USER_1 to 20, GAME_USER_2 to 10))
+            )
+    }
+
+}

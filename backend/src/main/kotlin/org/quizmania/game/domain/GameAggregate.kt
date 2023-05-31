@@ -2,12 +2,13 @@ package org.quizmania.game.domain
 
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
-import org.axonframework.modelling.command.AggregateIdentifier
-import org.axonframework.modelling.command.AggregateLifecycle
+import org.axonframework.modelling.command.*
 import org.axonframework.spring.stereotype.Aggregate
 import org.quizmania.game.api.*
+import org.quizmania.question.Question
+import org.quizmania.question.QuestionService
 import org.slf4j.LoggerFactory
-import java.util.UUID
+import java.util.*
 
 @Aggregate
 internal class GameAggregate {
@@ -21,6 +22,8 @@ internal class GameAggregate {
     private var gameStatus: GameStatus = GameStatus.CREATED
 
     private var users: MutableList<User> = mutableListOf()
+
+    @AggregateMember(eventForwardingMode = ForwardMatchingInstances::class)
     private var askedQuestions: MutableList<GameQuestion> = mutableListOf()
 
     constructor() {}
@@ -62,16 +65,16 @@ internal class GameAggregate {
     @CommandHandler
     fun handle(command: RemoveUserCommand) {
         log.info("Executing RemoveUserCommand for game ${command.gameId} and user ${command.username}")
-        if (users.containsUsername(command.username)) {
+        users.findByUsername(command.username)?.let {user ->
             AggregateLifecycle.apply(
                 UserRemovedEvent(
                     command.gameId,
-                    UUID.randomUUID(),
-                    command.username
+                    user.gameUserId,
+                    user.username
                 )
             )
 
-            if (command.username == this.moderatorUsername || this.users.size == 1) {
+            if (command.username == this.moderatorUsername || this.users.size == 0) {
                 AggregateLifecycle.apply(
                     GameCanceledEvent(gameId)
                 )
@@ -80,24 +83,12 @@ internal class GameAggregate {
     }
 
     @CommandHandler
-    fun handle(command: StartGameCommand) {
+    fun handle(command: StartGameCommand, questionService: QuestionService) {
         log.info("Executing StartGameCommand for game ${command.gameId}")
         // todo verify if allowed
         AggregateLifecycle.apply(GameStartedEvent(command.gameId))
 
-        AggregateLifecycle.apply(
-            QuestionAskedEvent(
-                gameId = gameId,
-                gameQuestionId = UUID.randomUUID(),
-                gameQuestionNumber = 1,
-                ChoiceQuestion(
-                    id = UUID.randomUUID(),
-                    phrase = "Was ist gelb und schießt durch den Wald?",
-                    correctAnswer = "Banone",
-                    answerOptions = listOf("Banone", "Hagenutte", "Nuschel", "Gürkin")
-                )
-            )
-        )
+        askNextQuestion(questionService)
     }
 
     @CommandHandler
@@ -107,40 +98,22 @@ internal class GameAggregate {
             throw GameAlreadyEndedException(gameId)
         }
 
-        val gameQuestion =
-            askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
+        val gameQuestion = askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
         val user = users.findByUsername(command.username) ?: throw GameException(gameId, "User not found")
 
         if (!gameQuestion.open) {
             throw QuestionAlreadyClosedException(gameId, command.gameQuestionId)
         }
 
-        if (gameQuestion.userAnswers.find { it.gameUserId == user.gameUserId } != null) {
+        if (gameQuestion.hasUserAlreadyAnswered(user.gameUserId)) {
             throw GameException(gameId, "Question already answered")
         }
 
-        AggregateLifecycle.apply(
-            QuestionAnsweredEvent(
-                gameId = gameId,
-                gameQuestionId = command.gameQuestionId,
-                gameUserId = user.gameUserId,
-                userAnswerId = UUID.randomUUID(),
-                answer = command.answer
-            )
-        )
+        gameQuestion.answer(user.gameUserId, command.answer)
 
         // after QuestionAnsweredEvent is applied, the user-answer is actually in the list
-        if (users.size == gameQuestion.userAnswers.size) {
-            val points =
-                gameQuestion.userAnswers.filter { it.answer == gameQuestion.question.correctAnswer }
-                    .associate { it.gameUserId to 1 }
-            AggregateLifecycle.apply(
-                QuestionClosedEvent(
-                    gameId = gameId,
-                    gameQuestionId = gameQuestion.id,
-                    points = points
-                )
-            )
+        if (users.size == gameQuestion.numAnswers()) {
+            gameQuestion.closeQuestion()
 
             if (this.askedQuestions.size >= this.config.numQuestions) {
                 AggregateLifecycle.apply(
@@ -153,7 +126,7 @@ internal class GameAggregate {
     }
 
     @CommandHandler
-    fun handle(command: AskNextQuestionCommand) {
+    fun handle(command: AskNextQuestionCommand, questionService: QuestionService) {
         log.info("Executing AnswerQuestionCommand for game ${command.gameId}: $command")
         if (gameStatus != GameStatus.STARTED) {
             throw GameAlreadyEndedException(gameId)
@@ -163,20 +136,7 @@ internal class GameAggregate {
             throw GameException(gameId, "Other question is still open")
         }
 
-        AggregateLifecycle.apply(
-            QuestionAskedEvent(
-                gameId = gameId,
-                gameQuestionId = UUID.randomUUID(),
-                gameQuestionNumber = askedQuestions.size + 1, // next index,
-                ChoiceQuestion(
-                    id = UUID.randomUUID(),
-                    phrase = "Was ist gelb und schießt durch den Wald?",
-                    correctAnswer = "Banone",
-                    answerOptions = listOf("Banone", "Hagenutte", "Nuschel", "Gürkin")
-                )
-            )
-        )
-
+        askNextQuestion(questionService)
     }
 
     @EventSourcingHandler
@@ -217,23 +177,28 @@ internal class GameAggregate {
         this.questionsAsked++
         this.askedQuestions.add(
             GameQuestion(
+                gameId = gameId,
                 id = event.gameQuestionId,
                 number = event.gameQuestionNumber,
-                open = true,
                 question = event.question,
                 userAnswers = mutableListOf()
             )
         )
     }
 
-    @EventSourcingHandler
-    fun on(event: QuestionAnsweredEvent) {
-        this.askedQuestions.findById(event.gameQuestionId)!!.userAnswers.add(UserAnswer(event.gameUserId, event.answer))
-    }
-
-    @EventSourcingHandler
-    fun on(event: QuestionClosedEvent) {
-        this.askedQuestions.findById(event.gameQuestionId)!!.open = false
+    private fun askNextQuestion(questionService: QuestionService) {
+        val question = questionService.findRandomQuestion(
+            config.questionTypes.filter { it.minPlayers <= users.size },
+            askedQuestions.map { it.question.id }.toSet()
+        )
+        AggregateLifecycle.apply(
+            QuestionAskedEvent(
+                gameId = gameId,
+                gameQuestionId = UUID.randomUUID(),
+                gameQuestionNumber = askedQuestions.size + 1,
+                question = question
+            )
+        )
     }
 }
 
@@ -256,19 +221,6 @@ fun MutableList<User>.containsUsername(username: String): Boolean {
 data class User(
     val gameUserId: UUID,
     val username: String,
-)
-
-data class GameQuestion(
-    val id: UUID,
-    val number: Int,
-    val question: Question,
-    var open: Boolean,
-    var userAnswers: MutableList<UserAnswer>
-)
-
-data class UserAnswer(
-    val gameUserId: UUID,
-    val answer: String
 )
 
 enum class GameStatus {

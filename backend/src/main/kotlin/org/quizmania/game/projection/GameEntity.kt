@@ -1,6 +1,7 @@
 package org.quizmania.game.projection
 
 import jakarta.persistence.*
+import org.quizmania.question.QuestionType
 import org.springframework.data.repository.CrudRepository
 import java.util.*
 
@@ -42,6 +43,8 @@ class GameUserEntity(
 class GameQuestionEntity(
     @Id
     val gameQuestionId: UUID,
+    @Enumerated(EnumType.STRING)
+    val type: QuestionType,
     val questionNumber: Int,
     val questionPhrase: String,
     var open: Boolean,
@@ -67,6 +70,7 @@ class UserAnswerEntity(
     val userAnswerId: UUID,
     val gameUserId: UUID,
     var answer: String,
+    var points: Int? = null
 )
 
 enum class GameStatus {

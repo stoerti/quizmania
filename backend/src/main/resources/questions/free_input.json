@@ -1,0 +1,32 @@
+[
+  {
+    "id": "32535ddf-a239-4de8-bc57-db8f1293c776",
+    "type": "FREE_INPUT",
+    "phrase": "Wo findet das originale Oktoberfest statt?",
+    "correctAnswer": "München"
+  },
+  {
+    "id": "25998e5a-9040-4062-b48e-02c41bae3b42",
+    "type": "FREE_INPUT",
+    "phrase": "In welchem Märchen werden zwei Geschwister allein im Wald zurück gelassen?",
+    "correctAnswer": "Hänsel und Gretel"
+  },
+  {
+    "id": "a901c932-3e5b-4f3f-bf78-99c64076d7d1",
+    "type": "FREE_INPUT",
+    "phrase": "Wer war der erste Mensch auf dem Mond?",
+    "correctAnswer": "Neil Armstrong"
+  },
+  {
+    "id": "3da7e556-40ca-4d5c-ac76-d31c7c1817b6",
+    "type": "FREE_INPUT",
+    "phrase": "Wer ist unser Bundeskanzler?",
+    "correctAnswer": "Olaf Scholz"
+  },
+  {
+    "id": "1d6f1c78-34a5-4e2a-9a22-4fbce7365c52",
+    "type": "FREE_INPUT",
+    "phrase": "Mit welchem Film startete das moderne MCU?",
+    "correctAnswer": "Iron Man"
+  }
+]

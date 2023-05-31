@@ -1,5 +1,6 @@
 package org.quizmania.game.api
 
+import org.quizmania.question.Question
 import java.util.*
 
 interface GameEvent {

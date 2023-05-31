@@ -33,6 +33,12 @@ export enum GameStatus {
     CANCELED = 'CANCELED'
 }
 
+export enum QuestionType {
+    CHOICE = 'CHOICE',
+    FREE_INPUT = 'FREE_INPUT',
+    ESTIMATE = 'ESTIMATE',
+}
+
 export type GameUserDto = {
     id: string
     name: string,
@@ -41,6 +47,7 @@ export type GameUserDto = {
 
 export type GameQuestionDto = {
     id: string,
+    type: QuestionType,
     questionNumber: number,
     phrase: string,
     open: boolean,
@@ -53,6 +60,7 @@ export type UserAnswerDto = {
     id: string,
     gameUserId: string,
     answer: string,
+    points: number
 }
 
 export type GameStartedEvent = {

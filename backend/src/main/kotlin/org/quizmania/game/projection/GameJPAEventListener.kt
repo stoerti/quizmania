@@ -3,6 +3,7 @@ package org.quizmania.game.projection
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
 import org.quizmania.game.api.*
+import org.quizmania.question.ChoiceQuestion
 import org.slf4j.LoggerFactory
 import org.springframework.core.annotation.Order
 import org.springframework.data.repository.findByIdOrNull
@@ -42,6 +43,7 @@ class GameJPAEventListener(
                 it.questions.add(
                     GameQuestionEntity(
                         gameQuestionId = event.gameQuestionId,
+                        type = event.question.type,
                         questionNumber = event.gameQuestionNumber,
                         questionPhrase = event.question.phrase,
                         open = true,
@@ -76,6 +78,11 @@ class GameJPAEventListener(
                 question.open = false
             }
             event.points.forEach { entry ->
+                gameEntity.questions.find { it.gameQuestionId == event.gameQuestionId }?.let { question ->
+                    question.userAnswers.find { user -> user.gameUserId == entry.key }?.let {
+                        it.points = entry.value
+                    }
+                }
                 gameEntity.users.find { user -> user.gameUserId == entry.key }?.let {
                     it.points += entry.value
                 }

@@ -3,11 +3,16 @@ package org.quizmania.integration
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
+import org.mockito.kotlin.any
 import org.quizmania.game.api.GameConfig
 import org.quizmania.game.projection.GameStatus
 import org.quizmania.game.rest.AnswerDto
 import org.quizmania.game.rest.GameDto
 import org.quizmania.game.rest.NewGameDto
+import org.quizmania.question.ChoiceQuestion
+import org.quizmania.question.QuestionService
+import org.springframework.boot.test.mock.mockito.MockBean
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -17,8 +22,15 @@ class HappyPathITest : AbstractSpringIntegrationTest() {
         const val OTHER_USERNAME: String = "other-test-user"
     }
 
+    @MockBean
+    private lateinit var questionService: QuestionService
+
     @Test
     fun testHappyPath() {
+        Mockito.`when`(questionService.findRandomQuestion(any(), any())).thenReturn(
+            ChoiceQuestion(UUID.randomUUID(), "Was ist gelb und schießt durch den Wald?", "Banone", listOf("Banone", "Gürkin", "Nuschel", "Hagenutte")),
+            ChoiceQuestion(UUID.randomUUID(), "Was ist gelb und schießt durch den Wald?", "Banone", listOf("Banone", "Gürkin", "Nuschel", "Hagenutte")),
+        )
 
         // create game
         val response = gameController.createGame(USERNAME, NewGameDto(UUID.randomUUID().toString(), GameConfig(2, 2), false))
@@ -36,6 +48,7 @@ class HappyPathITest : AbstractSpringIntegrationTest() {
             .atMost(10, TimeUnit.SECONDS)
             .untilAsserted {
                 assertThat(gameController.get(gameId).body!!.status).isEqualTo(GameStatus.STARTED)
+                assertThat(gameController.get(gameId).body!!.questions).hasSize(1)
             }
 
         var game: GameDto = gameController.get(gameId).body!!

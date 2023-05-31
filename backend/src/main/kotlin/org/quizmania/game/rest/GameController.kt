@@ -3,6 +3,7 @@ package org.quizmania.game.rest
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.quizmania.game.api.*
 import org.quizmania.game.projection.*
+import org.quizmania.question.QuestionType
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
@@ -173,6 +174,7 @@ class GameController(
     fun GameQuestionEntity.toDto(): GameQuestionDto {
         return GameQuestionDto(
             id = gameQuestionId,
+            type = type,
             questionNumber = questionNumber,
             phrase = questionPhrase,
             open = open,
@@ -186,7 +188,8 @@ class GameController(
         return UserAnswerDto(
             id = userAnswerId,
             gameUserId = gameUserId,
-            answer = if (mask) "******" else answer
+            answer = if (mask) "******" else answer,
+            points = points
         )
     }
 }
@@ -221,6 +224,7 @@ data class GameUserDto(
 
 data class GameQuestionDto(
     val id: UUID,
+    val type: QuestionType,
     val questionNumber: Int,
     val phrase: String,
     val open: Boolean,
@@ -233,4 +237,5 @@ data class UserAnswerDto(
     val id: UUID,
     val gameUserId: UUID,
     val answer: String,
+    val points: Int?
 )

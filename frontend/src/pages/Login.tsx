@@ -10,7 +10,7 @@ const LoginPage = (props: LoginPageProps) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
 
-        var username: string = data.get('username')!.toString()
+        let username: string = data.get('username')!.toString()
 
         console.log({
             username: username,

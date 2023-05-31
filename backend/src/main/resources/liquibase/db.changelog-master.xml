@@ -36,6 +36,7 @@
             <column name="GAME_QUESTION_ID" type="UUID" >
                 <constraints primaryKey="true" primaryKeyName="GAME_QUESTION_PK" />
             </column>
+            <column name="TYPE" type="VARCHAR(50)" />
             <column name="GAME_ID" type="UUID" />
             <column name="QUESTION_NUMBER" type="NUMBER" />
             <column name="QUESTION_PHRASE" type="VARCHAR(1000)" />
@@ -59,6 +60,7 @@
             <column name="GAME_QUESTION_ID" type="UUID" />
             <column name="GAME_USER_ID" type="UUID" />
             <column name="ANSWER" type="VARCHAR(400)" />
+            <column name="POINTS" type="NUMBER" />
         </createTable>
     </changeSet>
 
