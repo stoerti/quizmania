@@ -44,7 +44,7 @@ class GameAggregateTest {
 
         fixture.givenNoPriorActivity()
             .`when`(GameCommandFixtures.createGame())
-            .expectEvents(gameCreated())
+            .expectEvents(gameCreated(config = GameConfig(questionSetId = QUESTION_SET_ID, numQuestions = 2)))
     }
 
     @Test
