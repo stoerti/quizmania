@@ -32,12 +32,18 @@ internal class GameAggregate {
   @CommandHandler
   constructor(command: CreateGameCommand, questionPort: QuestionPort) {
     log.info("Executing CreateGameCommand for game ${command.gameId}")
+
+    val questionSet = questionPort.getQuestionSet(command.config.questionSetId)
+    val realNumQuestions = command.config.numQuestions.coerceAtMost(questionSet.questions.size)
+
     AggregateLifecycle.apply(
       GameCreatedEvent(
         command.gameId,
         command.name,
-        command.config,
-        questionPort.getQuestionSet(command.config.questionSetId).questions.take(command.config.numQuestions),
+        command.config.copy(
+          numQuestions = realNumQuestions // adjust question number to questionSet
+        ),
+        questionSet.questions.take(realNumQuestions),
         command.creatorUsername,
         command.moderatorUsername
       )

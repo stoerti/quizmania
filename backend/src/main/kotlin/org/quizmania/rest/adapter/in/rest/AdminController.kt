@@ -1,4 +1,4 @@
-package org.quizmania.game.rest
+package org.quizmania.rest.adapter.`in`.rest
 
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.quizmania.game.api.AddUserCommand

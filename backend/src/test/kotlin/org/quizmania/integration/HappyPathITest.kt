@@ -4,10 +4,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility
 import org.junit.jupiter.api.Test
 import org.quizmania.game.common.GameConfig
-import org.quizmania.game.query.application.domain.GameStatus
-import org.quizmania.game.rest.AnswerDto
-import org.quizmania.game.rest.GameDto
-import org.quizmania.game.rest.NewGameDto
+import org.quizmania.rest.application.domain.GameStatus
+import org.quizmania.rest.adapter.`in`.rest.AnswerDto
+import org.quizmania.rest.adapter.`in`.rest.GameDto
+import org.quizmania.rest.adapter.`in`.rest.NewGameDto
 import java.util.*
 import java.util.concurrent.TimeUnit
 

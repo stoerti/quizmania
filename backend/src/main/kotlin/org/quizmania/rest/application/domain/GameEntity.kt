@@ -1,8 +1,7 @@
-package org.quizmania.game.query.application.domain
+package org.quizmania.rest.application.domain
 
 import jakarta.persistence.*
 import org.quizmania.game.common.QuestionType
-import org.springframework.data.repository.CrudRepository
 import java.util.*
 
 @Entity(name = "GAME")

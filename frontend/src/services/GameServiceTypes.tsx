@@ -20,6 +20,7 @@ export type GameDto = {
     id: string,
     name: string,
     maxPlayers: number,
+    numQuestions: number,
     creator: string,
     moderator: string,
     status: GameStatus,

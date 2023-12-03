@@ -1,11 +1,11 @@
-package org.quizmania.game.rest
+package org.quizmania.rest.adapter.`in`.rest
 
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.quizmania.game.api.*
 import org.quizmania.game.common.GameConfig
 import org.quizmania.game.common.QuestionType
-import org.quizmania.game.query.adapter.out.GameRepository
-import org.quizmania.game.query.application.domain.*
+import org.quizmania.rest.adapter.out.GameRepository
+import org.quizmania.rest.application.domain.*
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
@@ -161,6 +161,7 @@ class GameController(
             id = gameId,
             name = name,
             maxPlayers = maxPlayers,
+            numQuestions = numQuestions,
             creator = creator,
             moderator = moderator,
             status = status,
@@ -211,6 +212,7 @@ data class GameDto(
     val id: UUID,
     val name: String,
     val maxPlayers: Int,
+    val numQuestions: Int,
     val creator: String,
     val moderator: String?,
     val status: GameStatus,

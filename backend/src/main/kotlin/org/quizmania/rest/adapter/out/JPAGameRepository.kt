@@ -1,7 +1,7 @@
-package org.quizmania.game.query.adapter.out
+package org.quizmania.rest.adapter.out
 
-import org.quizmania.game.query.application.domain.GameEntity
-import org.quizmania.game.query.application.domain.GameStatus
+import org.quizmania.rest.application.domain.GameEntity
+import org.quizmania.rest.application.domain.GameStatus
 import org.springframework.data.repository.CrudRepository
 import java.util.*
 

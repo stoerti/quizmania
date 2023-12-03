@@ -1,6 +1,19 @@
-import {Box, Button, Dialog, DialogTitle, FormControlLabel, FormGroup, Switch, TextField} from "@mui/material";
-import React from "react";
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogTitle,
+    FormControlLabel,
+    FormGroup,
+    MenuItem,
+    Select,
+    Switch,
+    TextField
+} from "@mui/material";
+import React, {useEffect} from "react";
 import {NewGameDto} from "../services/GameServiceTypes";
+import {QuestionSetDto} from "../services/QuestionSetServiceTypes";
+import {QuestionSetService} from "../services/QuestionSetService";
 
 type GameCreationDialogProps = {
     open: boolean
@@ -11,6 +24,13 @@ type GameCreationDialogProps = {
 
 export const GameCreationDialog = (props: GameCreationDialogProps) => {
     const {open, onClose, onCreateGame} = props
+    const [questionSets, setQuestionSets] = React.useState<QuestionSetDto[]>([])
+
+    const questionSetService = new QuestionSetService()
+
+    useEffect(() => {
+        questionSetService.searchQuestionSets(setQuestionSets)
+    }, []);
 
     const handleClose = () => {
         onClose()
@@ -24,6 +44,7 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
         let gameName: string = data.get('gameName')!.toString()
         let maxPlayers: number = parseInt(data.get('maxPlayers')!.toString())
         let numQuestions: number = parseInt(data.get('numQuestions')!.toString())
+        let questionSetId: string = data.get('questionSet')!.toString()
         let withModerator: boolean = data.get('moderator') === 'on'
 
         onCreateGame({
@@ -31,7 +52,7 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
             config: {
                 maxPlayers: maxPlayers,
                 numQuestions: numQuestions,
-                questionSetId: '40d28946-be06-47d7-814c-e1914c142ae4'
+                questionSetId: questionSetId
             },
             withModerator: withModerator
         })
@@ -74,6 +95,18 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
                                type="number"
                                defaultValue="10"
                     />
+                    <Select margin="dense"
+                        required
+                        fullWidth
+                        id="questionSet"
+                        name="questionSet"
+                        label="Question set"
+                            value={questionSets != undefined && questionSets.length > 0 ? questionSets[0].id : undefined}
+                    >
+                        {questionSets.map((row) => (
+                            <MenuItem key={row.id} value={row.id}>{row.name}</MenuItem>
+                        ))}
+                    </Select>
                     <FormControlLabel control={<Switch id="moderator" name="moderator" defaultValue="false"/>}
                                       label="Moderator"/>
                     <Button

@@ -13,7 +13,7 @@ import java.nio.charset.Charset
 import java.util.*
 
 @Component
-class QuestionService : QuestionPort {
+class QuestionService {
 
   private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -45,11 +45,14 @@ class QuestionService : QuestionPort {
     log.info("Loaded ${questionSets.size} questionSets into the database")
   }
 
-  override fun getQuestion(questionId: QuestionId): Question {
+  fun getQuestion(questionId: QuestionId): Question {
     return questions[questionId]!!
   }
 
-  override fun getQuestionSet(questionSetId: QuestionSetId): QuestionSet {
+  fun getQuestionSet(questionSetId: QuestionSetId): QuestionSet {
     return questionSets[questionSetId]!!
   }
+
+  fun getAllQuestionSets(): List<QuestionSet> =
+    questionSets.values.sortedBy { it.name }
 }

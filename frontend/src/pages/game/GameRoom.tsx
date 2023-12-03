@@ -44,8 +44,8 @@ const QuestionContainer = (props: QuestionContainerProps) => {
     if (props.question.type === QuestionType.CHOICE) {
         answerContainer = <Stack spacing={2} direction="column" justifyContent="center" alignItems="center" useFlexGap
                                  flexWrap="wrap">
-            {props.question.answerOptions.map(answer =>
-                <Button variant="contained" sx={{width: '80%', maxWidth: '300px'}} onClick={() => props.onAnswerQuestion(answer)}>{answer}</Button>)}
+            {props.question.answerOptions.map((answer, index) =>
+                <Button key={index} variant="contained" sx={{width: '80%', maxWidth: '300px'}} onClick={() => props.onAnswerQuestion(answer)}>{answer}</Button>)}
         </Stack>
     } else if (props.question.type === QuestionType.FREE_INPUT) {
         answerContainer = <Box component="form" noValidate onSubmit={handleSubmit} sx={{

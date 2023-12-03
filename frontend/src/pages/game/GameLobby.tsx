@@ -75,7 +75,7 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
                             <Numbers/>
                         </ListItemIcon>
                         <ListItemText
-                            primary="10"
+                            primary={props.game.numQuestions}
                             secondary='number of questions'
                         />
                     </ListItem>

@@ -1,12 +1,12 @@
-package org.quizmania.game.query.adapter.`in`.axon
+package org.quizmania.rest.adapter.`in`.axon
 
 import com.fasterxml.jackson.annotation.JsonRawValue
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
 import org.quizmania.game.common.GameEvent
-import org.quizmania.game.rest.GameController
-import org.quizmania.game.rest.GameDto
+import org.quizmania.rest.adapter.`in`.rest.GameController
+import org.quizmania.rest.adapter.`in`.rest.GameDto
 import org.slf4j.LoggerFactory
 import org.springframework.core.annotation.Order
 import org.springframework.messaging.simp.SimpMessagingTemplate
@@ -17,9 +17,9 @@ import java.util.*
 @ProcessingGroup("defaultProjection")
 @Order(2)
 class WebsocketForwardingEventListener(
-    val gameController: GameController,
-    val template: SimpMessagingTemplate,
-    val objectMapper: ObjectMapper
+  val gameController: GameController,
+  val template: SimpMessagingTemplate,
+  val objectMapper: ObjectMapper
     ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 

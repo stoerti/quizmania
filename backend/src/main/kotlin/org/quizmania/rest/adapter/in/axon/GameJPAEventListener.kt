@@ -1,11 +1,10 @@
-package org.quizmania.game.query.adapter.`in`.axon
+package org.quizmania.rest.adapter.`in`.axon
 
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
 import org.quizmania.game.common.*
-import org.quizmania.game.common.ChoiceQuestion
-import org.quizmania.game.query.adapter.out.GameRepository
-import org.quizmania.game.query.application.domain.*
+import org.quizmania.rest.adapter.out.GameRepository
+import org.quizmania.rest.application.domain.*
 import org.slf4j.LoggerFactory
 import org.springframework.core.annotation.Order
 import org.springframework.data.repository.findByIdOrNull
