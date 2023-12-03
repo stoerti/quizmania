@@ -7,6 +7,7 @@ export type NewGameDto = {
 export type GameConfig = {
     maxPlayers: number,
     numQuestions: number,
+    questionSetId: string
 }
 
 export type NewAnswerDto = {

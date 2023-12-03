@@ -5,7 +5,6 @@ import org.axonframework.test.matchers.Matchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import org.quizmania.game.*
 import org.quizmania.game.GameCommandFixtures.Companion.answerQuestion
@@ -20,25 +19,29 @@ import org.quizmania.game.GameEventFixtures.Companion.userRemoved
 import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
 import org.quizmania.game.QuestionFixtures.Companion.estimateQuestion
 import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
-import org.quizmania.game.api.*
-import org.quizmania.question.QuestionService
+import org.quizmania.game.QuestionFixtures.Companion.questionSet
+import org.quizmania.game.command.application.domain.GameAggregate
+import org.quizmania.game.common.*
+import org.quizmania.game.command.application.port.out.QuestionPort
 import java.util.*
 
 class GameAggregateTest {
 
     private lateinit var fixture: AggregateTestFixture<GameAggregate>
-    private lateinit var questionService: QuestionService
+    private lateinit var questionPort: QuestionPort
 
     @BeforeEach
     fun before() {
-        this.questionService = Mockito.mock(QuestionService::class.java)
+        this.questionPort = Mockito.mock(QuestionPort::class.java)
 
         this.fixture = AggregateTestFixture(GameAggregate::class.java)
-        this.fixture.registerInjectableResource(questionService)
+        this.fixture.registerInjectableResource(questionPort)
     }
 
     @Test
     fun createGame_ok() {
+        whenever(questionPort.getQuestionSet(QUESTION_SET_ID)).thenReturn(questionSet())
+
         fixture.givenNoPriorActivity()
             .`when`(GameCommandFixtures.createGame())
             .expectEvents(gameCreated())
@@ -61,7 +64,7 @@ class GameAggregateTest {
 
     @Test
     fun addUser_gameAlreadyFull() {
-        fixture.given(gameCreated(USERNAME_1, GameConfig(maxPlayers = 2)), userAdded(USERNAME_1), userAdded(USERNAME_2))
+        fixture.given(gameCreated(USERNAME_1, GameConfig(maxPlayers = 2, questionSetId = QUESTION_SET_ID)), userAdded(USERNAME_1), userAdded(USERNAME_2))
             .`when`(GameCommandFixtures.addUser("Another user"))
             .expectException(Matchers.matches<Exception> { it.message == "Game is already full" })
     }
@@ -83,7 +86,7 @@ class GameAggregateTest {
     @Test
     fun startGame_ok() {
         val question = choiceQuestion()
-        whenever(questionService.findRandomQuestion(any(), any())).thenReturn(question)
+        whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
 
         fixture.registerIgnoredField(QuestionAskedEvent::class.java, "gameQuestionId")
         fixture.given(gameCreated(), userAdded(USERNAME_1, GAME_USER_1), userAdded(USERNAME_2, GAME_USER_2))

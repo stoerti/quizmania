@@ -3,95 +3,93 @@ package org.quizmania.integration
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.quizmania.game.api.GameConfig
-import org.quizmania.game.projection.GameStatus
+import org.quizmania.game.common.GameConfig
+import org.quizmania.game.query.application.domain.GameStatus
 import org.quizmania.game.rest.AnswerDto
 import org.quizmania.game.rest.GameDto
 import org.quizmania.game.rest.NewGameDto
-import org.quizmania.question.ChoiceQuestion
-import org.quizmania.question.QuestionService
-import org.springframework.boot.test.mock.mockito.MockBean
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class HappyPathITest : AbstractSpringIntegrationTest() {
-    companion object {
-        const val USERNAME: String = "test-user"
-        const val OTHER_USERNAME: String = "other-test-user"
-    }
+  companion object {
+    const val USERNAME: String = "test-user"
+    const val OTHER_USERNAME: String = "other-test-user"
+  }
 
-    @MockBean
-    private lateinit var questionService: QuestionService
+  @Test
+  fun testHappyPath() {
+    // create game
+    val response = gameController.createGame(
+      USERNAME,
+      NewGameDto(
+        UUID.randomUUID().toString(),
+        GameConfig(
+          maxPlayers = 2,
+          numQuestions = 2,
+          questionSetId = UUID.fromString("40d28946-be06-47d7-814c-e1914c142ae4")
+        ),
+        false
+      )
+    )
+    val gameId = UUID.fromString(response.body)
 
-    @Test
-    fun testHappyPath() {
-        Mockito.`when`(questionService.findRandomQuestion(any(), any())).thenReturn(
-            ChoiceQuestion(UUID.randomUUID(), "Was ist gelb und schießt durch den Wald?", "Banone", listOf("Banone", "Gürkin", "Nuschel", "Hagenutte")),
-            ChoiceQuestion(UUID.randomUUID(), "Was ist gelb und schießt durch den Wald?", "Banone", listOf("Banone", "Gürkin", "Nuschel", "Hagenutte")),
-        )
+    Awaitility.await()
+      .atMost(10, TimeUnit.SECONDS)
+      .untilAsserted {
+        assertThat(gameController.get(gameId).statusCode.is2xxSuccessful).isTrue()
+      }
+    gameController.joinGame(gameId, OTHER_USERNAME)
+    gameController.startGame(gameId)
 
-        // create game
-        val response = gameController.createGame(USERNAME, NewGameDto(UUID.randomUUID().toString(), GameConfig(2, 2), false))
-        val gameId = UUID.fromString(response.body)
+    Awaitility.await()
+      .atMost(10, TimeUnit.SECONDS)
+      .untilAsserted {
+        assertThat(gameController.get(gameId).body!!.status).isEqualTo(GameStatus.STARTED)
+        assertThat(gameController.get(gameId).body!!.questions).hasSize(1)
+      }
 
-        Awaitility.await()
-            .atMost(10, TimeUnit.SECONDS)
-            .untilAsserted {
-                assertThat(gameController.get(gameId).statusCode.is2xxSuccessful).isTrue()
-            }
-        gameController.joinGame(gameId, OTHER_USERNAME)
-        gameController.startGame(gameId)
+    var game: GameDto = gameController.get(gameId).body!!
 
-        Awaitility.await()
-            .atMost(10, TimeUnit.SECONDS)
-            .untilAsserted {
-                assertThat(gameController.get(gameId).body!!.status).isEqualTo(GameStatus.STARTED)
-                assertThat(gameController.get(gameId).body!!.questions).hasSize(1)
-            }
+    assertThat(game.creator).isEqualTo(USERNAME)
+    assertThat(game.status).isEqualTo(GameStatus.STARTED)
+    assertThat(game.users).hasSize(2)
+    assertThat(game.questions).hasSize(1)
 
-        var game: GameDto = gameController.get(gameId).body!!
+    assertThat(game.questions[0].questionNumber).isEqualTo(1)
+    assertThat(game.questions[0].phrase).isEqualTo("Was ist gelb und schießt durch den Wald?")
+    assertThat(game.questions[0].answerOptions).containsExactlyInAnyOrder("Banone", "Gürkin", "Nuschel", "Hagenutte")
 
-        assertThat(game.creator).isEqualTo(USERNAME)
-        assertThat(game.status).isEqualTo(GameStatus.STARTED)
-        assertThat(game.users).hasSize(2)
-        assertThat(game.questions).hasSize(1)
+    gameController.answerQuestion(gameId, USERNAME, AnswerDto(game.questions[0].id, "Banone"))
+    gameController.answerQuestion(gameId, OTHER_USERNAME, AnswerDto(game.questions[0].id, "Banone"))
+    gameController.askNextQuestion(gameId)
 
-        assertThat(game.questions[0].questionNumber).isEqualTo(1)
-        assertThat(game.questions[0].phrase).isEqualTo("Was ist gelb und schießt durch den Wald?")
-        assertThat(game.questions[0].answerOptions).containsExactlyInAnyOrder("Banone", "Gürkin", "Nuschel", "Hagenutte")
+    Awaitility.await()
+      .atMost(10, TimeUnit.SECONDS)
+      .untilAsserted {
+        assertThat(gameController.get(gameId).body!!.questions).hasSize(2)
+      }
 
-        gameController.answerQuestion(gameId, USERNAME, AnswerDto(game.questions[0].id, "Banone"))
-        gameController.answerQuestion(gameId, OTHER_USERNAME, AnswerDto(game.questions[0].id, "Banone"))
-        gameController.askNextQuestion(gameId)
+    game = gameController.get(gameId).body!!
 
-        Awaitility.await()
-            .atMost(10, TimeUnit.SECONDS)
-            .untilAsserted {
-                assertThat(gameController.get(gameId).body!!.questions).hasSize(2)
-            }
+    gameController.answerQuestion(gameId, USERNAME, AnswerDto(game.questions[1].id, "Banone"))
 
-        game = gameController.get(gameId).body!!
+    Awaitility.await()
+      .atMost(10, TimeUnit.SECONDS)
+      .untilAsserted {
+        assertThat(gameController.get(gameId).body!!.questions[1].userAnswers).hasSize(1)
+      }
 
-        gameController.answerQuestion(gameId, USERNAME, AnswerDto(game.questions[1].id, "Banone"))
+    game = gameController.get(gameId).body!!
+    assertThat(game.questions[1].questionNumber).isEqualTo(2)
+    assertThat(game.questions[1].userAnswers[0].answer).isEqualTo("******")
 
-        Awaitility.await()
-            .atMost(10, TimeUnit.SECONDS)
-            .untilAsserted {
-                assertThat(gameController.get(gameId).body!!.questions[1].userAnswers).hasSize(1)
-            }
+    gameController.answerQuestion(gameId, OTHER_USERNAME, AnswerDto(game.questions[1].id, "Gürkin"))
 
-        game = gameController.get(gameId).body!!
-        assertThat(game.questions[1].questionNumber).isEqualTo(2)
-        assertThat(game.questions[1].userAnswers[0].answer).isEqualTo("******")
-
-        gameController.answerQuestion(gameId, OTHER_USERNAME, AnswerDto(game.questions[1].id, "Gürkin"))
-
-        Awaitility.await()
-            .atMost(10, TimeUnit.SECONDS)
-            .untilAsserted {
-                assertThat(gameController.get(gameId).body!!.status).isEqualTo(GameStatus.ENDED)
-            }
-    }
+    Awaitility.await()
+      .atMost(10, TimeUnit.SECONDS)
+      .untilAsserted {
+        assertThat(gameController.get(gameId).body!!.status).isEqualTo(GameStatus.ENDED)
+      }
+  }
 }

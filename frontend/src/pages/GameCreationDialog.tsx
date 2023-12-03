@@ -30,7 +30,8 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
             name: gameName,
             config: {
                 maxPlayers: maxPlayers,
-                numQuestions: numQuestions
+                numQuestions: numQuestions,
+                questionSetId: '40d28946-be06-47d7-814c-e1914c142ae4'
             },
             withModerator: withModerator
         })
@@ -76,6 +77,7 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
                     <FormControlLabel control={<Switch id="moderator" name="moderator" defaultValue="false"/>}
                                       label="Moderator"/>
                     <Button
+                        id="createGameSubmit"
                         type="submit"
                         fullWidth
                         variant="contained"

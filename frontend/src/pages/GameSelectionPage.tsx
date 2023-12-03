@@ -139,12 +139,12 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
                         Games
                     </Typography>
                     <Tooltip title="Create new game">
-                        <IconButton color="inherit" onClick={onButtonClickNewGame}>
+                        <IconButton id="createGame" color="inherit" onClick={onButtonClickNewGame}>
                             <Add/>
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Reload">
-                        <IconButton color="inherit" onClick={onButtonClickReload}>
+                        <IconButton id="reload" color="inherit" onClick={onButtonClickReload}>
                             <Refresh/>
                         </IconButton>
                     </Tooltip>

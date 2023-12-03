@@ -43,6 +43,7 @@ const LoginPage = (props: LoginPageProps) => {
                                    sx={{margin: 2}}
                         />
                         <Button
+                            id="submitLogin"
                             type="submit"
                             fullWidth
                             variant="contained"

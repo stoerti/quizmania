@@ -1,31 +1,12 @@
 package org.quizmania.game.domain
 
 import org.assertj.core.api.Assertions
-import org.axonframework.test.aggregate.AggregateTestFixture
-import org.axonframework.test.matchers.Matchers
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.mockito.kotlin.whenever
 import org.quizmania.game.*
-import org.quizmania.game.GameCommandFixtures.Companion.answerQuestion
-import org.quizmania.game.GameCommandFixtures.Companion.startGame
-import org.quizmania.game.GameEventFixtures.Companion.gameCanceled
-import org.quizmania.game.GameEventFixtures.Companion.gameCreated
-import org.quizmania.game.GameEventFixtures.Companion.gameStarted
-import org.quizmania.game.GameEventFixtures.Companion.questionAnswered
-import org.quizmania.game.GameEventFixtures.Companion.questionAsked
-import org.quizmania.game.GameEventFixtures.Companion.userAdded
-import org.quizmania.game.GameEventFixtures.Companion.userRemoved
-import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
-import org.quizmania.game.QuestionFixtures.Companion.estimateQuestion
-import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
-import org.quizmania.game.api.*
-import org.quizmania.question.FreeInputQuestion
-import org.quizmania.question.QuestionService
+import org.quizmania.game.command.application.domain.GameQuestion
+import org.quizmania.game.command.application.domain.UserAnswer
+import org.quizmania.game.common.FreeInputQuestion
 import java.util.*
 
 class GameQuestionTest {

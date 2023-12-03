@@ -1,70 +1,70 @@
-package org.quizmania.game.api
+package org.quizmania.game.common
 
-import org.quizmania.question.Question
 import java.util.*
 
 interface GameEvent {
-    val gameId: UUID
+    val gameId: GameId
 }
 
 data class GameCreatedEvent(
-    override val gameId: UUID,
+    override val gameId: GameId,
     val name: String,
     val config: GameConfig,
+    val questionList: List<QuestionId>,
     val creatorUsername: String,
-    val moderatorUsername: String?
+    val moderatorUsername: String?,
 ) : GameEvent
 
 data class UserAddedEvent(
-    override val gameId: UUID,
-    val gameUserId: UUID,
+    override val gameId: GameId,
+    val gameUserId: GameUserId,
     val username: String,
 ) : GameEvent
 
 data class UserRemovedEvent(
-    override val gameId: UUID,
-    val gameUserId: UUID,
+    override val gameId: GameId,
+    val gameUserId: GameUserId,
     val username: String,
 ) : GameEvent
 
 data class GameStartedEvent(
-    override val gameId: UUID,
+    override val gameId: GameId,
 ) : GameEvent
 
 data class GameEndedEvent(
-    override val gameId: UUID,
+    override val gameId: GameId,
 ) : GameEvent
 
 data class GameCanceledEvent(
-    override val gameId: UUID,
+    override val gameId: GameId,
 ) : GameEvent
 
 data class QuestionAskedEvent(
-    override val gameId: UUID,
-    val gameQuestionId: UUID,
-    val gameQuestionNumber: Int,
+    override val gameId: GameId,
+    val gameQuestionId: GameQuestionId,
+    val gameQuestionNumber: GameQuestionNumber,
     val question: Question,
 ) : GameEvent
 
 data class QuestionAnsweredEvent(
-    override val gameId: UUID,
-    val gameQuestionId: UUID,
-    val gameUserId: UUID,
+    override val gameId: GameId,
+    val gameQuestionId: GameQuestionId,
+    val gameUserId: GameUserId,
     val userAnswerId: UUID,
     val answer: String
 ) : GameEvent
 
 data class QuestionClosedEvent(
-    override val gameId: UUID,
-    val gameQuestionId: UUID,
+    override val gameId: GameId,
+    val gameQuestionId: GameQuestionId,
     /**
      * key = gameUserId
      */
-    val points: Map<UUID, Int>,
+    val points: Map<GameUserId, Int>,
 ) : GameEvent
 
 
 data class GameFinishedEvent(
-    override val gameId: UUID,
+    override val gameId: GameId,
     val points: Map<String, Int> //(username, points)
 ) : GameEvent

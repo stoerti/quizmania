@@ -1,24 +1,29 @@
 package org.quizmania.game
 
 import org.quizmania.game.api.*
-import org.quizmania.question.ChoiceQuestion
-import org.quizmania.question.EstimateQuestion
-import org.quizmania.question.FreeInputQuestion
-import org.quizmania.question.Question
+import org.quizmania.game.common.*
+import org.quizmania.game.common.ChoiceQuestion
+import org.quizmania.game.common.EstimateQuestion
+import org.quizmania.game.common.FreeInputQuestion
+import org.quizmania.game.common.Question
 import java.util.*
 
-val GAME_UUID: UUID = UUID.randomUUID()
+val GAME_UUID: GameId = UUID.randomUUID()
 val GAME_NAME: String = "Game 1"
-val GAME_USER_1: UUID = UUID.randomUUID()
-val GAME_USER_2: UUID = UUID.randomUUID()
+val GAME_USER_1: GameUserId = UUID.randomUUID()
+val GAME_USER_2: GameUserId = UUID.randomUUID()
 val USERNAME_1: String = "User 1"
 val USERNAME_2: String = "User 2"
-val GAME_QUESTION_1: UUID = UUID.randomUUID()
-val GAME_QUESTION_2: UUID = UUID.randomUUID()
+val GAME_QUESTION_1: GameQuestionId = UUID.randomUUID()
+val GAME_QUESTION_2: GameQuestionId = UUID.randomUUID()
+
+val QUESTION_SET_ID: QuestionSetId = UUID.randomUUID()
+val QUESTION_ID_1: QuestionSetId = UUID.randomUUID()
+val QUESTION_ID_2: QuestionSetId = UUID.randomUUID()
 
 class GameCommandFixtures {
     companion object {
-        fun createGame(creator: String = USERNAME_1, config: GameConfig = GameConfig()) : CreateGameCommand {
+        fun createGame(creator: String = USERNAME_1, config: GameConfig = GameConfig(questionSetId = QUESTION_SET_ID)) : CreateGameCommand {
             return CreateGameCommand(
                 gameId = GAME_UUID,
                 name = GAME_NAME,
@@ -61,13 +66,14 @@ class GameCommandFixtures {
 
 class GameEventFixtures {
     companion object {
-        fun gameCreated(creator: String = USERNAME_1, config: GameConfig = GameConfig()) : GameCreatedEvent {
+        fun gameCreated(creator: String = USERNAME_1, config: GameConfig = GameConfig(questionSetId = QUESTION_SET_ID)) : GameCreatedEvent {
             return GameCreatedEvent(
                 gameId = GAME_UUID,
                 name = GAME_NAME,
                 config = config,
                 creatorUsername = creator,
-                moderatorUsername = null
+                moderatorUsername = null,
+                questionList = listOf(QUESTION_ID_1, QUESTION_ID_2)
             )
         }
         fun userAdded(username: String = USERNAME_1, gameUserId: UUID = GAME_USER_1) : UserAddedEvent {
@@ -116,6 +122,14 @@ class GameEventFixtures {
 
 class QuestionFixtures {
     companion object {
+
+        fun questionSet(questionSetId: QuestionSetId = QUESTION_SET_ID) : QuestionSet = QuestionSet(
+            id = questionSetId,
+            name = "Test QuestionSet",
+            minPlayers = 1,
+            questions = listOf(QUESTION_ID_1, QUESTION_ID_2)
+        )
+
         fun choiceQuestion(questionId: UUID = UUID.randomUUID()) : ChoiceQuestion {
             return ChoiceQuestion(
                 id = questionId,

@@ -1,10 +1,10 @@
-package org.quizmania.game.projection
+package org.quizmania.game.query.adapter.`in`.axon
 
 import com.fasterxml.jackson.annotation.JsonRawValue
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
-import org.quizmania.game.api.GameEvent
+import org.quizmania.game.common.GameEvent
 import org.quizmania.game.rest.GameController
 import org.quizmania.game.rest.GameDto
 import org.slf4j.LoggerFactory

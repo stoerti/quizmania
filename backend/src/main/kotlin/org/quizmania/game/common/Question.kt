@@ -1,4 +1,4 @@
-package org.quizmania.question
+package org.quizmania.game.common
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -24,7 +24,7 @@ enum class QuestionType(
 )
 interface Question {
     val type: QuestionType
-    val id: UUID
+    val id: QuestionId
     val phrase: String
     val correctAnswer: String
 }
@@ -34,20 +34,20 @@ sealed class AbstractQuestion(
 ) : Question
 
 data class ChoiceQuestion(
-    override val id: UUID,
+    override val id: QuestionId,
     override val phrase: String,
     override val correctAnswer: String,
     val answerOptions: List<String>
 ) : AbstractQuestion(QuestionType.CHOICE)
 
 data class FreeInputQuestion(
-    override val id: UUID,
+    override val id: QuestionId,
     override val phrase: String,
     override val correctAnswer: String,
 ) : AbstractQuestion(QuestionType.FREE_INPUT)
 
 data class EstimateQuestion(
-    override val id: UUID,
+    override val id: QuestionId,
     override val phrase: String,
     override val correctAnswer: String,
 ) : AbstractQuestion(QuestionType.ESTIMATE)
