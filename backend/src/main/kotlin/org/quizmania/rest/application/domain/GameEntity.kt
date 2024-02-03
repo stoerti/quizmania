@@ -1,7 +1,6 @@
 package org.quizmania.rest.application.domain
 
 import jakarta.persistence.*
-import org.axonframework.eventhandling.EventHandler
 import org.quizmania.game.common.*
 import java.util.*
 
@@ -26,8 +25,7 @@ class GameEntity(
   var questions: MutableList<GameQuestionEntity> = mutableListOf()
 ) {
 
-  constructor(event: GameCreatedEvent) :
-          this(
+  constructor(event: GameCreatedEvent) : this(
             gameId = event.gameId,
             name = event.name,
             maxPlayers = event.config.maxPlayers,
@@ -77,28 +75,22 @@ class GameEntity(
     }
   }
 
-  @EventHandler
   fun on(event: UserAddedEvent) {
     users.add(GameUserEntity(event.gameUserId, event.username, 0))
   }
 
-  @EventHandler
   fun on(event: UserRemovedEvent) {
     users.removeIf { it.gameUserId == event.gameUserId }
   }
 
-
-  @EventHandler
   fun on(event: GameStartedEvent) {
     status = GameStatus.STARTED
   }
 
-  @EventHandler
   fun on(event: GameEndedEvent) {
     status = GameStatus.ENDED
   }
 
-  @EventHandler
   fun on(event: GameCanceledEvent) {
     status = GameStatus.CANCELED
   }
