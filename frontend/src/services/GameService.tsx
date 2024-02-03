@@ -9,7 +9,7 @@ import {
 
 
 export class GameService {
-    SOCKET_URL = 'ws://localhost:8080/ws-message';
+    SOCKET_URL = (process.env.NODE_ENV =='production') ? 'ws://' + window.location.host + '/ws-message' : 'ws://localhost:8080/ws-message';
 
     client?: Client;
 

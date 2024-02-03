@@ -5,8 +5,6 @@ import {SnackbarProvider} from 'material-ui-snackbar-provider'
 import QuizmaniaMainUI from "./pages/QuizmaniaMainUI";
 import {createTheme, ThemeProvider} from "@mui/material";
 
-const SOCKET_URL = 'ws://localhost:8080/ws-message';
-
 interface MessageDto {
     message: string;
 }
