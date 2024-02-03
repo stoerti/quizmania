@@ -1,4 +1,4 @@
-package org.quizmania.rest.application.port.out
+package org.quizmania.rest.port.out
 
 import org.quizmania.game.common.QuestionSet
 

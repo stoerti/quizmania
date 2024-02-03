@@ -35,3 +35,5 @@ out/
 
 ### VS Code ###
 .vscode/
+/backend/src/main/resources/public/
+/frontend/dist/

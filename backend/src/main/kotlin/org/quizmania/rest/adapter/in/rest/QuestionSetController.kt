@@ -1,7 +1,7 @@
 package org.quizmania.rest.adapter.`in`.rest
 
 import org.quizmania.game.common.QuestionSetId
-import org.quizmania.rest.application.port.out.QuestionPort
+import org.quizmania.rest.port.out.QuestionPort
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping

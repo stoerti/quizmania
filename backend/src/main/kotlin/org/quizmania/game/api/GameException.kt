@@ -6,7 +6,7 @@ import java.util.*
 open class GameException(
     open val gameId: UUID,
     override val message: String
-) : Exception(message);
+) : Exception(message)
 
 class GameAlreadyFullException(override val gameId: UUID) :
         GameException(gameId, "")

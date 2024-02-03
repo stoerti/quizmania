@@ -5,7 +5,7 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier
 import org.quizmania.game.common.GameConfig
 import java.util.UUID
 
-interface GameCommand {
+sealed interface GameCommand {
     val gameId: UUID
 }
 

@@ -2,7 +2,7 @@ package org.quizmania.rest.adapter.out
 
 import org.quizmania.game.common.QuestionSet
 import org.quizmania.game.common.adapter.out.QuestionService
-import org.quizmania.rest.application.port.out.QuestionPort
+import org.quizmania.rest.port.out.QuestionPort
 import org.springframework.stereotype.Component
 
 @Component("restQuestionAdapter")

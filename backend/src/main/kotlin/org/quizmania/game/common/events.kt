@@ -2,7 +2,7 @@ package org.quizmania.game.common
 
 import java.util.*
 
-interface GameEvent {
+sealed interface GameEvent {
     val gameId: GameId
 }
 
