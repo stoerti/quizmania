@@ -3,6 +3,8 @@ package org.quizmania.rest.adapter.`in`.rest
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.quizmania.game.api.*
 import org.quizmania.game.common.GameConfig
+import org.quizmania.game.common.GameQuestionId
+import org.quizmania.game.common.GameUserId
 import org.quizmania.game.common.QuestionType
 import org.quizmania.rest.application.domain.*
 import org.quizmania.rest.port.`in`.FindGamePort
@@ -129,11 +131,45 @@ class GameController(
     return ResponseEntity.ok().build()
   }
 
+  @PostMapping("/{gameId}/override-answer")
+  fun overrideAnswer(
+    @PathVariable("gameId") gameId: UUID,
+    @RequestBody answer: AnswerOverrideDto
+  ): ResponseEntity<Void> {
+    commandGateway.sendAndWait<Void>(
+      OverrideAnswerCommand(
+        gameId = gameId,
+        gameQuestionId = answer.gameQuestionId,
+        gameUserId = answer.gameUserId,
+        answer = answer.answer
+      )
+    )
+    return ResponseEntity.ok().build()
+  }
+
   @PostMapping("/{gameId}/ask-next-question")
   fun askNextQuestion(
     @PathVariable("gameId") gameId: UUID
   ): ResponseEntity<Void> {
     commandGateway.sendAndWait<Void>(AskNextQuestionCommand(gameId = gameId))
+    return ResponseEntity.ok().build()
+  }
+
+  @PostMapping("/{gameId}/question/{gameQuestionId}/close")
+  fun closeQuestion(
+    @PathVariable("gameId") gameId: UUID,
+    @PathVariable("gameQuestionId") gameQuestionId: GameQuestionId,
+  ): ResponseEntity<Void> {
+    commandGateway.sendAndWait<Void>(CloseQuestionCommand(gameId = gameId, gameQuestionId = gameQuestionId))
+    return ResponseEntity.ok().build()
+  }
+
+  @PostMapping("/{gameId}/question/{gameQuestionId}/rate")
+  fun rateQuestion(
+    @PathVariable("gameId") gameId: UUID,
+    @PathVariable("gameQuestionId") gameQuestionId: GameQuestionId,
+  ): ResponseEntity<Void> {
+    commandGateway.sendAndWait<Void>(RateQuestionCommand(gameId = gameId, gameQuestionId = gameQuestionId))
     return ResponseEntity.ok().build()
   }
 }
@@ -146,6 +182,13 @@ data class NewGameDto(
 
 data class AnswerDto(
   val gameQuestionId: UUID,
+  val answer: String
+)
+
+data class AnswerOverrideDto(
+  val gameQuestionId: UUID,
+  val gameUserId: GameUserId,
+  val userAnswerId: UUID,
   val answer: String
 )
 

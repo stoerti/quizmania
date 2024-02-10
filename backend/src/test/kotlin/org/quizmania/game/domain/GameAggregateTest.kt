@@ -8,10 +8,13 @@ import org.mockito.Mockito
 import org.mockito.kotlin.whenever
 import org.quizmania.game.*
 import org.quizmania.game.GameCommandFixtures.Companion.answerQuestion
+import org.quizmania.game.GameCommandFixtures.Companion.closeQuestion
+import org.quizmania.game.GameCommandFixtures.Companion.rateQuestion
 import org.quizmania.game.GameCommandFixtures.Companion.startGame
 import org.quizmania.game.GameEventFixtures.Companion.gameCanceled
 import org.quizmania.game.GameEventFixtures.Companion.gameCreated
 import org.quizmania.game.GameEventFixtures.Companion.gameStarted
+import org.quizmania.game.GameEventFixtures.Companion.questionAnswerOverridden
 import org.quizmania.game.GameEventFixtures.Companion.questionAnswered
 import org.quizmania.game.GameEventFixtures.Companion.questionAsked
 import org.quizmania.game.GameEventFixtures.Companion.userAdded
@@ -126,7 +129,8 @@ class GameAggregateTest {
             .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2"))
             .expectEvents(
                 questionAnswered(GAME_QUESTION_1, GAME_USER_2, UUID.randomUUID(), "Answer 2"),
-                QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_USER_1 to 10))
+                QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
+                QuestionRatedEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_USER_1 to 10))
             )
     }
 
@@ -136,7 +140,7 @@ class GameAggregateTest {
 
         fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "userAnswerId")
         fixture.given(
-            gameCreated(),
+            gameCreated(moderator = "Some moderator"),
             userAdded(USERNAME_1, GAME_USER_1),
             userAdded(USERNAME_2, GAME_USER_2),
             gameStarted(),
@@ -146,7 +150,48 @@ class GameAggregateTest {
             .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2"))
             .expectEvents(
                 questionAnswered(GAME_QUESTION_1, GAME_USER_2, UUID.randomUUID(), "Answer 2"),
-                QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_USER_1 to 10))
+                QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1)
+            )
+    }
+
+    @Test
+    fun rateFreeInputQuestion_complete_ok() {
+        val question = freeInputQuestion()
+
+        fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "userAnswerId")
+        fixture.given(
+            gameCreated(moderator = "Some moderator"),
+            userAdded(USERNAME_1, GAME_USER_1),
+            userAdded(USERNAME_2, GAME_USER_2),
+            gameStarted(),
+            questionAsked(GAME_QUESTION_1, 1, question),
+            questionAnswered(GAME_QUESTION_1, GAME_USER_1, UUID.randomUUID(), "Answer 1"),
+            questionAnswered(GAME_QUESTION_1, GAME_USER_2, UUID.randomUUID(), "Answer 2"),
+        )
+            .`when`(rateQuestion(GAME_QUESTION_1))
+            .expectEvents(
+                QuestionRatedEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_USER_1 to 10))
+            )
+    }
+    @Test
+    fun rateFreeInputQuestion_overridden_ok() {
+        val question = freeInputQuestion()
+        val questionAnswerId = UUID.randomUUID()
+
+        fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "userAnswerId")
+        fixture.given(
+            gameCreated(moderator = "Some moderator"),
+            userAdded(USERNAME_1, GAME_USER_1),
+            userAdded(USERNAME_2, GAME_USER_2),
+            gameStarted(),
+            questionAsked(GAME_QUESTION_1, 1, question),
+            questionAnswered(GAME_QUESTION_1, GAME_USER_1, UUID.randomUUID(), "Answer 1"),
+            questionAnswered(GAME_QUESTION_1, GAME_USER_2, questionAnswerId, "Answer 2"),
+            questionAnswerOverridden(GAME_QUESTION_1, GAME_USER_2, questionAnswerId, "Answer 1"),
+        )
+            .`when`(rateQuestion(GAME_QUESTION_1))
+            .expectEvents(
+                QuestionRatedEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_USER_1 to 10, GAME_USER_2 to 10))
             )
     }
 
@@ -166,7 +211,8 @@ class GameAggregateTest {
             .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_2, "150"))
             .expectEvents(
                 questionAnswered(GAME_QUESTION_1, GAME_USER_2, UUID.randomUUID(), "150"),
-                QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_USER_1 to 20, GAME_USER_2 to 10))
+                QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
+                QuestionRatedEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_USER_1 to 20, GAME_USER_2 to 10))
             )
     }
 

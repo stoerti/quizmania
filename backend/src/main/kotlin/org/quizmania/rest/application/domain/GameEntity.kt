@@ -26,14 +26,14 @@ class GameEntity(
 ) {
 
   constructor(event: GameCreatedEvent) : this(
-            gameId = event.gameId,
-            name = event.name,
-            maxPlayers = event.config.maxPlayers,
-            numQuestions = event.config.numQuestions,
-            creator = event.creatorUsername,
-            moderator = event.moderatorUsername,
-            status = GameStatus.CREATED
-          )
+    gameId = event.gameId,
+    name = event.name,
+    maxPlayers = event.config.maxPlayers,
+    numQuestions = event.config.numQuestions,
+    creator = event.creatorUsername,
+    moderator = event.moderatorUsername,
+    status = GameStatus.CREATED
+  )
 
   fun on(event: QuestionAskedEvent) {
     this.questions.add(
@@ -59,10 +59,21 @@ class GameEntity(
     )
   }
 
+  fun on(event: QuestionAnswerOverriddenEvent) {
+    questions.find { it.gameQuestionId == event.gameQuestionId }?.let { question ->
+      question.userAnswers.first { it.userAnswerId == event.userAnswerId }.let {
+        it.answer = event.answer
+      }
+    }
+  }
+
   fun on(event: QuestionClosedEvent) {
     questions.find { it.gameQuestionId == event.gameQuestionId }?.let { question ->
       question.open = false
     }
+  }
+
+  fun on(event: QuestionRatedEvent) {
     event.points.forEach { entry ->
       questions.find { it.gameQuestionId == event.gameQuestionId }?.let { question ->
         question.userAnswers.find { user -> user.gameUserId == entry.key }?.let {

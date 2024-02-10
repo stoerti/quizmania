@@ -110,7 +110,7 @@ internal class GameAggregate {
       askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
     val user = users.findByUsername(command.username) ?: throw GameException(gameId, "User not found")
 
-    if (!gameQuestion.open) {
+    if (gameQuestion.isClosed()) {
       throw QuestionAlreadyClosedException(gameId, command.gameQuestionId)
     }
 
@@ -135,13 +135,69 @@ internal class GameAggregate {
   }
 
   @CommandHandler
+  fun handle(command: OverrideAnswerCommand) {
+    log.info("Executing OverrideAnswerCommand for game ${command.gameId}: $command")
+    if (gameStatus != GameStatus.STARTED) {
+      throw GameAlreadyEndedException(gameId)
+    }
+
+    val gameQuestion =
+      askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
+
+    if (gameQuestion.isClosed()) {
+      throw QuestionAlreadyClosedException(gameId, command.gameQuestionId)
+    }
+
+    if (!gameQuestion.hasUserAlreadyAnswered(command.gameUserId)) {
+      throw GameException(gameId, "Question was not answered by user answered")
+    }
+
+    gameQuestion.overrideAnswer(command.gameUserId, command.answer)
+  }
+
+  @CommandHandler
+  fun handle(command: CloseQuestionCommand) {
+    log.info("Executing CloseQuestionCommand for game ${command.gameId}: $command")
+    if (gameStatus != GameStatus.STARTED) {
+      throw GameAlreadyEndedException(gameId)
+    }
+
+    val gameQuestion =
+      askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
+
+    if (gameQuestion.isClosed()) {
+      throw QuestionAlreadyClosedException(gameId, command.gameQuestionId)
+    }
+
+    gameQuestion.closeQuestion()
+  }
+
+  @CommandHandler
+  fun handle(command: RateQuestionCommand) {
+    log.info("Executing RateQuestionCommand for game ${command.gameId}: $command")
+    if (gameStatus != GameStatus.STARTED) {
+      throw GameAlreadyEndedException(gameId)
+    }
+
+    val gameQuestion =
+      askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
+
+    if (gameQuestion.isRated()) {
+      throw QuestionAlreadyClosedException(gameId, command.gameQuestionId)
+    }
+
+    gameQuestion.rateQuestion()
+  }
+
+
+  @CommandHandler
   fun handle(command: AskNextQuestionCommand, questionPort: QuestionPort) {
     log.info("Executing AnswerQuestionCommand for game ${command.gameId}: $command")
     if (gameStatus != GameStatus.STARTED) {
       throw GameAlreadyEndedException(gameId)
     }
 
-    if (askedQuestions.find { it.open } != null) {
+    if (askedQuestions.any { !it.isClosed() }) {
       throw GameException(gameId, "Other question is still open")
     }
 
@@ -191,7 +247,8 @@ internal class GameAggregate {
         id = event.gameQuestionId,
         number = event.gameQuestionNumber,
         question = event.question,
-        userAnswers = mutableListOf()
+        userAnswers = mutableListOf(),
+        isModerated = moderatorUsername != null,
       )
     )
   }

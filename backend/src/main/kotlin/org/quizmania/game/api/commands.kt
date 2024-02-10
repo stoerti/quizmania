@@ -48,12 +48,26 @@ data class AnswerQuestionCommand(
     val answer: String
 ): GameCommand
 
+data class OverrideAnswerCommand(
+    @TargetAggregateIdentifier
+    override val gameId: UUID,
+    val gameQuestionId: UUID,
+    val gameUserId: UUID,
+    val answer: String
+): GameCommand
+
 data class AskNextQuestionCommand(
     @TargetAggregateIdentifier
     override val gameId: UUID,
 ): GameCommand
 
 data class CloseQuestionCommand(
+    @TargetAggregateIdentifier
+    override val gameId: UUID,
+    val gameQuestionId: UUID,
+): GameCommand
+
+data class RateQuestionCommand(
     @TargetAggregateIdentifier
     override val gameId: UUID,
     val gameQuestionId: UUID,

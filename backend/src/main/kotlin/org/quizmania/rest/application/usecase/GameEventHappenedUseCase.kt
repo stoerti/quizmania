@@ -40,6 +40,8 @@ class GameEventHappenedUseCase(
   override fun questionAsked(evt: QuestionAskedEvent) = updateAndPropagate(evt) { it.on(evt) }
 
   override fun questionAnswered(evt: QuestionAnsweredEvent) = updateAndPropagate(evt) { it.on(evt) }
+  override fun questionAnswerOverridden(evt: QuestionAnswerOverriddenEvent) = updateAndPropagate(evt) { it.on(evt) }
 
   override fun questionClosed(evt: QuestionClosedEvent) = updateAndPropagate(evt) { it.on(evt) }
+  override fun questionRated(evt: QuestionRatedEvent) = updateAndPropagate(evt) { it.on(evt) }
 }

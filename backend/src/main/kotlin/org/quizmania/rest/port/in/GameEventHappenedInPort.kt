@@ -12,5 +12,7 @@ interface GameEventHappenedInPort {
   fun userRemoved(evt: UserRemovedEvent)
   fun questionAsked(evt: QuestionAskedEvent)
   fun questionAnswered(evt: QuestionAnsweredEvent)
+  fun questionAnswerOverridden(evt: QuestionAnswerOverriddenEvent)
   fun questionClosed(evt: QuestionClosedEvent)
+  fun questionRated(evt: QuestionRatedEvent)
 }
