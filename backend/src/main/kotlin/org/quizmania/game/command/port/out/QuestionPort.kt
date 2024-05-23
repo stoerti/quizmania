@@ -1,4 +1,4 @@
-package org.quizmania.game.command.application.port.out
+package org.quizmania.game.command.port.out
 
 import org.quizmania.game.common.Question
 import org.quizmania.game.common.QuestionId

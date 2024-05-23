@@ -1,5 +1,6 @@
 package org.quizmania.rest.adapter.`in`.rest
 
+import mu.KLogging
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.quizmania.game.api.*
 import org.quizmania.game.common.GameConfig
@@ -8,7 +9,6 @@ import org.quizmania.game.common.GameUserId
 import org.quizmania.game.common.QuestionType
 import org.quizmania.rest.application.domain.*
 import org.quizmania.rest.port.`in`.FindGamePort
-import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -22,14 +22,16 @@ class GameController(
   val commandGateway: CommandGateway,
   val findGamePort: FindGamePort
 ) {
-  private val log = LoggerFactory.getLogger(this.javaClass)
+
+  companion object : KLogging()
+
 
   @PutMapping("/", produces = [MediaType.TEXT_PLAIN_VALUE])
   fun createGame(
     @CookieValue(name = "username", defaultValue = "someUser") username: String,
     @RequestBody newGameDto: NewGameDto
   ): ResponseEntity<String> {
-    log.info(newGameDto.toString())
+    logger.info { newGameDto.toString() }
 
     val gameId = UUID.randomUUID()
 

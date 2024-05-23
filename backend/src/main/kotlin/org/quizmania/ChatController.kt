@@ -1,8 +1,6 @@
 package org.quizmania
 
-import lombok.extern.slf4j.Slf4j
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -15,15 +13,15 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping(value = ["/api/chat"], produces = [MediaType.APPLICATION_JSON_VALUE])
-@Slf4j
 class ChatController(
     var template: SimpMessagingTemplate
 ) {
-    private val log: Logger = LoggerFactory.getLogger(ChatController::class.java)
+
+    companion object : KLogging()
 
     @PutMapping("/")
     fun put(@RequestParam("message") message: String) {
-        log.info(message)
+        logger.info { message }
         template.convertAndSend("/chat/message", TextMessageDTO(message))
     }
 
@@ -35,7 +33,7 @@ class ChatController(
 
     @MessageMapping("/sendMessage")
     fun receiveMessage(@Payload textMessageDTO: TextMessageDTO) {
-        log.info("Socket: $textMessageDTO")
+        logger.info { "Socket: $textMessageDTO" }
     }
 
     @SendTo("/chat/message")

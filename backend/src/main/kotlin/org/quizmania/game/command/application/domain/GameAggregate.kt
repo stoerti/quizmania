@@ -1,18 +1,19 @@
 package org.quizmania.game.command.application.domain
 
+import mu.KLogging
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.modelling.command.*
 import org.axonframework.spring.stereotype.Aggregate
 import org.quizmania.game.api.*
-import org.quizmania.game.command.application.port.out.QuestionPort
+import org.quizmania.game.command.port.out.QuestionPort
 import org.quizmania.game.common.*
-import org.slf4j.LoggerFactory
 import java.util.*
 
 @Aggregate
 internal class GameAggregate {
-  private val log = LoggerFactory.getLogger(this.javaClass)
+  
+  companion object : KLogging()
 
   @AggregateIdentifier
   private lateinit var gameId: UUID
@@ -31,7 +32,7 @@ internal class GameAggregate {
 
   @CommandHandler
   constructor(command: CreateGameCommand, questionPort: QuestionPort) {
-    log.info("Executing CreateGameCommand for game ${command.gameId}")
+    logger.info { "Executing CreateGameCommand for game ${command.gameId}" }
 
     val questionSet = questionPort.getQuestionSet(command.config.questionSetId)
     val realNumQuestions = command.config.numQuestions.coerceAtMost(questionSet.questions.size)
@@ -52,7 +53,7 @@ internal class GameAggregate {
 
   @CommandHandler
   fun handle(command: AddUserCommand) {
-    log.info("Executing AddUserCommand for game ${command.gameId} and user ${command.username}")
+    logger.info { "Executing AddUserCommand for game ${command.gameId} and user ${command.username}" }
     if (users.size < config.maxPlayers) {
       if (!users.containsUsername(command.username) && moderatorUsername != command.username) {
         AggregateLifecycle.apply(
@@ -72,7 +73,7 @@ internal class GameAggregate {
 
   @CommandHandler
   fun handle(command: RemoveUserCommand) {
-    log.info("Executing RemoveUserCommand for game ${command.gameId} and user ${command.username}")
+    logger.info { "Executing RemoveUserCommand for game ${command.gameId} and user ${command.username}" }
     users.findByUsername(command.username)?.let { user ->
       AggregateLifecycle.apply(
         UserRemovedEvent(
@@ -92,7 +93,7 @@ internal class GameAggregate {
 
   @CommandHandler
   fun handle(command: StartGameCommand, questionPort: QuestionPort) {
-    log.info("Executing StartGameCommand for game ${command.gameId}")
+    logger.info { "Executing StartGameCommand for game ${command.gameId}" }
     // todo verify if allowed
     AggregateLifecycle.apply(GameStartedEvent(command.gameId))
 
@@ -101,7 +102,7 @@ internal class GameAggregate {
 
   @CommandHandler
   fun handle(command: AnswerQuestionCommand) {
-    log.info("Executing AnswerQuestionCommand for game ${command.gameId}: $command")
+    logger.info { "Executing AnswerQuestionCommand for game ${command.gameId}: $command" }
     if (gameStatus != GameStatus.STARTED) {
       throw GameAlreadyEndedException(gameId)
     }
@@ -136,7 +137,7 @@ internal class GameAggregate {
 
   @CommandHandler
   fun handle(command: OverrideAnswerCommand) {
-    log.info("Executing OverrideAnswerCommand for game ${command.gameId}: $command")
+    logger.info { "Executing OverrideAnswerCommand for game ${command.gameId}: $command" }
     if (gameStatus != GameStatus.STARTED) {
       throw GameAlreadyEndedException(gameId)
     }
@@ -157,7 +158,7 @@ internal class GameAggregate {
 
   @CommandHandler
   fun handle(command: CloseQuestionCommand) {
-    log.info("Executing CloseQuestionCommand for game ${command.gameId}: $command")
+    logger.info { "Executing CloseQuestionCommand for game ${command.gameId}: $command" }
     if (gameStatus != GameStatus.STARTED) {
       throw GameAlreadyEndedException(gameId)
     }
@@ -174,7 +175,7 @@ internal class GameAggregate {
 
   @CommandHandler
   fun handle(command: RateQuestionCommand) {
-    log.info("Executing RateQuestionCommand for game ${command.gameId}: $command")
+    logger.info { "Executing RateQuestionCommand for game ${command.gameId}: $command" }
     if (gameStatus != GameStatus.STARTED) {
       throw GameAlreadyEndedException(gameId)
     }
@@ -192,7 +193,7 @@ internal class GameAggregate {
 
   @CommandHandler
   fun handle(command: AskNextQuestionCommand, questionPort: QuestionPort) {
-    log.info("Executing AnswerQuestionCommand for game ${command.gameId}: $command")
+    logger.info { "Executing AskNextQuestionCommand for game ${command.gameId}: $command" }
     if (gameStatus != GameStatus.STARTED) {
       throw GameAlreadyEndedException(gameId)
     }

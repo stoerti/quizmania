@@ -1,6 +1,6 @@
 package org.quizmania.game.command.adapter.out
 
-import org.quizmania.game.command.application.port.out.QuestionPort
+import org.quizmania.game.command.port.out.QuestionPort
 import org.quizmania.game.common.Question
 import org.quizmania.game.common.QuestionId
 import org.quizmania.game.common.QuestionSet

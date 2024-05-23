@@ -25,7 +25,7 @@ import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
 import org.quizmania.game.QuestionFixtures.Companion.questionSet
 import org.quizmania.game.command.application.domain.GameAggregate
 import org.quizmania.game.common.*
-import org.quizmania.game.command.application.port.out.QuestionPort
+import org.quizmania.game.command.port.out.QuestionPort
 import java.util.*
 
 class GameAggregateTest {

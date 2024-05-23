@@ -18,7 +18,6 @@ import kotlin.random.Random
 class AdminController(
     val commandGateway: CommandGateway
 ) {
-    private val log = LoggerFactory.getLogger(this.javaClass)
     private val usernames = setOf(
         "Frodo",
         "Samwise",
