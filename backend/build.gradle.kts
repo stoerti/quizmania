@@ -4,9 +4,9 @@ plugins {
     id("org.springframework.boot") version "3.1.4"
     id("io.spring.dependency-management") version "1.1.0"
     id("jacoco")
-    kotlin("jvm") version "1.7.22"
-    kotlin("plugin.spring") version "1.7.22"
-    kotlin("plugin.jpa") version "1.7.22"
+    kotlin("jvm") version "1.9.24"
+    kotlin("plugin.spring") version "1.9.24"
+    kotlin("plugin.jpa") version "1.9.24"
 }
 
 group = "org.quizmania"
@@ -54,6 +54,8 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("org.awaitility:awaitility:4.2.0")
 
+    testImplementation("com.tngtech.jgiven:jgiven-spring-junit5:1.3.1")
+    testImplementation("io.toolisticon.testing:jgiven-kotlin:1.3.1.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")

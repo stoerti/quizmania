@@ -1,95 +1,91 @@
 package org.quizmania.integration
 
-import org.assertj.core.api.Assertions.assertThat
-import org.awaitility.Awaitility
+import io.toolisticon.testing.jgiven.GIVEN
+import io.toolisticon.testing.jgiven.THEN
+import io.toolisticon.testing.jgiven.WHEN
 import org.junit.jupiter.api.Test
-import org.quizmania.game.common.GameConfig
-import org.quizmania.rest.application.domain.GameStatus
-import org.quizmania.rest.adapter.`in`.rest.AnswerDto
-import org.quizmania.rest.adapter.`in`.rest.GameDto
-import org.quizmania.rest.adapter.`in`.rest.NewGameDto
-import java.util.*
-import java.util.concurrent.TimeUnit
+import org.quizmania.integration._jgiven.AbstractSpringIntegrationTest
 
 class HappyPathITest : AbstractSpringIntegrationTest() {
   companion object {
-    const val USERNAME: String = "test-user"
-    const val OTHER_USERNAME: String = "other-test-user"
+    private const val USERNAME: String = "test-user"
+    private const val OTHER_USERNAME: String = "other-test-user"
   }
 
   @Test
-  fun testHappyPath() {
-    // create game
-    val response = gameController.createGame(
-      USERNAME,
-      NewGameDto(
-        UUID.randomUUID().toString(),
-        GameConfig(
-          maxPlayers = 2,
-          numQuestions = 2,
-          questionSetId = UUID.fromString("40d28946-be06-47d7-814c-e1914c142ae4")
-        ),
-        false
+  fun `game can be created`() {
+    WHEN
+      .`a game is created by user $`(USERNAME)
+
+    THEN
+      .`the game can be queried`()
+  }
+
+  @Test
+  fun `game can be started`() {
+    GIVEN
+      .`a game is created by user $`(USERNAME)
+
+    WHEN
+      .`the game starts`()
+
+    THEN
+      .`the game is started`()
+      .`the game has $ questions`(1)
+      .`the current question is $ with answer options $`(
+        questionText = "Was ist gelb und schießt durch den Wald?",
+        answerOptions = listOf("Banone", "Gürkin", "Nuschel", "Hagenutte")
       )
-    )
-    val gameId = UUID.fromString(response.body)
+  }
 
-    Awaitility.await()
-      .atMost(10, TimeUnit.SECONDS)
-      .untilAsserted {
-        assertThat(gameController.get(gameId).statusCode.is2xxSuccessful).isTrue()
-      }
-    gameController.joinGame(gameId, OTHER_USERNAME)
-    gameController.startGame(gameId)
+  @Test
+  fun `question can be answered`() {
+    GIVEN
+      .`a game is created by user $`(USERNAME)
+      .`the game starts`()
 
-    Awaitility.await()
-      .atMost(10, TimeUnit.SECONDS)
-      .untilAsserted {
-        assertThat(gameController.get(gameId).body!!.status).isEqualTo(GameStatus.STARTED)
-        assertThat(gameController.get(gameId).body!!.questions).hasSize(1)
-      }
+    WHEN
+      .`the user $ answers current question with $`(USERNAME, "Banone")
 
-    var game: GameDto = gameController.get(gameId).body!!
+    THEN
+      .`the question is answered by $`(USERNAME)
+      .`the last answered question is closed`()
+      .`user $ scored $ points for the last question`(USERNAME, 10)
+  }
 
-    assertThat(game.creator).isEqualTo(USERNAME)
-    assertThat(game.status).isEqualTo(GameStatus.STARTED)
-    assertThat(game.users).hasSize(2)
-    assertThat(game.questions).hasSize(1)
+  @Test
+  fun `multiple users can play game`() {
+    GIVEN
+      .`a game is created by user $`(USERNAME)
+      .`user $ joins the game`(OTHER_USERNAME)
+      .`the game starts`()
 
-    assertThat(game.questions[0].questionNumber).isEqualTo(1)
-    assertThat(game.questions[0].phrase).isEqualTo("Was ist gelb und schießt durch den Wald?")
-    assertThat(game.questions[0].answerOptions).containsExactlyInAnyOrder("Banone", "Gürkin", "Nuschel", "Hagenutte")
+    // first question
+    WHEN
+      .`the user $ answers current question with $`(USERNAME, "Banone")
+      .`the user $ answers current question with $`(OTHER_USERNAME, "Gürkin")
+    THEN
+      .`the last answered question is closed`()
+      .`user $ scored $ points for the last question`(USERNAME, 10)
+      .`user $ scored $ points for the last question`(OTHER_USERNAME, 0)
 
-    gameController.answerQuestion(gameId, USERNAME, AnswerDto(game.questions[0].id, "Banone"))
-    gameController.answerQuestion(gameId, OTHER_USERNAME, AnswerDto(game.questions[0].id, "Banone"))
-    gameController.askNextQuestion(gameId)
+    // open next question
+    WHEN
+      .`the next question is asked`()
+    THEN
+      .`the game has $ questions`(2)
 
-    Awaitility.await()
-      .atMost(10, TimeUnit.SECONDS)
-      .untilAsserted {
-        assertThat(gameController.get(gameId).body!!.questions).hasSize(2)
-      }
+    // third question
+    WHEN
+      .`the user $ answers current question with $`(USERNAME, "Elbe")
+      .`the user $ answers current question with $`(OTHER_USERNAME, "Elbe")
 
-    game = gameController.get(gameId).body!!
-
-    gameController.answerQuestion(gameId, USERNAME, AnswerDto(game.questions[1].id, "Banone"))
-
-    Awaitility.await()
-      .atMost(10, TimeUnit.SECONDS)
-      .untilAsserted {
-        assertThat(gameController.get(gameId).body!!.questions[1].userAnswers).hasSize(1)
-      }
-
-    game = gameController.get(gameId).body!!
-    assertThat(game.questions[1].questionNumber).isEqualTo(2)
-    assertThat(game.questions[1].userAnswers[0].answer).isEqualTo("******")
-
-    gameController.answerQuestion(gameId, OTHER_USERNAME, AnswerDto(game.questions[1].id, "Gürkin"))
-
-    Awaitility.await()
-      .atMost(10, TimeUnit.SECONDS)
-      .untilAsserted {
-        assertThat(gameController.get(gameId).body!!.status).isEqualTo(GameStatus.ENDED)
-      }
+    THEN
+      .`the last answered question is closed`()
+      .`user $ scored $ points for the last question`(USERNAME, 10)
+      .`user $ scored $ points for the last question`(USERNAME, 10)
+      .`user $ scored $ points total`(USERNAME, 20)
+      .`user $ scored $ points total`(OTHER_USERNAME, 10)
+      .`the game is ended`()
   }
 }

@@ -84,6 +84,14 @@ class GameEntity(
         it.points += entry.value
       }
     }
+
+    // wrong answers scored 0 points
+    questions.find { it.gameQuestionId == event.gameQuestionId }?.let { question ->
+      question.userAnswers.filter { userAnswer -> userAnswer.points == null }.forEach {
+        it.points = 0
+      }
+    }
+
   }
 
   fun on(event: UserAddedEvent) {

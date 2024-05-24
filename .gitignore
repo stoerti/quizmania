@@ -37,3 +37,4 @@ out/
 .vscode/
 /backend/src/main/resources/public/
 /frontend/dist/
+jgiven-reports/
