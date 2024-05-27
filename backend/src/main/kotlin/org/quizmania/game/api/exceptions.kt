@@ -19,3 +19,9 @@ class GameAlreadyEndedException(override val gameId: UUID) :
 
 class QuestionAlreadyClosedException(override val gameId: UUID, val gameQuestionId: UUID) :
         GameException(gameId, "")
+
+class QuestionNotClosedException(override val gameId: UUID, val gameQuestionId: UUID) :
+        GameException(gameId, "")
+
+class QuestionAlreadyRatedException(override val gameId: UUID, val gameQuestionId: UUID) :
+        GameException(gameId, "")

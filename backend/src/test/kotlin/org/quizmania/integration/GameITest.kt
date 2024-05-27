@@ -6,7 +6,7 @@ import io.toolisticon.testing.jgiven.WHEN
 import org.junit.jupiter.api.Test
 import org.quizmania.integration._jgiven.AbstractSpringIntegrationTest
 
-class HappyPathITest : AbstractSpringIntegrationTest() {
+class GameITest : AbstractSpringIntegrationTest() {
   companion object {
     private const val USERNAME: String = "test-user"
     private const val OTHER_USERNAME: String = "other-test-user"

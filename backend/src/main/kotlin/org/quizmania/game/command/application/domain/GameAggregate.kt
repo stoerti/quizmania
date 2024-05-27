@@ -145,8 +145,12 @@ internal class GameAggregate {
     val gameQuestion =
       askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
 
-    if (gameQuestion.isClosed()) {
-      throw QuestionAlreadyClosedException(gameId, command.gameQuestionId)
+    if (!gameQuestion.isClosed()) {
+      throw QuestionNotClosedException(gameId, command.gameQuestionId)
+    }
+
+    if (gameQuestion.isRated()) {
+      throw QuestionAlreadyRatedException(gameId, command.gameQuestionId)
     }
 
     if (!gameQuestion.hasUserAlreadyAnswered(command.gameUserId)) {

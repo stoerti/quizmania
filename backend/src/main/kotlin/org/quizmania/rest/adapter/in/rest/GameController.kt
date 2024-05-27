@@ -45,12 +45,14 @@ class GameController(
       )
     )
 
-    commandGateway.sendAndWait<Void>(
-      AddUserCommand(
-        gameId,
-        username
+    if (!newGameDto.withModerator) {
+      commandGateway.sendAndWait<Void>(
+        AddUserCommand(
+          gameId,
+          username
+        )
       )
-    )
+    }
 
     return ResponseEntity.ok(gameId.toString());
   }

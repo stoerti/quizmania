@@ -71,7 +71,7 @@ data class GameQuestion(
       )
     )
 
-    // if the game is moderated and it is a free input question, the moderator can overrule answers
+    // if the game is moderated and it is a free input question the moderator can overrule answers
     if (!(isModerated && QuestionType.FREE_INPUT == question.type)) {
       rateQuestion()
     }
