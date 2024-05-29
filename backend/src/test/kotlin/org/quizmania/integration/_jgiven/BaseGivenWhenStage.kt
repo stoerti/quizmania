@@ -17,6 +17,7 @@ import org.quizmania.rest.adapter.`in`.rest.AnswerOverrideDto
 import org.quizmania.rest.adapter.`in`.rest.GameController
 import org.quizmania.rest.adapter.`in`.rest.NewGameDto
 import org.quizmania.rest.application.domain.GameStatus
+import org.quizmania.rest.application.domain.QuestionStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import java.util.*
@@ -134,17 +135,19 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
     executeSuccessfully { gameController.rateQuestion(gameId, currentQuestion.id) }
   }
 
-  fun `the next question is asked`() = step {
+  fun `the next question is asked`(wait: Boolean = true) = step {
     executeSuccessfully { gameController.askNextQuestion(gameId) }
 
-    Awaitility.await()
-      .atMost(10, TimeUnit.SECONDS)
-      .untilAsserted {
-        val game = exchangeSuccessfully { gameController.get(gameId) }
-        val currentQuestion = game.questions.last()
+    if (wait) {
+      Awaitility.await()
+        .atMost(10, TimeUnit.SECONDS)
+        .untilAsserted {
+          val game = exchangeSuccessfully { gameController.get(gameId) }
+          val currentQuestion = game.questions.last()
 
-        assertThat(currentQuestion.open).isTrue()
-      }
+          assertThat(currentQuestion.status).isEqualTo(QuestionStatus.OPEN)
+        }
+    }
   }
 
   private fun <T> exchangeSuccessfully(function: () -> ResponseEntity<T>): T {

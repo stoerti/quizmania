@@ -111,6 +111,11 @@ class ModeratedGameITest : AbstractSpringIntegrationTest() {
       .`user $ scored $ points for the last question`(OTHER_PLAYER, 10)
       .`user $ scored $ points total`(PLAYER, 20)
       .`user $ scored $ points total`(OTHER_PLAYER, 10)
+
+    // open next question to end the game
+    WHEN
+      .`the next question is asked`(wait = false)
+    THEN
       .`the game is ended`()
   }
 }

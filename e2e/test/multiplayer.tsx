@@ -57,7 +57,7 @@ Scenario('multiplayser_moderated',  ({ I , loginPage, lobbyPage}) => {
         lobbyPage.joinGame(gameName)
     });
 
-    I.wait(50000)
+    I.wait(500)
 
     I.waitForText(username2)
     I.waitForText(username3)

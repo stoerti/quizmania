@@ -86,6 +86,11 @@ class GameITest : AbstractSpringIntegrationTest() {
       .`user $ scored $ points for the last question`(USERNAME, 10)
       .`user $ scored $ points total`(USERNAME, 20)
       .`user $ scored $ points total`(OTHER_USERNAME, 10)
+
+    // open next question to end the game
+    WHEN
+      .`the next question is asked`(wait = false)
+    THEN
       .`the game is ended`()
   }
 }

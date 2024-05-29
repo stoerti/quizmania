@@ -12,6 +12,7 @@ import org.quizmania.game.common.GameId
 import org.quizmania.game.common.GameQuestionId
 import org.quizmania.rest.adapter.`in`.rest.GameController
 import org.quizmania.rest.application.domain.GameStatus
+import org.quizmania.rest.application.domain.QuestionStatus
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.concurrent.TimeUnit
 
@@ -108,7 +109,7 @@ class BaseThenStage : Stage<BaseThenStage>() {
       .untilAsserted {
         val game = gameController.get(gameId).body!!
         val question = game.questions.first { it.id == lastAnsweredQuestionId }
-        assertThat(question.open).isFalse()
+        assertThat(question.status).isNotEqualTo(QuestionStatus.OPEN)
       }
   }
 
