@@ -42,7 +42,7 @@ class GameEntity(
         type = event.question.type,
         questionNumber = event.gameQuestionNumber,
         questionPhrase = event.question.phrase,
-        open = true,
+        status = QuestionStatus.OPEN,
         correctAnswer = event.question.correctAnswer,
         answerOptions = if (event.question is ChoiceQuestion) event.question.answerOptions.toMutableList() else mutableListOf()
       )
@@ -69,19 +69,20 @@ class GameEntity(
 
   fun on(event: QuestionClosedEvent) {
     questions.find { it.gameQuestionId == event.gameQuestionId }?.let { question ->
-      question.open = false
+      question.status = QuestionStatus.CLOSED
     }
   }
 
   fun on(event: QuestionRatedEvent) {
-    event.points.forEach { entry ->
-      questions.find { it.gameQuestionId == event.gameQuestionId }?.let { question ->
+    questions.find { it.gameQuestionId == event.gameQuestionId }?.let { question ->
+      question.status = QuestionStatus.RATED
+      event.points.forEach { entry ->
         question.userAnswers.find { user -> user.gameUserId == entry.key }?.let {
           it.points = entry.value
         }
-      }
-      users.find { user -> user.gameUserId == entry.key }?.let {
-        it.points += entry.value
+        users.find { user -> user.gameUserId == entry.key }?.let {
+          it.points += entry.value
+        }
       }
     }
 
@@ -132,7 +133,8 @@ class GameQuestionEntity(
   val type: QuestionType,
   val questionNumber: Int,
   val questionPhrase: String,
-  var open: Boolean,
+  @Enumerated(EnumType.STRING)
+  var status: QuestionStatus,
   var correctAnswer: String? = null,
 
   @ElementCollection(fetch = FetchType.EAGER)
@@ -146,7 +148,6 @@ class GameQuestionEntity(
   @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
   @JoinColumn(name = "game_question_id")
   var userAnswers: MutableList<UserAnswerEntity> = mutableListOf()
-
 )
 
 @Entity(name = "USER_ANSWER")
@@ -157,3 +158,9 @@ class UserAnswerEntity(
   var answer: String,
   var points: Int? = null
 )
+
+enum class QuestionStatus {
+  OPEN,
+  CLOSED,
+  RATED
+}

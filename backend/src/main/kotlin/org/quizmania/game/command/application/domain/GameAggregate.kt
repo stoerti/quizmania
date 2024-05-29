@@ -12,7 +12,7 @@ import java.util.*
 
 @Aggregate
 internal class GameAggregate {
-  
+
   companion object : KLogging()
 
   @AggregateIdentifier
@@ -124,14 +124,6 @@ internal class GameAggregate {
     // after QuestionAnsweredEvent is applied, the user-answer is actually in the list
     if (users.size == gameQuestion.numAnswers()) {
       gameQuestion.closeQuestion()
-
-      if (this.askedQuestions.size >= this.config.numQuestions) {
-        AggregateLifecycle.apply(
-          GameEndedEvent(
-            gameId = gameId
-          )
-        )
-      }
     }
   }
 
@@ -202,11 +194,18 @@ internal class GameAggregate {
       throw GameAlreadyEndedException(gameId)
     }
 
-    if (askedQuestions.any { !it.isClosed() }) {
-      throw GameException(gameId, "Other question is still open")
+    if (askedQuestions.any { !it.isRated() }) {
+      throw GameException(gameId, "Other question is still open or not rated")
     }
-
-    askNextQuestion(questionPort)
+    if (this.askedQuestions.size >= this.config.numQuestions) {
+      AggregateLifecycle.apply(
+        GameEndedEvent(
+          gameId = gameId
+        )
+      )
+    } else {
+      askNextQuestion(questionPort)
+    }
   }
 
   @EventSourcingHandler
@@ -259,7 +258,7 @@ internal class GameAggregate {
   }
 
   private fun askNextQuestion(questionPort: QuestionPort) {
-    val question = questionPort.getQuestion(questionList.get(askedQuestions.size))
+    val question = questionPort.getQuestion(questionList[askedQuestions.size])
 
     AggregateLifecycle.apply(
       QuestionAskedEvent(

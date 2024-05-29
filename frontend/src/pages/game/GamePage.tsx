@@ -1,12 +1,5 @@
 import React, {useEffect} from "react";
-import {
-    GameCanceledEvent,
-    GameDto,
-    GameStartedEvent,
-    GameStatus,
-    UserAddedEvent,
-    UserRemovedEvent
-} from "../../services/GameServiceTypes";
+import {GameDto, GameStartedEvent, GameStatus, UserRemovedEvent} from "../../services/GameServiceTypes";
 import {useSnackbar} from "material-ui-snackbar-provider";
 import Cookies from "js-cookie";
 import {GameLobbyPage} from "./GameLobby";
@@ -30,24 +23,18 @@ const GamePage = (props: GamePageProps) => {
         gameService.findGame(props.gameId, setGame)
         gameService.subscribeToGame(props.gameId, {
             onGameStarted(event: GameStartedEvent) {
-                setGame({
-                    ...game!,
-                    status: GameStatus.STARTED
-                })
+                setGame(event.game)
             },
             onGameEnded(event, game) {
                 setGame(game)
             },
-            onGameCanceled(event: GameCanceledEvent) {
+            onGameCanceled(event, game) {
                 gameService.unsubscribeFromGame()
                 props.onGameEnded()
                 snackbar.showMessage("Game was canceled by creator or system")
             },
-            onUserAdded(event: UserAddedEvent) {
-                setGame({
-                    ...game!,
-                    users: [...game!.users, {id: event.gameUserId, name: event.username, points: 0}]
-                })
+            onUserAdded(event, game) {
+                setGame(game)
             },
             onUserRemoved(event: UserRemovedEvent) {
                 if (event.username === Cookies.get('username')) {
@@ -74,7 +61,13 @@ const GamePage = (props: GamePageProps) => {
             onQuestionAnswered(event, game) {
                 setGame(game)
             },
+            onQuestionAnswerOverriddenEvent(event, game) {
+                setGame(game)
+            },
             onQuestionClosed(event, game) {
+                setGame(game)
+            },
+            onQuestionRated(event, game) {
                 setGame(game)
             }
         })

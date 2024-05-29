@@ -16,6 +16,14 @@ export type NewAnswerDto = {
     answer: string
 }
 
+export type OverrideAnswerDto = {
+  gameId: string,
+  gameQuestionId: string,
+  gameUserId: string,
+  userAnswerId: string,
+  answer: string
+}
+
 export type GameDto = {
     id: string,
     name: string,
@@ -52,10 +60,16 @@ export type GameQuestionDto = {
     type: QuestionType,
     questionNumber: number,
     phrase: string,
-    open: boolean,
+    status: QuestionStatus,
     correctAnswer: string,
     answerOptions: string[],
     userAnswers: UserAnswerDto[]
+}
+
+export enum QuestionStatus {
+    OPEN = 'OPEN',
+    CLOSED = 'CLOSED',
+    RATED = 'RATED',
 }
 
 export type UserAnswerDto = {
@@ -106,13 +120,26 @@ export type QuestionAnsweredEvent = {
     gameId: string,
     questionId: number,
     question: string,
-    answers: string[],
+    answer: string,
+    game: GameDto
+}
+
+export type QuestionAnswerOverriddenEvent = {
+    gameId: string,
+    questionId: number,
+    question: string,
+    answer: string,
     game: GameDto
 }
 
 export type QuestionClosedEvent = {
     gameId: string,
     questionId: number,
-    correctAnswer: string,
+    game: GameDto
+}
+
+export type QuestionRatedEvent = {
+    gameId: string,
+    questionId: number,
     game: GameDto
 }

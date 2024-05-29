@@ -1,11 +1,14 @@
 const { I } = inject();
 
-export function createGame(gameName: string) {
+export function createGame(gameName: string, moderated: boolean = false) {
   I.click({id: 'createGame'});
 
   I.fillField({id: "gameName"}, gameName)
   I.fillField({id: "maxPlayers"}, 4)
   I.fillField({id: "numQuestions"}, 4)
+  if (moderated) {
+    I.click({id: "moderator"})
+  }
 
   I.wait(1)
 

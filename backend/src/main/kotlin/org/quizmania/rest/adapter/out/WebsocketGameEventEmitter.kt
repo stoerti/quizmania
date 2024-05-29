@@ -28,7 +28,7 @@ class WebsocketGameEventEmitter(
       payload = objectMapper.writeValueAsString(evt),
       game = gameState.toDto()
     )
-    logger.debug { "Forwarding event $wrappedEvent to websocket clients on $channel" }
+    logger.trace { "Forwarding event $wrappedEvent to websocket clients on $channel" }
     template.convertAndSend(channel, wrappedEvent)
   }
 

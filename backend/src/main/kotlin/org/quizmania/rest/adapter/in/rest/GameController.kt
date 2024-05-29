@@ -219,7 +219,7 @@ data class GameQuestionDto(
   val type: QuestionType,
   val questionNumber: Int,
   val phrase: String,
-  val open: Boolean,
+  val status: QuestionStatus,
   val correctAnswer: String?,
   val answerOptions: List<String>,
   val userAnswers: List<UserAnswerDto>
@@ -256,10 +256,10 @@ fun GameQuestionEntity.toDto(): GameQuestionDto {
     type = type,
     questionNumber = questionNumber,
     phrase = questionPhrase,
-    open = open,
+    status = status,
     correctAnswer = correctAnswer,
     answerOptions = answerOptions,
-    userAnswers = userAnswers.map { it.toDto(open) }
+    userAnswers = userAnswers.map { it.toDto(status == QuestionStatus.OPEN) }
   )
 }
 
