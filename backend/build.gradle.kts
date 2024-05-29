@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.1.4"
-    id("io.spring.dependency-management") version "1.1.0"
+    id("org.springframework.boot") version "3.3.0"
+    id("io.spring.dependency-management") version "1.1.5"
     id("jacoco")
-    kotlin("jvm") version "1.9.24"
-    kotlin("plugin.spring") version "1.9.24"
-    kotlin("plugin.jpa") version "1.9.24"
+    kotlin("jvm") version "2.0.0"
+    kotlin("plugin.spring") version "2.0.0"
+    kotlin("plugin.jpa") version "2.0.0"
 }
 
 group = "org.quizmania"
@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    implementation(platform("org.testcontainers:testcontainers-bom:1.19.1")) //import bom
+    implementation(platform("org.testcontainers:testcontainers-bom:1.19.8")) //import bom
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -33,14 +33,14 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.session:spring-session-core")
 
-    implementation("org.axonframework:axon-spring-boot-starter:4.8.2")
+    implementation("org.axonframework:axon-spring-boot-starter:4.9.3")
 
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.liquibase:liquibase-core")
-    implementation("commons-io:commons-io:2.14.0")
+    implementation("commons-io:commons-io:2.16.1")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
@@ -49,10 +49,10 @@ dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     testImplementation("org.junit.jupiter:junit-jupiter-params")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
-    testImplementation("org.assertj:assertj-core:3.24.2")
-    testImplementation("org.awaitility:awaitility:4.2.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
+    testImplementation("org.assertj:assertj-core:3.26.0")
+    testImplementation("org.awaitility:awaitility:4.2.1")
 
     testImplementation("com.tngtech.jgiven:jgiven-spring-junit5:1.3.1")
     testImplementation("io.toolisticon.testing:jgiven-kotlin:1.3.1.0")
@@ -60,7 +60,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
-    testImplementation("org.axonframework:axon-test:4.8.2")
+    testImplementation("org.axonframework:axon-test:4.9.3")
     testRuntimeOnly("org.postgresql:postgresql")
 }
 
