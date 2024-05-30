@@ -30,15 +30,15 @@ export const QuestionContainer = (props: QuestionContainerProps) => {
         answerContainer = <Box component="form" noValidate onSubmit={handleSubmit} sx={{
             my: 4, mx: 4, display: 'flex', flexDirection: 'column', alignItems: 'center',
         }}>
-            <TextField margin="normal" required fullWidth id="answer" label="Answer" name="answer" autoFocus sx={{margin: 2}}
+            <TextField margin="normal" required fullWidth id="freeChoiceAnswer" label="Answer" name="answer" autoFocus sx={{margin: 2}}
             />
-            <Button type="submit" fullWidth variant="contained" sx={{ml: 2, mr: 2, mb: 2}}>Submit answer</Button>
+            <Button id="submitAnswer" type="submit" fullWidth variant="contained" sx={{ml: 2, mr: 2, mb: 2}}>Submit answer</Button>
         </Box>
     } else if (props.question.type === QuestionType.ESTIMATE) {
         answerContainer =
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{my: 4, mx: 4, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                <TextField margin="normal" required fullWidth id="answer" label="Answer" name="answer" autoFocus type="number" sx={{margin: 2}}/>
-                <Button type="submit" fullWidth variant="contained" sx={{ml: 2, mr: 2, mb: 2}}>Submit answer</Button>
+                <TextField margin="normal" required fullWidth id="estimationAnswer" label="Answer" name="answer" autoFocus type="number" sx={{margin: 2}}/>
+                <Button id="submitAnswer" type="submit" fullWidth variant="contained" sx={{ml: 2, mr: 2, mb: 2}}>Submit answer</Button>
             </Box>
     }
 

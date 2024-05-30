@@ -1,65 +1,122 @@
 Feature('create_game');
 
-Scenario('multiplayer',  ({ I , loginPage, lobbyPage}) => {
-    let gameName = "Game " + Math.floor(Math.random() * 100000)
-    let username1 = "User 1" + Math.floor(Math.random() * 100000)
-    let username2 = "User 2" + Math.floor(Math.random() * 100000)
-    let username3 = "User 3" + Math.floor(Math.random() * 100000)
-    let username4 = "User 4" + Math.floor(Math.random() * 100000)
+Scenario('multiplayer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
+  let gameName = "Game " + Math.floor(Math.random() * 100000)
+  let username1 = "User 1" + Math.floor(Math.random() * 100000)
+  let username2 = "User 2" + Math.floor(Math.random() * 100000)
+  let username3 = "User 3" + Math.floor(Math.random() * 100000)
+  let username4 = "User 4" + Math.floor(Math.random() * 100000)
 
-    loginPage.logInWithUsername(username1)
+  loginPage.logInWithUsername(username1)
+  I.wait(1)
+
+  lobbyPage.createGame(gameName)
+  I.wait(1)
+
+  session('player2', () => {
+    loginPage.logInWithUsername(username2)
     I.wait(1)
+    lobbyPage.joinGame(gameName)
+  });
 
-    lobbyPage.createGame(gameName)
+  session('player3', () => {
+    loginPage.logInWithUsername(username3)
     I.wait(1)
+    lobbyPage.joinGame(gameName)
+  });
 
-    session('player2', () => {
-        loginPage.logInWithUsername(username2)
-        I.wait(1)
-        lobbyPage.joinGame(gameName)
-    });
+  I.wait(50000)
 
-    session('player3', () => {
-        loginPage.logInWithUsername(username3)
-        I.wait(1)
-        lobbyPage.joinGame(gameName)
-    });
-
-    I.wait(50000)
-
-    I.waitForText(username2)
-    I.waitForText(username3)
+  I.waitForText(username2)
+  I.waitForText(username3)
 
 });
 
-Scenario('multiplayser_moderated',  ({ I , loginPage, lobbyPage}) => {
-    let gameName = "Game " + Math.floor(Math.random() * 100000)
-    let username1 = "User 1" + Math.floor(Math.random() * 100000)
-    let username2 = "User 2" + Math.floor(Math.random() * 100000)
-    let username3 = "User 3" + Math.floor(Math.random() * 100000)
-    let username4 = "User 4" + Math.floor(Math.random() * 100000)
+Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
+  let gameName = "Game " + Math.floor(Math.random() * 100000)
+  let moderator = "Moderator " + Math.floor(Math.random() * 100000)
+  let username1 = "User " + Math.floor(Math.random() * 100000)
+  let username2 = "User " + Math.floor(Math.random() * 100000)
+  let username3 = "User " + Math.floor(Math.random() * 100000)
 
+  loginPage.logInWithUsername(moderator)
+  I.wait(1)
+
+  lobbyPage.createGame(gameName, true)
+  I.wait(1)
+
+  session('player1', () => {
     loginPage.logInWithUsername(username1)
     I.wait(1)
+    lobbyPage.joinGame(gameName)
+  });
 
-    lobbyPage.createGame(gameName, true)
+  session('player2', () => {
+    loginPage.logInWithUsername(username2)
     I.wait(1)
+    lobbyPage.joinGame(gameName)
+  });
 
-    session('player2', () => {
-        loginPage.logInWithUsername(username2)
-        I.wait(1)
-        lobbyPage.joinGame(gameName)
-    });
+  session('player3', () => {
+    loginPage.logInWithUsername(username3)
+    I.wait(1)
+    lobbyPage.joinGame(gameName)
+  });
 
-    session('player3', () => {
-        loginPage.logInWithUsername(username3)
-        I.wait(1)
-        lobbyPage.joinGame(gameName)
-    });
+  I.waitForText(username1)
+  I.waitForText(username2)
+  I.waitForText(username3)
 
-    I.wait(500)
+  gameRoomPage.startGame()
 
-    I.waitForText(username2)
-    I.waitForText(username3)
+  session('player1', () => {
+    gameRoomPage.answerChoiceQuestion("Banone")
+  })
+  session('player2', () => {
+    gameRoomPage.answerChoiceQuestion("Banone")
+  })
+  session('player3', () => {
+    gameRoomPage.answerChoiceQuestion("Gürkin")
+  })
 
+  I.waitForText("Banone", 5, "tr:has-text('"+username1+"')")
+  I.waitForText("Banone", 5, "tr:has-text('"+username2+"')")
+  I.waitForText("Gürkin", 5, "tr:has-text('"+username3+"')")
+
+  gameRoomPage.nextQuestion()
+
+  session('player1', () => {
+    gameRoomPage.answerChoiceQuestion("Spree")
+  })
+  session('player2', () => {
+    gameRoomPage.answerChoiceQuestion("Elbe")
+  })
+  session('player3', () => {
+    gameRoomPage.answerChoiceQuestion("Elbe")
+  })
+
+  I.waitForText("Spree", 5, "tr:has-text('"+username1+"')")
+  I.waitForText("Elbe", 5, "tr:has-text('"+username2+"')")
+  I.waitForText("Elbe", 5, "tr:has-text('"+username3+"')")
+
+  gameRoomPage.nextQuestion()
+
+  session('player1', () => {
+    gameRoomPage.answerFreeQuestion("Neil armstrong")
+  })
+  session('player2', () => {
+    gameRoomPage.answerFreeQuestion("NeilArmstrong")
+  })
+  session('player3', () => {
+    gameRoomPage.answerFreeQuestion("Niel armstrong")
+  })
+
+  I.wait(2)
+
+  gameRoomPage.rateQuestion()
+  gameRoomPage.nextQuestion()
+
+  I.waitForText("Results")
+
+  I.wait(2)
 });

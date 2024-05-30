@@ -47,14 +47,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
   const theme = useTheme();
   if (question.status == QuestionStatus.OPEN) {
     return <Box>
-      <Paper sx={{padding: 2, mb: 2, backgroundColor: theme.palette.primary.light}}>
-        <Typography sx={{flex: '1 1 100%'}} variant="overline" component="div">
-          Question {question.questionNumber}
-        </Typography>
-        <Typography sx={{flex: '1 1 100%'}} variant="h5" component="div">
-          {question.phrase}
-        </Typography>
-      </Paper>
+      <QuestionPhrasePanel question={question} />
       <Paper sx={{padding: 2}}>
         <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
           <Box sx={{display: 'flex', justifyContent: 'center'}}>
@@ -73,7 +66,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
                 if (alreadyAnswered(user.id)) {
                   icon = <CheckCircle color='success'/>
                 } else {
-                  icon = <QuestionMark color='error'/>
+                  icon = <QuestionMark color='info'/>
                 }
                 return (
                   <TableRow key={user.id} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
@@ -95,7 +88,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
     return (
       <Stack spacing={2}>
         <QuestionPhrasePanel question={question}/>
-        <Button sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
+        <Button id="rateQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
                 onClick={() => props.gameService.rateQuestion(props.game.id, question.id)}
         >Rate question</Button>
         <List dense>
@@ -113,7 +106,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {[...question.userAnswers].sort((a1, a2) => a1.points - a2.points || getUsername(a1.gameUserId).localeCompare(getUsername(a2.gameUserId))).map(answer => {
+            {[...question.userAnswers].sort((a1, a2) => getUsername(a1.gameUserId).localeCompare(getUsername(a2.gameUserId))).map(answer => {
               let answerCorrect = answer.answer.toLowerCase() == question.correctAnswer.toLowerCase() // TODO better check if answer is correct
               let icon = answerCorrect ? <CheckCircle color='success'/> : <Cancel color='error'/>
               let action = !answerCorrect ?
@@ -153,7 +146,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
       <Stack spacing={2}>
         <QuestionPhrasePanel question={question}/>
         <div style={{display: "flex", alignItems: "center"}}>
-          <Button sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
+          <Button id="nextQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
                   onClick={() => props.gameService.askNextQuestion(props.game.id, () => {
                   })}
           >Next question</Button>
@@ -173,8 +166,8 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {[...question.userAnswers].sort((a1, a2) => a1.points - a2.points || getUsername(a1.gameUserId).localeCompare(getUsername(a2.gameUserId))).map(answer => {
-              let icon = answer.points > 0 ? <CheckCircle color='success'/> : <Cancel color='error'/> // TODO better check if answer is correct
+            {[...question.userAnswers].sort((a1, a2) => getUsername(a1.gameUserId).localeCompare(getUsername(a2.gameUserId))).map(answer => {
+              let icon = answer.points > 0 ? <CheckCircle color='success'/> : <Cancel color='error'/>
               return (
                 <TableRow key={answer.id} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
                   <TableCell align="left">{icon}</TableCell>

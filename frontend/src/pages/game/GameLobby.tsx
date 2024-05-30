@@ -45,7 +45,7 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
                 alignItems: "center"
             }}
         >
-            <Button sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained" onClick={onClickStartGame}>Start
+            <Button id="startGame" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained" onClick={onClickStartGame}>Start
                 game</Button>
         </div>
     }

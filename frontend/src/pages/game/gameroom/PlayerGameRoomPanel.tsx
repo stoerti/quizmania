@@ -24,6 +24,7 @@ import PlayArrow from "@mui/icons-material/PlayArrow";
 import Cancel from "@mui/icons-material/Cancel";
 import React from "react";
 import {QuestionMark} from "@mui/icons-material";
+import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
 
 export type PlayerGameRoomPanelProps = {
     game: GameDto,
@@ -84,21 +85,14 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
         let nextButton;
         if (question.status == QuestionStatus.RATED && props.game.creator === Cookies.get('username')) {
             nextButton = <div style={{display: "flex", alignItems: "center"}}>
-                <Button sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
+                <Button id="nextQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
                         onClick={() => props.gameService.askNextQuestion(props.game.id, () => {
                         })}>Next question</Button>
             </div>
         }
         return (
             <Stack spacing={2}>
-                <Paper sx={{padding: 2, backgroundColor: theme.palette.primary.light}}>
-                    <Typography sx={{flex: '1 1 100%'}} variant="overline" component="div">
-                        Question {question.questionNumber}
-                    </Typography>
-                    <Typography sx={{flex: '1 1 100%'}} variant="h5" component="div">
-                        {question.phrase}
-                    </Typography>
-                </Paper>
+                <QuestionPhrasePanel question={question} />
                 {nextButton}
                 <List dense>
                     <ListItem key="correctAnswer">

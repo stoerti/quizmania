@@ -4,8 +4,8 @@ export function createGame(gameName: string, moderated: boolean = false) {
   I.click({id: 'createGame'});
 
   I.fillField({id: "gameName"}, gameName)
-  I.fillField({id: "maxPlayers"}, 4)
-  I.fillField({id: "numQuestions"}, 4)
+  I.fillField({id: "maxPlayers"}, 3)
+  I.fillField({id: "numQuestions"}, 3)
   if (moderated) {
     I.click({id: "moderator"})
   }
