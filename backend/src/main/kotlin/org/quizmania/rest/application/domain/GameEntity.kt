@@ -46,6 +46,7 @@ class GameEntity(
         type = event.question.type,
         questionNumber = event.gameQuestionNumber,
         questionPhrase = event.question.phrase,
+        questionImagePath = event.question.imagePath,
         questionAsked = eventTimestamp,
         status = QuestionStatus.OPEN,
         correctAnswer = event.question.correctAnswer,
@@ -138,6 +139,7 @@ class GameQuestionEntity(
   val type: QuestionType,
   val questionNumber: Int,
   val questionPhrase: String,
+  val questionImagePath: String?,
   val questionAsked: Instant,
   @Enumerated(EnumType.STRING)
   var status: QuestionStatus,

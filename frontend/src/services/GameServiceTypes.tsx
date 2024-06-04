@@ -61,6 +61,7 @@ export type GameQuestionDto = {
   type: QuestionType,
   questionNumber: number,
   phrase: string,
+  imagePath: string | undefined,
   status: QuestionStatus,
   correctAnswer: string,
   answerOptions: string[],

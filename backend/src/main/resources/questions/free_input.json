@@ -1,5 +1,12 @@
 [
   {
+    "id": "32535ddf-a239-4de8-bc57-db8f1293c777",
+    "type": "FREE_INPUT",
+    "phrase": "Wer wohnt in diesem Haus?",
+    "imagePath": "https://i.pinimg.com/originals/ef/6e/dc/ef6edcd9b4e3e5ad0fde9d21db933beb.jpg",
+    "correctAnswer": "Gummibärenbande"
+  },
+  {
     "id": "32535ddf-a239-4de8-bc57-db8f1293c776",
     "type": "FREE_INPUT",
     "phrase": "Wo findet das originale Oktoberfest statt?",

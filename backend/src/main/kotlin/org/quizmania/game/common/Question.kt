@@ -26,6 +26,7 @@ interface Question {
     val type: QuestionType
     val id: QuestionId
     val phrase: String
+    val imagePath: String?
     val correctAnswer: String
 }
 
@@ -36,6 +37,7 @@ sealed class AbstractQuestion(
 data class ChoiceQuestion(
     override val id: QuestionId,
     override val phrase: String,
+    override val imagePath: String? = null,
     override val correctAnswer: String,
     val answerOptions: List<String>
 ) : AbstractQuestion(QuestionType.CHOICE)
@@ -43,11 +45,13 @@ data class ChoiceQuestion(
 data class FreeInputQuestion(
     override val id: QuestionId,
     override val phrase: String,
+    override val imagePath: String? = null,
     override val correctAnswer: String,
 ) : AbstractQuestion(QuestionType.FREE_INPUT)
 
 data class EstimateQuestion(
     override val id: QuestionId,
     override val phrase: String,
+    override val imagePath: String? = null,
     override val correctAnswer: String,
 ) : AbstractQuestion(QuestionType.ESTIMATE)

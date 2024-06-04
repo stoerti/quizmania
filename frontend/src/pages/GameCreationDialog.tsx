@@ -104,7 +104,7 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
                      label="Question timer"
                      name="numSecondsToAnswer"
                      type="number"
-                     defaultValue="10"
+                     defaultValue="15"
           />
           <Select margin="dense"
                   required
