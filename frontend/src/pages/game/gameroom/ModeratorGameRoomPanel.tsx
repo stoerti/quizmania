@@ -24,6 +24,8 @@ import Cancel from "@mui/icons-material/Cancel";
 import React from "react";
 import {Build, QuestionMark} from "@mui/icons-material";
 import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
+import Countdown from "react-countdown";
+import {QuestionCountdownBar} from "../question/QuestionCountdownBar";
 
 export type ModeratorGameRoomPanelProps = {
   game: GameDto,
@@ -48,6 +50,12 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
   if (question.status == QuestionStatus.OPEN) {
     return <Box>
       <QuestionPhrasePanel question={question} />
+      <Countdown
+        date={Date.parse(question.questionAsked) + question.questionTimeout * 1000}
+        intervalDelay={0}
+        precision={3}
+        renderer={p => <QuestionCountdownBar timeLeft={p.total} totalTime={question.questionTimeout * 1000} />}
+      />
       <Paper sx={{padding: 2}}>
         <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
           <Box sx={{display: 'flex', justifyContent: 'center'}}>

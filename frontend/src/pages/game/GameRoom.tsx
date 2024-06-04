@@ -39,7 +39,11 @@ export const GameRoomPage = (props: GameRoomPageProps) => {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Box sx={{padding: 2}}>{container}</Box>
+      <Box sx={{
+        display: "flex",
+        justifyContent: "center",
+        marginTop: 2
+      }}>{container}</Box>
     </div>
   )
 }

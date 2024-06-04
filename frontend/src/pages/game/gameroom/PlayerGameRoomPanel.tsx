@@ -43,23 +43,15 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
         return question.userAnswers.find(answer => answer.gameUserId === gameUserId) !== undefined
     }
 
-    const game = props.game
     const question = props.currentQuestion
-    const user = props.currentQuestion
+    const user = props.user
 
-    const theme = useTheme();
+    let container = undefined
 
     if (question.status == QuestionStatus.OPEN) {
         if (alreadyAnswered(user.id)) {
-            return <Box>
-                <Paper sx={{padding: 2, mb: 2, backgroundColor: theme.palette.primary.light}}>
-                    <Typography sx={{flex: '1 1 100%'}} variant="overline" component="div">
-                        Question {question.questionNumber}
-                    </Typography>
-                    <Typography sx={{flex: '1 1 100%'}} variant="h5" component="div">
-                        {question.phrase}
-                    </Typography>
-                </Paper>
+          container = <Stack spacing={2}>
+                <QuestionPhrasePanel question={question} />
                 <Paper sx={{padding: 2}}>
                     <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
                         <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h4" component="div">
@@ -70,7 +62,7 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
                         </Box>
                     </Box>
                 </Paper>
-            </Box>
+            </Stack>
         } else {
             const onAnswerQuestion = (answer: string) =>
                 props.gameService.answerQuestion({
@@ -79,7 +71,7 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
                     answer: answer
                 }, () => {
                 })
-            return <QuestionContainer question={question} onAnswerQuestion={onAnswerQuestion}/>
+          container = <QuestionContainer question={question} onAnswerQuestion={onAnswerQuestion}/>
         }
     } else if (question.status == QuestionStatus.CLOSED || question.status == QuestionStatus.RATED) {
         let nextButton;
@@ -90,7 +82,7 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
                         })}>Next question</Button>
             </div>
         }
-        return (
+      container =
             <Stack spacing={2}>
                 <QuestionPhrasePanel question={question} />
                 {nextButton}
@@ -140,8 +132,12 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
                     </TableBody>
                 </Table>
             </Stack>
-        )
+
     } else {
-        return <div>Unknown state</div>
+      container = <div>Unknown state</div>
     }
+
+    return <Box sx={{maxWidth: '650px', width: '100%'}}>
+      {container}
+    </Box>
 }

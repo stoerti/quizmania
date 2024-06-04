@@ -72,9 +72,12 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   session('player1', () => {
     gameRoomPage.answerChoiceQuestion("Banone")
   })
+
+  I.wait(2)
   session('player2', () => {
     gameRoomPage.answerChoiceQuestion("Banone")
   })
+  I.wait(2)
   session('player3', () => {
     gameRoomPage.answerChoiceQuestion("Gürkin")
   })
@@ -105,13 +108,14 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
     gameRoomPage.answerFreeQuestion("Neil armstrong")
   })
   session('player2', () => {
-    gameRoomPage.answerFreeQuestion("NeilArmstrong")
+    gameRoomPage.answerFreeQuestion("NielArmstrong")
   })
-  session('player3', () => {
-    gameRoomPage.answerFreeQuestion("Niel armstrong")
-  })
+  I.wait(15)
 
-  I.wait(2)
+  I.waitForText("Neil armstrong", 5, "tr:has-text('"+username1+"')")
+  I.waitForText("NielArmstrong", 5, "tr:has-text('"+username2+"')")
+  I.dontSeeElement("tr:has-text('"+username3+"')")
+
 
   gameRoomPage.rateQuestion()
   gameRoomPage.nextQuestion()

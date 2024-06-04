@@ -3,9 +3,11 @@ package org.quizmania.rest.adapter.`in`.axon
 import mu.KLogging
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
+import org.axonframework.eventhandling.Timestamp
 import org.quizmania.game.common.*
 import org.quizmania.rest.port.`in`.GameEventHappenedInPort
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 @ProcessingGroup("defaultProjection")
@@ -13,7 +15,7 @@ class GameEventListener(
   val gameEventHappenedInPort: GameEventHappenedInPort
 ) {
   companion object : KLogging()
-  
+
   @EventHandler
   fun on(event: GameCreatedEvent) {
     logger.info { "Received GameCreatedEvent $event" }
@@ -21,9 +23,9 @@ class GameEventListener(
   }
 
   @EventHandler
-  fun on(event: QuestionAskedEvent) {
+  fun on(event: QuestionAskedEvent, @Timestamp eventTimestamp: Instant) {
     logger.info { "Received QuestionAskedEvent $event" }
-    gameEventHappenedInPort.questionAsked(event)
+    gameEventHappenedInPort.questionAsked(event, eventTimestamp)
   }
 
   @EventHandler

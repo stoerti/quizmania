@@ -2,6 +2,7 @@ package org.quizmania.rest.application.domain
 
 import jakarta.persistence.*
 import org.quizmania.game.common.*
+import java.time.Instant
 import java.util.*
 
 @Entity(name = "GAME")
@@ -13,6 +14,8 @@ class GameEntity(
   var numQuestions: Int,
   var creator: String,
   var moderator: String?,
+
+  var questionTimeout: Long,
   @Enumerated(EnumType.STRING)
   var status: GameStatus,
 
@@ -32,16 +35,18 @@ class GameEntity(
     numQuestions = event.config.numQuestions,
     creator = event.creatorUsername,
     moderator = event.moderatorUsername,
+    questionTimeout = event.config.secondsToAnswer,
     status = GameStatus.CREATED
   )
 
-  fun on(event: QuestionAskedEvent) {
+  fun on(event: QuestionAskedEvent, eventTimestamp: Instant) {
     this.questions.add(
       GameQuestionEntity(
         gameQuestionId = event.gameQuestionId,
         type = event.question.type,
         questionNumber = event.gameQuestionNumber,
         questionPhrase = event.question.phrase,
+        questionAsked = eventTimestamp,
         status = QuestionStatus.OPEN,
         correctAnswer = event.question.correctAnswer,
         answerOptions = if (event.question is ChoiceQuestion) event.question.answerOptions.toMutableList() else mutableListOf()
@@ -133,6 +138,7 @@ class GameQuestionEntity(
   val type: QuestionType,
   val questionNumber: Int,
   val questionPhrase: String,
+  val questionAsked: Instant,
   @Enumerated(EnumType.STRING)
   var status: QuestionStatus,
   var correctAnswer: String? = null,

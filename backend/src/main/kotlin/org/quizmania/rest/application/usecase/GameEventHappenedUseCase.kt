@@ -6,6 +6,7 @@ import org.quizmania.rest.port.`in`.GameEventHappenedInPort
 import org.quizmania.rest.port.out.GameChangedEventEmitterPort
 import org.quizmania.rest.port.out.GameRepository
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class GameEventHappenedUseCase(
@@ -37,7 +38,7 @@ class GameEventHappenedUseCase(
 
   override fun userRemoved(evt: UserRemovedEvent) = updateAndPropagate(evt) { it.on(evt) }
 
-  override fun questionAsked(evt: QuestionAskedEvent) = updateAndPropagate(evt) { it.on(evt) }
+  override fun questionAsked(evt: QuestionAskedEvent, eventTimestamp: Instant) = updateAndPropagate(evt) { it.on(evt, eventTimestamp) }
 
   override fun questionAnswered(evt: QuestionAnsweredEvent) = updateAndPropagate(evt) { it.on(evt) }
   override fun questionAnswerOverridden(evt: QuestionAnswerOverriddenEvent) = updateAndPropagate(evt) { it.on(evt) }

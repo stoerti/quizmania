@@ -13,6 +13,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
+import java.time.Instant
 import java.util.*
 
 @RestController
@@ -222,6 +223,8 @@ data class GameQuestionDto(
   val status: QuestionStatus,
   val correctAnswer: String?,
   val answerOptions: List<String>,
+  val questionTimeout: Long,
+  val questionAsked: Instant,
   val userAnswers: List<UserAnswerDto>
 )
 
@@ -242,7 +245,7 @@ fun GameEntity.toDto(): GameDto {
     moderator = moderator,
     status = status,
     users = users.map { it.toDto() },
-    questions = questions.map { it.toDto() },
+    questions = questions.map { it.toDto(questionTimeout) },
   )
 }
 
@@ -250,7 +253,7 @@ fun GameUserEntity.toDto(): GameUserDto {
   return GameUserDto(gameUserId, username, points)
 }
 
-fun GameQuestionEntity.toDto(): GameQuestionDto {
+fun GameQuestionEntity.toDto(questionTimeout: Long): GameQuestionDto {
   return GameQuestionDto(
     id = gameQuestionId,
     type = type,
@@ -259,6 +262,8 @@ fun GameQuestionEntity.toDto(): GameQuestionDto {
     status = status,
     correctAnswer = correctAnswer,
     answerOptions = answerOptions,
+    questionTimeout = questionTimeout,
+    questionAsked = questionAsked,
     userAnswers = userAnswers.map { it.toDto(status == QuestionStatus.OPEN) }
   )
 }

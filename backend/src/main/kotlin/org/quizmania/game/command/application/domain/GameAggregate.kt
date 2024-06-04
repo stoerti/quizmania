@@ -2,13 +2,17 @@ package org.quizmania.game.command.application.domain
 
 import mu.KLogging
 import org.axonframework.commandhandling.CommandHandler
+import org.axonframework.deadline.DeadlineManager
+import org.axonframework.deadline.annotation.DeadlineHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.modelling.command.*
 import org.axonframework.spring.stereotype.Aggregate
 import org.quizmania.game.api.*
 import org.quizmania.game.command.port.out.QuestionPort
 import org.quizmania.game.common.*
+import java.time.Duration
 import java.util.*
+import kotlin.math.log
 
 @Aggregate
 internal class GameAggregate {
@@ -92,16 +96,16 @@ internal class GameAggregate {
   }
 
   @CommandHandler
-  fun handle(command: StartGameCommand, questionPort: QuestionPort) {
+  fun handle(command: StartGameCommand, questionPort: QuestionPort, deadlineManager: DeadlineManager) {
     logger.info { "Executing StartGameCommand for game ${command.gameId}" }
     // todo verify if allowed
     AggregateLifecycle.apply(GameStartedEvent(command.gameId))
 
-    askNextQuestion(questionPort)
+    askNextQuestion(questionPort, deadlineManager)
   }
 
   @CommandHandler
-  fun handle(command: AnswerQuestionCommand) {
+  fun handle(command: AnswerQuestionCommand, deadlineManager: DeadlineManager) {
     logger.info { "Executing AnswerQuestionCommand for game ${command.gameId}: $command" }
     if (gameStatus != GameStatus.STARTED) {
       throw GameAlreadyEndedException(gameId)
@@ -124,6 +128,7 @@ internal class GameAggregate {
     // after QuestionAnsweredEvent is applied, the user-answer is actually in the list
     if (users.size == gameQuestion.numAnswers()) {
       gameQuestion.closeQuestion()
+      deadlineManager.cancelAllWithinScope("questionCloseDeadline")
     }
   }
 
@@ -153,7 +158,7 @@ internal class GameAggregate {
   }
 
   @CommandHandler
-  fun handle(command: CloseQuestionCommand) {
+  fun handle(command: CloseQuestionCommand, deadlineManager: DeadlineManager) {
     logger.info { "Executing CloseQuestionCommand for game ${command.gameId}: $command" }
     if (gameStatus != GameStatus.STARTED) {
       throw GameAlreadyEndedException(gameId)
@@ -167,6 +172,7 @@ internal class GameAggregate {
     }
 
     gameQuestion.closeQuestion()
+    deadlineManager.cancelAllWithinScope("questionCloseDeadline")
   }
 
   @CommandHandler
@@ -188,7 +194,7 @@ internal class GameAggregate {
 
 
   @CommandHandler
-  fun handle(command: AskNextQuestionCommand, questionPort: QuestionPort) {
+  fun handle(command: AskNextQuestionCommand, questionPort: QuestionPort, deadlineManager: DeadlineManager) {
     logger.info { "Executing AskNextQuestionCommand for game ${command.gameId}: $command" }
     if (gameStatus != GameStatus.STARTED) {
       throw GameAlreadyEndedException(gameId)
@@ -204,7 +210,7 @@ internal class GameAggregate {
         )
       )
     } else {
-      askNextQuestion(questionPort)
+      askNextQuestion(questionPort, deadlineManager)
     }
   }
 
@@ -257,7 +263,13 @@ internal class GameAggregate {
     )
   }
 
-  private fun askNextQuestion(questionPort: QuestionPort) {
+  @DeadlineHandler(deadlineName = "questionCloseDeadline")
+  fun onQuestionClosedDeadline() {
+    logger.info { "Reached question deadline for game $gameId" }
+    askedQuestions.firstOrNull { !it.isClosed() }?.closeQuestion()
+  }
+
+  private fun askNextQuestion(questionPort: QuestionPort, deadlineManager: DeadlineManager) {
     val question = questionPort.getQuestion(questionList[askedQuestions.size])
 
     AggregateLifecycle.apply(
@@ -268,6 +280,10 @@ internal class GameAggregate {
         question = question
       )
     )
+
+    if (config.secondsToAnswer > 0) {
+      deadlineManager.schedule(Duration.ofSeconds(config.secondsToAnswer), "questionCloseDeadline")
+    }
   }
 }
 
