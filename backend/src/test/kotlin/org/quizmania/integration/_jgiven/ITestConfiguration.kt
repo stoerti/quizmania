@@ -9,6 +9,7 @@ import org.axonframework.eventhandling.tokenstore.inmemory.InMemoryTokenStore
 import org.axonframework.eventsourcing.eventstore.inmemory.InMemoryEventStorageEngine
 import org.axonframework.modelling.saga.repository.inmemory.InMemorySagaStore
 import org.axonframework.spring.config.SpringConfigurer
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
 
@@ -32,10 +33,5 @@ class ITestConfiguration {
    */
   @Bean
   fun sagaStore() = InMemorySagaStore()
-
-  @Bean
-  fun deadlineManager(configurer: SpringConfigurer, transactionManager: TransactionManager): DeadlineManager =
-    SimpleDeadlineManager.builder().scopeAwareProvider(ConfigurationScopeAwareProvider(configurer.buildConfiguration()))
-      .transactionManager(transactionManager).build()
 
 }
