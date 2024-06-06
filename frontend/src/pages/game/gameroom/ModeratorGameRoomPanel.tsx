@@ -22,7 +22,7 @@ import CheckCircle from "@mui/icons-material/CheckCircle";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import Cancel from "@mui/icons-material/Cancel";
 import React from "react";
-import {Build, QuestionMark} from "@mui/icons-material";
+import {Build, MarkEmailRead, QuestionMark} from "@mui/icons-material";
 import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
 import Countdown from "react-countdown";
 import {QuestionCountdownBar} from "../question/QuestionCountdownBar";
@@ -72,7 +72,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
               {props.game.users.sort((a1, a2) => a1.name.localeCompare(a2.name)).map(user => {
                 let icon;
                 if (alreadyAnswered(user.id)) {
-                  icon = <CheckCircle color='success'/>
+                  icon = <MarkEmailRead color='success'/>
                 } else {
                   icon = <QuestionMark color='info'/>
                 }
