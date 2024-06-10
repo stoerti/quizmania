@@ -1,0 +1,187 @@
+[
+  {
+    "id": "werkstatt_choice_01",
+    "type": "CHOICE",
+    "phrase": "Which US president was NOT assassinated in office?",
+    "correctAnswer": "Theodore Roosevelt",
+    "answerOptions": ["Abraham Lincoln", "John F. Kennedy", "Theodore Roosevelt", "William McKinley"]
+  },
+  {
+    "id": "werkstatt_choice_02",
+    "type": "CHOICE",
+    "phrase": "Which independent country has the oldest continuously existing parliament?",
+    "correctAnswer": "Iceland",
+    "answerOptions": ["Switzerland", "Iceland", "Norway", "Greece"]
+  },
+  {
+    "id": "werkstatt_choice_03",
+    "type": "CHOICE",
+    "phrase": "Reginald Kenneth Dwight is better known by what name?",
+    "correctAnswer": "Elton John",
+    "answerOptions": ["Elton John", "Paul McCartney", "Bob Dylan", "John Lennon"]
+  },
+  {
+    "id": "werkstatt_choice_04",
+    "type": "CHOICE",
+    "phrase": "Who said it? \"God does not play dice.\"",
+    "correctAnswer": "Albert Einstein",
+    "answerOptions": ["Pope John Paul II", "Frank Sinatra", "Albert Einstein", "George Washington"]
+  },
+  {
+    "id": "werkstatt_choice_05",
+    "type": "CHOICE",
+    "phrase": "Ranidaphobia is the fear of which of these?",
+    "correctAnswer": "Frogs",
+    "answerOptions": ["Cats", "Ants", "Frogs", "Mice"]
+  },
+  {
+    "id": "werkstatt_choice_06",
+    "type": "CHOICE",
+    "phrase": "3. What links \"Sean Connery\", \"Billy Connolly\", \"Arthur Conan Doyle\" and \"Macbeth\"?",
+    "correctAnswer": "Scotland",
+    "answerOptions": ["New Zealand", "Murder", "Espionage", "Scotland"]
+  },
+  {
+    "id": "werkstatt_choice_07",
+    "type": "CHOICE",
+    "phrase": "What is the most spoken language in the world?",
+    "correctAnswer": "Mandarin",
+    "answerOptions": ["English", "Mandarin", "Spanish", "Hindi"]
+  },
+  {
+    "id": "werkstatt_choice_08",
+    "type": "CHOICE",
+    "phrase": "Which continent has the most countries?",
+    "correctAnswer": "Africa",
+    "answerOptions": ["Africa", "Asia", "Europe", "South America"]
+  },
+  {
+    "id": "werkstatt_choice_09",
+    "type": "CHOICE",
+    "phrase": "Since which year the Euro is our official currency?",
+    "correctAnswer": "2002",
+    "answerOptions": ["2000", "2001", "2002", "2003"]
+  },
+  {
+    "id": "werkstatt_choice_10",
+    "type": "CHOICE",
+    "phrase": "What is the capital of Canada?",
+    "correctAnswer": "Ottawa",
+    "answerOptions": ["Vancouver", "Montreal", "Ottawa", "Toronto"]
+  },
+  {
+    "id": "werkstatt_choice_11",
+    "type": "CHOICE",
+    "phrase": "Which football club won the second most Bundesliga titles?",
+    "correctAnswer": "Borussia Mönchengladbach",
+    "answerOptions": ["Hamburger SV", "Borussia Mönchengladbach", "FC Bayern München", "Borussia Dortmund"]
+  },
+  {
+    "id": "werkstatt_choice_12",
+    "type": "CHOICE",
+    "phrase": "What country has the most islands in the world?",
+    "correctAnswer": "Sweden",
+    "answerOptions": ["Finland", "Philippines", "Micronesia", "Sweden"]
+  },
+  {
+    "id": "werkstatt_choice_12",
+    "type": "CHOICE",
+    "phrase": "Which country is not an monarchy?",
+    "correctAnswer": "Chile",
+    "answerOptions": ["Luxembourg", "Jordan", "Cambodia", "Chile"]
+  },
+  {
+    "id": "werkstatt_choice_13",
+    "type": "CHOICE",
+    "phrase": "Which of these animals is the fastest?",
+    "correctAnswer": "Falcon",
+    "answerOptions": ["Swordfish", "Falcon", "Leopard", "Lion"]
+  },
+  {
+    "id": "werkstatt_choice_14",
+    "type": "CHOICE",
+    "phrase": "What country is the kiwi from?",
+    "correctAnswer": "China",
+    "answerOptions": ["Vietnam", "New Zealand", "Indonesia", "China"]
+  },
+  {
+    "id": "werkstatt_choice_15",
+    "type": "CHOICE",
+    "phrase": "Which national flag is not within the norwegian national flag?",
+    "correctAnswer": "Russia",
+    "answerOptions": ["Russia", "Finland", "France", "Thailand"]
+  },
+  {
+    "id": "werkstatt_freeinput_01",
+    "type": "FREE_INPUT",
+    "phrase": "On which album Michael Jacksons \"Beat it\" was first published?",
+    "correctAnswer": "Thriller"
+  },
+  {
+    "id": "werkstatt_freeinput_02",
+    "type": "FREE_INPUT",
+    "phrase": "Which was the launch title of the Nintendo Game Boy?",
+    "correctAnswer": "Tetris"
+  },
+  {
+    "id": "werkstatt_freeinput_03",
+    "type": "FREE_INPUT",
+    "phrase": "Who lives in this house?",
+    "imagePath": "https://i.pinimg.com/originals/ef/6e/dc/ef6edcd9b4e3e5ad0fde9d21db933beb.jpg",
+    "correctAnswer": "gummy bears"
+  },
+  {
+    "id": "werkstatt_freeinput_04",
+    "type": "FREE_INPUT",
+    "phrase": "Who was Germanys first Bundeskanzler?",
+    "correctAnswer": "Konrad Adenauer"
+  },
+  {
+    "id": "werkstatt_freeinput_05",
+    "type": "FREE_INPUT",
+    "phrase": "What is the maximum number of oscars any movie has won?",
+    "correctAnswer": "11"
+  },
+  {
+    "id": "werkstatt_freeinput_06",
+    "type": "FREE_INPUT",
+    "phrase": "How many days did the Cuban Missile Crisis last?",
+    "correctAnswer": "13"
+  },
+  {
+    "id": "werkstatt_freeinput_07",
+    "type": "FREE_INPUT",
+    "phrase": "Which famous graffiti artist comes from Bristol?",
+    "correctAnswer": "Bansky"
+  },
+  {
+    "id": "werkstatt_freeinput_07",
+    "type": "FREE_INPUT",
+    "phrase": "What city do the Beatles come from?",
+    "correctAnswer": "Liverpool"
+  },
+  {
+    "id": "werkstatt_freeinput_07",
+    "type": "FREE_INPUT",
+    "phrase": "Brian Jones, Jimi Hendrix, Janis Joplin, Kurt Cobain, Amy Winehouse and other famous singers were all the same age when they died. How old was this?",
+    "correctAnswer": "27"
+  },
+  {
+    "id": "werkstatt_estimate_01",
+    "type": "ESTIMATE",
+    "phrase": "How many years did the Hundred Years' War last?",
+    "correctAnswer": "116"
+  },
+  {
+    "id": "werkstatt_estimate_02",
+    "type": "ESTIMATE",
+    "phrase": "How many cities with the name Berlin are there in the USA?",
+    "correctAnswer": "31"
+  },
+  {
+    "id": "werkstatt_estimate_03",
+    "type": "ESTIMATE",
+    "phrase": "How many goals have been scored in the last Bundesliga season?",
+    "correctAnswer": "985"
+  }
+]

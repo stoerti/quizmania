@@ -79,7 +79,7 @@ class AdminController(
                     config = GameConfig(
                         maxPlayers = maxPlayers,
                         numQuestions = 10,
-                        questionSetId = UUID.fromString("40d28946-be06-47d7-814c-e1914c142ae4")
+                        questionSetId = "test01"
                     ),
                     creatorUsername = shuffledUsers[1],
                     moderatorUsername = if (isModerated) shuffledUsers[0] else null

@@ -102,11 +102,16 @@ class ModeratedGameITest : AbstractSpringIntegrationTest() {
 
     // third question
     WHEN
-      .`the user $ answers current question with $`(PLAYER, "Elbe")
-      .`the user $ answers current question with $`(OTHER_PLAYER, "Elbe")
+      .`the user $ answers current question with $`(PLAYER, "München")
+      .`the user $ answers current question with $`(OTHER_PLAYER, "Muenchen")
 
     THEN
       .`the last answered question is closed`()
+
+    WHEN
+      .`the moderator rates the current question`()
+
+    THEN
       .`user $ scored $ points for the last question`(PLAYER, 10)
       .`user $ scored $ points for the last question`(OTHER_PLAYER, 10)
       .`user $ scored $ points total`(PLAYER, 20)

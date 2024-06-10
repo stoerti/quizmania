@@ -25,3 +25,8 @@ export function answerFreeQuestion(answer: string) {
   I.click({id: 'submitAnswer'});
 }
 
+export function answerEstimateQuestion(answer: number) {
+  I.fillField({id: 'estimationAnswer'}, answer);
+  I.click({id: 'submitAnswer'});
+}
+

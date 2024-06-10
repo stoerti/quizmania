@@ -7,5 +7,5 @@ typealias GameQuestionId = UUID
 typealias GameUserId = UUID
 typealias GameQuestionNumber = Int
 
-typealias QuestionId = UUID
-typealias QuestionSetId = UUID
+typealias QuestionId = String
+typealias QuestionSetId = String

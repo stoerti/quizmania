@@ -95,12 +95,12 @@ export class GameService {
     this.genericPostNoReturn('/api/game/' + gameId + '/ask-next-question', responseHandler, errorHandler)
   }
 
-  public closeQuestion(gameId: string, gameQuestionId: string, responseHandler: () => void, errorHandler: (err: any) => void = () => {
+  public closeQuestion(gameId: string, gameQuestionId: string, responseHandler: () => void = () => {}, errorHandler: (err: any) => void = () => {
   }) {
     this.genericPostNoReturn('api/game/' + gameId + '/question/' + gameQuestionId + '/close', responseHandler, errorHandler)
   }
 
-  public rateQuestion(gameId: string, gameQuestionId: string, responseHandler: () => void= () => {}, errorHandler: (err: any) => void = () => {
+  public rateQuestion(gameId: string, gameQuestionId: string, responseHandler: () => void = () => {}, errorHandler: (err: any) => void = () => {
   }) {
     this.genericPostNoReturn('api/game/' + gameId + '/question/' + gameQuestionId + '/rate', responseHandler, errorHandler)
   }

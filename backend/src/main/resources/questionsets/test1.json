@@ -1,12 +1,12 @@
 {
-  "id": "40d28946-be06-47d7-814c-e1914c142ae4",
+  "id": "test01",
   "name": "Test Questions 1",
   "minPlayers": 1,
   "questions": [
-    "d37b5ae9-6c02-4b68-bf7f-e7cba625ab61",
-    "14f73bc2-a672-429c-8097-538100c1eeae",
-    "a901c932-3e5b-4f3f-bf78-99c64076d7d1",
-    "1d6f1c78-34a5-4e2a-9a22-4fbce7365c52",
-    "32535ddf-a239-4de8-bc57-db8f1293c777"
+    "choice_01",
+    "freeinput_01",
+    "estimate_01",
+    "freeinput_02",
+    "freeinput_image_01"
   ]
 }

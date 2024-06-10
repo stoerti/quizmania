@@ -1,0 +1,33 @@
+{
+  "id": "werkstatt",
+  "name": "Werkstatt questions",
+  "minPlayers": 1,
+  "questions": [
+    "werkstatt_choice_01",
+    "werkstatt_choice_02",
+    "werkstatt_choice_03",
+    "werkstatt_choice_04",
+    "werkstatt_choice_05",
+    "werkstatt_choice_06",
+    "werkstatt_choice_07",
+    "werkstatt_choice_08",
+    "werkstatt_choice_09",
+    "werkstatt_choice_10",
+    "werkstatt_choice_11",
+    "werkstatt_choice_12",
+    "werkstatt_choice_13",
+    "werkstatt_choice_14",
+    "werkstatt_choice_15",
+    "werkstatt_estimate_01",
+    "werkstatt_estimate_02",
+    "werkstatt_estimate_03",
+    "werkstatt_freeinput_01",
+    "werkstatt_freeinput_02",
+    "werkstatt_freeinput_03",
+    "werkstatt_freeinput_04",
+    "werkstatt_freeinput_05",
+    "werkstatt_freeinput_06",
+    "werkstatt_freeinput_07",
+    "werkstatt_freeinput_08"
+  ]
+}

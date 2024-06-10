@@ -89,19 +89,20 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   gameRoomPage.nextQuestion()
 
   session('player1', () => {
-    gameRoomPage.answerChoiceQuestion("Spree")
+    gameRoomPage.answerEstimateQuestion(800)
   })
   session('player2', () => {
-    gameRoomPage.answerChoiceQuestion("Elbe")
+    gameRoomPage.answerEstimateQuestion(900)
   })
   session('player3', () => {
-    gameRoomPage.answerChoiceQuestion("Elbe")
+    gameRoomPage.answerEstimateQuestion(1000)
   })
 
-  I.waitForText("Spree", 5, "tr:has-text('"+username1+"')")
-  I.waitForText("Elbe", 5, "tr:has-text('"+username2+"')")
-  I.waitForText("Elbe", 5, "tr:has-text('"+username3+"')")
+  I.waitForText("800", 5, "tr:has-text('"+username1+"')")
+  I.waitForText("900", 5, "tr:has-text('"+username2+"')")
+  I.waitForText("1000", 5, "tr:has-text('"+username3+"')")
 
+  I.wait(10)
   gameRoomPage.nextQuestion()
 
   session('player1', () => {

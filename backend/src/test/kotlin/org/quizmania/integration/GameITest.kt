@@ -77,8 +77,8 @@ class GameITest : AbstractSpringIntegrationTest() {
 
     // third question
     WHEN
-      .`the user $ answers current question with $`(USERNAME, "Elbe")
-      .`the user $ answers current question with $`(OTHER_USERNAME, "Elbe")
+      .`the user $ answers current question with $`(USERNAME, "München")
+      .`the user $ answers current question with $`(OTHER_USERNAME, "München")
 
     THEN
       .`the last answered question is closed`()

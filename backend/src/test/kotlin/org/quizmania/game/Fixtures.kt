@@ -12,16 +12,18 @@ val GAME_UUID: GameId = UUID.randomUUID()
 val GAME_NAME: String = "Game 1"
 val GAME_USER_1: GameUserId = UUID.randomUUID()
 val GAME_USER_2: GameUserId = UUID.randomUUID()
+val GAME_USER_3: GameUserId = UUID.randomUUID()
 val USERNAME_1: String = "User 1"
 val USERNAME_2: String = "User 2"
 val GAME_QUESTION_1: GameQuestionId = UUID.randomUUID()
 val GAME_QUESTION_2: GameQuestionId = UUID.randomUUID()
 val USER_ANSWER_1: GameQuestionId = UUID.randomUUID()
 val USER_ANSWER_2: GameQuestionId = UUID.randomUUID()
+val USER_ANSWER_3: GameQuestionId = UUID.randomUUID()
 
-val QUESTION_SET_ID: QuestionSetId = UUID.randomUUID()
-val QUESTION_ID_1: QuestionSetId = UUID.randomUUID()
-val QUESTION_ID_2: QuestionSetId = UUID.randomUUID()
+val QUESTION_SET_ID: QuestionSetId = UUID.randomUUID().toString()
+val QUESTION_ID_1: QuestionSetId = UUID.randomUUID().toString()
+val QUESTION_ID_2: QuestionSetId = UUID.randomUUID().toString()
 
 class GameCommandFixtures {
   companion object {
@@ -178,7 +180,7 @@ class QuestionFixtures {
       questions = listOf(QUESTION_ID_1, QUESTION_ID_2)
     )
 
-    fun choiceQuestion(questionId: UUID = UUID.randomUUID()): ChoiceQuestion {
+    fun choiceQuestion(questionId: QuestionId = UUID.randomUUID().toString()): ChoiceQuestion {
       return ChoiceQuestion(
         id = questionId,
         phrase = "Question?",
@@ -187,7 +189,7 @@ class QuestionFixtures {
       )
     }
 
-    fun freeInputQuestion(questionId: UUID = UUID.randomUUID()): FreeInputQuestion {
+    fun freeInputQuestion(questionId: QuestionId = UUID.randomUUID().toString()): FreeInputQuestion {
       return FreeInputQuestion(
         id = questionId,
         phrase = "Question?",
@@ -195,7 +197,7 @@ class QuestionFixtures {
       )
     }
 
-    fun estimateQuestion(questionId: UUID = UUID.randomUUID()): EstimateQuestion {
+    fun estimateQuestion(questionId: QuestionId = UUID.randomUUID().toString()): EstimateQuestion {
       return EstimateQuestion(
         id = questionId,
         phrase = "Question?",

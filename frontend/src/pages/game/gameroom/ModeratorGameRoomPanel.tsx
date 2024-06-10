@@ -22,7 +22,7 @@ import CheckCircle from "@mui/icons-material/CheckCircle";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import Cancel from "@mui/icons-material/Cancel";
 import React from "react";
-import {Build, MarkEmailRead, QuestionMark} from "@mui/icons-material";
+import {Build, MarkEmailRead, QuestionMark, StopCircle} from "@mui/icons-material";
 import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
 import Countdown from "react-countdown";
 import {QuestionCountdownBar} from "../question/QuestionCountdownBar";
@@ -59,7 +59,9 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
       <Paper sx={{padding: 2}}>
         <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
           <Box sx={{display: 'flex', justifyContent: 'center'}}>
-            <CircularProgress/>
+            <Button id="closeQuestion" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained"
+                    onClick={() => props.gameService.closeQuestion(props.game.id, question.id)}
+            >Close question</Button>
           </Box>
           <Table aria-label="simple table">
             <TableHead>

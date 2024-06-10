@@ -5,6 +5,8 @@ import org.axonframework.modelling.command.AggregateLifecycle
 import org.axonframework.modelling.command.EntityId
 import org.quizmania.game.common.*
 import java.util.*
+import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 data class GameQuestion(
   val gameId: GameId, // aggregate identifier
@@ -110,8 +112,9 @@ data class GameQuestion(
 
   internal fun resolvePointsEstimateQuestion(): Map<GameUserId, Int> {
     val correctAnswerInt = question.correctAnswer.toInt()
-    return userAnswers.map { it.gameUserId to it.answer.toInt().minus(correctAnswerInt).toUInt() }
+    return userAnswers.map { it.gameUserId to (it.answer.toInt().minus(correctAnswerInt)).absoluteValue }
       .sortedWith { p1, p2 -> p2.second.compareTo(p1.second) }
+      .reversed()
       .mapIndexed { i, pair ->
         pair.first to when (i) {
           0 -> 20
