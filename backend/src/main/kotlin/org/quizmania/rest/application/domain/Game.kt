@@ -1,14 +1,9 @@
 package org.quizmania.rest.application.domain
 
-import jakarta.persistence.*
 import org.quizmania.game.common.*
-import java.time.Instant
-import java.util.*
 
-@Entity(name = "GAME")
-class GameEntity(
-  @Id
-  val gameId: UUID,
+class Game(
+  val gameId: GameId,
   var name: String,
   var maxPlayers: Int,
   var numQuestions: Int,
@@ -16,12 +11,9 @@ class GameEntity(
   var moderator: String?,
 
   var questionTimeout: Long,
-  @Enumerated(EnumType.STRING)
   var status: GameStatus,
 
-  @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-  @JoinColumn(name = "game_id")
-  var users: MutableList<GameUserEntity> = mutableListOf(),
+  var users: MutableList<GameUser> = mutableListOf(),
 ) {
 
   constructor(event: GameCreatedEvent) : this(
@@ -36,7 +28,7 @@ class GameEntity(
   )
 
   fun on(event: UserAddedEvent) {
-    users.add(GameUserEntity(event.gameUserId, event.username))
+    users.add(GameUser(event.gameUserId, event.username))
   }
 
   fun on(event: UserRemovedEvent) {
@@ -55,10 +47,3 @@ class GameEntity(
     status = GameStatus.CANCELED
   }
 }
-
-@Entity(name = "GAME_USER")
-class GameUserEntity(
-  @Id
-  val gameUserId: UUID,
-  var username: String,
-)

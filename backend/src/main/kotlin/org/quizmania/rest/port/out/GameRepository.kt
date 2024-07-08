@@ -1,16 +1,16 @@
 package org.quizmania.rest.port.out
 
 import org.quizmania.game.common.GameId
-import org.quizmania.rest.application.domain.GameEntity
+import org.quizmania.rest.application.domain.Game
 import org.quizmania.rest.application.domain.GameStatus
 
 interface GameRepository {
 
-  fun save(game: GameEntity)
+  fun save(game: Game)
 
-  fun findById(gameId: GameId): GameEntity?
+  fun findById(gameId: GameId): Game?
 
-  fun findAll(): List<GameEntity>
+  fun findAll(): List<Game>
 
-  fun findByStatus(status: GameStatus): List<GameEntity>
+  fun findByStatus(status: GameStatus): List<Game>
 }

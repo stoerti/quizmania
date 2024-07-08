@@ -6,22 +6,21 @@ import org.quizmania.game.api.*
 import org.quizmania.game.common.GameConfig
 import org.quizmania.game.common.GameQuestionId
 import org.quizmania.game.common.GameUserId
-import org.quizmania.rest.application.domain.GameEntity
-import org.quizmania.rest.application.domain.GameStatus
-import org.quizmania.rest.application.domain.GameUserEntity
-import org.quizmania.rest.port.`in`.FindGamePort
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
+/**
+ * GameCommandController violates hexagonal architecture by directly calling the command gateway. But adding use-cases,
+ * ports and command adapter seems useless since it is just a forwarding gateway without any logic
+ */
 @RestController
 @RequestMapping(value = ["/api/game"], produces = [MediaType.APPLICATION_JSON_VALUE])
 @Transactional
-class GameController(
+class GameCommandController(
   val commandGateway: CommandGateway,
-  val findGamePort: FindGamePort
 ) {
 
   companion object : KLogging()
@@ -56,26 +55,6 @@ class GameController(
     }
 
     return ResponseEntity.ok(gameId.toString());
-  }
-
-  @GetMapping("/")
-  fun search(
-    @RequestParam(
-      name = "gameStatus",
-      required = false
-    ) gameStatus: GameStatus?
-  ): ResponseEntity<List<GameDto>> {
-    val games = if (gameStatus != null) findGamePort.findByStatus(gameStatus) else findGamePort.findAll()
-    return ResponseEntity.ok(games.map { it.toDto() })
-  }
-
-  @GetMapping("/{gameId}")
-  fun get(@PathVariable("gameId") gameId: UUID): ResponseEntity<GameDto> {
-    findGamePort.findById(gameId)?.let {
-      return ResponseEntity.ok(it.toDto())
-    }
-
-    return ResponseEntity.notFound().build()
   }
 
   @PostMapping("/{gameId}/join")
@@ -196,36 +175,3 @@ data class AnswerOverrideDto(
   val userAnswerId: UUID,
   val answer: String
 )
-
-data class GameDto(
-  val id: UUID,
-  val name: String,
-  val maxPlayers: Int,
-  val numQuestions: Int,
-  val creator: String,
-  val moderator: String?,
-  val status: GameStatus,
-  val users: List<GameUserDto>,
-)
-
-data class GameUserDto(
-  val id: UUID,
-  val name: String,
-)
-
-fun GameEntity.toDto(): GameDto {
-  return GameDto(
-    id = gameId,
-    name = name,
-    maxPlayers = maxPlayers,
-    numQuestions = numQuestions,
-    creator = creator,
-    moderator = moderator,
-    status = status,
-    users = users.map { it.toDto() },
-  )
-}
-
-fun GameUserEntity.toDto(): GameUserDto {
-  return GameUserDto(gameUserId, username)
-}

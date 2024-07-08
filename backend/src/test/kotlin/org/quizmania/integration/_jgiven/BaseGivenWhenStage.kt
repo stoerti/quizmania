@@ -11,7 +11,8 @@ import org.quizmania.game.common.GameConfig
 import org.quizmania.game.common.GameId
 import org.quizmania.game.common.GameQuestionId
 import org.quizmania.game.common.QuestionSetId
-import org.quizmania.rest.adapter.`in`.rest.GameController
+import org.quizmania.rest.adapter.`in`.rest.GameCommandController
+import org.quizmania.rest.adapter.`in`.rest.GameReadController
 import org.quizmania.rest.adapter.`in`.rest.NewGameDto
 import org.quizmania.rest.application.domain.GameStatus
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +24,10 @@ import java.util.concurrent.TimeUnit
 class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
 
   @Autowired
-  private lateinit var gameController: GameController
+  private lateinit var gameCommandController: GameCommandController
+
+  @Autowired
+  private lateinit var gameReadController: GameReadController
 
   @ProvidedScenarioState
   private lateinit var gameId: GameId
@@ -59,7 +63,7 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
     moderated: Boolean = false
   ) = step {
     gameId = exchangeSuccessfully {
-      gameController.createGame(
+      gameCommandController.createGame(
         username,
         NewGameDto(
           UUID.randomUUID().toString(),
@@ -72,30 +76,34 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
     Awaitility.await()
       .atMost(10, TimeUnit.SECONDS)
       .untilAsserted {
-        executeSuccessfully { gameController.get(gameId) }
+        executeSuccessfully { gameReadController.get(gameId) }
       }
   }
 
-  fun `the game starts`() = step {
-    executeSuccessfully { gameController.startGame(gameId) }
+  fun `the game starts`(synchronizeWithProjection: Boolean = false) = step {
+    executeSuccessfully { gameCommandController.startGame(gameId) }
 
-    Awaitility.await()
-      .atMost(10, TimeUnit.SECONDS)
-      .untilAsserted {
-        val game = exchangeSuccessfully { gameController.get(gameId) }
-        assertThat(game.status).isEqualTo(GameStatus.STARTED)
-      }
+    if (synchronizeWithProjection) {
+      Awaitility.await()
+        .atMost(10, TimeUnit.SECONDS)
+        .untilAsserted {
+          val game = exchangeSuccessfully { gameReadController.get(gameId) }
+          assertThat(game.status).isEqualTo(GameStatus.STARTED)
+        }
+    }
   }
 
-  fun `user $ joins the game`(@Quoted username: String) = step {
-    executeSuccessfully { gameController.joinGame(gameId, username) }
+  fun `user $ joins the game`(@Quoted username: String, synchronizeWithProjection: Boolean = false) = step {
+    executeSuccessfully { gameCommandController.joinGame(gameId, username) }
 
-    Awaitility.await()
-      .atMost(10, TimeUnit.SECONDS)
-      .untilAsserted {
-        val game = exchangeSuccessfully { gameController.get(gameId) }
-        assertThat(game.users.filter { it.name == username }).isNotEmpty
-      }
+    if (synchronizeWithProjection) {
+      Awaitility.await()
+        .atMost(10, TimeUnit.SECONDS)
+        .untilAsserted {
+          val game = exchangeSuccessfully { gameReadController.get(gameId) }
+          assertThat(game.users.filter { it.name == username }).isNotEmpty
+        }
+    }
   }
 
   private fun <T> exchangeSuccessfully(function: () -> ResponseEntity<T>): T {
