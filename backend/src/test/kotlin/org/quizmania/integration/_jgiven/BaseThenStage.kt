@@ -7,8 +7,8 @@ import com.tngtech.jgiven.integration.spring.JGivenStage
 import io.toolisticon.testing.jgiven.step
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
-import org.quizmania.game.common.GameId
-import org.quizmania.game.common.GameQuestionId
+import org.quizmania.game.api.GameId
+import org.quizmania.game.api.GameQuestionId
 import org.quizmania.rest.adapter.`in`.rest.GameReadController
 import org.quizmania.rest.application.domain.GameStatus
 import org.springframework.beans.factory.annotation.Autowired

@@ -1,6 +1,6 @@
 package org.quizmania.rest.application.usecase
 
-import org.quizmania.game.common.GameId
+import org.quizmania.game.api.GameId
 import org.quizmania.rest.application.domain.Game
 import org.quizmania.rest.application.domain.GameStatus
 import org.quizmania.rest.port.`in`.FindGamePort

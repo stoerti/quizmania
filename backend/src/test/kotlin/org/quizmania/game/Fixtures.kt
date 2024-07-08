@@ -1,11 +1,7 @@
 package org.quizmania.game
 
 import org.quizmania.game.api.*
-import org.quizmania.game.common.*
-import org.quizmania.game.common.ChoiceQuestion
-import org.quizmania.game.common.EstimateQuestion
-import org.quizmania.game.common.FreeInputQuestion
-import org.quizmania.game.common.Question
+import org.quizmania.question.api.*
 import java.time.Instant
 import java.util.*
 

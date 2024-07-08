@@ -7,10 +7,10 @@ import com.tngtech.jgiven.integration.spring.JGivenStage
 import io.toolisticon.testing.jgiven.step
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility
-import org.quizmania.game.common.GameConfig
-import org.quizmania.game.common.GameId
-import org.quizmania.game.common.GameQuestionId
-import org.quizmania.game.common.QuestionSetId
+import org.quizmania.game.api.GameConfig
+import org.quizmania.game.api.GameId
+import org.quizmania.game.api.GameQuestionId
+import org.quizmania.question.api.QuestionSetId
 import org.quizmania.rest.adapter.`in`.rest.GameCommandController
 import org.quizmania.rest.adapter.`in`.rest.GameReadController
 import org.quizmania.rest.adapter.`in`.rest.NewGameDto

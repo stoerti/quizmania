@@ -3,7 +3,7 @@ package org.quizmania.rest.adapter.`in`.rest
 import com.fasterxml.jackson.annotation.JsonRawValue
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.axonframework.eventsourcing.eventstore.EventStore
-import org.quizmania.game.common.GameId
+import org.quizmania.game.api.GameId
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping

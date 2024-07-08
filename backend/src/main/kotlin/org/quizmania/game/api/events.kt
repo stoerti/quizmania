@@ -1,5 +1,7 @@
-package org.quizmania.game.common
+package org.quizmania.game.api
 
+import org.quizmania.question.api.Question
+import org.quizmania.question.api.QuestionId
 import java.time.Instant
 import java.util.*
 

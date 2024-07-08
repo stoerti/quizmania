@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonRawValue
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogging
 import org.quizmania.common.EventMetaData
-import org.quizmania.game.common.GameEvent
-import org.quizmania.game.common.GameId
+import org.quizmania.game.api.GameEvent
+import org.quizmania.game.api.GameId
 import org.quizmania.rest.port.out.GameChangedEventEmitterPort
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component

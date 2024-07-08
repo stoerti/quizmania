@@ -2,7 +2,6 @@ package org.quizmania.game.api
 
 import org.axonframework.modelling.command.AggregateIdentifier
 import org.axonframework.modelling.command.TargetAggregateIdentifier
-import org.quizmania.game.common.GameConfig
 import java.util.UUID
 
 sealed interface GameCommand {
@@ -10,12 +9,12 @@ sealed interface GameCommand {
 }
 
 data class CreateGameCommand(
-    @AggregateIdentifier
+  @AggregateIdentifier
     override val gameId: UUID,
-    val name: String,
-    val config: GameConfig,
-    val creatorUsername: String,
-    val moderatorUsername: String?
+  val name: String,
+  val config: GameConfig,
+  val creatorUsername: String,
+  val moderatorUsername: String?
 ): GameCommand
 
 data class AddUserCommand(

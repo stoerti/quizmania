@@ -1,6 +1,6 @@
 package org.quizmania.rest.application.domain
 
-import org.quizmania.game.common.*
+import org.quizmania.game.api.*
 
 class Game(
   val gameId: GameId,

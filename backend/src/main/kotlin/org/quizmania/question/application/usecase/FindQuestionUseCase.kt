@@ -1,7 +1,7 @@
 package org.quizmania.question.application.usecase
 
-import org.quizmania.game.common.Question
-import org.quizmania.game.common.QuestionId
+import org.quizmania.question.api.Question
+import org.quizmania.question.api.QuestionId
 import org.quizmania.question.port.`in`.FindQuestionPort
 import org.quizmania.question.port.out.QuestionRepository
 import org.springframework.stereotype.Component

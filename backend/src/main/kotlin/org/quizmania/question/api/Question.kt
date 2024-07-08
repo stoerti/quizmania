@@ -1,8 +1,8 @@
-package org.quizmania.game.common
+package org.quizmania.question.api
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import java.util.*
+import org.quizmania.question.api.QuestionId
 
 enum class QuestionType(
     val minPlayers: Int
@@ -35,23 +35,23 @@ sealed class AbstractQuestion(
 ) : Question
 
 data class ChoiceQuestion(
-    override val id: QuestionId,
-    override val phrase: String,
-    override val imagePath: String? = null,
-    override val correctAnswer: String,
-    val answerOptions: List<String>
+  override val id: QuestionId,
+  override val phrase: String,
+  override val imagePath: String? = null,
+  override val correctAnswer: String,
+  val answerOptions: List<String>
 ) : AbstractQuestion(QuestionType.CHOICE)
 
 data class FreeInputQuestion(
-    override val id: QuestionId,
-    override val phrase: String,
-    override val imagePath: String? = null,
-    override val correctAnswer: String,
+  override val id: QuestionId,
+  override val phrase: String,
+  override val imagePath: String? = null,
+  override val correctAnswer: String,
 ) : AbstractQuestion(QuestionType.FREE_INPUT)
 
 data class EstimateQuestion(
-    override val id: QuestionId,
-    override val phrase: String,
-    override val imagePath: String? = null,
-    override val correctAnswer: String,
+  override val id: QuestionId,
+  override val phrase: String,
+  override val imagePath: String? = null,
+  override val correctAnswer: String,
 ) : AbstractQuestion(QuestionType.ESTIMATE)

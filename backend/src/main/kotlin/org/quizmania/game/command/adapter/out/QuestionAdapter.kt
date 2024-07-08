@@ -1,10 +1,10 @@
 package org.quizmania.game.command.adapter.out
 
 import org.quizmania.game.command.port.out.QuestionPort
-import org.quizmania.game.common.Question
-import org.quizmania.game.common.QuestionId
-import org.quizmania.game.common.QuestionSet
-import org.quizmania.game.common.QuestionSetId
+import org.quizmania.question.api.Question
+import org.quizmania.question.api.QuestionId
+import org.quizmania.question.api.QuestionSet
+import org.quizmania.question.api.QuestionSetId
 import org.quizmania.question.port.`in`.FindQuestionPort
 import org.quizmania.question.port.`in`.FindQuestionSetPort
 import org.springframework.stereotype.Component

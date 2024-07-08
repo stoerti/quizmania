@@ -7,8 +7,8 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.quizmania.game.*
 import org.quizmania.game.command.application.domain.GameQuestion
 import org.quizmania.game.command.application.domain.UserAnswer
-import org.quizmania.game.common.EstimateQuestion
-import org.quizmania.game.common.FreeInputQuestion
+import org.quizmania.question.api.EstimateQuestion
+import org.quizmania.question.api.FreeInputQuestion
 import java.util.*
 
 class GameQuestionTest {

@@ -1,7 +1,7 @@
 package org.quizmania.question.port.`in`
 
-import org.quizmania.game.common.QuestionSet
-import org.quizmania.game.common.QuestionSetId
+import org.quizmania.question.api.QuestionSet
+import org.quizmania.question.api.QuestionSetId
 
 interface FindQuestionSetPort {
 

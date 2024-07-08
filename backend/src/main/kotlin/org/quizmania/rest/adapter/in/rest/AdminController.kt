@@ -3,8 +3,7 @@ package org.quizmania.rest.adapter.`in`.rest
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.quizmania.game.api.AddUserCommand
 import org.quizmania.game.api.CreateGameCommand
-import org.quizmania.game.common.GameConfig
-import org.slf4j.LoggerFactory
+import org.quizmania.game.api.GameConfig
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping

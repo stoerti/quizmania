@@ -1,6 +1,6 @@
 package org.quizmania.rest.adapter.`in`.rest
 
-import org.quizmania.game.common.QuestionSetId
+import org.quizmania.question.api.QuestionSetId
 import org.quizmania.rest.port.out.QuestionPort
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity

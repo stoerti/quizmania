@@ -3,9 +3,10 @@ package org.quizmania.game.command.application.domain
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.modelling.command.AggregateLifecycle
 import org.axonframework.modelling.command.EntityId
-import org.quizmania.game.common.*
+import org.quizmania.game.api.*
+import org.quizmania.question.api.Question
+import org.quizmania.question.api.QuestionType
 import java.util.*
-import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 data class GameQuestion(

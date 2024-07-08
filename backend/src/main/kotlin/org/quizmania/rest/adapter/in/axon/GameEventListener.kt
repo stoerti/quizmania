@@ -6,7 +6,7 @@ import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventhandling.SequenceNumber
 import org.axonframework.eventhandling.Timestamp
 import org.quizmania.common.EventMetaData
-import org.quizmania.game.common.*
+import org.quizmania.game.api.*
 import org.quizmania.rest.port.`in`.GameEventHappenedInPort
 import org.springframework.stereotype.Component
 import java.time.Instant

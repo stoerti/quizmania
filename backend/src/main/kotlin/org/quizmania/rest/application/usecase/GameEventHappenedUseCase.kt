@@ -1,7 +1,7 @@
 package org.quizmania.rest.application.usecase
 
 import org.quizmania.common.EventMetaData
-import org.quizmania.game.common.*
+import org.quizmania.game.api.*
 import org.quizmania.rest.application.domain.Game
 import org.quizmania.rest.port.`in`.GameEventHappenedInPort
 import org.quizmania.rest.port.out.GameChangedEventEmitterPort

@@ -8,7 +8,6 @@ import org.mockito.Mockito
 import org.mockito.kotlin.whenever
 import org.quizmania.game.*
 import org.quizmania.game.GameCommandFixtures.Companion.answerQuestion
-import org.quizmania.game.GameCommandFixtures.Companion.closeQuestion
 import org.quizmania.game.GameCommandFixtures.Companion.rateQuestion
 import org.quizmania.game.GameCommandFixtures.Companion.startGame
 import org.quizmania.game.GameEventFixtures.Companion.gameCanceled
@@ -23,8 +22,8 @@ import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
 import org.quizmania.game.QuestionFixtures.Companion.estimateQuestion
 import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
 import org.quizmania.game.QuestionFixtures.Companion.questionSet
+import org.quizmania.game.api.*
 import org.quizmania.game.command.application.domain.GameAggregate
-import org.quizmania.game.common.*
 import org.quizmania.game.command.port.out.QuestionPort
 import java.util.*
 

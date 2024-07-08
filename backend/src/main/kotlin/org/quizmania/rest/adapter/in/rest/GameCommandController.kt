@@ -3,9 +3,9 @@ package org.quizmania.rest.adapter.`in`.rest
 import mu.KLogging
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.quizmania.game.api.*
-import org.quizmania.game.common.GameConfig
-import org.quizmania.game.common.GameQuestionId
-import org.quizmania.game.common.GameUserId
+import org.quizmania.game.api.GameConfig
+import org.quizmania.game.api.GameQuestionId
+import org.quizmania.game.api.GameUserId
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
