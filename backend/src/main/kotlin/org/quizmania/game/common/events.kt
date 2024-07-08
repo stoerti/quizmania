@@ -1,5 +1,6 @@
 package org.quizmania.game.common
 
+import java.time.Instant
 import java.util.*
 
 sealed interface GameEvent {
@@ -47,6 +48,8 @@ data class QuestionAskedEvent(
   override val gameId: GameId,
   override val gameQuestionId: GameQuestionId,
   val gameQuestionNumber: GameQuestionNumber,
+  val questionTimestamp: Instant,
+  val timeToAnswer: Long,
   val question: Question,
 ) : GameQuestionEvent
 

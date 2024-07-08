@@ -1,5 +1,6 @@
 package org.quizmania.rest.application.usecase
 
+import org.quizmania.common.EventMetaData
 import org.quizmania.game.common.*
 import org.quizmania.rest.application.domain.GameEntity
 import org.quizmania.rest.port.`in`.GameEventHappenedInPort
@@ -14,35 +15,37 @@ class GameEventHappenedUseCase(
   val gameChangedEventEmitterPort: GameChangedEventEmitterPort
 ) : GameEventHappenedInPort {
 
-  private fun updateAndPropagate(evt: GameEvent, transform: (GameEntity) -> (Unit)) {
+  private fun updateAndPropagate(evt: GameEvent, metadata: EventMetaData, transform: (GameEntity) -> (Unit)) {
     gameRepository.findById(evt.gameId)?.let { game ->
       transform.invoke(game)
       gameRepository.save(game)
-      gameChangedEventEmitterPort.emitGameChangeEventToPlayers(evt, game)
+      gameChangedEventEmitterPort.emitGameChangeEventToPlayers(evt, metadata, game)
     }
   }
 
-  override fun gameCreated(evt: GameCreatedEvent) {
+  override fun gameCreated(evt: GameCreatedEvent, metadata: EventMetaData) {
     val game = GameEntity(evt)
     gameRepository.save(game)
-    gameChangedEventEmitterPort.emitGameChangeEventToPlayers(evt, game)
+    gameChangedEventEmitterPort.emitGameChangeEventToPlayers(evt, metadata, game)
   }
 
-  override fun gameStarted(evt: GameStartedEvent) = updateAndPropagate(evt) { it.on(evt) }
+  override fun gameStarted(evt: GameStartedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
 
-  override fun gameEnded(evt: GameEndedEvent) = updateAndPropagate(evt) { it.on(evt) }
+  override fun gameEnded(evt: GameEndedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
 
-  override fun gameCanceled(evt: GameCanceledEvent) = updateAndPropagate(evt) { it.on(evt) }
+  override fun gameCanceled(evt: GameCanceledEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
 
-  override fun userAdded(evt: UserAddedEvent) = updateAndPropagate(evt) { it.on(evt) }
+  override fun userAdded(evt: UserAddedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
 
-  override fun userRemoved(evt: UserRemovedEvent) = updateAndPropagate(evt) { it.on(evt) }
+  override fun userRemoved(evt: UserRemovedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
 
-  override fun questionAsked(evt: QuestionAskedEvent, eventTimestamp: Instant) = updateAndPropagate(evt) { it.on(evt, eventTimestamp) }
+  override fun questionAsked(evt: QuestionAskedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt, metadata.timestamp) }
 
-  override fun questionAnswered(evt: QuestionAnsweredEvent) = updateAndPropagate(evt) { it.on(evt) }
-  override fun questionAnswerOverridden(evt: QuestionAnswerOverriddenEvent) = updateAndPropagate(evt) { it.on(evt) }
+  override fun questionAnswered(evt: QuestionAnsweredEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
 
-  override fun questionClosed(evt: QuestionClosedEvent) = updateAndPropagate(evt) { it.on(evt) }
-  override fun questionRated(evt: QuestionRatedEvent) = updateAndPropagate(evt) { it.on(evt) }
+  override fun questionAnswerOverridden(evt: QuestionAnswerOverriddenEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
+
+  override fun questionClosed(evt: QuestionClosedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
+
+  override fun questionRated(evt: QuestionRatedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
 }

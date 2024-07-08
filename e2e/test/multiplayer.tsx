@@ -10,7 +10,7 @@ Scenario('multiplayer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   loginPage.logInWithUsername(username1)
   I.wait(1)
 
-  lobbyPage.createGame(gameName)
+  lobbyPage.createGame(gameName, "test01")
   I.wait(1)
 
   session('player2', () => {
@@ -42,7 +42,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   loginPage.logInWithUsername(moderator)
   I.wait(1)
 
-  lobbyPage.createGame(gameName, true)
+  lobbyPage.createGame(gameName, "test01", true)
   I.wait(1)
 
   session('player1', () => {
@@ -102,7 +102,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.waitForText("900", 5, "tr:has-text('"+username2+"')")
   I.waitForText("1000", 5, "tr:has-text('"+username3+"')")
 
-  I.wait(10)
+  I.wait(1)
   gameRoomPage.nextQuestion()
 
   session('player1', () => {
@@ -111,7 +111,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   session('player2', () => {
     gameRoomPage.answerFreeQuestion("NielArmstrong")
   })
-  I.wait(15)
+  I.wait(6)
 
   I.waitForText("Neil armstrong", 5, "tr:has-text('"+username1+"')")
   I.waitForText("NielArmstrong", 5, "tr:has-text('"+username2+"')")

@@ -1,5 +1,5 @@
-import {GameService} from "../../services/GameService";
-import {GameDto, GameQuestionDto} from "../../services/GameServiceTypes";
+import {GameCommandService} from "../../services/GameCommandService";
+import {Game, GameQuestion} from "../../domain/GameModel";
 import React from "react";
 import Cookies from "js-cookie";
 import {AppBar, Box, Toolbar, Typography} from "@mui/material";
@@ -8,12 +8,12 @@ import {PlayerGameRoomPanel} from "./gameroom/PlayerGameRoomPanel";
 
 
 export type GameRoomPageProps = {
-  game: GameDto,
-  gameService: GameService
+  game: Game,
+  gameCommandService: GameCommandService
 }
 
-const findCurrentQuestion = (game: GameDto): GameQuestionDto | undefined => {
-  return [...game.questions].sort((q1, q2) => q2.questionNumber - q1.questionNumber)[0]
+const findCurrentQuestion = (game: Game): GameQuestion | undefined => {
+  return [...game.questions].sort((q1, q2) => q2.gameQuestionNumber - q1.gameQuestionNumber)[0]
 }
 
 export const GameRoomPage = (props: GameRoomPageProps) => {
@@ -24,10 +24,10 @@ export const GameRoomPage = (props: GameRoomPageProps) => {
 
   let container
   if (props.game.moderator == username) {
-    container = <ModeratorGameRoomPanel game={props.game} currentQuestion={currentQuestion} gameService={props.gameService}/>
+    container = <ModeratorGameRoomPanel game={props.game} currentQuestion={currentQuestion} gameService={props.gameCommandService}/>
   } else {
-    let currentUser = props.game.users.find(user => user.name === username)!
-    container = <PlayerGameRoomPanel game={props.game} user={currentUser} currentQuestion={currentQuestion} gameService={props.gameService}/>
+    let currentUser = props.game.players.find(user => user.name === username)!
+    container = <PlayerGameRoomPanel game={props.game} user={currentUser} currentQuestion={currentQuestion} gameService={props.gameCommandService}/>
   }
 
   return (

@@ -6,6 +6,7 @@ import org.quizmania.game.common.ChoiceQuestion
 import org.quizmania.game.common.EstimateQuestion
 import org.quizmania.game.common.FreeInputQuestion
 import org.quizmania.game.common.Question
+import java.time.Instant
 import java.util.*
 
 val GAME_UUID: GameId = UUID.randomUUID()
@@ -135,6 +136,8 @@ class GameEventFixtures {
         gameId = GAME_UUID,
         gameQuestionId = gameQuestionId,
         gameQuestionNumber = gameQuestionNumber,
+        questionTimestamp = Instant.now(),
+        timeToAnswer = 10000,
         question = question
       )
     }

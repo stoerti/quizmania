@@ -1,13 +1,4 @@
-import {Client} from "@stomp/stompjs";
-import {
-    GameCanceledEvent, GameDto,
-    GameEndedEvent,
-    GameStartedEvent, NewAnswerDto, NewGameDto, QuestionAnsweredEvent, QuestionAskedEvent, QuestionClosedEvent,
-    UserAddedEvent,
-    UserRemovedEvent
-} from "./GameServiceTypes";
 import {QuestionSetDto} from "./QuestionSetServiceTypes";
-
 
 export class QuestionSetService {
 

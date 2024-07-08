@@ -17,8 +17,8 @@ import Refresh from "@mui/icons-material/Refresh"
 import React, {useEffect} from "react";
 import {GameCreationDialog} from "./GameCreationDialog";
 import {useSnackbar} from "material-ui-snackbar-provider";
-import {GameService} from "../services/GameService";
-import {GameDto, NewGameDto} from "../services/GameServiceTypes";
+import {GameCommandService} from "../services/GameCommandService";
+import {GameDto, NewGameCommand} from "../services/GameCommandService";
 import {TransferWithinAStation} from "@mui/icons-material";
 
 type GameSelectionContainerProps = {
@@ -88,7 +88,7 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
   const [games, setGames] = React.useState<GameDto[]>([])
 
   const snackbar = useSnackbar()
-  const gameService = new GameService()
+  const gameService = new GameCommandService()
 
   useEffect(() => {
     gameService.searchOpenGames(setGames)
@@ -112,7 +112,7 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
     setNewGameDialogOpen(false)
   }
 
-  const onCreateNewGame = (newGame: NewGameDto) => {
+  const onCreateNewGame = (newGame: NewGameCommand) => {
     gameService.createNewGame(newGame, gameSelected, (error) => {
     })
     snackbar.showMessage(

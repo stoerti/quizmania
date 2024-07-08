@@ -4,8 +4,8 @@
   "minPlayers": 1,
   "questions": [
     "choice_01",
-    "freeinput_01",
     "estimate_01",
+    "freeinput_03",
     "freeinput_02",
     "freeinput_image_01"
   ]

@@ -1,11 +1,16 @@
 const { I } = inject();
 
-export function createGame(gameName: string, moderated: boolean = false) {
+export function createGame(gameName: string, questionSet: string, moderated: boolean = false) {
   I.click({id: 'createGame'});
 
   I.fillField({id: "gameName"}, gameName)
   I.fillField({id: "maxPlayers"}, 3)
   I.fillField({id: "numQuestions"}, 3)
+  I.fillField({id: "numSecondsToAnswer"}, 5)
+
+  I.click({id: 'questionSet'})
+  I.click({xpath: '//ul//li[@data-value="'+questionSet+'"]'})
+
   if (moderated) {
     I.click({id: "moderator"})
   }

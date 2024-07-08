@@ -1,9 +1,8 @@
-import {GameDto, GameQuestionDto, QuestionStatus} from "../../../services/GameServiceTypes";
-import {GameService} from "../../../services/GameService";
+import {Game, GameQuestion, QuestionStatus} from "../../../domain/GameModel";
+import {GameCommandService} from "../../../services/GameCommandService";
 import {
   Box,
   Button,
-  CircularProgress,
   IconButton,
   List,
   ListItem,
@@ -28,39 +27,34 @@ import Countdown from "react-countdown";
 import {QuestionCountdownBar} from "../question/QuestionCountdownBar";
 
 export type ModeratorGameRoomPanelProps = {
-  game: GameDto,
-  currentQuestion: GameQuestionDto,
-  gameService: GameService
+  game: Game,
+  currentQuestion: GameQuestion,
+  gameService: GameCommandService
 }
 
 
 export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
-  const getUsername = (gameUserId: string): string => {
-    return props.game.users.find(user => user.id === gameUserId)?.name ?? ''
-  }
-
-  const alreadyAnswered = (gameUserId: string): boolean => {
-    return question.userAnswers.find(answer => answer.gameUserId === gameUserId) !== undefined
-  }
 
   const game = props.game
   const question = props.currentQuestion
 
   const theme = useTheme();
-  if (question.status == QuestionStatus.OPEN) {
+  if (question == undefined) {
+    return <div>Waiting for first question</div>
+  } else if (question.status == QuestionStatus.OPEN) {
     return <Box>
-      <QuestionPhrasePanel question={question} />
+      <QuestionPhrasePanel gameQuestion={question}/>
       <Countdown
-        date={Date.parse(question.questionAsked) + question.questionTimeout * 1000}
+        date={question.questionAsked.getTime() + question.questionTimeout}
         intervalDelay={0}
         precision={3}
-        renderer={p => <QuestionCountdownBar timeLeft={p.total} totalTime={question.questionTimeout * 1000} />}
+        renderer={p => <QuestionCountdownBar timeLeft={p.total} totalTime={question.questionTimeout}/>}
       />
       <Paper sx={{padding: 2}}>
         <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
           <Box sx={{display: 'flex', justifyContent: 'center'}}>
             <Button id="closeQuestion" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained"
-                    onClick={() => props.gameService.closeQuestion(props.game.id, question.id)}
+                    onClick={() => props.gameService.closeQuestion(props.game.id, question.gameQuestionId)}
             >Close question</Button>
           </Box>
           <Table aria-label="simple table">
@@ -71,9 +65,9 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {props.game.users.sort((a1, a2) => a1.name.localeCompare(a2.name)).map(user => {
+              {props.game.players.sort((a1, a2) => a1.name.localeCompare(a2.name)).map(user => {
                 let icon;
-                if (alreadyAnswered(user.id)) {
+                if (question.hasPlayerAlreadyAnswered(user.id)) {
                   icon = <MarkEmailRead color='success'/>
                 } else {
                   icon = <QuestionMark color='info'/>
@@ -97,13 +91,13 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
   } else if (question.status == QuestionStatus.CLOSED) {
     return (
       <Stack spacing={2}>
-        <QuestionPhrasePanel question={question}/>
+        <QuestionPhrasePanel gameQuestion={question}/>
         <Button id="rateQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
-                onClick={() => props.gameService.rateQuestion(props.game.id, question.id)}
+                onClick={() => props.gameService.rateQuestion(props.game.id, question.gameQuestionId)}
         >Rate question</Button>
         <List dense>
           <ListItem key="correctAnswer">
-            <ListItemText primary={question.correctAnswer} secondary='Answer'/>
+            <ListItemText primary={question.question.correctAnswer} secondary='Answer'/>
           </ListItem>
         </List>
         <Table aria-label="simple table">
@@ -116,17 +110,17 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {[...question.userAnswers].sort((a1, a2) => getUsername(a1.gameUserId).localeCompare(getUsername(a2.gameUserId))).map(answer => {
-              let answerCorrect = answer.answer.toLowerCase() == question.correctAnswer.toLowerCase() // TODO better check if answer is correct
+            {[...question.answers].sort((a1, a2) => game.findPlayerName(a1.gamePlayerId).localeCompare(game.findPlayerName(a2.gamePlayerId))).map(answer => {
+              let answerCorrect = answer.answer.toLowerCase() == question.question.correctAnswer.toLowerCase() // TODO better check if answer is correct
               let icon = answerCorrect ? <CheckCircle color='success'/> : <Cancel color='error'/>
               let action = !answerCorrect ?
                 <IconButton
                   onClick={() => props.gameService.overrideAnswer({
                     gameId: game.id,
-                    gameQuestionId: question.id,
-                    gameUserId: answer.gameUserId,
+                    gameQuestionId: question.gameQuestionId,
+                    gameUserId: answer.gamePlayerId,
                     userAnswerId: answer.id,
-                    answer: question.correctAnswer
+                    answer: question.question.correctAnswer
                   }, () => {
                   })}
                 ><Build color='success'></Build></IconButton> : undefined
@@ -135,7 +129,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
                   <TableCell align="left">{icon}</TableCell>
                   <TableCell component="th" scope="row">
                     <Typography variant="body1" component="div">
-                      {getUsername(answer.gameUserId)}
+                      {game.findPlayerName(answer.gamePlayerId)}
                     </Typography>
                   </TableCell>
                   <TableCell component="th" scope="row">
@@ -154,7 +148,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
   } else if (question.status == QuestionStatus.RATED) {
     return (
       <Stack spacing={2}>
-        <QuestionPhrasePanel question={question}/>
+        <QuestionPhrasePanel gameQuestion={question}/>
         <div style={{display: "flex", alignItems: "center"}}>
           <Button id="nextQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
                   onClick={() => props.gameService.askNextQuestion(props.game.id, () => {
@@ -163,7 +157,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
         </div>
         <List dense>
           <ListItem key="correctAnswer">
-            <ListItemText primary={question.correctAnswer} secondary='Answer'/>
+            <ListItemText primary={question.question.correctAnswer} secondary='Answer'/>
           </ListItem>
         </List>
         <Table aria-label="simple table">
@@ -176,14 +170,14 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {[...question.userAnswers].sort((a1, a2) => getUsername(a1.gameUserId).localeCompare(getUsername(a2.gameUserId))).map(answer => {
+            {[...question.answers].sort((a1, a2) => game.findPlayerName(a1.gamePlayerId).localeCompare(game.findPlayerName(a2.gamePlayerId))).map(answer => {
               let icon = answer.points > 0 ? <CheckCircle color='success'/> : <Cancel color='error'/>
               return (
                 <TableRow key={answer.id} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
                   <TableCell align="left">{icon}</TableCell>
                   <TableCell component="th" scope="row">
                     <Typography variant="body1" component="div">
-                      {getUsername(answer.gameUserId)}
+                      {game.findPlayerName(answer.gamePlayerId)}
                     </Typography>
                   </TableCell>
                   <TableCell component="th" scope="row">

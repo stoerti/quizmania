@@ -11,6 +11,7 @@ import org.quizmania.game.api.*
 import org.quizmania.game.command.port.out.QuestionPort
 import org.quizmania.game.common.*
 import java.time.Duration
+import java.time.Instant
 import java.util.*
 import kotlin.math.log
 
@@ -277,6 +278,8 @@ internal class GameAggregate {
         gameId = gameId,
         gameQuestionId = UUID.randomUUID(),
         gameQuestionNumber = askedQuestions.size + 1,
+        questionTimestamp = Instant.now(),
+        timeToAnswer = config.secondsToAnswer * 1000,
         question = question
       )
     )

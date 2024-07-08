@@ -11,14 +11,14 @@ import {
   TextField
 } from "@mui/material";
 import React, {useEffect} from "react";
-import {NewGameDto} from "../services/GameServiceTypes";
+import {NewGameCommand} from "../services/GameCommandService";
 import {QuestionSetDto} from "../services/QuestionSetServiceTypes";
 import {QuestionSetService} from "../services/QuestionSetService";
 
 type GameCreationDialogProps = {
   open: boolean
   onClose: () => void
-  onCreateGame: (newGame: NewGameDto) => void
+  onCreateGame: (newGame: NewGameCommand) => void
 }
 
 
@@ -112,7 +112,7 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
                   id="questionSet"
                   name="questionSet"
                   label="Question set"
-                  value={questionSets != undefined && questionSets.length > 0 ? questionSets[0].id : undefined}
+                  defaultValue={questionSets != undefined && questionSets.length > 0 ? questionSets[0].id : undefined}
           >
             {questionSets.map((row) => (
               <MenuItem key={row.id} value={row.id}>{row.name}</MenuItem>

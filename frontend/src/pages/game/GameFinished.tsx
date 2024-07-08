@@ -1,5 +1,5 @@
-import {GameDto} from "../../services/GameServiceTypes";
-import {GameService} from "../../services/GameService";
+import {Game} from "../../domain/GameModel";
+import {GameCommandService} from "../../services/GameCommandService";
 import React from "react";
 import {
   AppBar,
@@ -18,8 +18,8 @@ import EmojiEvents from "@mui/icons-material/EmojiEvents";
 import {amber, brown, grey} from "@mui/material/colors";
 
 export type GameFinishedPageProps = {
-  game: GameDto,
-  gameService: GameService,
+  game: Game,
+  gameCommandService: GameCommandService,
   onClickLeaveGame: () => void
 }
 
@@ -54,7 +54,7 @@ export const GameFinishedPage = (props: GameFinishedPageProps) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {[...props.game.users].sort((u1, u2) => u2.points - u1.points).map((row, index) => {
+                {[...props.game.players].sort((u1, u2) => u2.points - u1.points).map((row, index) => {
                   let cup;
                   switch (index) {
                     case 0:

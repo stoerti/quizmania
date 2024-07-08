@@ -1,4 +1,4 @@
-import {GameService} from "../../services/GameService";
+import {GameCommandService} from "../../services/GameCommandService";
 import Cookies from "js-cookie";
 import {
     AppBar,
@@ -18,22 +18,22 @@ import Numbers from "@mui/icons-material/Numbers";
 import RecordVoiceOver from "@mui/icons-material/RecordVoiceOver";
 import Person from "@mui/icons-material/Person";
 import React from "react";
-import {GameDto} from "../../services/GameServiceTypes";
+import {Game} from "../../domain/GameModel";
 
 export type GameLobbyPageProps = {
-    game: GameDto,
-    gameService: GameService
+    game: Game,
+    gameSCommandervice: GameCommandService
 }
 
 export const GameLobbyPage = (props: GameLobbyPageProps) => {
 
     const onClickLeaveGame = () => {
-        props.gameService.leaveGame(props.game.id, () => {
+        props.gameSCommandervice.leaveGame(props.game.id, () => {
         })
     }
 
     const onClickStartGame = () => {
-        props.gameService.startGame(props.game.id, () => {
+        props.gameSCommandervice.startGame(props.game.id, () => {
         })
     }
 
@@ -75,7 +75,7 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
                             <Numbers/>
                         </ListItemIcon>
                         <ListItemText
-                            primary={props.game.numQuestions}
+                            primary={props.game.config.numQuestions}
                             secondary='number of questions'
                         />
                     </ListItem>
@@ -94,7 +94,7 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
                     Participants
                 </Typography>
                 <List dense={false}>
-                    {props.game.users.map((row) => (
+                    {props.game.players.map((row) => (
                         <ListItem key={row.id}>
                             <ListItemIcon>
                                 <Person/>

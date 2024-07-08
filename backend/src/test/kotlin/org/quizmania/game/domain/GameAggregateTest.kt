@@ -92,6 +92,7 @@ class GameAggregateTest {
         whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
 
         fixture.registerIgnoredField(QuestionAskedEvent::class.java, "gameQuestionId")
+        fixture.registerIgnoredField(QuestionAskedEvent::class.java, "questionTimestamp")
         fixture.given(gameCreated(), userAdded(USERNAME_1, GAME_USER_1), userAdded(USERNAME_2, GAME_USER_2))
             .`when`(startGame())
             .expectEvents(gameStarted(), questionAsked(UUID.randomUUID(), 1, question))
