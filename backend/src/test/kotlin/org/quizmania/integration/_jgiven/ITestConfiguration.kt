@@ -1,15 +1,8 @@
 package org.quizmania.integration._jgiven
 
-import org.axonframework.common.transaction.TransactionManager
-import org.axonframework.config.ConfigurationScopeAwareProvider
-import org.axonframework.config.DefaultConfigurer
-import org.axonframework.deadline.DeadlineManager
-import org.axonframework.deadline.SimpleDeadlineManager
 import org.axonframework.eventhandling.tokenstore.inmemory.InMemoryTokenStore
 import org.axonframework.eventsourcing.eventstore.inmemory.InMemoryEventStorageEngine
 import org.axonframework.modelling.saga.repository.inmemory.InMemorySagaStore
-import org.axonframework.spring.config.SpringConfigurer
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
 

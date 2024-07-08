@@ -7,17 +7,13 @@ import com.tngtech.jgiven.integration.spring.JGivenStage
 import io.toolisticon.testing.jgiven.step
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility
-import org.junit.Test
 import org.quizmania.game.common.GameConfig
 import org.quizmania.game.common.GameId
 import org.quizmania.game.common.GameQuestionId
 import org.quizmania.game.common.QuestionSetId
-import org.quizmania.rest.adapter.`in`.rest.AnswerDto
-import org.quizmania.rest.adapter.`in`.rest.AnswerOverrideDto
 import org.quizmania.rest.adapter.`in`.rest.GameController
 import org.quizmania.rest.adapter.`in`.rest.NewGameDto
 import org.quizmania.rest.application.domain.GameStatus
-import org.quizmania.rest.application.domain.QuestionStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import java.util.*
@@ -88,7 +84,6 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
       .untilAsserted {
         val game = exchangeSuccessfully { gameController.get(gameId) }
         assertThat(game.status).isEqualTo(GameStatus.STARTED)
-        assertThat(game.questions).hasSize(1)
       }
   }
 
@@ -101,53 +96,6 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
         val game = exchangeSuccessfully { gameController.get(gameId) }
         assertThat(game.users.filter { it.name == username }).isNotEmpty
       }
-  }
-
-  fun `the user $ answers current question with $`(@Quoted username: String, @Quoted answer: String) = step {
-    val game = exchangeSuccessfully { gameController.get(gameId) }
-    val currentQuestion = game.questions.last()
-
-    executeSuccessfully { gameController.answerQuestion(gameId, username, AnswerDto(currentQuestion.id, answer)) }
-
-    lastAnsweredQuestionId = currentQuestion.id
-  }
-
-  fun `the moderator overrides the last answer of user $ with $`(@Quoted username: String, @Quoted answer: String) = step {
-    val game = exchangeSuccessfully { gameController.get(gameId) }
-    val currentQuestion = game.questions.last()
-    val user = game.users.first { it.name == username }
-    val userAnswer = currentQuestion.userAnswers.first { it.gameUserId == user.id }
-
-    executeSuccessfully { gameController.overrideAnswer(gameId, AnswerOverrideDto(currentQuestion.id, user.id, userAnswer.id, answer)) }
-  }
-
-  fun `the moderator closes the current question`() = step {
-    val game = exchangeSuccessfully { gameController.get(gameId) }
-    val currentQuestion = game.questions.last()
-
-    executeSuccessfully { gameController.closeQuestion(gameId, currentQuestion.id) }
-  }
-
-  fun `the moderator rates the current question`() = step {
-    val game = exchangeSuccessfully { gameController.get(gameId) }
-    val currentQuestion = game.questions.last()
-
-    executeSuccessfully { gameController.rateQuestion(gameId, currentQuestion.id) }
-  }
-
-  fun `the next question is asked`(wait: Boolean = true) = step {
-    executeSuccessfully { gameController.askNextQuestion(gameId) }
-
-    if (wait) {
-      Awaitility.await()
-        .atMost(10, TimeUnit.SECONDS)
-        .untilAsserted {
-          val game = exchangeSuccessfully { gameController.get(gameId) }
-          val currentQuestion = game.questions.last()
-
-          assertThat(currentQuestion.status).isEqualTo(QuestionStatus.OPEN)
-        }
-    }
   }
 
   private fun <T> exchangeSuccessfully(function: () -> ResponseEntity<T>): T {

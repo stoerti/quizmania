@@ -17,9 +17,9 @@ import Refresh from "@mui/icons-material/Refresh"
 import React, {useEffect} from "react";
 import {GameCreationDialog} from "./GameCreationDialog";
 import {useSnackbar} from "material-ui-snackbar-provider";
-import {GameCommandService} from "../services/GameCommandService";
-import {GameDto, NewGameCommand} from "../services/GameCommandService";
+import {GameCommandService, NewGameCommand} from "../services/GameCommandService";
 import {TransferWithinAStation} from "@mui/icons-material";
+import {GameDto, GameOverviewService} from "../services/GameOverviewService";
 
 type GameSelectionContainerProps = {
   games: GameDto[]
@@ -88,10 +88,11 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
   const [games, setGames] = React.useState<GameDto[]>([])
 
   const snackbar = useSnackbar()
-  const gameService = new GameCommandService()
+  const gameCommandService = new GameCommandService()
+  const gameOverviewService = new GameOverviewService()
 
   useEffect(() => {
-    gameService.searchOpenGames(setGames)
+    gameOverviewService.searchOpenGames(setGames)
   }, []);
 
   const onButtonClickNewGame = () => {
@@ -99,11 +100,11 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
   }
 
   const onButtonClickReload = () => {
-    gameService.searchOpenGames(setGames)
+    gameOverviewService.searchOpenGames(setGames)
   }
 
   const onButtonClickJoinGame = (gameId: string) => {
-    gameService.joinGame(gameId, () => {
+    gameCommandService.joinGame(gameId, () => {
       props.onGameSelected(gameId)
     })
   }
@@ -113,7 +114,7 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
   }
 
   const onCreateNewGame = (newGame: NewGameCommand) => {
-    gameService.createNewGame(newGame, gameSelected, (error) => {
+    gameCommandService.createNewGame(newGame, gameSelected, (error) => {
     })
     snackbar.showMessage(
       `Created game ${newGame.name} for ${newGame.config.maxPlayers} players, ${newGame.config.numQuestions} questions and ${newGame.withModerator ? 'with' : 'without'} moderator`

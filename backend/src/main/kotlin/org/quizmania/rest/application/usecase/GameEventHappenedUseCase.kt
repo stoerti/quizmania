@@ -39,13 +39,13 @@ class GameEventHappenedUseCase(
 
   override fun userRemoved(evt: UserRemovedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
 
-  override fun questionAsked(evt: QuestionAskedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt, metadata.timestamp) }
+  override fun questionAsked(evt: QuestionAskedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { }
 
-  override fun questionAnswered(evt: QuestionAnsweredEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
+  override fun questionAnswered(evt: QuestionAnsweredEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { }
 
-  override fun questionAnswerOverridden(evt: QuestionAnswerOverriddenEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
+  override fun questionAnswerOverridden(evt: QuestionAnswerOverriddenEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { }
 
-  override fun questionClosed(evt: QuestionClosedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
+  override fun questionClosed(evt: QuestionClosedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { }
 
-  override fun questionRated(evt: QuestionRatedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { it.on(evt) }
+  override fun questionRated(evt: QuestionRatedEvent, metadata: EventMetaData) = updateAndPropagate(evt, metadata) { }
 }

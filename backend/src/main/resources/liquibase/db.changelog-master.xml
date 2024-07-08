@@ -28,43 +28,6 @@
                 <constraints primaryKey="true" primaryKeyName="GAME_USER_PK" />
             </column>
             <column name="USERNAME" type="VARCHAR(255)" />
-            <column name="POINTS" type="NUMBER" />
         </createTable>
     </changeSet>
-
-    <changeSet id="001_create_question" author="thielc">
-        <createTable tableName="GAME_QUESTION">
-            <column name="GAME_QUESTION_ID" type="UUID" >
-                <constraints primaryKey="true" primaryKeyName="GAME_QUESTION_PK" />
-            </column>
-            <column name="TYPE" type="VARCHAR(50)" />
-            <column name="GAME_ID" type="UUID" />
-            <column name="QUESTION_NUMBER" type="NUMBER" />
-            <column name="QUESTION_PHRASE" type="VARCHAR(1000)" />
-            <column name="QUESTION_IMAGE_PATH" type="VARCHAR(1000)" />
-            <column name="CORRECT_ANSWER" type="VARCHAR(400)" />
-            <column name="STATUS" type="VARCHAR(100)" />
-            <column name="QUESTION_ASKED" type="DATETIME" />
-        </createTable>
-    </changeSet>
-
-    <changeSet id="001_create_question_answer_options" author="thielc">
-        <createTable tableName="GAME_QUESTION_ANSWER_OPTIONS">
-            <column name="GAME_QUESTION_ID" type="UUID" />
-            <column name="ANSWER_OPTION" type="VARCHAR(400)" />
-        </createTable>
-    </changeSet>
-
-    <changeSet id="001_create_question_user_answer" author="thielc">
-        <createTable tableName="USER_ANSWER">
-            <column name="USER_ANSWER_ID" type="UUID" >
-                <constraints primaryKey="true" primaryKeyName="USER_ANSWER_PK" />
-            </column>
-            <column name="GAME_QUESTION_ID" type="UUID" />
-            <column name="GAME_USER_ID" type="UUID" />
-            <column name="ANSWER" type="VARCHAR(400)" />
-            <column name="POINTS" type="NUMBER" />
-        </createTable>
-    </changeSet>
-
 </databaseChangeLog>

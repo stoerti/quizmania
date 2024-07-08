@@ -6,14 +6,14 @@ import org.quizmania.game.api.*
 import org.quizmania.game.common.GameConfig
 import org.quizmania.game.common.GameQuestionId
 import org.quizmania.game.common.GameUserId
-import org.quizmania.game.common.QuestionType
-import org.quizmania.rest.application.domain.*
+import org.quizmania.rest.application.domain.GameEntity
+import org.quizmania.rest.application.domain.GameStatus
+import org.quizmania.rest.application.domain.GameUserEntity
 import org.quizmania.rest.port.`in`.FindGamePort
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
-import java.time.Instant
 import java.util.*
 
 @RestController
@@ -206,34 +206,11 @@ data class GameDto(
   val moderator: String?,
   val status: GameStatus,
   val users: List<GameUserDto>,
-  val questions: List<GameQuestionDto>
 )
 
 data class GameUserDto(
   val id: UUID,
   val name: String,
-  val points: Int
-)
-
-data class GameQuestionDto(
-  val id: UUID,
-  val type: QuestionType,
-  val questionNumber: Int,
-  val phrase: String,
-  val imagePath: String?,
-  val status: QuestionStatus,
-  val correctAnswer: String?,
-  val answerOptions: List<String>,
-  val questionTimeout: Long,
-  val questionAsked: Instant,
-  val userAnswers: List<UserAnswerDto>
-)
-
-data class UserAnswerDto(
-  val id: UUID,
-  val gameUserId: UUID,
-  val answer: String,
-  val points: Int?
 )
 
 fun GameEntity.toDto(): GameDto {
@@ -246,35 +223,9 @@ fun GameEntity.toDto(): GameDto {
     moderator = moderator,
     status = status,
     users = users.map { it.toDto() },
-    questions = questions.map { it.toDto(questionTimeout) },
   )
 }
 
 fun GameUserEntity.toDto(): GameUserDto {
-  return GameUserDto(gameUserId, username, points)
-}
-
-fun GameQuestionEntity.toDto(questionTimeout: Long): GameQuestionDto {
-  return GameQuestionDto(
-    id = gameQuestionId,
-    type = type,
-    questionNumber = questionNumber,
-    phrase = questionPhrase,
-    imagePath = questionImagePath,
-    status = status,
-    correctAnswer = correctAnswer,
-    answerOptions = answerOptions,
-    questionTimeout = questionTimeout,
-    questionAsked = questionAsked,
-    userAnswers = userAnswers.map { it.toDto(status == QuestionStatus.OPEN) }
-  )
-}
-
-fun UserAnswerEntity.toDto(mask: Boolean): UserAnswerDto {
-  return UserAnswerDto(
-    id = userAnswerId,
-    gameUserId = gameUserId,
-    answer = if (mask) "******" else answer,
-    points = points
-  )
+  return GameUserDto(gameUserId, username)
 }
