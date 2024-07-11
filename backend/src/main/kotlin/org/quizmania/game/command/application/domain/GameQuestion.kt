@@ -6,6 +6,7 @@ import org.axonframework.modelling.command.EntityId
 import org.quizmania.game.api.*
 import org.quizmania.question.api.Question
 import org.quizmania.question.api.QuestionType
+import java.time.Instant
 import java.util.*
 import kotlin.math.absoluteValue
 
@@ -17,7 +18,10 @@ data class GameQuestion(
   val id: GameQuestionId,
   val number: GameQuestionNumber,
   val question: Question,
-  private var userAnswers: MutableList<UserAnswer>
+  val questionMode: GameQuestionMode,
+  private var userAnswers: MutableList<UserAnswer> = mutableListOf(),
+  private var userBuzzes: MutableList<UserBuzz> = mutableListOf(),
+  private var currentBuzzWinner: GameUserId? = null,
 ) {
   companion object {
     internal fun cleanupAnswerString(answerString: String): String {
@@ -35,12 +39,47 @@ data class GameQuestion(
     private set
 
   fun numAnswers(): Int = userAnswers.size
-  fun hasUserAlreadyAnswered(gameUserId: GameUserId): Boolean = userAnswers.find { it.gameUserId == gameUserId } != null
+  fun hasUserAlreadyAnswered(gameUserId: GameUserId): Boolean = userAnswers.any { it.gameUserId == gameUserId }
+
+  fun numBuzzers(): Int = userBuzzes.size
+  fun hasUserAlreadyBuzzed(gameUserId: GameUserId): Boolean = userBuzzes.any { it.gameUserId == gameUserId }
 
   fun isClosed(): Boolean = status == GameQuestionStatus.CLOSED || status == GameQuestionStatus.RATED
   fun isRated(): Boolean = status == GameQuestionStatus.RATED
+  fun isBuzzable() = this.question.type.buzzable && this.questionMode == GameQuestionMode.BUZZER
+
+  private fun assertNotAlreadyAnswered(gameUserId: GameUserId) {
+    if (hasUserAlreadyAnswered(gameUserId)) {
+      throw QuestionAlreadyAnsweredException(gameId, id, gameUserId)
+    }
+  }
+
+  private fun assertNotAlreadyBuzzed(gameUserId: GameUserId) {
+    if (hasUserAlreadyBuzzed(gameUserId)) {
+      throw QuestionAlreadyBuzzedException(gameId, id, gameUserId)
+    }
+  }
+
+  private fun assertNotClosed() {
+    if (isClosed()) {
+      throw QuestionAlreadyClosedException(gameId, id)
+    }
+  }
+
+  private fun assertNotRated() {
+    if (isRated()) {
+      throw QuestionAlreadyRatedException(gameId, id)
+    }
+  }
 
   fun answer(gameUserId: GameUserId, answer: String) {
+    if (this.questionMode == GameQuestionMode.BUZZER) {
+      throw QuestionInBuzzerModeException(this.gameId, this.id)
+    }
+
+    assertNotClosed()
+    assertNotAlreadyAnswered(gameUserId)
+
     AggregateLifecycle.apply(
       QuestionAnsweredEvent(
         gameId = gameId,
@@ -53,6 +92,14 @@ data class GameQuestion(
   }
 
   fun overrideAnswer(gameUserId: GameUserId, answer: String) {
+    if (this.questionMode == GameQuestionMode.BUZZER) {
+      throw QuestionInBuzzerModeException(this.gameId, this.id)
+    }
+    assertNotRated()
+
+    if (!hasUserAlreadyAnswered(gameUserId)) {
+      throw GameException(gameId, "Question was not answered by user answered")
+    }
     val answerId = userAnswers.first { it.gameUserId == gameUserId }.userAnswerId
 
     AggregateLifecycle.apply(
@@ -66,7 +113,92 @@ data class GameQuestion(
     )
   }
 
+  fun buzz(gameUserId: GameUserId, buzzerTimestamp: Instant) {
+    if (this.questionMode != GameQuestionMode.BUZZER) {
+      throw QuestionNotInBuzzerModeException(this.gameId, this.id)
+    }
+
+    assertNotClosed()
+    assertNotAlreadyBuzzed(gameUserId)
+
+    AggregateLifecycle.apply(
+      QuestionBuzzedEvent(
+        gameId = gameId,
+        gameQuestionId = id,
+        gameUserId = gameUserId,
+        buzzerTimestamp = buzzerTimestamp
+      )
+    )
+  }
+
+  fun evaluateBuzzes() {
+    assertNotClosed()
+
+    val buzzWinner = userBuzzes
+      .filterNot { userAnswers.map { a -> a.gameUserId }.toList().contains(it.gameUserId) } // filter users already failed answering
+      .minByOrNull { it.buzzTimestamp } // sort all others ascending by buzzer time
+
+    if (buzzWinner != null) {
+      AggregateLifecycle.apply(
+        QuestionBuzzerWonEvent(
+          gameId = gameId,
+          gameQuestionId = id,
+          gameUserId = buzzWinner.gameUserId
+        )
+      )
+    } else {
+      // apparently no one else buzzed
+      closeQuestion()
+    }
+  }
+
+  fun answerBuzzWinner(correctAnswer: Boolean) {
+    if (this.questionMode != GameQuestionMode.BUZZER) {
+      throw QuestionNotInBuzzerModeException(this.gameId, this.id)
+    }
+    if (this.currentBuzzWinner == null) {
+      throw GameException(this.gameId, "No buzzer winner in current question")
+    }
+
+    assertNotClosed()
+    assertNotAlreadyAnswered(this.currentBuzzWinner!!)
+
+    if (correctAnswer) {
+      AggregateLifecycle.apply(
+        QuestionAnsweredEvent(
+          gameId = gameId,
+          gameQuestionId = id,
+          gameUserId = this.currentBuzzWinner!!,
+          userAnswerId = UUID.randomUUID(),
+          answer = question.correctAnswer
+        )
+      )
+      AggregateLifecycle.apply(
+        QuestionClosedEvent(
+          gameId = gameId,
+          gameQuestionId = id,
+        )
+      )
+
+      rateQuestion()
+    } else {
+      AggregateLifecycle.apply(
+        QuestionAnsweredEvent(
+          gameId = gameId,
+          gameQuestionId = id,
+          gameUserId = this.currentBuzzWinner!!,
+          userAnswerId = UUID.randomUUID(),
+          answer = "" // some empty wrong answer - TODO better concept?
+        )
+      )
+
+      evaluateBuzzes()
+    }
+  }
+
   fun closeQuestion() {
+    assertNotClosed()
+
     AggregateLifecycle.apply(
       QuestionClosedEvent(
         gameId = gameId,
@@ -75,7 +207,7 @@ data class GameQuestion(
     )
 
     // if the game is moderated and it is a free input question the moderator can overrule answers
-    if (!(isModerated && QuestionType.FREE_INPUT == question.type)) {
+    if (this.questionMode == GameQuestionMode.BUZZER || !(this.isModerated && QuestionType.FREE_INPUT == this.question.type)) {
       rateQuestion()
     }
   }
@@ -139,6 +271,16 @@ data class GameQuestion(
   }
 
   @EventSourcingHandler
+  fun on(event: QuestionBuzzedEvent) {
+    this.userBuzzes.add(UserBuzz(event.gameUserId, event.buzzerTimestamp))
+  }
+
+  @EventSourcingHandler
+  fun on(event: QuestionBuzzerWonEvent) {
+    this.currentBuzzWinner = event.gameUserId
+  }
+
+  @EventSourcingHandler
   fun on(event: QuestionClosedEvent) {
     status = GameQuestionStatus.CLOSED
   }
@@ -159,4 +301,9 @@ data class UserAnswer(
   val userAnswerId: UUID,
   val gameUserId: GameUserId,
   val answer: String
+)
+
+data class UserBuzz(
+  val gameUserId: GameUserId,
+  val buzzTimestamp: Instant
 )

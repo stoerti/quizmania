@@ -2,14 +2,14 @@ package org.quizmania.question.api
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import org.quizmania.question.api.QuestionId
 
 enum class QuestionType(
-    val minPlayers: Int
+    val minPlayers: Int,
+    val buzzable: Boolean
 ) {
-    CHOICE(1),
-    FREE_INPUT(1),
-    ESTIMATE(2)
+    CHOICE(1, true),
+    FREE_INPUT(1, true),
+    ESTIMATE(2, false)
 }
 
 @JsonTypeInfo(

@@ -9,4 +9,5 @@ data class GameConfig(
   val secondsToAnswer: Long = 10,
   val questionTypes: Set<QuestionType> = QuestionType.entries.toSet(),
   val questionSetId: QuestionSetId,
+  val useBuzzer: Boolean = false,
 )

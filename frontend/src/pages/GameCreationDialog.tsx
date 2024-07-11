@@ -47,6 +47,7 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
     let numSecondsToAnswer: number = parseInt(data.get('numSecondsToAnswer')!.toString())
     let questionSetId: string = data.get('questionSet')!.toString()
     let withModerator: boolean = data.get('moderator') === 'on'
+    let useBuzzer: boolean = data.get('useBuzzer') === 'on'
 
     onCreateGame({
       name: gameName,
@@ -54,7 +55,8 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
         maxPlayers: maxPlayers,
         numQuestions: numQuestions,
         questionSetId: questionSetId,
-        secondsToAnswer: numSecondsToAnswer
+        secondsToAnswer: numSecondsToAnswer,
+        useBuzzer: useBuzzer
       },
       withModerator: withModerator
     })
@@ -120,6 +122,8 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
           </Select>
           <FormControlLabel control={<Switch id="moderator" name="moderator" defaultValue="false"/>}
                             label="Moderator"/>
+          <FormControlLabel control={<Switch id="useBuzzer" name="useBuzzer" defaultValue="false"/>}
+                            label="Use buzzer"/>
           <Button
             id="createGameSubmit"
             type="submit"

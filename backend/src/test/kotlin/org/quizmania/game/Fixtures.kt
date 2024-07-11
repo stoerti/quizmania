@@ -127,14 +127,15 @@ class GameEventFixtures {
       )
     }
 
-    fun questionAsked(gameQuestionId: UUID, gameQuestionNumber: Int, question: Question): QuestionAskedEvent {
+    fun questionAsked(gameQuestionId: UUID, gameQuestionNumber: Int, question: Question, mode: GameQuestionMode = GameQuestionMode.COLLECTIVE): QuestionAskedEvent {
       return QuestionAskedEvent(
         gameId = GAME_UUID,
         gameQuestionId = gameQuestionId,
         gameQuestionNumber = gameQuestionNumber,
         questionTimestamp = Instant.now(),
         timeToAnswer = 10000,
-        question = question
+        question = question,
+        questionMode = mode,
       )
     }
 

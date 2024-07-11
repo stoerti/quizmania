@@ -44,6 +44,10 @@ internal class GameAggregate {
     val questionSet = questionPort.getQuestionSet(command.config.questionSetId)
     val realNumQuestions = command.config.numQuestions.coerceAtMost(questionSet.questions.size)
 
+    if (command.config.useBuzzer && command.moderatorUsername == null) {
+      throw Exception("Buzzer game needs a moderator")
+    }
+
     AggregateLifecycle.apply(
       GameCreatedEvent(
         command.gameId,
@@ -101,31 +105,24 @@ internal class GameAggregate {
   @CommandHandler
   fun handle(command: StartGameCommand, questionPort: QuestionPort, deadlineManager: DeadlineManager) {
     logger.info { "Executing StartGameCommand for game ${command.gameId}" }
-    // todo verify if allowed
-    AggregateLifecycle.apply(GameStartedEvent(command.gameId))
+    if (config.useBuzzer && this.users.size < 2) {
+      throw GameException(this.gameId, "Buzzer game needs at least two players")
+    }
+    if (this.gameStatus != GameStatus.CREATED) {
+      throw GameAlreadyStartedException(this.gameId)
+    }
 
+    AggregateLifecycle.apply(GameStartedEvent(command.gameId))
     askNextQuestion(questionPort, deadlineManager)
   }
 
   @CommandHandler
   fun handle(command: AnswerQuestionCommand, deadlineManager: DeadlineManager) {
     logger.info { "Executing AnswerQuestionCommand for game ${command.gameId}: $command" }
-    if (gameStatus != GameStatus.STARTED) {
-      throw GameAlreadyEndedException(gameId)
-    }
+    assertStarted()
 
-    val gameQuestion =
-      askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
-    val user = users.findByUsername(command.username) ?: throw GameException(gameId, "User not found")
-
-    if (gameQuestion.isClosed()) {
-      throw QuestionAlreadyClosedException(gameId, command.gameQuestionId)
-    }
-
-    if (gameQuestion.hasUserAlreadyAnswered(user.gameUserId)) {
-      throw GameException(gameId, "Question already answered")
-    }
-
+    val user = users.getByUsername(command.username)
+    val gameQuestion = askedQuestions.getById(command.gameQuestionId)
     gameQuestion.answer(user.gameUserId, command.answer)
 
     // after QuestionAnsweredEvent is applied, the user-answer is actually in the list
@@ -138,56 +135,55 @@ internal class GameAggregate {
   @CommandHandler
   fun handle(command: OverrideAnswerCommand) {
     logger.info { "Executing OverrideAnswerCommand for game ${command.gameId}: $command" }
-    if (gameStatus != GameStatus.STARTED) {
-      throw GameAlreadyEndedException(gameId)
-    }
+    assertStarted()
 
-    val gameQuestion =
-      askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
-
-    if (!gameQuestion.isClosed()) {
-      throw QuestionNotClosedException(gameId, command.gameQuestionId)
-    }
-
-    if (gameQuestion.isRated()) {
-      throw QuestionAlreadyRatedException(gameId, command.gameQuestionId)
-    }
-
-    if (!gameQuestion.hasUserAlreadyAnswered(command.gameUserId)) {
-      throw GameException(gameId, "Question was not answered by user answered")
-    }
-
+    val gameQuestion = askedQuestions.getById(command.gameQuestionId)
     gameQuestion.overrideAnswer(command.gameUserId, command.answer)
+  }
+
+  @CommandHandler
+  fun handle(command: BuzzQuestionCommand, deadlineManager: DeadlineManager) {
+    logger.info { "Executing BuzzQuestionCommand for game ${command.gameId}: $command" }
+    assertStarted()
+
+    val user = users.getByUsername(command.username)
+    val gameQuestion = askedQuestions.getById(command.gameQuestionId)
+
+    gameQuestion.buzz(user.gameUserId, command.buzzerTimestamp)
+
+    if (gameQuestion.numBuzzers() == 1) {
+      deadlineManager.schedule(Duration.ofMillis(500), "questionBuzzDeadline")
+    }
+  }
+
+  @CommandHandler
+  fun handle(command: AnswerBuzzerQuestionCommand) {
+    logger.info { "Executing AnswerBuzzerQuestionCommand for game ${command.gameId}: $command" }
+    assertStarted()
+
+    val gameQuestion = askedQuestions.getById(command.gameQuestionId)
+
+    gameQuestion.answerBuzzWinner(command.answerCorrect)
   }
 
   @CommandHandler
   fun handle(command: CloseQuestionCommand, deadlineManager: DeadlineManager) {
     logger.info { "Executing CloseQuestionCommand for game ${command.gameId}: $command" }
-    if (gameStatus != GameStatus.STARTED) {
-      throw GameAlreadyEndedException(gameId)
-    }
+    assertStarted()
 
-    val gameQuestion =
-      askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
+    askedQuestions.getById(command.gameQuestionId)
+      .closeQuestion()
 
-    if (gameQuestion.isClosed()) {
-      throw QuestionAlreadyClosedException(gameId, command.gameQuestionId)
-    }
-
-    gameQuestion.closeQuestion()
     deadlineManager.cancelAllWithinScope("questionCloseDeadline")
   }
 
   @CommandHandler
   fun handle(command: RateQuestionCommand) {
     logger.info { "Executing RateQuestionCommand for game ${command.gameId}: $command" }
-    if (gameStatus != GameStatus.STARTED) {
-      throw GameAlreadyEndedException(gameId)
-    }
+    assertStarted()
 
     val gameQuestion =
-      askedQuestions.findById(command.gameQuestionId) ?: throw GameException(gameId, "Question not found")
-
+      askedQuestions.getById(command.gameQuestionId)
     if (gameQuestion.isRated()) {
       throw QuestionAlreadyClosedException(gameId, command.gameQuestionId)
     }
@@ -199,9 +195,7 @@ internal class GameAggregate {
   @CommandHandler
   fun handle(command: AskNextQuestionCommand, questionPort: QuestionPort, deadlineManager: DeadlineManager) {
     logger.info { "Executing AskNextQuestionCommand for game ${command.gameId}: $command" }
-    if (gameStatus != GameStatus.STARTED) {
-      throw GameAlreadyEndedException(gameId)
-    }
+    assertStarted()
 
     if (askedQuestions.any { !it.isRated() }) {
       throw GameException(gameId, "Other question is still open or not rated")
@@ -214,6 +208,12 @@ internal class GameAggregate {
       )
     } else {
       askNextQuestion(questionPort, deadlineManager)
+    }
+  }
+
+  private fun assertStarted() {
+    if (gameStatus != GameStatus.STARTED) {
+      throw GameAlreadyEndedException(gameId)
     }
   }
 
@@ -259,8 +259,10 @@ internal class GameAggregate {
         gameId = gameId,
         id = event.gameQuestionId,
         number = event.gameQuestionNumber,
+        questionMode = event.questionMode,
         question = event.question,
         userAnswers = mutableListOf(),
+        userBuzzes = mutableListOf(),
         isModerated = moderatorUsername != null,
       )
     )
@@ -272,8 +274,16 @@ internal class GameAggregate {
     askedQuestions.firstOrNull { !it.isClosed() }?.closeQuestion()
   }
 
+  @DeadlineHandler(deadlineName = "questionBuzzDeadline")
+  fun onQuestionBuzzDeadline() {
+    logger.info { "Reached question buzzer deadline for game $gameId" }
+    askedQuestions.firstOrNull { !it.isClosed() }?.evaluateBuzzes()
+  }
+
   private fun askNextQuestion(questionPort: QuestionPort, deadlineManager: DeadlineManager) {
     val question = questionPort.getQuestion(questionList[askedQuestions.size])
+
+    val questionMode = if (this.config.useBuzzer) GameQuestionMode.BUZZER else GameQuestionMode.COLLECTIVE
 
     AggregateLifecycle.apply(
       QuestionAskedEvent(
@@ -281,31 +291,36 @@ internal class GameAggregate {
         gameQuestionId = UUID.randomUUID(),
         gameQuestionNumber = askedQuestions.size + 1,
         questionTimestamp = Instant.now(),
+        questionMode = questionMode,
         timeToAnswer = config.secondsToAnswer * 1000,
         question = question
       )
     )
 
-    if (config.secondsToAnswer > 0) {
+    if (questionMode != GameQuestionMode.BUZZER && config.secondsToAnswer > 0) {
       deadlineManager.schedule(Duration.ofSeconds(config.secondsToAnswer), "questionCloseDeadline")
     }
   }
-}
 
-fun MutableList<GameQuestion>.findById(gameQuestionId: UUID): GameQuestion? {
-  return this.find { it.id == gameQuestionId }
-}
+  fun MutableList<GameQuestion>.getById(gameQuestionId: UUID): GameQuestion {
+    return this.find { it.id == gameQuestionId } ?: throw GameException(gameId, "Question not found")
+  }
 
-fun MutableList<User>.findById(gameUserId: UUID): User? {
-  return this.find { it.gameUserId == gameUserId }
-}
+  fun MutableList<User>.getById(gameUserId: UUID): User {
+    return this.find { it.gameUserId == gameUserId } ?: throw GameException(gameId, "User $gameUserId not found")
+  }
 
-fun MutableList<User>.findByUsername(username: String): User? {
-  return this.find { it.username == username }
-}
+  fun MutableList<User>.findByUsername(username: String): User? {
+    return this.find { it.username == username }
+  }
 
-fun MutableList<User>.containsUsername(username: String): Boolean {
-  return this.find { it.username == username } != null
+  fun MutableList<User>.getByUsername(username: String): User {
+    return this.find { it.username == username } ?: throw GameException(gameId, "User $username not found")
+  }
+
+  fun MutableList<User>.containsUsername(username: String): Boolean {
+    return this.find { it.username == username } != null
+  }
 }
 
 data class User(

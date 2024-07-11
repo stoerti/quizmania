@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.quizmania.game.*
+import org.quizmania.game.api.GameQuestionMode
 import org.quizmania.game.command.application.domain.GameQuestion
 import org.quizmania.game.command.application.domain.UserAnswer
 import org.quizmania.question.api.EstimateQuestion
@@ -24,6 +25,7 @@ class GameQuestionTest {
         phrase = "Question?",
         correctAnswer = "100"
       ),
+      GameQuestionMode.COLLECTIVE,
       mutableListOf(
         UserAnswer(USER_ANSWER_1, GAME_USER_1, "90"),
         UserAnswer(USER_ANSWER_2, GAME_USER_2, "98"),
@@ -63,6 +65,7 @@ class GameQuestionTest {
         phrase = "Question?",
         correctAnswer = correctAnswer
       ),
+      GameQuestionMode.COLLECTIVE,
       mutableListOf(UserAnswer(USER_ANSWER_1, GAME_USER_1, userAnswer)),
     )
 

@@ -114,12 +114,14 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
   }
 
   const onCreateNewGame = (newGame: NewGameCommand) => {
-    gameCommandService.createNewGame(newGame, gameSelected, (error) => {
+    gameCommandService.createNewGame(newGame, (gameId) => {
+      gameSelected(gameId)
+      snackbar.showMessage(
+        `Created game ${newGame.name} for ${newGame.config.maxPlayers} players, ${newGame.config.numQuestions} questions and ${newGame.withModerator ? 'with' : 'without'} moderator`
+      )
+      setNewGameDialogOpen(false)
+    }, (error) => {
     })
-    snackbar.showMessage(
-      `Created game ${newGame.name} for ${newGame.config.maxPlayers} players, ${newGame.config.numQuestions} questions and ${newGame.withModerator ? 'with' : 'without'} moderator`
-    )
-    setNewGameDialogOpen(false)
   }
 
   const gameSelected = (gameId: string) => {

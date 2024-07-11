@@ -14,6 +14,8 @@ interface GameEventHappenedInPort {
   fun questionAsked(evt: QuestionAskedEvent, metadata: EventMetaData)
   fun questionAnswered(evt: QuestionAnsweredEvent, metadata: EventMetaData)
   fun questionAnswerOverridden(evt: QuestionAnswerOverriddenEvent, metadata: EventMetaData)
+  fun questionBuzzed(evt: QuestionBuzzedEvent, metadata: EventMetaData)
+  fun questionBuzzerWon(evt: QuestionBuzzerWonEvent, metadata: EventMetaData)
   fun questionClosed(evt: QuestionClosedEvent, metadata: EventMetaData)
   fun questionRated(evt: QuestionRatedEvent, metadata: EventMetaData)
 }

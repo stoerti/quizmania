@@ -1,21 +1,18 @@
 import {
   GameCanceledEvent,
   GameConfig,
-  GameCreatedEvent, GameEndedEvent, GameEvent,
+  GameCreatedEvent, GameEndedEvent, GameEvent, GameQuestionMode,
   GameStartedEvent,
   Question,
   QuestionAnsweredEvent,
   QuestionAnswerOverriddenEvent,
-  QuestionAskedEvent,
+  QuestionAskedEvent, QuestionBuzzedEvent, QuestionBuzzerWonEvent,
   QuestionClosedEvent,
   QuestionRatedEvent,
   UserAddedEvent,
   UserRemovedEvent
 } from "../services/GameEventTypes";
 import {GameEventType} from "../services/GameRepository";
-import {Simulate} from "react-dom/test-utils";
-import play = Simulate.play;
-
 
 export enum GameStatus {
   CREATED = 'CREATED',
@@ -74,6 +71,10 @@ export class Game {
         return this.onQuestionAnswered(event as QuestionAnsweredEvent)
       case "QuestionAnswerOverriddenEvent":
         return this.onQuestionAnswerOverridden(event as QuestionAnswerOverriddenEvent)
+      case "QuestionBuzzedEvent":
+        return this.onQuestionBuzzed(event as QuestionBuzzedEvent)
+      case "QuestionBuzzerWonEvent":
+        return this.onQuestionBuzzerWon(event as QuestionBuzzerWonEvent)
       case "QuestionClosedEvent":
         return this.onQuestionClosed(event as QuestionClosedEvent)
       case "QuestionRatedEvent":
@@ -147,6 +148,14 @@ export class Game {
     return this.updateQuestion(event.gameQuestionId, question => question.onQuestionAnswerOverridden(event))
   }
 
+  public onQuestionBuzzed(event: QuestionBuzzedEvent): Game {
+    return this.updateQuestion(event.gameQuestionId, question => question.onQuestionBuzzed(event))
+  }
+
+  public onQuestionBuzzerWon(event: QuestionBuzzerWonEvent): Game {
+    return this.updateQuestion(event.gameQuestionId, question => question.onQuestionBuzzerWon(event))
+  }
+
   public onQuestionClosed(event: QuestionClosedEvent): Game {
     return this.updateQuestion(event.gameQuestionId, question => question.onQuestionClosed(event))
   }
@@ -184,7 +193,10 @@ export class GameQuestion {
   readonly gameQuestionId: string;
   readonly gameQuestionNumber: number;
   readonly question: Question;
+  readonly questionMode: GameQuestionMode;
   readonly answers: Answer[] = [];
+  readonly buzzedPlayerIds: string[] = [];
+  readonly currentBuzzWinnerId: string | undefined = undefined;
   readonly status: QuestionStatus;
   readonly questionAsked: Date;
   readonly questionTimeout: number;
@@ -193,6 +205,7 @@ export class GameQuestion {
     this.gameQuestionId = event.gameQuestionId
     this.gameQuestionNumber = event.gameQuestionNumber
     this.question = event.question
+    this.questionMode = event.questionMode
     this.status = QuestionStatus.OPEN
     this.questionAsked = new Date(event.questionTimestamp)
     this.questionTimeout = event.timeToAnswer
@@ -221,6 +234,18 @@ export class GameQuestion {
         ...this.answers.filter(answer => answer.gamePlayerId != event.gameUserId),
         new Answer(event)
       ]
+    })
+  }
+
+  public onQuestionBuzzed(event: QuestionBuzzedEvent): GameQuestion {
+    return this.copyWith({
+      buzzedPlayerIds: [...this.buzzedPlayerIds, event.gameUserId]
+    })
+  }
+
+  public onQuestionBuzzerWon(event: QuestionBuzzerWonEvent): GameQuestion {
+    return this.copyWith({
+      currentBuzzWinnerId: event.gameUserId
     })
   }
 

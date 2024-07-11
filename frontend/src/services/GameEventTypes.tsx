@@ -2,7 +2,13 @@ export type GameConfig = {
   maxPlayers: number,
   numQuestions: number,
   secondsToAnswer: number,
-  questionSetId: string
+  questionSetId: string,
+  useBuzzer: boolean,
+}
+
+export enum GameQuestionMode {
+  BUZZER = 'BUZZER',
+  COLLECTIVE = 'COLLECTIVE',
 }
 
 export enum QuestionType {
@@ -55,6 +61,7 @@ export type QuestionAskedEvent = {
   gameId: string,
   gameQuestionId: string,
   gameQuestionNumber: number,
+  questionMode: GameQuestionMode,
   questionTimestamp: string,
   timeToAnswer: number,
   question: Question,
@@ -74,6 +81,19 @@ export type QuestionAnswerOverriddenEvent = {
   gameUserId: string,
   userAnswerId: string,
   answer: string
+}
+
+export type QuestionBuzzedEvent = {
+  gameId: string,
+  gameQuestionId: string,
+  gameUserId: string,
+  buzzerTimestamp: string
+}
+
+export type QuestionBuzzerWonEvent = {
+  gameId: string,
+  gameQuestionId: string,
+  gameUserId: string,
 }
 
 export type QuestionClosedEvent = {

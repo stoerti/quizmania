@@ -3,13 +3,11 @@ package org.quizmania.rest.adapter.`in`.rest
 import mu.KLogging
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.quizmania.game.api.*
-import org.quizmania.game.api.GameConfig
-import org.quizmania.game.api.GameQuestionId
-import org.quizmania.game.api.GameUserId
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
+import java.time.Instant
 import java.util.*
 
 /**
@@ -115,6 +113,38 @@ class GameCommandController(
     return ResponseEntity.ok().build()
   }
 
+  @PostMapping("/{gameId}/buzz-question")
+  fun buzzQuestion(
+    @PathVariable("gameId") gameId: UUID,
+    @CookieValue(name = "username", defaultValue = "someUser") username: String,
+    @RequestBody answer: BuzzDto
+  ): ResponseEntity<Void> {
+    commandGateway.sendAndWait<Void>(
+      BuzzQuestionCommand(
+        gameId = gameId,
+        gameQuestionId = answer.gameQuestionId,
+        username = username,
+        buzzerTimestamp = answer.buzzerTimestamp
+      )
+    )
+    return ResponseEntity.ok().build()
+  }
+
+  @PostMapping("/{gameId}/buzzer-answer-question")
+  fun buzzQuestion(
+    @PathVariable("gameId") gameId: UUID,
+    @RequestBody answer: BuzzerAnswerDto
+  ): ResponseEntity<Void> {
+    commandGateway.sendAndWait<Void>(
+      AnswerBuzzerQuestionCommand(
+        gameId = gameId,
+        gameQuestionId = answer.gameQuestionId,
+        answerCorrect = answer.answerCorrect
+      )
+    )
+    return ResponseEntity.ok().build()
+  }
+
   @PostMapping("/{gameId}/override-answer")
   fun overrideAnswer(
     @PathVariable("gameId") gameId: UUID,
@@ -167,6 +197,16 @@ data class NewGameDto(
 data class AnswerDto(
   val gameQuestionId: UUID,
   val answer: String
+)
+
+data class BuzzDto(
+  val gameQuestionId: UUID,
+  val buzzerTimestamp: Instant
+)
+
+data class BuzzerAnswerDto(
+  val gameQuestionId: GameQuestionId,
+  val answerCorrect: Boolean,
 )
 
 data class AnswerOverrideDto(

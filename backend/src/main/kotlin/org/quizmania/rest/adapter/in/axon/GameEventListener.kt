@@ -37,6 +37,18 @@ class GameEventListener(
   }
 
   @EventHandler
+  fun on(event: QuestionBuzzedEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
+    logger.info { "Received QuestionBuzzedEvent $event" }
+    gameEventHappenedInPort.questionBuzzed(event, EventMetaData(seqNo, timestamp))
+  }
+
+  @EventHandler
+  fun on(event: QuestionBuzzerWonEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
+    logger.info { "Received QuestionBuzzerWonEvent $event" }
+    gameEventHappenedInPort.questionBuzzerWon(event, EventMetaData(seqNo, timestamp))
+  }
+
+  @EventHandler
   fun on(event: QuestionAnswerOverriddenEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
     logger.info { "Received QuestionAnswerOverriddenEvent $event" }
     gameEventHappenedInPort.questionAnswerOverridden(event, EventMetaData(seqNo, timestamp))

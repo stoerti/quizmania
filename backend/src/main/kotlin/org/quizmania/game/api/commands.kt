@@ -2,6 +2,7 @@ package org.quizmania.game.api
 
 import org.axonframework.modelling.command.AggregateIdentifier
 import org.axonframework.modelling.command.TargetAggregateIdentifier
+import java.time.Instant
 import java.util.UUID
 
 sealed interface GameCommand {
@@ -54,6 +55,21 @@ data class OverrideAnswerCommand(
     val gameUserId: UUID,
     val answer: String
 ): GameCommand
+
+data class BuzzQuestionCommand(
+  @TargetAggregateIdentifier
+  override val gameId: GameId,
+  val gameQuestionId: GameQuestionId,
+  val username: String,
+  val buzzerTimestamp: Instant
+) : GameCommand
+
+data class AnswerBuzzerQuestionCommand(
+  @TargetAggregateIdentifier
+  override val gameId: GameId,
+  val gameQuestionId: GameQuestionId,
+  val answerCorrect: Boolean
+) : GameCommand
 
 data class AskNextQuestionCommand(
     @TargetAggregateIdentifier

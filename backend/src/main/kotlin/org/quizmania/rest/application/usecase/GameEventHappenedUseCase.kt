@@ -48,6 +48,10 @@ class GameEventHappenedUseCase(
 
   override fun questionAnswerOverridden(evt: QuestionAnswerOverriddenEvent, metadata: EventMetaData) = propagate(evt, metadata)
 
+  override fun questionBuzzed(evt: QuestionBuzzedEvent, metadata: EventMetaData) = propagate(evt, metadata)
+
+  override fun questionBuzzerWon(evt: QuestionBuzzerWonEvent, metadata: EventMetaData) = propagate(evt, metadata)
+
   override fun questionClosed(evt: QuestionClosedEvent, metadata: EventMetaData) = propagate(evt, metadata)
 
   override fun questionRated(evt: QuestionRatedEvent, metadata: EventMetaData) = propagate(evt, metadata)

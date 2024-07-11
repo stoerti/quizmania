@@ -1,3 +1,5 @@
+import {expect} from "playwright/test";
+
 const { I } = inject();
 
 export function startGame() {
@@ -16,6 +18,18 @@ export function closeQuestion() {
   I.click({id: 'closeQuestion'});
 }
 
+export function acceptBuzzerAnswer() {
+  I.click({id: 'acceptAnswer'});
+}
+
+export function rejectBuzzerAnswer() {
+  I.click({id: 'rejectAnswer'});
+}
+
+export function buzz() {
+  I.click({id: 'buzzer'});
+}
+
 export function answerChoiceQuestion(answer: string) {
   I.click('button:has-text("'+answer+'")');
 }
@@ -29,4 +43,16 @@ export function answerEstimateQuestion(answer: number) {
   I.fillField({id: 'estimationAnswer'}, answer);
   I.click({id: 'submitAnswer'});
 }
+
+// then
+
+export function wonBuzz() {
+  I.waitForText("ANSWER QUESTION", 2, {id: 'buzzer'})
+}
+
+export function lostBuzz() {
+  I.waitForText("SOMEONE ELSE WAS FASTER", 2, {id: 'buzzer'})
+}
+
+
 

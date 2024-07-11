@@ -91,6 +91,8 @@ export type GameEventType =
   | 'QuestionAskedEvent'
   | 'QuestionAnsweredEvent'
   | 'QuestionAnswerOverriddenEvent'
+  | 'QuestionBuzzedEvent'
+  | 'QuestionBuzzerWonEvent'
   | 'QuestionClosedEvent'
   | 'QuestionRatedEvent';
 

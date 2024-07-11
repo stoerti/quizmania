@@ -13,6 +13,11 @@ sealed interface GameQuestionEvent : GameEvent {
     val gameQuestionId: GameQuestionId
 }
 
+enum class GameQuestionMode {
+  COLLECTIVE,
+  BUZZER,
+}
+
 data class GameCreatedEvent(
   override val gameId: GameId,
   val name: String,
@@ -50,6 +55,7 @@ data class QuestionAskedEvent(
   override val gameId: GameId,
   override val gameQuestionId: GameQuestionId,
   val gameQuestionNumber: GameQuestionNumber,
+  val questionMode: GameQuestionMode,
   val questionTimestamp: Instant,
   val timeToAnswer: Long,
   val question: Question,
@@ -71,6 +77,19 @@ data class QuestionAnswerOverriddenEvent(
   val answer: String
 ) : GameQuestionEvent
 
+data class QuestionBuzzedEvent(
+  override val gameId: GameId,
+  override val gameQuestionId: GameQuestionId,
+  val gameUserId: GameUserId,
+  val buzzerTimestamp: Instant
+) : GameQuestionEvent
+
+data class QuestionBuzzerWonEvent(
+  override val gameId: GameId,
+  override val gameQuestionId: GameQuestionId,
+  val gameUserId: GameUserId,
+) : GameQuestionEvent
+
 data class QuestionClosedEvent(
   override val gameId: GameId,
   override val gameQuestionId: GameQuestionId,
@@ -84,7 +103,6 @@ data class QuestionRatedEvent(
    */
   val points: Map<GameUserId, Int>,
 ) : GameQuestionEvent
-
 
 data class GameFinishedEvent(
   override val gameId: GameId,

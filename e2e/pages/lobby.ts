@@ -1,6 +1,6 @@
 const { I } = inject();
 
-export function createGame(gameName: string, questionSet: string, moderated: boolean = false) {
+export function createGame(gameName: string, questionSet: string, moderated: boolean = false, useBuzzer: boolean = false) {
   I.click({id: 'createGame'});
 
   I.fillField({id: "gameName"}, gameName)
@@ -13,6 +13,10 @@ export function createGame(gameName: string, questionSet: string, moderated: boo
 
   if (moderated) {
     I.click({id: "moderator"})
+  }
+
+  if (useBuzzer) {
+    I.click({id: "useBuzzer"})
   }
 
   I.wait(1)

@@ -14,8 +14,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography,
-  useTheme
+  Typography
 } from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import {QuestionContainer} from "../question/QuestionContainer";
@@ -25,6 +24,8 @@ import Cancel from "@mui/icons-material/Cancel";
 import React from "react";
 import {QuestionMark} from "@mui/icons-material";
 import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
+import {GameQuestionMode} from "../../../services/GameEventTypes";
+import {BuzzerQuestionContainer} from "../question/BuzzerQuestionContainer";
 
 export type PlayerGameRoomPanelProps = {
   game: Game,
@@ -57,14 +58,27 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
         </Paper>
       </Stack>
     } else {
-      const onAnswerQuestion = (answer: string) =>
-        props.gameService.answerQuestion({
-          gameId: props.game.id,
-          gameQuestionId: question.gameQuestionId,
-          answer: answer
-        }, () => {
-        })
-      container = <QuestionContainer gameQuestion={question} onAnswerQuestion={onAnswerQuestion}/>
+      if (question.questionMode == GameQuestionMode.COLLECTIVE) {
+        const onAnswerQuestion = (answer: string) =>
+          props.gameService.answerQuestion({
+            gameId: props.game.id,
+            gameQuestionId: question.gameQuestionId,
+            answer: answer
+          }, () => {
+          })
+        container = <QuestionContainer gameQuestion={question} onAnswerQuestion={onAnswerQuestion}/>
+      } else if (question.questionMode == GameQuestionMode.BUZZER) {
+        const onBuzzQuestion = () =>
+          props.gameService.buzzQuestion({
+            gameId: props.game.id,
+            gameQuestionId: question.gameQuestionId,
+            buzzerTimestamp: new Date().toISOString()
+          }, () => {
+          })
+        container = <BuzzerQuestionContainer gameQuestion={question} gameUser={user} onBuzzQuestion={onBuzzQuestion}/>
+      } else {
+        container = <div>Unknown gameQuestionMode {question.questionMode}</div>
+      }
     }
   } else if (question.status == QuestionStatus.CLOSED || question.status == QuestionStatus.RATED) {
     let nextButton;

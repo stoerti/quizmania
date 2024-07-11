@@ -9,9 +9,10 @@ export type GameConfig = {
   numQuestions: number,
   secondsToAnswer: number,
   questionSetId: string
+  useBuzzer: boolean,
 }
 
-export type NewAnswerCommand = {
+export type AnswerQuestionCommand = {
   gameId: string,
   gameQuestionId: string,
   answer: string
@@ -25,6 +26,17 @@ export type OverrideAnswerCommand = {
   answer: string
 }
 
+export type BuzzQuestionCommand = {
+  gameId: string,
+  gameQuestionId: string,
+  buzzerTimestamp: string
+}
+
+export type AnswerBuzzerQuestionCommand = {
+  gameId: string,
+  gameQuestionId: string,
+  answerCorrect: boolean
+}
 
 export class GameCommandService {
   public createNewGame(newGame: NewGameCommand, responseHandler: (gameId: string) => void, errorHandler: (err: any) => void = () => {
@@ -36,8 +48,13 @@ export class GameCommandService {
         'Content-type': 'application/json; charset=UTF-8',
       },
     })
-      .then((response) => response.text())
-      .then(responseHandler)
+      .then((response) => {
+        if (response.ok) {
+          response.text().then(responseHandler)
+        } else {
+          response.text().then(errorHandler)
+        }
+      })
       .catch((err) => {
         if (errorHandler !== undefined)
           errorHandler(err);
@@ -85,12 +102,7 @@ export class GameCommandService {
   }) {
     fetch('/api/game/' + answer.gameId + '/override-answer', {
       method: 'POST',
-      body: JSON.stringify({
-        gameQuestionId: answer.gameQuestionId,
-        gameUserId: answer.gameUserId,
-        userAnswerId: answer.userAnswerId,
-        answer: answer.answer
-      }),
+      body: JSON.stringify(answer),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
@@ -105,11 +117,49 @@ export class GameCommandService {
       });
   }
 
-  public answerQuestion(answer: NewAnswerCommand, responseHandler: () => void, errorHandler: (err: any) => void = () => {
+  public answerQuestion(answer: AnswerQuestionCommand, responseHandler: () => void, errorHandler: (err: any) => void = () => {
   }) {
     fetch('/api/game/' + answer.gameId + '/answer-question', {
       method: 'POST',
-      body: JSON.stringify({gameQuestionId: answer.gameQuestionId, answer: answer.answer}),
+      body: JSON.stringify(answer),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+      .then((response) => {
+        if (response.ok) responseHandler()
+        else console.log(response)
+      })
+      .catch((err) => {
+        if (errorHandler !== undefined)
+          errorHandler(err);
+      });
+  }
+
+  public buzzQuestion(buzz: BuzzQuestionCommand, responseHandler: () => void = () => {}, errorHandler: (err: any) => void = () => {
+  }) {
+    fetch('/api/game/' + buzz.gameId + '/buzz-question', {
+      method: 'POST',
+      body: JSON.stringify(buzz),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+      .then((response) => {
+        if (response.ok) responseHandler()
+        else console.log(response)
+      })
+      .catch((err) => {
+        if (errorHandler !== undefined)
+          errorHandler(err);
+      });
+  }
+
+  public answerBuzzerQuestion(answer: AnswerBuzzerQuestionCommand, responseHandler: () => void = () => {}, errorHandler: (err: any) => void = () => {
+  }) {
+    fetch('/api/game/' + answer.gameId + '/buzzer-answer-question', {
+      method: 'POST',
+      body: JSON.stringify(answer),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
