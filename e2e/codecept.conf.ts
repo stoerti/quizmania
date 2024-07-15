@@ -23,6 +23,7 @@ export const config: CodeceptJS.MainConfig = {
     loginPage: './pages/login.ts',
     lobbyPage: './pages/lobby.ts',
     gameRoomPage: './pages/gameRoom.ts',
+
   },
   name: 'e2e'
 }

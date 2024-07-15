@@ -11,23 +11,19 @@ Scenario('multiplayer_buzzer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.wait(1)
 
   lobbyPage.createGame(gameName, "test02", true, true)
-  I.wait(1)
 
   session('player1', () => {
     loginPage.logInWithUsername(username1)
-    I.wait(1)
     lobbyPage.joinGame(gameName)
   });
 
   session('player2', () => {
     loginPage.logInWithUsername(username2)
-    I.wait(1)
     lobbyPage.joinGame(gameName)
   });
 
   session('player3', () => {
     loginPage.logInWithUsername(username3)
-    I.wait(1)
     lobbyPage.joinGame(gameName)
   });
 
@@ -50,16 +46,12 @@ Scenario('multiplayer_buzzer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   session('player2', () => {
     gameRoomPage.buzz()
   })
-
   session('player1', () => {
     gameRoomPage.wonBuzz()
   })
-
   session('player2', () => {
     gameRoomPage.lostBuzz()
   })
-
-  I.wait(5)
 
   I.waitForText(username1, 5, {id: 'buzzWinner'})
   gameRoomPage.acceptBuzzerAnswer()
@@ -79,18 +71,12 @@ Scenario('multiplayer_buzzer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
     gameRoomPage.buzz()
   })
 
-  I.wait(5)
-
   I.waitForText(username2, 5, {id: 'buzzWinner'})
   gameRoomPage.rejectBuzzerAnswer()
   I.waitForText(username1, 5, {id: 'buzzWinner'})
   gameRoomPage.rejectBuzzerAnswer()
   I.waitForText(username3, 5, {id: 'buzzWinner'})
   gameRoomPage.acceptBuzzerAnswer()
-
-
-  I.wait(5)
-
   gameRoomPage.nextQuestion()
 
   // -----------------------------
@@ -101,7 +87,5 @@ Scenario('multiplayer_buzzer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   gameRoomPage.nextQuestion()
 
   I.waitForText("Results")
-
-
-  I.wait(2)
+  I.wait(1)
 });

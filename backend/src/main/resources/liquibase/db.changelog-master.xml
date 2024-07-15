@@ -5,6 +5,7 @@
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <include file="axon-tokenEntry.xml" relativeToChangelogFile="true" />
+    <include file="classpath:org/quartz/impl/jdbcjobstore/liquibase.quartz.init.xml" relativeToChangelogFile="false" />
 
     <changeSet id="001_create_game" author="thielc">
         <createTable tableName="GAME">

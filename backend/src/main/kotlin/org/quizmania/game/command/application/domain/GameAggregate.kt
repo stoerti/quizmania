@@ -2,7 +2,6 @@ package org.quizmania.game.command.application.domain
 
 import mu.KLogging
 import org.axonframework.commandhandling.CommandHandler
-import org.axonframework.deadline.DeadlineManager
 import org.axonframework.deadline.annotation.DeadlineHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.modelling.command.AggregateIdentifier
@@ -11,6 +10,7 @@ import org.axonframework.modelling.command.AggregateMember
 import org.axonframework.modelling.command.ForwardMatchingInstances
 import org.axonframework.spring.stereotype.Aggregate
 import org.quizmania.game.api.*
+import org.quizmania.game.command.adapter.out.DeadlineScheduler
 import org.quizmania.game.command.port.out.QuestionPort
 import org.quizmania.question.api.QuestionId
 import java.time.Duration
@@ -20,7 +20,13 @@ import java.util.*
 @Aggregate
 internal class GameAggregate {
 
-  companion object : KLogging()
+  companion object : KLogging() {
+    object Deadline {
+      const val GAME_ABANDONED = "gameAbandonedDeadline"
+      const val QUESTION_CLOSE = "questionCloseDeadline"
+      const val QUESTION_BUZZER = "questionBuzzerDeadline"
+    }
+  }
 
   @AggregateIdentifier
   private lateinit var gameId: UUID
@@ -38,7 +44,7 @@ internal class GameAggregate {
   constructor() {}
 
   @CommandHandler
-  constructor(command: CreateGameCommand, questionPort: QuestionPort) {
+  constructor(command: CreateGameCommand, questionPort: QuestionPort, deadlineScheduler: DeadlineScheduler) {
     logger.info { "Executing CreateGameCommand for game ${command.gameId}" }
 
     val questionSet = questionPort.getQuestionSet(command.config.questionSetId)
@@ -60,6 +66,8 @@ internal class GameAggregate {
         command.moderatorUsername
       )
     )
+
+    deadlineScheduler.schedule(Duration.ofMinutes(30), Deadline.GAME_ABANDONED, command.gameId)
   }
 
   @CommandHandler
@@ -103,7 +111,7 @@ internal class GameAggregate {
   }
 
   @CommandHandler
-  fun handle(command: StartGameCommand, questionPort: QuestionPort, deadlineManager: DeadlineManager) {
+  fun handle(command: StartGameCommand, questionPort: QuestionPort, deadlineScheduler: DeadlineScheduler) {
     logger.info { "Executing StartGameCommand for game ${command.gameId}" }
     if (config.useBuzzer && this.users.size < 2) {
       throw GameException(this.gameId, "Buzzer game needs at least two players")
@@ -113,11 +121,11 @@ internal class GameAggregate {
     }
 
     AggregateLifecycle.apply(GameStartedEvent(command.gameId))
-    askNextQuestion(questionPort, deadlineManager)
+    askNextQuestion(questionPort, deadlineScheduler)
   }
 
   @CommandHandler
-  fun handle(command: AnswerQuestionCommand, deadlineManager: DeadlineManager) {
+  fun handle(command: AnswerQuestionCommand, deadlineScheduler: DeadlineScheduler) {
     logger.info { "Executing AnswerQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
@@ -128,7 +136,7 @@ internal class GameAggregate {
     // after QuestionAnsweredEvent is applied, the user-answer is actually in the list
     if (users.size == gameQuestion.numAnswers()) {
       gameQuestion.closeQuestion()
-      deadlineManager.cancelAllWithinScope("questionCloseDeadline")
+      deadlineScheduler.cancel(Deadline.QUESTION_CLOSE, this.gameId)
     }
   }
 
@@ -142,7 +150,7 @@ internal class GameAggregate {
   }
 
   @CommandHandler
-  fun handle(command: BuzzQuestionCommand, deadlineManager: DeadlineManager) {
+  fun handle(command: BuzzQuestionCommand, deadlineScheduler: DeadlineScheduler) {
     logger.info { "Executing BuzzQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
@@ -152,7 +160,7 @@ internal class GameAggregate {
     gameQuestion.buzz(user.gameUserId, command.buzzerTimestamp)
 
     if (gameQuestion.numBuzzers() == 1) {
-      deadlineManager.schedule(Duration.ofMillis(500), "questionBuzzDeadline")
+      deadlineScheduler.schedule(Duration.ofMillis(500), Deadline.QUESTION_BUZZER, this.gameId)
     }
   }
 
@@ -167,14 +175,14 @@ internal class GameAggregate {
   }
 
   @CommandHandler
-  fun handle(command: CloseQuestionCommand, deadlineManager: DeadlineManager) {
+  fun handle(command: CloseQuestionCommand, deadlineScheduler: DeadlineScheduler) {
     logger.info { "Executing CloseQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
     askedQuestions.getById(command.gameQuestionId)
       .closeQuestion()
 
-    deadlineManager.cancelAllWithinScope("questionCloseDeadline")
+    deadlineScheduler.cancel(Deadline.QUESTION_CLOSE, this.gameId)
   }
 
   @CommandHandler
@@ -193,7 +201,7 @@ internal class GameAggregate {
 
 
   @CommandHandler
-  fun handle(command: AskNextQuestionCommand, questionPort: QuestionPort, deadlineManager: DeadlineManager) {
+  fun handle(command: AskNextQuestionCommand, questionPort: QuestionPort, deadlineScheduler: DeadlineScheduler) {
     logger.info { "Executing AskNextQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
@@ -207,7 +215,7 @@ internal class GameAggregate {
         )
       )
     } else {
-      askNextQuestion(questionPort, deadlineManager)
+      askNextQuestion(questionPort, deadlineScheduler)
     }
   }
 
@@ -280,7 +288,16 @@ internal class GameAggregate {
     askedQuestions.firstOrNull { !it.isClosed() }?.evaluateBuzzes()
   }
 
-  private fun askNextQuestion(questionPort: QuestionPort, deadlineManager: DeadlineManager) {
+  @DeadlineHandler(deadlineName = "gameAbandonedDeadline")
+  fun onGameAbandonedDeadline() {
+    logger.info { "Reached game abandon deadline for game $gameId" }
+
+    AggregateLifecycle.apply(
+      GameCanceledEvent(gameId)
+    )
+  }
+
+  private fun askNextQuestion(questionPort: QuestionPort, deadlineScheduler: DeadlineScheduler) {
     val question = questionPort.getQuestion(questionList[askedQuestions.size])
 
     val questionMode = if (this.config.useBuzzer) GameQuestionMode.BUZZER else GameQuestionMode.COLLECTIVE
@@ -298,8 +315,11 @@ internal class GameAggregate {
     )
 
     if (questionMode != GameQuestionMode.BUZZER && config.secondsToAnswer > 0) {
-      deadlineManager.schedule(Duration.ofSeconds(config.secondsToAnswer), "questionCloseDeadline")
+      deadlineScheduler.schedule(Duration.ofSeconds(config.secondsToAnswer), Deadline.QUESTION_CLOSE, this.gameId)
     }
+
+    deadlineScheduler.cancel(Deadline.GAME_ABANDONED, this.gameId)
+    deadlineScheduler.schedule(Duration.ofMinutes(15), Deadline.GAME_ABANDONED, this.gameId)
   }
 
   fun MutableList<GameQuestion>.getById(gameQuestionId: UUID): GameQuestion {

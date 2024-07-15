@@ -15,17 +15,13 @@ Scenario('multiplayer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
 
   session('player2', () => {
     loginPage.logInWithUsername(username2)
-    I.wait(1)
     lobbyPage.joinGame(gameName)
   });
 
   session('player3', () => {
     loginPage.logInWithUsername(username3)
-    I.wait(1)
     lobbyPage.joinGame(gameName)
   });
-
-  I.wait(50000)
 
   I.waitForText(username2)
   I.waitForText(username3)
@@ -47,19 +43,16 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
 
   session('player1', () => {
     loginPage.logInWithUsername(username1)
-    I.wait(1)
     lobbyPage.joinGame(gameName)
   });
 
   session('player2', () => {
     loginPage.logInWithUsername(username2)
-    I.wait(1)
     lobbyPage.joinGame(gameName)
   });
 
   session('player3', () => {
     loginPage.logInWithUsername(username3)
-    I.wait(1)
     lobbyPage.joinGame(gameName)
   });
 
@@ -73,11 +66,11 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
     gameRoomPage.answerChoiceQuestion("Banone")
   })
 
-  I.wait(2)
+  I.wait(1)
   session('player2', () => {
     gameRoomPage.answerChoiceQuestion("Banone")
   })
-  I.wait(2)
+  I.wait(1)
   session('player3', () => {
     gameRoomPage.answerChoiceQuestion("Gürkin")
   })
@@ -123,5 +116,5 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
 
   I.waitForText("Results")
 
-  I.wait(2)
+  I.wait(1)
 });

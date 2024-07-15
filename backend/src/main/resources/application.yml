@@ -15,6 +15,13 @@ spring:
           use_jdbc_metadata_defaults: false
         jdbc:
           time_zone: UTC
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    startup-delay: 10s
+    properties:
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
 
 logging:
   level:

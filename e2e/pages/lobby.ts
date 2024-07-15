@@ -29,6 +29,7 @@ export function createGame(gameName: string, questionSet: string, moderated: boo
 }
 
 export function joinGame(gameName: string) {
+  I.waitForText(gameName)
   let joinGameButton = locate('Button').inside(locate('tr').withDescendant('div').withText(gameName))
 
   I.click(joinGameButton);
