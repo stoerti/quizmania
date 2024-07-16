@@ -17,11 +17,12 @@ class DeadlineScheduler(
   companion object : KLogging()
 
   override fun schedule(duration: Duration, deadlineId: String, gameId: GameId) {
-    logger.debug { "Scheduling deadline $gameId / $deadlineId with duration $duration" }
     // if the duration is too short for the usual poll interval
     if (duration.minus(Duration.ofMinutes(5)).isNegative) {
+      logger.debug { "Scheduling deadline $gameId / $deadlineId with duration $duration on transientDeadlineManager" }
       transientDeadlineManager.schedule(duration, deadlineId)
     } else {
+      logger.debug { "Scheduling deadline $gameId / $deadlineId with duration $duration on regular deadlineManager" }
       deadlineManager.schedule(duration, deadlineId)
     }
   }

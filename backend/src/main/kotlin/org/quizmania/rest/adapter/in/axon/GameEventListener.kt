@@ -25,48 +25,6 @@ class GameEventListener(
   }
 
   @EventHandler
-  fun on(event: QuestionAskedEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
-    logger.info { "Received QuestionAskedEvent $event" }
-    gameEventHappenedInPort.questionAsked(event, EventMetaData(seqNo, timestamp))
-  }
-
-  @EventHandler
-  fun on(event: QuestionAnsweredEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
-    logger.info { "Received QuestionAnsweredEvent $event" }
-    gameEventHappenedInPort.questionAnswered(event, EventMetaData(seqNo, timestamp))
-  }
-
-  @EventHandler
-  fun on(event: QuestionBuzzedEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
-    logger.info { "Received QuestionBuzzedEvent $event" }
-    gameEventHappenedInPort.questionBuzzed(event, EventMetaData(seqNo, timestamp))
-  }
-
-  @EventHandler
-  fun on(event: QuestionBuzzerWonEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
-    logger.info { "Received QuestionBuzzerWonEvent $event" }
-    gameEventHappenedInPort.questionBuzzerWon(event, EventMetaData(seqNo, timestamp))
-  }
-
-  @EventHandler
-  fun on(event: QuestionAnswerOverriddenEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
-    logger.info { "Received QuestionAnswerOverriddenEvent $event" }
-    gameEventHappenedInPort.questionAnswerOverridden(event, EventMetaData(seqNo, timestamp))
-  }
-
-  @EventHandler
-  fun on(event: QuestionClosedEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
-    logger.info { "Received QuestionClosedEvent $event" }
-    gameEventHappenedInPort.questionClosed(event, EventMetaData(seqNo, timestamp))
-  }
-
-  @EventHandler
-  fun on(event: QuestionRatedEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
-    logger.info { "Received QuestionRatedEvent $event" }
-    gameEventHappenedInPort.questionRated(event, EventMetaData(seqNo, timestamp))
-  }
-
-  @EventHandler
   fun on(event: UserAddedEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
     logger.info { "Received UserAddedEvent $event" }
     gameEventHappenedInPort.userAdded(event, EventMetaData(seqNo, timestamp))

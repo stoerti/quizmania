@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+  app:
+    image: quizmania:latest
+#    container_name: quizmania
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/quizmania
+      - AXON_AXONSERVER_SERVERS=axonserver
+    ports:
+      - '8080'
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
+    ports:
+      - "8080:8080"
+  db:
+    image: postgres:16.2
+    container_name: db
+    environment:
+      - POSTGRES_USER=quizmania
+      - POSTGRES_PASSWORD=quizmania
+    ports:
+      - '5432:5432'
+  axonserver:
+    image: axoniq/axonserver:2024.0.2-jdk-17
+    hostname: axonserver
+    environment:
+      AXONIQ_AXONSERVER_STANDALONE: "true"
+    #    volumes:
+#      - axonserver-data:/data
+#      - axonserver-events:/eventdata
+#      - axonserver-config:/config:ro
+    ports:
+      - '8024:8024'
+      - '8124:8124'
+      - '8224:8224'

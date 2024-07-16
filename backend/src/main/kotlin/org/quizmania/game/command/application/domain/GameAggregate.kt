@@ -209,11 +209,7 @@ internal class GameAggregate {
       throw GameException(gameId, "Other question is still open or not rated")
     }
     if (this.askedQuestions.size >= this.config.numQuestions) {
-      AggregateLifecycle.apply(
-        GameEndedEvent(
-          gameId = gameId
-        )
-      )
+      endGame(deadlineScheduler)
     } else {
       askNextQuestion(questionPort, deadlineScheduler)
     }
@@ -276,25 +272,29 @@ internal class GameAggregate {
     )
   }
 
-  @DeadlineHandler(deadlineName = "questionCloseDeadline")
+  @DeadlineHandler(deadlineName = Deadline.QUESTION_CLOSE)
   fun onQuestionClosedDeadline() {
     logger.info { "Reached question deadline for game $gameId" }
     askedQuestions.firstOrNull { !it.isClosed() }?.closeQuestion()
   }
 
-  @DeadlineHandler(deadlineName = "questionBuzzDeadline")
+  @DeadlineHandler(deadlineName = Deadline.QUESTION_BUZZER)
   fun onQuestionBuzzDeadline() {
     logger.info { "Reached question buzzer deadline for game $gameId" }
     askedQuestions.firstOrNull { !it.isClosed() }?.evaluateBuzzes()
   }
 
-  @DeadlineHandler(deadlineName = "gameAbandonedDeadline")
+  @DeadlineHandler(deadlineName = Deadline.GAME_ABANDONED)
   fun onGameAbandonedDeadline() {
     logger.info { "Reached game abandon deadline for game $gameId" }
 
-    AggregateLifecycle.apply(
-      GameCanceledEvent(gameId)
-    )
+    if (this.gameStatus == GameStatus.CANCELED || this.gameStatus == GameStatus.ENDED) {
+      logger.warn { "${Deadline.GAME_ABANDONED} triggered for ${this.gameId} but game is already in status ${this.gameStatus}" }
+    } else {
+      AggregateLifecycle.apply(
+        GameCanceledEvent(gameId)
+      )
+    }
   }
 
   private fun askNextQuestion(questionPort: QuestionPort, deadlineScheduler: DeadlineScheduler) {
@@ -320,6 +320,15 @@ internal class GameAggregate {
 
     deadlineScheduler.cancel(Deadline.GAME_ABANDONED, this.gameId)
     deadlineScheduler.schedule(Duration.ofMinutes(15), Deadline.GAME_ABANDONED, this.gameId)
+  }
+
+  private fun endGame(deadlineScheduler: DeadlineScheduler) {
+    AggregateLifecycle.apply(
+      GameEndedEvent(
+        gameId = gameId
+      )
+    )
+    deadlineScheduler.cancel(Deadline.GAME_ABANDONED, this.gameId)
   }
 
   fun MutableList<GameQuestion>.getById(gameQuestionId: UUID): GameQuestion {

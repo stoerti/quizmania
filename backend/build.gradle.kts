@@ -4,6 +4,7 @@ plugins {
   id("org.springframework.boot") version "3.3.0"
   id("io.spring.dependency-management") version "1.1.5"
   id("jacoco")
+  id("com.google.cloud.tools.jib") version "3.4.3"
   kotlin("jvm") version "2.0.0"
   kotlin("plugin.spring") version "2.0.0"
   kotlin("plugin.jpa") version "2.0.0"
@@ -88,3 +89,17 @@ jacoco {
   toolVersion = "0.8.7"
 }
 
+jib {
+  from {
+    image = "openjdk:17-jdk-slim"
+    platforms {
+      platform {
+        architecture = "arm64"
+        os = "linux"
+      }
+    }
+  }
+  to {
+    image = "quizmania"
+  }
+}
