@@ -8,14 +8,6 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.2",
     "@stomp/stompjs": "^7.0.0",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.14",
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
-    "@types/sockjs-client": "^1.5.1",
     "js-cookie": "^3.0.5",
     "material-react-toastify": "^2.0.1",
     "material-ui-snackbar-provider": "^2.0.0",
@@ -55,6 +47,14 @@
   },
   "proxy": "http://localhost:8080",
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.14",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@types/sockjs-client": "^1.5.1",
     "@types/js-cookie": "^3.0.3"
   }
 }
