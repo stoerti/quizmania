@@ -7,6 +7,9 @@ import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 
 const App = () => {
   const theme = createTheme({
+    typography: {
+      fontFamily: 'Klarheit Kurrent, Roboto, Arial'
+    },
     palette: {
       mode: 'light',
       primary: {
@@ -34,6 +37,25 @@ const App = () => {
       divider: '#102924',
     },
     components: {
+      MuiCssBaseline: {
+        styleOverrides: `/* holi theme */
+@font-face {
+  font-family: 'Klarheit Kurrent';
+  font-weight: 400;
+  src: url('./assets/fonts/ESKlarheitKurrent-Rg.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Klarheit Kurrent';
+  font-weight: 500;
+  src: url('./assets/fonts/ESKlarheitKurrent-Md.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Klarheit Kurrent';
+  font-weight: 600;
+  src: url('./assets/fonts/ESKlarheitKurrent-Smbd.otf') format('opentype');
+}
+`
+      },
       MuiButton: {
         styleOverrides: {
           root: {
