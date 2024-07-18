@@ -7,16 +7,19 @@ import org.axonframework.eventhandling.SequenceNumber
 import org.axonframework.eventhandling.Timestamp
 import org.quizmania.common.EventMetaData
 import org.quizmania.game.api.*
+import org.quizmania.rest.adapter.`in`.axon.GameEventListener.Companion.PROCESSING_GROUP
 import org.quizmania.rest.port.`in`.GameEventHappenedInPort
 import org.springframework.stereotype.Component
 import java.time.Instant
 
 @Component
-@ProcessingGroup("defaultProjection")
+@ProcessingGroup(PROCESSING_GROUP)
 class GameEventListener(
   val gameEventHappenedInPort: GameEventHappenedInPort
 ) {
-  companion object : KLogging()
+  companion object : KLogging() {
+    const val PROCESSING_GROUP = "defaultProjection"
+  }
 
   @EventHandler
   fun on(event: GameCreatedEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {

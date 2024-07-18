@@ -17,7 +17,7 @@ import Refresh from "@mui/icons-material/Refresh"
 import React, {useEffect} from "react";
 import {GameCreationDialog} from "./GameCreationDialog";
 import {useSnackbar} from "material-ui-snackbar-provider";
-import {GameCommandService, NewGameCommand} from "../services/GameCommandService";
+import {GameAlreadyFullException, GameCommandService, GameConfigInvalidException, GameException, NewGameCommand} from "../services/GameCommandService";
 import {TransferWithinAStation} from "@mui/icons-material";
 import {GameDto, GameOverviewService} from "../services/GameOverviewService";
 
@@ -103,29 +103,38 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
     gameOverviewService.searchOpenGames(setGames)
   }
 
-  const onButtonClickJoinGame = (gameId: string) => {
-    gameCommandService.joinGame(gameId, () => {
+  const onButtonClickJoinGame = async (gameId: string) => {
+    try {
+      await gameCommandService.joinGame(gameId)
       props.onGameSelected(gameId)
-    })
+    } catch (error) {
+      if (error instanceof GameAlreadyFullException) {
+        snackbar.showMessage("The selected game is already full")
+      } else {
+        snackbar.showMessage("Something went wrong")
+      }
+    }
   }
 
   const onCloseNewGameDialog = () => {
     setNewGameDialogOpen(false)
   }
 
-  const onCreateNewGame = (newGame: NewGameCommand) => {
-    gameCommandService.createNewGame(newGame, (gameId) => {
-      gameSelected(gameId)
+  const onCreateNewGame = async (newGame: NewGameCommand) => {
+    try {
+      const gameId = await gameCommandService.createNewGame(newGame)
+      props.onGameSelected(gameId)
       snackbar.showMessage(
         `Created game ${newGame.name} for ${newGame.config.maxPlayers} players, ${newGame.config.numQuestions} questions and ${newGame.withModerator ? 'with' : 'without'} moderator`
       )
       setNewGameDialogOpen(false)
-    }, (error) => {
-    })
-  }
-
-  const gameSelected = (gameId: string) => {
-    props.onGameSelected(gameId)
+    } catch (error) {
+      if (error instanceof GameException) {
+        snackbar.showMessage(error.message)
+      } else {
+        snackbar.showMessage("Something went wrong: " + error)
+      }
+    }
   }
 
   return (

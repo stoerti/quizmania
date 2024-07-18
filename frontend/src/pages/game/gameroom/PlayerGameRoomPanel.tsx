@@ -1,5 +1,5 @@
 import {Game, GameQuestion, Player, QuestionStatus} from "../../../domain/GameModel";
-import {GameCommandService} from "../../../services/GameCommandService";
+import {GameCommandService, GameException} from "../../../services/GameCommandService";
 import {
   Box,
   Button,
@@ -26,6 +26,7 @@ import {QuestionMark} from "@mui/icons-material";
 import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
 import {GameQuestionMode} from "../../../services/GameEventTypes";
 import {BuzzerQuestionContainer} from "../question/BuzzerQuestionContainer";
+import {useSnackbar} from "material-ui-snackbar-provider";
 
 export type PlayerGameRoomPanelProps = {
   game: Game,
@@ -39,10 +40,12 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
   const question = props.currentQuestion
   const user = props.user
 
+  const snackbar = useSnackbar()
+
   let container = undefined
-  if (question == undefined) {
+  if (question === undefined) {
     container = <div>Waiting for first question</div>
-  } else if (question.status == QuestionStatus.OPEN) {
+  } else if (question.status === QuestionStatus.OPEN) {
     if (question.hasPlayerAlreadyAnswered(user.id)) {
       container = <Stack spacing={2}>
         <QuestionPhrasePanel gameQuestion={question}/>
@@ -58,35 +61,58 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
         </Paper>
       </Stack>
     } else {
-      if (question.questionMode == GameQuestionMode.COLLECTIVE) {
-        const onAnswerQuestion = (answer: string) =>
-          props.gameService.answerQuestion({
-            gameId: props.game.id,
-            gameQuestionId: question.gameQuestionId,
-            answer: answer
-          }, () => {
-          })
+      if (question.questionMode === GameQuestionMode.COLLECTIVE) {
+        const onAnswerQuestion = async (answer: string) => {
+          try {
+            await props.gameService.answerQuestion({
+              gameId: props.game.id,
+              gameQuestionId: question.gameQuestionId,
+              answer: answer
+            })
+          } catch (error) {
+            if (error instanceof GameException) {
+              snackbar.showMessage(error.message)
+            }
+          }
+        }
+
         container = <QuestionContainer gameQuestion={question} onAnswerQuestion={onAnswerQuestion}/>
-      } else if (question.questionMode == GameQuestionMode.BUZZER) {
-        const onBuzzQuestion = () =>
-          props.gameService.buzzQuestion({
-            gameId: props.game.id,
-            gameQuestionId: question.gameQuestionId,
-            buzzerTimestamp: new Date().toISOString()
-          }, () => {
-          })
+      } else if (question.questionMode === GameQuestionMode.BUZZER) {
+        const onBuzzQuestion = async () => {
+          try {
+            await props.gameService.buzzQuestion({
+              gameId: props.game.id,
+              gameQuestionId: question.gameQuestionId,
+              buzzerTimestamp: new Date().toISOString()
+            })
+          } catch (error) {
+            if (error instanceof GameException) {
+              snackbar.showMessage(error.message)
+            }
+          }
+        }
         container = <BuzzerQuestionContainer gameQuestion={question} gameUser={user} onBuzzQuestion={onBuzzQuestion}/>
       } else {
         container = <div>Unknown gameQuestionMode {question.questionMode}</div>
       }
     }
-  } else if (question.status == QuestionStatus.CLOSED || question.status == QuestionStatus.RATED) {
+  } else if (question.status === QuestionStatus.CLOSED || question.status === QuestionStatus.RATED) {
     let nextButton;
-    if (question.status == QuestionStatus.RATED && props.game.creator === Cookies.get('username')) {
+    const onNextQuestion = async () => {
+      try {
+        await props.gameService.askNextQuestion(props.game.id)
+      } catch (error) {
+        if (error instanceof GameException) {
+          snackbar.showMessage(error.message)
+        }
+      }
+    }
+
+
+    if (question.status === QuestionStatus.RATED && props.game.creator === Cookies.get('username')) {
       nextButton = <div style={{display: "flex", alignItems: "center"}}>
         <Button id="nextQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
-                onClick={() => props.gameService.askNextQuestion(props.game.id, () => {
-                })}>Next question</Button>
+                onClick={onNextQuestion}>Next question</Button>
       </div>
     }
     container =
@@ -110,7 +136,7 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
           <TableBody>
             {[...question.answers].sort((a1, a2) => a1.points - a2.points || props.game.findPlayerName(a1.gamePlayerId).localeCompare(props.game.findPlayerName(a2.gamePlayerId))).map(answer => {
               let icon;
-              if (question.status == QuestionStatus.RATED) {
+              if (question.status === QuestionStatus.RATED) {
                 if (answer.points > 0) {
                   icon = <CheckCircle color='success'/>
                 } else {

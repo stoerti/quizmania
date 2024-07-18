@@ -50,31 +50,31 @@ data class GameQuestion(
 
   private fun assertNotAlreadyAnswered(gameUserId: GameUserId) {
     if (hasUserAlreadyAnswered(gameUserId)) {
-      throw QuestionAlreadyAnsweredException(gameId, id, gameUserId)
+      throw QuestionAlreadyAnsweredProblem(gameId, id, gameUserId)
     }
   }
 
   private fun assertNotAlreadyBuzzed(gameUserId: GameUserId) {
     if (hasUserAlreadyBuzzed(gameUserId)) {
-      throw QuestionAlreadyBuzzedException(gameId, id, gameUserId)
+      throw QuestionAlreadyBuzzedProblem(gameId, id, gameUserId)
     }
   }
 
   private fun assertNotClosed() {
     if (isClosed()) {
-      throw QuestionAlreadyClosedException(gameId, id)
+      throw QuestionAlreadyClosedProblem(gameId, id)
     }
   }
 
   private fun assertNotRated() {
     if (isRated()) {
-      throw QuestionAlreadyRatedException(gameId, id)
+      throw QuestionAlreadyRatedProblem(gameId, id)
     }
   }
 
   fun answer(gameUserId: GameUserId, answer: String) {
     if (this.questionMode == GameQuestionMode.BUZZER) {
-      throw QuestionInBuzzerModeException(this.gameId, this.id)
+      throw QuestionInBuzzerModeProblem(this.gameId, this.id)
     }
 
     assertNotClosed()
@@ -93,12 +93,12 @@ data class GameQuestion(
 
   fun overrideAnswer(gameUserId: GameUserId, answer: String) {
     if (this.questionMode == GameQuestionMode.BUZZER) {
-      throw QuestionInBuzzerModeException(this.gameId, this.id)
+      throw QuestionInBuzzerModeProblem(this.gameId, this.id)
     }
     assertNotRated()
 
     if (!hasUserAlreadyAnswered(gameUserId)) {
-      throw GameException(gameId, "Question was not answered by user answered")
+      throw AnswerNotFoundProblem(gameId, this.id, gameUserId)
     }
     val answerId = userAnswers.first { it.gameUserId == gameUserId }.userAnswerId
 
@@ -115,7 +115,7 @@ data class GameQuestion(
 
   fun buzz(gameUserId: GameUserId, buzzerTimestamp: Instant) {
     if (this.questionMode != GameQuestionMode.BUZZER) {
-      throw QuestionNotInBuzzerModeException(this.gameId, this.id)
+      throw QuestionNotInBuzzerModeProblem(this.gameId, this.id)
     }
 
     assertNotClosed()
@@ -154,10 +154,10 @@ data class GameQuestion(
 
   fun answerBuzzWinner(correctAnswer: Boolean) {
     if (this.questionMode != GameQuestionMode.BUZZER) {
-      throw QuestionNotInBuzzerModeException(this.gameId, this.id)
+      throw QuestionNotInBuzzerModeProblem(this.gameId, this.id)
     }
     if (this.currentBuzzWinner == null) {
-      throw GameException(this.gameId, "No buzzer winner in current question")
+      throw NoBuzzerWinnerProblem(this.gameId, this.id)
     }
 
     assertNotClosed()

@@ -13,6 +13,11 @@ import org.quizmania.rest.port.`in`.GameEventHappenedInPort
 import org.springframework.stereotype.Component
 import java.time.Instant
 
+/**
+ * SubscribingGameEventListener violates hexagonal architecture by forwarding all events to the websocketEmitter.
+ * Using strongly typed events, ports and usecases would just be boilterplate code here
+ */
+
 @Component
 @ProcessingGroup(PROCESSING_GROUP)
 class SubscribingGameEventListener(

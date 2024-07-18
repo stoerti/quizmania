@@ -1,5 +1,5 @@
 import {GameQuestion} from "../../../domain/GameModel";
-import {Box, Paper, Stack, Typography, useTheme} from "@mui/material";
+import {Paper, Stack, Typography, useTheme} from "@mui/material";
 import React from "react";
 
 export type QuestionPhrasePanelProps = {

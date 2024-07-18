@@ -1,4 +1,4 @@
-import {GameCommandService} from "../../services/GameCommandService";
+import {GameCommandService, GameException} from "../../services/GameCommandService";
 import Cookies from "js-cookie";
 import {
     AppBar,
@@ -19,22 +19,34 @@ import RecordVoiceOver from "@mui/icons-material/RecordVoiceOver";
 import Person from "@mui/icons-material/Person";
 import React from "react";
 import {Game} from "../../domain/GameModel";
+import {useSnackbar} from "material-ui-snackbar-provider";
 
 export type GameLobbyPageProps = {
     game: Game,
-    gameSCommandervice: GameCommandService
+    gameCommandService: GameCommandService
 }
 
 export const GameLobbyPage = (props: GameLobbyPageProps) => {
+  const snackbar = useSnackbar()
 
-    const onClickLeaveGame = () => {
-        props.gameSCommandervice.leaveGame(props.game.id, () => {
-        })
+    const onClickLeaveGame = async () => {
+      try {
+        await props.gameCommandService.leaveGame(props.game.id)
+      } catch (error) {
+        if (error instanceof GameException) {
+          snackbar.showMessage(error.message)
+        }
+      }
     }
 
-    const onClickStartGame = () => {
-        props.gameSCommandervice.startGame(props.game.id, () => {
-        })
+    const onClickStartGame = async () => {
+      try {
+        await props.gameCommandService.startGame(props.game.id)
+      } catch (error) {
+        if (error instanceof GameException) {
+          snackbar.showMessage(error.message)
+        }
+      }
     }
 
     let startButton;

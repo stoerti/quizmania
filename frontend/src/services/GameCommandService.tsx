@@ -38,158 +38,105 @@ export type AnswerBuzzerQuestionCommand = {
   answerCorrect: boolean
 }
 
+type ProblemJson = {
+  type: string,
+  title: string | undefined,
+  detail: string | undefined,
+  context: any,
+}
+
+export class GameException extends Error {}
+
+export class GameAlreadyFullException extends GameException {
+  constructor() {
+    super('The game is already full');
+  }
+}
+
+export class GameConfigInvalidException extends GameException {
+  constructor(problem: ProblemJson) {
+    super('The game config is invalid: ' + problem.detail);
+  }
+}
+
 export class GameCommandService {
-  public createNewGame(newGame: NewGameCommand, responseHandler: (gameId: string) => void, errorHandler: (err: any) => void = () => {
-  }) {
-    fetch('/api/game/', {
-      method: 'PUT',
-      body: JSON.stringify(newGame),
+  public async createNewGame(newGame: NewGameCommand) {
+    const response = await this.genericPut('/api/game/', JSON.stringify(newGame))
+    return await response.text()
+  }
+
+  public async joinGame(gameId: string) {
+    await this.genericPost('/api/game/' + gameId + '/join')
+  }
+
+  public async leaveGame(gameId: string) {
+    await this.genericPost('/api/game/' + gameId + '/leave')
+  }
+
+  public async startGame(gameId: string) {
+    await this.genericPost('/api/game/' + gameId + '/start')
+  }
+
+  public async askNextQuestion(gameId: string) {
+    await this.genericPost('/api/game/' + gameId + '/ask-next-question')
+  }
+
+  public async closeQuestion(gameId: string, gameQuestionId: string) {
+    await this.genericPost('api/game/' + gameId + '/question/' + gameQuestionId + '/close')
+  }
+
+  public async rateQuestion(gameId: string, gameQuestionId: string) {
+    await this.genericPost('api/game/' + gameId + '/question/' + gameQuestionId + '/rate')
+  }
+
+  public async overrideAnswer(answer: OverrideAnswerCommand) {
+    await this.genericPost('/api/game/' + answer.gameId + '/override-answer', JSON.stringify(answer))
+  }
+
+  public async answerQuestion(answer: AnswerQuestionCommand) {
+    await this.genericPost('/api/game/' + answer.gameId + '/answer-question', JSON.stringify(answer))
+  }
+
+  public async buzzQuestion(buzz: BuzzQuestionCommand) {
+    await this.genericPost('/api/game/' + buzz.gameId + '/buzz-question', JSON.stringify(buzz))
+  }
+
+  public async answerBuzzerQuestion(answer: AnswerBuzzerQuestionCommand) {
+    await this.genericPost('/api/game/' + answer.gameId + '/buzzer-answer-question', JSON.stringify(answer))
+  }
+
+  private async genericPost(path: string, body?: any) {
+    return this.genericExchange('POST', path, body)
+  }
+
+  private async genericPut(path: string, body?: any) {
+    return this.genericExchange('PUT', path, body)
+  }
+
+  private async genericExchange(method: string, path: string, body?: any) {
+    const response = await fetch(path, {
+      method: method,
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
+      body: body
     })
-      .then((response) => {
-        if (response.ok) {
-          response.text().then(responseHandler)
-        } else {
-          response.text().then(errorHandler)
-        }
-      })
-      .catch((err) => {
-        if (errorHandler !== undefined)
-          errorHandler(err);
-      });
+
+    if (!response.ok && response.headers.get('Content-Type') === 'application/problem+json') {
+      throw this.resolveProblemException(await response.json() as ProblemJson)
+    } else if (!response.ok) {
+      const error = await response.text()
+      throw Error("Generic error happened: " + error)
+    } else {
+      return response
+    }
   }
 
-  public joinGame(gameId: string, responseHandler: () => void, errorHandler: (err: any) => void = () => {
-  }) {
-    this.genericPostNoReturn('/api/game/' + gameId + '/join', responseHandler, errorHandler)
-  }
-
-  public leaveGame(gameId: string, responseHandler: () => void, errorHandler: (err: any) => void = () => {
-  }) {
-    this.genericPostNoReturn('/api/game/' + gameId + '/leave', responseHandler, errorHandler)
-  }
-
-  public startGame(gameId: string, responseHandler: () => void, errorHandler: (err: any) => void = () => {
-  }) {
-    this.genericPostNoReturn('/api/game/' + gameId + '/start', responseHandler, errorHandler)
-  }
-
-  public cancelGame(gameId: string, responseHandler: () => void, errorHandler: (err: any) => void = () => {
-  }) {
-    this.genericPostNoReturn('/api/game/' + gameId + '/cancel', responseHandler, errorHandler)
-  }
-
-  public askNextQuestion(gameId: string, responseHandler: () => void, errorHandler: (err: any) => void = () => {
-  }) {
-    this.genericPostNoReturn('/api/game/' + gameId + '/ask-next-question', responseHandler, errorHandler)
-  }
-
-  public closeQuestion(gameId: string, gameQuestionId: string, responseHandler: () => void = () => {
-  }, errorHandler: (err: any) => void = () => {
-  }) {
-    this.genericPostNoReturn('api/game/' + gameId + '/question/' + gameQuestionId + '/close', responseHandler, errorHandler)
-  }
-
-  public rateQuestion(gameId: string, gameQuestionId: string, responseHandler: () => void = () => {
-  }, errorHandler: (err: any) => void = () => {
-  }) {
-    this.genericPostNoReturn('api/game/' + gameId + '/question/' + gameQuestionId + '/rate', responseHandler, errorHandler)
-  }
-
-  public overrideAnswer(answer: OverrideAnswerCommand, responseHandler: () => void, errorHandler: (err: any) => void = () => {
-  }) {
-    fetch('/api/game/' + answer.gameId + '/override-answer', {
-      method: 'POST',
-      body: JSON.stringify(answer),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-      .then((response) => {
-        if (response.ok) responseHandler()
-        else console.log(response)
-      })
-      .catch((err) => {
-        if (errorHandler !== undefined)
-          errorHandler(err);
-      });
-  }
-
-  public answerQuestion(answer: AnswerQuestionCommand, responseHandler: () => void, errorHandler: (err: any) => void = () => {
-  }) {
-    fetch('/api/game/' + answer.gameId + '/answer-question', {
-      method: 'POST',
-      body: JSON.stringify(answer),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-      .then((response) => {
-        if (response.ok) responseHandler()
-        else console.log(response)
-      })
-      .catch((err) => {
-        if (errorHandler !== undefined)
-          errorHandler(err);
-      });
-  }
-
-  public buzzQuestion(buzz: BuzzQuestionCommand, responseHandler: () => void = () => {}, errorHandler: (err: any) => void = () => {
-  }) {
-    fetch('/api/game/' + buzz.gameId + '/buzz-question', {
-      method: 'POST',
-      body: JSON.stringify(buzz),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-      .then((response) => {
-        if (response.ok) responseHandler()
-        else console.log(response)
-      })
-      .catch((err) => {
-        if (errorHandler !== undefined)
-          errorHandler(err);
-      });
-  }
-
-  public answerBuzzerQuestion(answer: AnswerBuzzerQuestionCommand, responseHandler: () => void = () => {}, errorHandler: (err: any) => void = () => {
-  }) {
-    fetch('/api/game/' + answer.gameId + '/buzzer-answer-question', {
-      method: 'POST',
-      body: JSON.stringify(answer),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-      .then((response) => {
-        if (response.ok) responseHandler()
-        else console.log(response)
-      })
-      .catch((err) => {
-        if (errorHandler !== undefined)
-          errorHandler(err);
-      });
-  }
-
-  private genericPostNoReturn(path: string, responseHandler: () => void, errorHandler: (err: any) => void = () => {
-  }) {
-    fetch(path, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-      .then((response) => {
-        if (response.ok) responseHandler()
-        else console.log(response)
-      })
-      .catch((err) => {
-        console.log(err.message);
-        if (errorHandler !== undefined)
-          errorHandler(err);
-      });
+  private resolveProblemException(problem: ProblemJson): Error {
+    switch (problem.type) {
+      case 'urn:quizmania:game:alreadyFull': throw new GameAlreadyFullException()
+      case 'urn:quizmania:game:invalidConfig': throw new GameConfigInvalidException(problem)
+      default: throw new Error('Random error occurred')
+    }
   }
 }

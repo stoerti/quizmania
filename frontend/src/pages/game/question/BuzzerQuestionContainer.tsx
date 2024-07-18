@@ -1,9 +1,7 @@
 import {GameQuestion, Player} from "../../../domain/GameModel";
-import {Box, Button, Paper, Stack, TextField, Typography, useTheme} from "@mui/material";
+import {Button, Stack, useTheme} from "@mui/material";
 import React from "react";
 import {QuestionPhrasePanel} from "./QuestionPhrasePanel";
-import Countdown from "react-countdown";
-import {QuestionCountdownBar} from "./QuestionCountdownBar";
 import {QuestionType} from "../../../services/GameEventTypes";
 
 enum BuzzerStatus {
@@ -66,9 +64,9 @@ export const BuzzerQuestionContainer = (props: BuzzerQuestionContainerProps) => 
 
   let buzzerContainer
   if (props.gameQuestion.buzzedPlayerIds.includes(props.gameUser.id)) {
-    if (props.gameQuestion.currentBuzzWinnerId == props.gameUser.id) {
+    if (props.gameQuestion.currentBuzzWinnerId === props.gameUser.id) {
       buzzerContainer = <Buzzer status={BuzzerStatus.SUCCESS} onClick={() => {}}/>
-    } else if(props.gameQuestion.currentBuzzWinnerId == null) {
+    } else if(props.gameQuestion.currentBuzzWinnerId === null) {
       buzzerContainer = <Buzzer status={BuzzerStatus.WAITING} onClick={() => {}}/>
     } else {
       buzzerContainer = <Buzzer status={BuzzerStatus.FAIL} onClick={() => {}}/>

@@ -42,7 +42,6 @@ Scenario('multiplayer_buzzer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   session('player1', () => {
     gameRoomPage.buzz()
   })
-
   session('player2', () => {
     gameRoomPage.buzz()
   })

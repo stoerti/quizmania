@@ -50,7 +50,7 @@ const GamePage = (props: GamePageProps) => {
   if (game === undefined) {
     page = <div>Loading...</div>
   } else if (game.status === GameStatus.CREATED) {
-    page = <GameLobbyPage game={game} gameSCommandervice={gameCommandService}/>
+    page = <GameLobbyPage game={game} gameCommandService={gameCommandService}/>
   } else if (game.status === GameStatus.STARTED) {
     page = <GameRoomPage game={game} gameCommandService={gameCommandService}/>
   } else if (game.status === GameStatus.ENDED) {

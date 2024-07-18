@@ -1,8 +1,9 @@
 import {Game, GameQuestion, QuestionStatus} from "../../../domain/GameModel";
-import {GameCommandService} from "../../../services/GameCommandService";
+import {GameCommandService, GameException} from "../../../services/GameCommandService";
 import {
   Box,
-  Button, CircularProgress,
+  Button,
+  CircularProgress,
   IconButton,
   List,
   ListItem,
@@ -14,8 +15,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography,
-  useTheme
+  Typography
 } from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import PlayArrow from "@mui/icons-material/PlayArrow";
@@ -26,6 +26,7 @@ import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
 import Countdown from "react-countdown";
 import {QuestionCountdownBar} from "../question/QuestionCountdownBar";
 import {GameQuestionMode} from "../../../services/GameEventTypes";
+import {useSnackbar} from "material-ui-snackbar-provider";
 
 export type ModeratorGameRoomPanelProps = {
   game: Game,
@@ -38,12 +39,12 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
 
   const game = props.game
   const question = props.currentQuestion
+  const snackbar = useSnackbar()
 
-  const theme = useTheme();
-  if (question == undefined) {
+  if (question === undefined) {
     return <div>Waiting for first question</div>
-  } else if (question.status == QuestionStatus.OPEN) {
-    if (question.questionMode == GameQuestionMode.COLLECTIVE) {
+  } else if (question.status === QuestionStatus.OPEN) {
+    if (question.questionMode === GameQuestionMode.COLLECTIVE) {
       return <Box>
         <QuestionPhrasePanel gameQuestion={question}/>
         <Countdown
@@ -90,25 +91,25 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
           </Box>
         </Paper>
       </Box>
-    } else if (question.questionMode == GameQuestionMode.BUZZER) {
+    } else if (question.questionMode === GameQuestionMode.BUZZER) {
       let answerContainer;
       if (question.currentBuzzWinnerId == null) {
         answerContainer =
           <Box sx={{maxWidth: '650px', width: '100%'}}>
             <Stack spacing={2}>
-                <Button id="closeQuestion" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained"
-                        onClick={() => props.gameService.closeQuestion(props.game.id, question.gameQuestionId)}
-                >Close question</Button>
-                <Paper sx={{padding: 2}}>
-                  <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
-                    <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h4" component="div">
-                      Waiting on players to hit the buzzer
-                    </Typography>
-                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                      <CircularProgress/>
-                    </Box>
+              <Button id="closeQuestion" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained"
+                      onClick={() => props.gameService.closeQuestion(props.game.id, question.gameQuestionId)}
+              >Close question</Button>
+              <Paper sx={{padding: 2}}>
+                <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
+                  <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h4" component="div">
+                    Waiting on players to hit the buzzer
+                  </Typography>
+                  <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                    <CircularProgress/>
                   </Box>
-                </Paper>
+                </Box>
+              </Paper>
             </Stack>
           </Box>
 
@@ -145,7 +146,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
     } else {
       return <div>Unknown GameQuestionMode {question.questionMode}</div>
     }
-  } else if (question.status == QuestionStatus.CLOSED) {
+  } else if (question.status === QuestionStatus.CLOSED) {
     return (
       <Stack spacing={2}>
         <QuestionPhrasePanel gameQuestion={question}/>
@@ -168,18 +169,27 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
           </TableHead>
           <TableBody>
             {[...question.answers].sort((a1, a2) => game.findPlayerName(a1.gamePlayerId).localeCompare(game.findPlayerName(a2.gamePlayerId))).map(answer => {
-              let answerCorrect = answer.answer.toLowerCase() == question.question.correctAnswer.toLowerCase() // TODO better check if answer is correct
+              let answerCorrect = answer.answer.toLowerCase() === question.question.correctAnswer.toLowerCase() // TODO better check if answer is correct
               let icon = answerCorrect ? <CheckCircle color='success'/> : <Cancel color='error'/>
               let action = !answerCorrect ?
                 <IconButton
-                  onClick={() => props.gameService.overrideAnswer({
-                    gameId: game.id,
-                    gameQuestionId: question.gameQuestionId,
-                    gameUserId: answer.gamePlayerId,
-                    userAnswerId: answer.id,
-                    answer: question.question.correctAnswer
-                  }, () => {
-                  })}
+                  onClick={
+                    async () => {
+                      try {
+                        await props.gameService.overrideAnswer({
+                          gameId: game.id,
+                          gameQuestionId: question.gameQuestionId,
+                          gameUserId: answer.gamePlayerId,
+                          userAnswerId: answer.id,
+                          answer: question.question.correctAnswer
+                        })
+                      } catch (error) {
+                        if (error instanceof GameException) {
+                          snackbar.showMessage(error.message)
+                        }
+                      }
+                    }
+                  }
                 ><Build color='success'></Build></IconButton> : undefined
               return (
                 <TableRow key={answer.id} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
@@ -202,14 +212,23 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
         </Table>
       </Stack>
     )
-  } else if (question.status == QuestionStatus.RATED) {
+  } else if (question.status === QuestionStatus.RATED) {
     return (
       <Stack spacing={2}>
         <QuestionPhrasePanel gameQuestion={question}/>
         <div style={{display: "flex", alignItems: "center"}}>
           <Button id="nextQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
-                  onClick={() => props.gameService.askNextQuestion(props.game.id, () => {
-                  })}
+                  onClick={
+                    async () => {
+                      try {
+                        await props.gameService.askNextQuestion(props.game.id)
+                      } catch (error) {
+                        if (error instanceof GameException) {
+                          snackbar.showMessage(error.message)
+                        }
+                      }
+                    }
+                  }
           >Next question</Button>
         </div>
         <List dense>

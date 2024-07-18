@@ -33,5 +33,6 @@ export function joinGame(gameName: string) {
   let joinGameButton = locate('Button').inside(locate('tr').withDescendant('div').withText(gameName))
 
   I.click(joinGameButton);
+  I.waitForText("Participants")
 }
 

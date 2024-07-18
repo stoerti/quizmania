@@ -1,14 +1,15 @@
 package org.quizmania.game.command.application.domain
 
 import mu.KLogging
+import org.axonframework.commandhandling.CommandExecutionException
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.deadline.annotation.DeadlineHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
-import org.axonframework.modelling.command.AggregateIdentifier
-import org.axonframework.modelling.command.AggregateLifecycle
-import org.axonframework.modelling.command.AggregateMember
-import org.axonframework.modelling.command.ForwardMatchingInstances
+import org.axonframework.messaging.Message
+import org.axonframework.messaging.interceptors.ExceptionHandler
+import org.axonframework.modelling.command.*
 import org.axonframework.spring.stereotype.Aggregate
+import org.quizmania.common.axon.problem.CommandExecutionProblem
 import org.quizmania.game.api.*
 import org.quizmania.game.command.adapter.out.DeadlineScheduler
 import org.quizmania.game.command.port.out.QuestionPort
@@ -18,7 +19,7 @@ import java.time.Instant
 import java.util.*
 
 @Aggregate
-internal class GameAggregate {
+internal class GameAggregate() {
 
   companion object : KLogging() {
     object Deadline {
@@ -41,17 +42,16 @@ internal class GameAggregate {
   @AggregateMember(eventForwardingMode = ForwardMatchingInstances::class)
   private var askedQuestions: MutableList<GameQuestion> = mutableListOf()
 
-  constructor() {}
-
   @CommandHandler
-  constructor(command: CreateGameCommand, questionPort: QuestionPort, deadlineScheduler: DeadlineScheduler) {
+  @CreationPolicy(AggregateCreationPolicy.ALWAYS)
+  fun create(command: CreateGameCommand, questionPort: QuestionPort, deadlineScheduler: DeadlineScheduler) {
     logger.info { "Executing CreateGameCommand for game ${command.gameId}" }
 
     val questionSet = questionPort.getQuestionSet(command.config.questionSetId)
     val realNumQuestions = command.config.numQuestions.coerceAtMost(questionSet.questions.size)
 
     if (command.config.useBuzzer && command.moderatorUsername == null) {
-      throw Exception("Buzzer game needs a moderator")
+      throw InvalidConfigProblem(command.gameId, "Buzzer game needs a moderator")
     }
 
     AggregateLifecycle.apply(
@@ -83,10 +83,10 @@ internal class GameAggregate {
           )
         )
       } else {
-        throw Exception("User already exists in game")
+        throw UsernameTakenProblem(this.gameId)
       }
     } else {
-      throw Exception("Game is already full")
+      throw GameAlreadyFullProblem(this.gameId)
     }
   }
 
@@ -114,10 +114,10 @@ internal class GameAggregate {
   fun handle(command: StartGameCommand, questionPort: QuestionPort, deadlineScheduler: DeadlineScheduler) {
     logger.info { "Executing StartGameCommand for game ${command.gameId}" }
     if (config.useBuzzer && this.users.size < 2) {
-      throw GameException(this.gameId, "Buzzer game needs at least two players")
+      throw InvalidConfigProblem(this.gameId, "Buzzer game needs at least two players")
     }
     if (this.gameStatus != GameStatus.CREATED) {
-      throw GameAlreadyStartedException(this.gameId)
+      throw GameAlreadyStartedProblem(this.gameId)
     }
 
     AggregateLifecycle.apply(GameStartedEvent(command.gameId))
@@ -193,7 +193,7 @@ internal class GameAggregate {
     val gameQuestion =
       askedQuestions.getById(command.gameQuestionId)
     if (gameQuestion.isRated()) {
-      throw QuestionAlreadyClosedException(gameId, command.gameQuestionId)
+      throw QuestionAlreadyClosedProblem(gameId, command.gameQuestionId)
     }
 
     gameQuestion.rateQuestion()
@@ -206,7 +206,7 @@ internal class GameAggregate {
     assertStarted()
 
     if (askedQuestions.any { !it.isRated() }) {
-      throw GameException(gameId, "Other question is still open or not rated")
+      throw OtherQuestionStillOpenProblem(gameId)
     }
     if (this.askedQuestions.size >= this.config.numQuestions) {
       endGame(deadlineScheduler)
@@ -217,7 +217,7 @@ internal class GameAggregate {
 
   private fun assertStarted() {
     if (gameStatus != GameStatus.STARTED) {
-      throw GameAlreadyEndedException(gameId)
+      throw GameAlreadyEndedProblem(gameId)
     }
   }
 
@@ -297,6 +297,17 @@ internal class GameAggregate {
     }
   }
 
+  @ExceptionHandler(resultType = GameProblem::class, messageType = Message::class, payloadType = Any::class)
+  fun onException(ex: GameProblem) {
+    throw CommandExecutionException(ex.message, ex, mapOf(
+      "type" to ex.type,
+      "title" to ex.title,
+      "detail" to ex.detail,
+      "category" to ex.category,
+      "context" to (ex.context?: emptyMap()) + mapOf("aggregateId" to ex.gameId)
+    ))
+  }
+
   private fun askNextQuestion(questionPort: QuestionPort, deadlineScheduler: DeadlineScheduler) {
     val question = questionPort.getQuestion(questionList[askedQuestions.size])
 
@@ -332,11 +343,7 @@ internal class GameAggregate {
   }
 
   fun MutableList<GameQuestion>.getById(gameQuestionId: UUID): GameQuestion {
-    return this.find { it.id == gameQuestionId } ?: throw GameException(gameId, "Question not found")
-  }
-
-  fun MutableList<User>.getById(gameUserId: UUID): User {
-    return this.find { it.gameUserId == gameUserId } ?: throw GameException(gameId, "User $gameUserId not found")
+    return this.find { it.id == gameQuestionId } ?: throw QuestionNotFoundProblem(gameId, gameQuestionId)
   }
 
   fun MutableList<User>.findByUsername(username: String): User? {
@@ -344,7 +351,7 @@ internal class GameAggregate {
   }
 
   fun MutableList<User>.getByUsername(username: String): User {
-    return this.find { it.username == username } ?: throw GameException(gameId, "User $username not found")
+    return this.find { it.username == username } ?: throw UserNotFoundProblem(gameId, username)
   }
 
   fun MutableList<User>.containsUsername(username: String): Boolean {

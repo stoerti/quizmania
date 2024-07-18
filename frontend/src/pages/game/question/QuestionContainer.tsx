@@ -1,5 +1,5 @@
 import {GameQuestion} from "../../../domain/GameModel";
-import {Box, Button, Paper, Stack, TextField, Typography, useTheme} from "@mui/material";
+import {Box, Button, Stack, TextField} from "@mui/material";
 import React from "react";
 import {QuestionPhrasePanel} from "./QuestionPhrasePanel";
 import Countdown from "react-countdown";
@@ -12,8 +12,6 @@ export type QuestionContainerProps = {
 }
 
 export const QuestionContainer = (props: QuestionContainerProps) => {
-  const theme = useTheme();
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     let answerString: string = new FormData(event.currentTarget).get('answer')!.toString();

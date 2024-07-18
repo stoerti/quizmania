@@ -2,7 +2,7 @@ const { I } = inject();
 
 export function logInWithUsername(username: string) {
   I.amOnPage('/');
-  I.wait(2); // wait for animation
+  I.waitForElement({id: "username"});
 
   // enter username
   I.fillField('username', username);
