@@ -15,7 +15,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography
+  Typography, useTheme
 } from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import PlayArrow from "@mui/icons-material/PlayArrow";
@@ -27,6 +27,7 @@ import Countdown from "react-countdown";
 import {QuestionCountdownBar} from "../question/QuestionCountdownBar";
 import {GameQuestionMode} from "../../../services/GameEventTypes";
 import {useSnackbar} from "material-ui-snackbar-provider";
+import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
 
 export type ModeratorGameRoomPanelProps = {
   game: Game,
@@ -40,6 +41,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
   const game = props.game
   const question = props.currentQuestion
   const snackbar = useSnackbar()
+  const theme = useTheme()
 
   if (question === undefined) {
     return <div>Waiting for first question</div>
@@ -150,14 +152,10 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
     return (
       <Stack spacing={2}>
         <QuestionPhrasePanel gameQuestion={question}/>
+        <CorrectAnswerContainer correctAnswer={question.question.correctAnswer} />
         <Button id="rateQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
                 onClick={() => props.gameService.rateQuestion(props.game.id, question.gameQuestionId)}
         >Rate question</Button>
-        <List dense>
-          <ListItem key="correctAnswer">
-            <ListItemText primary={question.question.correctAnswer} secondary='Answer'/>
-          </ListItem>
-        </List>
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -216,6 +214,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
     return (
       <Stack spacing={2}>
         <QuestionPhrasePanel gameQuestion={question}/>
+        <CorrectAnswerContainer correctAnswer={question.question.correctAnswer} />
         <div style={{display: "flex", alignItems: "center"}}>
           <Button id="nextQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
                   onClick={
@@ -231,11 +230,6 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
                   }
           >Next question</Button>
         </div>
-        <List dense>
-          <ListItem key="correctAnswer">
-            <ListItemText primary={question.question.correctAnswer} secondary='Answer'/>
-          </ListItem>
-        </List>
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>

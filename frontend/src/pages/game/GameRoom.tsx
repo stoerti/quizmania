@@ -42,7 +42,7 @@ export const GameRoomPage = (props: GameRoomPageProps) => {
       <Box sx={{
         display: "flex",
         justifyContent: "center",
-        marginTop: 2
+        margin: 2
       }}>{container}</Box>
     </div>
   )

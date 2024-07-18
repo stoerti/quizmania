@@ -22,7 +22,7 @@ const Buzzer = (props: BuzzerProps) => {
   let text;
   let color;
   switch (props.status) {
-    case BuzzerStatus.OPEN: text = "HIT THE BUZZER"; color = theme.palette.warning.main; break;
+    case BuzzerStatus.OPEN: text = "HIT THE BUZZER"; color = theme.palette.secondary.main; break;
     case BuzzerStatus.WAITING: text = "WAITING..."; color = theme.palette.warning.main; break;
     case BuzzerStatus.SUCCESS: text = "ANSWER QUESTION"; color = theme.palette.success.main; break;
     case BuzzerStatus.FAIL: text = "SOMEONE ELSE WAS FASTER"; color = theme.palette.error.main; break;
@@ -39,7 +39,7 @@ const Buzzer = (props: BuzzerProps) => {
     textAlign: 'center',
     cursor: 'pointer',
     margin: 'auto',
-    boxShadow: '#222 0px 0px 20px, inset #DDD 0px 0px 20px',
+    boxShadow: '#111 5px 5px 15px, inset #666 -5px -5px 10px',
   }} onClick={props.onClick}>
     {text}
   </div>

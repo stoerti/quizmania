@@ -1,21 +1,6 @@
 import {Game, GameQuestion, Player, QuestionStatus} from "../../../domain/GameModel";
 import {GameCommandService, GameException} from "../../../services/GameCommandService";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography
-} from "@mui/material";
+import {Box, Button, CircularProgress, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, useTheme} from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import {QuestionContainer} from "../question/QuestionContainer";
 import Cookies from "js-cookie";
@@ -27,6 +12,7 @@ import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
 import {GameQuestionMode} from "../../../services/GameEventTypes";
 import {BuzzerQuestionContainer} from "../question/BuzzerQuestionContainer";
 import {useSnackbar} from "material-ui-snackbar-provider";
+import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
 
 export type PlayerGameRoomPanelProps = {
   game: Game,
@@ -41,6 +27,7 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
   const user = props.user
 
   const snackbar = useSnackbar()
+  const theme = useTheme()
 
   let container = undefined
   if (question === undefined) {
@@ -118,12 +105,8 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
     container =
       <Stack spacing={2}>
         <QuestionPhrasePanel gameQuestion={question}/>
+        <CorrectAnswerContainer correctAnswer={question.question.correctAnswer} />
         {nextButton}
-        <List dense>
-          <ListItem key="correctAnswer">
-            <ListItemText primary={question.question.correctAnswer} secondary='Answer'/>
-          </ListItem>
-        </List>
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>

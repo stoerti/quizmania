@@ -39,6 +39,8 @@ Scenario('multiplayer_buzzer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   // QUESTION 1
   // -----------------------------
 
+  I.wait(10000)
+
   session('player1', () => {
     gameRoomPage.buzz()
   })
