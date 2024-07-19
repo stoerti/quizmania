@@ -41,13 +41,13 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
 
     const data = new FormData(event.currentTarget);
 
-    let gameName: string = data.get('gameName')!.toString()
-    let maxPlayers: number = parseInt(data.get('maxPlayers')!.toString())
-    let numQuestions: number = parseInt(data.get('numQuestions')!.toString())
-    let numSecondsToAnswer: number = parseInt(data.get('numSecondsToAnswer')!.toString())
-    let questionSetId: string = data.get('questionSet')!.toString()
-    let withModerator: boolean = data.get('moderator') === 'on'
-    let useBuzzer: boolean = data.get('useBuzzer') === 'on'
+    const gameName: string = data.get('gameName')!.toString()
+    const maxPlayers: number = parseInt(data.get('maxPlayers')!.toString())
+    const numQuestions: number = parseInt(data.get('numQuestions')!.toString())
+    const numSecondsToAnswer: number = parseInt(data.get('numSecondsToAnswer')!.toString())
+    const questionSetId: string = data.get('questionSet')!.toString()
+    const withModerator: boolean = data.get('moderator') === 'on'
+    const useBuzzer: boolean = data.get('useBuzzer') === 'on'
 
     onCreateGame({
       name: gameName,

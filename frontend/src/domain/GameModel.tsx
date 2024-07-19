@@ -127,9 +127,9 @@ export class Game {
   }
 
   private updateQuestion(questionId: string, questionUpdater: (question: GameQuestion) => GameQuestion): Game {
-    let i = this.questions.findIndex(q => q.gameQuestionId == questionId)
+    const i = this.questions.findIndex(q => q.gameQuestionId == questionId)
     if (i != -1) {
-      let questionsCopy = [...this.questions]
+      const questionsCopy = [...this.questions]
       questionsCopy[i] = questionUpdater(this.questions[i])
 
       return this.copyWith({
@@ -162,9 +162,9 @@ export class Game {
 
   public onQuestionRated(event: QuestionRatedEvent): Game {
     // TODO optionally optimize, game is copied twice here
-    let game = this.updateQuestion(event.gameQuestionId, question => question.onQuestionRated(event))
+    const game = this.updateQuestion(event.gameQuestionId, question => question.onQuestionRated(event))
 
-    let newPlayers = game.players.map(player => {
+    const newPlayers = game.players.map(player => {
       if (event.points[player.id] != undefined) {
         return {
           ...player,
@@ -256,7 +256,7 @@ export class GameQuestion {
   }
 
   public onQuestionRated(event: QuestionRatedEvent): GameQuestion {
-    let newAnswers = this.answers.map(answer => {
+    const newAnswers = this.answers.map(answer => {
       if (event.points[answer.gamePlayerId] != undefined) {
         return {
           ...answer,

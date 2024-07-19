@@ -14,7 +14,7 @@ export type QuestionContainerProps = {
 export const QuestionContainer = (props: QuestionContainerProps) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    let answerString: string = new FormData(event.currentTarget).get('answer')!.toString();
+    const answerString: string = new FormData(event.currentTarget).get('answer')!.toString();
 
     props.onAnswerQuestion(answerString)
   };

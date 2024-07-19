@@ -9,8 +9,8 @@ export type QuestionCountdownBarProps = {
 export const QuestionCountdownBar = (props: QuestionCountdownBarProps) => {
   const theme = useTheme()
 
-  let percentage = props.timeLeft / props.totalTime
-  let color = percentage < 0.2 ? theme.palette.error.main : theme.palette.primary.main
+  const percentage = props.timeLeft / props.totalTime
+  const color = percentage < 0.2 ? theme.palette.error.main : theme.palette.primary.main
 
   return (<div style={{backgroundColor: color, width: percentage * 100 + '%', height: '10px'}}></div>)
 }
