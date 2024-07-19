@@ -1,13 +1,15 @@
-import {Game, GameStatus} from '../GameModel'
+import { describe, expect, test } from 'vitest';
 import {
   GameCreatedEvent,
+  GameQuestionMode,
   GameStartedEvent,
   QuestionAnsweredEvent, QuestionAnswerOverriddenEvent,
   QuestionAskedEvent, QuestionClosedEvent, QuestionRatedEvent,
   QuestionType,
   UserAddedEvent,
   UserRemovedEvent
-} from '../../services/GameEventTypes'
+} from '../../services/GameEventTypes';
+import { Game, GameStatus } from '../GameModel';
 
 describe('testing game read model', () => {
   test('newly created game should have status CREATED', () => {
@@ -94,8 +96,8 @@ describe('testing game read model', () => {
     game = game.onQuestionAnswered(questionAnswered("question1", "player3", "answer01_03", "foo"))
 
     game = game.onQuestionRated(questionRated("question1", {
-        "player2": 10
-      }
+      "player2": 10
+    }
     ));
 
     expect(game.questions[0].answers.length).toBe(2);
@@ -112,7 +114,8 @@ function gameCreatedEvent(): GameCreatedEvent {
       maxPlayers: 10,
       numQuestions: 10,
       secondsToAnswer: 10,
-      questionSetId: "questionSet1"
+      questionSetId: "questionSet1",
+      useBuzzer: true
     },
     creatorUsername: "player1",
     moderatorUsername: undefined,
@@ -148,6 +151,7 @@ function questionAsked(id: string, number: number, phrase: string, answer: strin
     gameQuestionNumber: number,
     questionTimestamp: new Date().toISOString(),
     timeToAnswer: 10000,
+    questionMode: GameQuestionMode.BUZZER,
     question: {
       type: QuestionType.FREE_INPUT,
       phrase: phrase,
