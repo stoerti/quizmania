@@ -62,6 +62,21 @@ const App = () => {
             borderRadius: '20px'
           }
         },
+      },
+      MuiTable: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#c8ffa5',
+            borderRadius: '20px'
+          }
+        }
+      },
+      MuiTableCell: {
+        styleOverrides: {
+          root: {
+            borderColor: '#102924',
+          }
+        }
       }
     }
   })
