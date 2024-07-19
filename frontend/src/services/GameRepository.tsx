@@ -17,7 +17,7 @@ export class GameRepository {
         brokerURL: this.SOCKET_URL,
         onConnect: () => {
           this.client?.subscribe('/game/' + gameId, message => {
-            let wrapper: GameEventWrapper = JSON.parse(message.body);
+            const wrapper: GameEventWrapper = JSON.parse(message.body);
             console.log(wrapper)
             this.handleEvent(wrapper, gameEventHandler)
           })

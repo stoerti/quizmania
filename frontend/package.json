@@ -10,7 +10,6 @@
     "@mui/material": "^5.16.4",
     "@stomp/stompjs": "^7.0.0",
     "js-cookie": "^3.0.5",
-    "material-react-toastify": "^10.0.4",
     "material-ui-snackbar-provider": "^2.0.0",
     "react": "^18.3.1",
     "react-countdown": "^2.3.5",
@@ -18,7 +17,6 @@
     "react-stomp": "^5.1.0",
     "sockjs": "^0.3.24",
     "typescript": "^5.5.3",
-    "web-vitals": "^4.2.2",
     "ws": "^8.18.0"
   },
   "scripts": {

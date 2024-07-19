@@ -13,14 +13,14 @@ import { Game, GameStatus } from '../GameModel';
 
 describe('testing game read model', () => {
   test('newly created game should have status CREATED', () => {
-    let event: GameCreatedEvent = gameCreatedEvent()
-    let game = new Game(event)
+    const event: GameCreatedEvent = gameCreatedEvent()
+    const game = new Game(event)
 
     expect(game.status).toBe(GameStatus.CREATED);
   });
 
   test('started game should have status STARTED', () => {
-    let event: GameCreatedEvent = gameCreatedEvent()
+    const event: GameCreatedEvent = gameCreatedEvent()
     let game = new Game(event)
 
     game = game.onGameStarted(gameStartedEvent())
@@ -66,7 +66,7 @@ describe('testing game read model', () => {
 
     expect(game.questions.length).toBe(3);
 
-    let question = game.questions.find(q => q.gameQuestionId == "question3")
+    const question = game.questions.find(q => q.gameQuestionId == "question3")
     expect(question).toBeDefined()
     expect(question!.question.phrase).toBe("Foo3");
   });
@@ -81,7 +81,7 @@ describe('testing game read model', () => {
     expect(game.questions.length).toBe(1);
     expect(game.questions[0].answers.length).toBe(1);
 
-    let question = game.questions.find(q => q.gameQuestionId == "question1")
+    const question = game.questions.find(q => q.gameQuestionId == "question1")
     expect(question!.answers).toHaveLength(1)
     expect(question!.answers[0].answer).toBe("bla");
   });

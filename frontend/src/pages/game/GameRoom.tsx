@@ -19,14 +19,14 @@ const findCurrentQuestion = (game: Game): GameQuestion | undefined => {
 export const GameRoomPage = (props: GameRoomPageProps) => {
   const game = props.game
 
-  let username = Cookies.get("username")
-  let currentQuestion = findCurrentQuestion(game)!
+  const username = Cookies.get("username")
+  const currentQuestion = findCurrentQuestion(game)!
 
   let container
   if (props.game.moderator == username) {
     container = <ModeratorGameRoomPanel game={props.game} currentQuestion={currentQuestion} gameService={props.gameCommandService}/>
   } else {
-    let currentUser = props.game.players.find(user => user.name === username)!
+    const currentUser = props.game.players.find(user => user.name === username)!
     container = <PlayerGameRoomPanel game={props.game} user={currentUser} currentQuestion={currentQuestion} gameService={props.gameCommandService}/>
   }
 

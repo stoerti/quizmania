@@ -167,9 +167,9 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
           </TableHead>
           <TableBody>
             {[...question.answers].sort((a1, a2) => game.findPlayerName(a1.gamePlayerId).localeCompare(game.findPlayerName(a2.gamePlayerId))).map(answer => {
-              let answerCorrect = answer.answer.toLowerCase() === question.question.correctAnswer.toLowerCase() // TODO better check if answer is correct
-              let icon = answerCorrect ? <CheckCircle color='success'/> : <Cancel color='error'/>
-              let action = !answerCorrect ?
+              const answerCorrect = answer.answer.toLowerCase() === question.question.correctAnswer.toLowerCase() // TODO better check if answer is correct
+              const icon = answerCorrect ? <CheckCircle color='success'/> : <Cancel color='error'/>
+              const action = !answerCorrect ?
                 <IconButton
                   onClick={
                     async () => {
@@ -241,7 +241,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
           </TableHead>
           <TableBody>
             {[...question.answers].sort((a1, a2) => game.findPlayerName(a1.gamePlayerId).localeCompare(game.findPlayerName(a2.gamePlayerId))).map(answer => {
-              let icon = answer.points > 0 ? <CheckCircle color='success'/> : <Cancel color='error'/>
+              const icon = answer.points > 0 ? <CheckCircle color='success'/> : <Cancel color='error'/>
               return (
                 <TableRow key={answer.id} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
                   <TableCell align="left">{icon}</TableCell>
