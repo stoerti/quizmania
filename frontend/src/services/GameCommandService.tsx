@@ -1,3 +1,5 @@
+import {ProblemJson, registerProblemFactory} from "./problem/ProblemInterceptor.tsx";
+
 export type NewGameCommand = {
   name: string,
   config: GameConfig,
@@ -36,13 +38,6 @@ export type AnswerBuzzerQuestionCommand = {
   gameId: string,
   gameQuestionId: string,
   answerCorrect: boolean
-}
-
-type ProblemJson = {
-  type: string,
-  title: string | undefined,
-  detail: string | undefined,
-  context: any,
 }
 
 export class GameException extends Error {}
@@ -111,15 +106,15 @@ export class GameCommandService {
     await this.genericPost('/api/game/' + answer.gameId + '/buzzer-answer-question', JSON.stringify(answer))
   }
 
-  private async genericPost(path: string, body?: any) {
+  private async genericPost(path: string, body?: BodyInit | null | undefined) {
     return this.genericExchange('POST', path, body)
   }
 
-  private async genericPut(path: string, body?: any) {
+  private async genericPut(path: string, body?: BodyInit | null | undefined) {
     return this.genericExchange('PUT', path, body)
   }
 
-  private async genericExchange(method: string, path: string, body?: any) {
+  private async genericExchange(method: string, path: string, body?: BodyInit | null | undefined) {
     const response = await fetch(path, {
       method: method,
       headers: {
@@ -128,24 +123,17 @@ export class GameCommandService {
       body: body
     })
 
-    if (!response.ok && response.headers.get('Content-Type') === 'application/problem+json') {
-      throw this.resolveProblemException(await response.json() as ProblemJson)
-    } else if (!response.ok) {
+    if (!response.ok) {
       const error = await response.text()
       throw Error("Generic error happened: " + error)
     } else {
       return response
     }
   }
-
-  private resolveProblemException(problem: ProblemJson): Error {
-    switch (problem.type) {
-      case 'urn:quizmania:game:alreadyFull': throw new GameAlreadyFullException()
-      case 'urn:quizmania:game:usernameTaken': throw new UsernameAlreadyTakenException()
-      case 'urn:quizmania:game:invalidConfig': throw new GameConfigInvalidException(problem)
-      default: throw new Error('Random error occurred')
-    }
-  }
 }
+
+registerProblemFactory('urn:quizmania:game:alreadyFull', (_) => new GameAlreadyFullException())
+registerProblemFactory('urn:quizmania:game:usernameTaken', (_) => new UsernameAlreadyTakenException())
+registerProblemFactory('urn:quizmania:game:invalidConfig', (problem) => new GameConfigInvalidException(problem))
 
 export const gameCommandService = new GameCommandService()
