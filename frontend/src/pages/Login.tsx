@@ -3,9 +3,9 @@ import React from "react";
 
 
 type LoginPageProps = {
-    loginSuccessAction: (username: string) => any
+    loginSuccessAction: (username: string) => void
 }
-const LoginPage = (props: LoginPageProps) => {
+const LoginPage = ({loginSuccessAction}: LoginPageProps) => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -15,7 +15,7 @@ const LoginPage = (props: LoginPageProps) => {
         console.log({
             username: username,
         });
-        props.loginSuccessAction(username)
+        loginSuccessAction(username)
     };
 
     return (

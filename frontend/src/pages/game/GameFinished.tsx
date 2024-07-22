@@ -19,7 +19,6 @@ import {amber, brown, grey} from "@mui/material/colors";
 
 export type GameFinishedPageProps = {
   game: Game,
-  gameCommandService: GameCommandService,
   onClickLeaveGame: () => void
 }
 

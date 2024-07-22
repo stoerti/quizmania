@@ -31,6 +31,8 @@ Scenario('multiplayer_buzzer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.waitForText(username2)
   I.waitForText(username3)
 
+  I.wait(10000)
+
   gameRoomPage.startGame()
 
   I.wait(1)
@@ -39,7 +41,6 @@ Scenario('multiplayer_buzzer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   // QUESTION 1
   // -----------------------------
 
-  I.wait(10000)
 
   session('player1', () => {
     gameRoomPage.buzz()

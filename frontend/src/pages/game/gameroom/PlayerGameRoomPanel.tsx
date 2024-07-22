@@ -1,5 +1,5 @@
 import {Game, GameQuestion, Player, QuestionStatus} from "../../../domain/GameModel";
-import {GameCommandService, GameException} from "../../../services/GameCommandService";
+import {gameCommandService, GameCommandService, GameException} from "../../../services/GameCommandService";
 import {Box, Button, CircularProgress, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, useTheme} from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import {QuestionContainer} from "../question/QuestionContainer";
@@ -18,7 +18,6 @@ export type PlayerGameRoomPanelProps = {
   game: Game,
   user: Player,
   currentQuestion: GameQuestion,
-  gameService: GameCommandService
 }
 
 
@@ -27,7 +26,6 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
   const user = props.user
 
   const snackbar = useSnackbar()
-  const theme = useTheme()
 
   let container = undefined
   if (question === undefined) {
@@ -51,7 +49,7 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
       if (question.questionMode === GameQuestionMode.COLLECTIVE) {
         const onAnswerQuestion = async (answer: string) => {
           try {
-            await props.gameService.answerQuestion({
+            await gameCommandService.answerQuestion({
               gameId: props.game.id,
               gameQuestionId: question.gameQuestionId,
               answer: answer
@@ -67,7 +65,7 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
       } else if (question.questionMode === GameQuestionMode.BUZZER) {
         const onBuzzQuestion = async () => {
           try {
-            await props.gameService.buzzQuestion({
+            await gameCommandService.buzzQuestion({
               gameId: props.game.id,
               gameQuestionId: question.gameQuestionId,
               buzzerTimestamp: new Date().toISOString()
@@ -87,7 +85,7 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
     let nextButton;
     const onNextQuestion = async () => {
       try {
-        await props.gameService.askNextQuestion(props.game.id)
+        await gameCommandService.askNextQuestion(props.game.id)
       } catch (error) {
         if (error instanceof GameException) {
           snackbar.showMessage(error.message)

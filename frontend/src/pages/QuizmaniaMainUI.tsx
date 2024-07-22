@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 
 import {useSnackbar} from 'material-ui-snackbar-provider'
 import Cookies from 'js-cookie';
@@ -32,49 +32,43 @@ const QuizmaniaMainUI = () => {
         }
     }
 
-    const onLoginSuccess = (username: string) => {
+    const onLoginSuccess = useCallback((username: string) => {
         Cookies.set('username', username, {expires: 1});
         setUsername(username)
         setMainPageState(MainPageState.GAME_SELECTION)
         snackbar.showMessage(
             'Username: ' + username
         )
-    }
+    }, [snackbar])
 
-    const onLogout = () => {
+    const onLogout = useCallback(() => {
         Cookies.remove('username');
         setUsername(undefined)
         setMainPageState(MainPageState.LOGIN)
-    }
+    }, [])
 
-    const onGameSelected = (gameId: string) => {
+    const onGameSelected = useCallback((gameId: string) => {
         setGameId(gameId)
         setMainPageState(MainPageState.IN_GAME)
         Cookies.set('gameId', gameId, {expires: 1});
-    }
+    }, [])
 
-    const onGameEnded = () => {
+    const onGameEnded = useCallback(() => {
         setGameId(undefined)
         setMainPageState(MainPageState.GAME_SELECTION)
         Cookies.remove('gameId');
-    }
+    },[])
 
-    let page;
-    if (mainPageState === MainPageState.LOGIN) {
-        page = <LoginPage loginSuccessAction={onLoginSuccess}/>
-    } else if (mainPageState === MainPageState.GAME_SELECTION) {
-        page = <GameSelectionPage onGameSelected={onGameSelected} onLogout={onLogout}/>
-    } else if (mainPageState === MainPageState.IN_GAME) {
-        page = <GamePage gameId={gameId!} onGameEnded={onGameEnded}/>
-    } else {
-        page = <div>Unknown state {mainPageState}</div>
+   if (mainPageState === MainPageState.LOGIN) {
+        return <LoginPage loginSuccessAction={onLoginSuccess}/>
     }
-
-    return (
-        <div>
-            {page}
-        </div>
-    )
+    if (mainPageState === MainPageState.GAME_SELECTION) {
+        return <GameSelectionPage onGameSelected={onGameSelected} onLogout={onLogout}/>
+    }
+    if (mainPageState === MainPageState.IN_GAME) {
+        return <GamePage gameId={gameId!} onGameEnded={onGameEnded}/>
+    }
+        return <div>Unknown state {mainPageState}</div>
 }
 
 export default QuizmaniaMainUI;

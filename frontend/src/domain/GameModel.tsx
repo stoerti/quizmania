@@ -128,7 +128,7 @@ export class Game {
 
   private updateQuestion(questionId: string, questionUpdater: (question: GameQuestion) => GameQuestion): Game {
     const i = this.questions.findIndex(q => q.gameQuestionId == questionId)
-    if (i != -1) {
+    if (i !== -1) {
       const questionsCopy = [...this.questions]
       questionsCopy[i] = questionUpdater(this.questions[i])
 

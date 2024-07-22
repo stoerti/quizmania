@@ -1,4 +1,4 @@
-import {GameCommandService, GameException} from "../../services/GameCommandService";
+import {gameCommandService, GameCommandService, GameException} from "../../services/GameCommandService";
 import Cookies from "js-cookie";
 import {
     AppBar,
@@ -23,7 +23,6 @@ import {useSnackbar} from "material-ui-snackbar-provider";
 
 export type GameLobbyPageProps = {
     game: Game,
-    gameCommandService: GameCommandService
 }
 
 export const GameLobbyPage = (props: GameLobbyPageProps) => {
@@ -31,7 +30,7 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
 
     const onClickLeaveGame = async () => {
       try {
-        await props.gameCommandService.leaveGame(props.game.id)
+        await gameCommandService.leaveGame(props.game.id)
       } catch (error) {
         if (error instanceof GameException) {
           snackbar.showMessage(error.message)
@@ -41,7 +40,7 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
 
     const onClickStartGame = async () => {
       try {
-        await props.gameCommandService.startGame(props.game.id)
+        await gameCommandService.startGame(props.game.id)
       } catch (error) {
         if (error instanceof GameException) {
           snackbar.showMessage(error.message)

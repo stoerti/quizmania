@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useMemo} from "react";
 import {UserRemovedEvent} from "../../services/GameEventTypes";
 import {useSnackbar} from "material-ui-snackbar-provider";
 import Cookies from "js-cookie";
@@ -15,62 +15,61 @@ type GamePageProps = {
   onGameEnded(): void
 }
 
-const GamePage = (props: GamePageProps) => {
+const GamePage = ({gameId, onGameEnded}: GamePageProps) => {
 
   const [game, setGame] = React.useState<Game | undefined>(undefined)
 
-  const gameRepository = new GameRepository()
+  const gameRepository = useMemo(() =>
+      new GameRepository()
+    , []);
   const gameCommandService = new GameCommandService()
   const snackbar = useSnackbar()
 
   useEffect(() => {
-    gameRepository.findGame(props.gameId, setGame, () => {
+    gameRepository.findGame(gameId, setGame, () => {
       gameRepository.unsubscribeFromGame()
-      props.onGameEnded()
+      onGameEnded()
     })
-    gameRepository.subscribeToGame(props.gameId, {
+    gameRepository.subscribeToGame(gameId, {
       onGameEvent(event: GameEvent, eventType: GameEventType, game: Game) {
-        if (eventType == 'GameCanceledEvent') {
+        if (eventType === 'GameCanceledEvent') {
           gameRepository.unsubscribeFromGame()
-          props.onGameEnded()
+          onGameEnded()
           snackbar.showMessage("Game was canceled by creator or system")
-        } else if (eventType == 'UserRemovedEvent') {
+        } else if (eventType === 'UserRemovedEvent') {
           if ((event as UserRemovedEvent).username === Cookies.get('username')) {
             // I left the game - return to game selection page
             gameRepository.unsubscribeFromGame()
-            props.onGameEnded()
+            onGameEnded()
           }
         }
         setGame(game)
       },
     })
-  }, []);
+  }, [gameId, gameRepository, onGameEnded, snackbar]);
 
-  let page
   if (game === undefined) {
-    page = <div>Loading...</div>
-  } else if (game.status === GameStatus.CREATED) {
-    page = <GameLobbyPage game={game} gameCommandService={gameCommandService}/>
-  } else if (game.status === GameStatus.STARTED) {
-    page = <GameRoomPage game={game} gameCommandService={gameCommandService}/>
-  } else if (game.status === GameStatus.ENDED) {
-    page = <GameFinishedPage game={game} gameCommandService={gameCommandService} onClickLeaveGame={() => {
+    return <div>Loading...</div>
+  }
+  if (game.status === GameStatus.CREATED) {
+    return <GameLobbyPage game={game}/>
+  }
+  if (game.status === GameStatus.STARTED) {
+    return <GameRoomPage game={game}/>
+  }
+  if (game.status === GameStatus.ENDED) {
+    return <GameFinishedPage game={game} onClickLeaveGame={() => {
       gameRepository.unsubscribeFromGame();
-      props.onGameEnded();
+      onGameEnded();
     }}/>
-  } else if (game.status === GameStatus.CANCELED) {
+  }
+  if (game.status === GameStatus.CANCELED) {
     gameRepository.unsubscribeFromGame()
-    props.onGameEnded()
-    page = <div>Game was cancelled</div>
-  } else {
-    page = <div>Unknown game state {game.status}</div>
+    onGameEnded()
+    return <div>Game was cancelled</div>
   }
 
-  return (
-    <div>
-      {page}
-    </div>
-  )
+  return <div>Unknown game state {game.status}</div>
 }
 
 export default GamePage

@@ -1,25 +1,13 @@
-import {
-  AppBar,
-  Box,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Toolbar,
-  Tooltip,
-  Typography
-} from "@mui/material";
+import {AppBar, Box, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Toolbar, Tooltip, Typography} from "@mui/material";
 import Add from "@mui/icons-material/Add"
 import Login from "@mui/icons-material/Login"
 import Refresh from "@mui/icons-material/Refresh"
 import React, {useEffect} from "react";
 import {GameCreationDialog} from "./GameCreationDialog";
 import {useSnackbar} from "material-ui-snackbar-provider";
-import {GameAlreadyFullException, GameCommandService, GameConfigInvalidException, GameException, NewGameCommand} from "../services/GameCommandService";
+import {GameAlreadyFullException, gameCommandService, GameException, NewGameCommand, UsernameAlreadyTakenException} from "../services/GameCommandService";
 import {TransferWithinAStation} from "@mui/icons-material";
-import {GameDto, GameOverviewService} from "../services/GameOverviewService";
+import {GameDto, gameOverviewService} from "../services/GameOverviewService";
 
 type GameSelectionContainerProps = {
   games: GameDto[]
@@ -38,7 +26,7 @@ const GameSelectionContainer = (props: GameSelectionContainerProps) => {
       sx={{
         display: "flex",
         justifyContent: "center",
-        marginTop: 2
+        margin: 2
       }}>
       <Table sx={{maxWidth: 650, justifySelf: 'center'}}>
         <TableHead>
@@ -88,8 +76,6 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
   const [games, setGames] = React.useState<GameDto[]>([])
 
   const snackbar = useSnackbar()
-  const gameCommandService = new GameCommandService()
-  const gameOverviewService = new GameOverviewService()
 
   useEffect(() => {
     gameOverviewService.searchOpenGames(setGames)
@@ -110,6 +96,8 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
     } catch (error) {
       if (error instanceof GameAlreadyFullException) {
         snackbar.showMessage("The selected game is already full")
+      } else if (error instanceof UsernameAlreadyTakenException) {
+        snackbar.showMessage("The username is already taken in the selected game")
       } else {
         snackbar.showMessage("Something went wrong")
       }

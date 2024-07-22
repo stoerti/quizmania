@@ -53,6 +53,12 @@ export class GameAlreadyFullException extends GameException {
   }
 }
 
+export class UsernameAlreadyTakenException extends GameException {
+  constructor() {
+    super('The username is already taken in the game');
+  }
+}
+
 export class GameConfigInvalidException extends GameException {
   constructor(problem: ProblemJson) {
     super('The game config is invalid: ' + problem.detail);
@@ -135,8 +141,11 @@ export class GameCommandService {
   private resolveProblemException(problem: ProblemJson): Error {
     switch (problem.type) {
       case 'urn:quizmania:game:alreadyFull': throw new GameAlreadyFullException()
+      case 'urn:quizmania:game:usernameTaken': throw new UsernameAlreadyTakenException()
       case 'urn:quizmania:game:invalidConfig': throw new GameConfigInvalidException(problem)
       default: throw new Error('Random error occurred')
     }
   }
 }
+
+export const gameCommandService = new GameCommandService()

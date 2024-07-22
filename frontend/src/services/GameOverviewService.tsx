@@ -38,3 +38,5 @@ export class GameOverviewService {
       });
   }
 }
+
+export const gameOverviewService = new GameOverviewService()

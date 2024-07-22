@@ -18,3 +18,5 @@ export class QuestionSetService {
             });
     }
 }
+
+export const questionSetService = new QuestionSetService()

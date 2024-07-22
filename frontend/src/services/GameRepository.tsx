@@ -1,11 +1,15 @@
 import {Client} from "@stomp/stompjs";
 import {GameCreatedEvent, GameEvent,} from "./GameEventTypes";
 import {Game} from "../domain/GameModel";
+import {createContext, useContext} from "react";
+
+
+
 
 
 export class GameRepository {
   SOCKET_URL = (process.env.NODE_ENV == 'production') ?
-    ( window.location.protocol == 'https' ? 'wss://' : 'ws://' )
+    ( window.location.protocol == 'https:' ? 'wss://' : 'ws://' )
     + window.location.host + '/ws-message' : 'ws://localhost:8080/ws-message';
 
   client?: Client;
@@ -106,3 +110,4 @@ type GameEventWrapper = {
   payload: GameEvent
 }
 
+export const gameRepository = new GameRepository()

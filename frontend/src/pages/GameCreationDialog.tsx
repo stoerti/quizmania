@@ -13,7 +13,7 @@ import {
 import React, {useEffect} from "react";
 import {NewGameCommand} from "../services/GameCommandService";
 import {QuestionSetDto} from "../services/QuestionSetServiceTypes";
-import {QuestionSetService} from "../services/QuestionSetService";
+import {questionSetService, QuestionSetService} from "../services/QuestionSetService";
 
 type GameCreationDialogProps = {
   open: boolean
@@ -25,8 +25,6 @@ type GameCreationDialogProps = {
 export const GameCreationDialog = (props: GameCreationDialogProps) => {
   const {open, onClose, onCreateGame} = props
   const [questionSets, setQuestionSets] = React.useState<QuestionSetDto[]>([])
-
-  const questionSetService = new QuestionSetService()
 
   useEffect(() => {
     questionSetService.searchQuestionSets(setQuestionSets)

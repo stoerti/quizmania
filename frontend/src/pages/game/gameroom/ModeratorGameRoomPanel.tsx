@@ -1,5 +1,5 @@
 import {Game, GameQuestion, QuestionStatus} from "../../../domain/GameModel";
-import {GameCommandService, GameException} from "../../../services/GameCommandService";
+import {gameCommandService, GameCommandService, GameException} from "../../../services/GameCommandService";
 import {
   Box,
   Button,
@@ -32,7 +32,6 @@ import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
 export type ModeratorGameRoomPanelProps = {
   game: Game,
   currentQuestion: GameQuestion,
-  gameService: GameCommandService
 }
 
 
@@ -41,7 +40,6 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
   const game = props.game
   const question = props.currentQuestion
   const snackbar = useSnackbar()
-  const theme = useTheme()
 
   if (question === undefined) {
     return <div>Waiting for first question</div>
@@ -59,7 +57,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
           <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
             <Box sx={{display: 'flex', justifyContent: 'center'}}>
               <Button id="closeQuestion" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained"
-                      onClick={() => props.gameService.closeQuestion(props.game.id, question.gameQuestionId)}
+                      onClick={() => gameCommandService.closeQuestion(props.game.id, question.gameQuestionId)}
               >Close question</Button>
             </Box>
             <Table aria-label="simple table">
@@ -100,7 +98,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
           <Box sx={{maxWidth: '650px', width: '100%'}}>
             <Stack spacing={2}>
               <Button id="closeQuestion" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained"
-                      onClick={() => props.gameService.closeQuestion(props.game.id, question.gameQuestionId)}
+                      onClick={() => gameCommandService.closeQuestion(props.game.id, question.gameQuestionId)}
               >Close question</Button>
               <Paper sx={{padding: 2}}>
                 <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
@@ -123,14 +121,14 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
             </Typography>
             <Box sx={{mt: 3, display: 'flex', justifyContent: 'center'}}>
               <Button id="acceptAnswer" sx={{margin: 'auto'}} startIcon={<CheckCircle/>} variant="contained" color="success"
-                      onClick={() => props.gameService.answerBuzzerQuestion({
+                      onClick={() => gameCommandService.answerBuzzerQuestion({
                         gameId: props.game.id,
                         gameQuestionId: question.gameQuestionId,
                         answerCorrect: true
                       })}
               >Accept answer</Button>
               <Button id="rejectAnswer" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained" color="error"
-                      onClick={() => props.gameService.answerBuzzerQuestion({
+                      onClick={() => gameCommandService.answerBuzzerQuestion({
                         gameId: props.game.id,
                         gameQuestionId: question.gameQuestionId,
                         answerCorrect: false
@@ -154,7 +152,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
         <QuestionPhrasePanel gameQuestion={question}/>
         <CorrectAnswerContainer correctAnswer={question.question.correctAnswer} />
         <Button id="rateQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
-                onClick={() => props.gameService.rateQuestion(props.game.id, question.gameQuestionId)}
+                onClick={() => gameCommandService.rateQuestion(props.game.id, question.gameQuestionId)}
         >Rate question</Button>
         <Table aria-label="simple table">
           <TableHead>
@@ -174,7 +172,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
                   onClick={
                     async () => {
                       try {
-                        await props.gameService.overrideAnswer({
+                        await gameCommandService.overrideAnswer({
                           gameId: game.id,
                           gameQuestionId: question.gameQuestionId,
                           gameUserId: answer.gamePlayerId,
@@ -220,7 +218,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
                   onClick={
                     async () => {
                       try {
-                        await props.gameService.askNextQuestion(props.game.id)
+                        await gameCommandService.askNextQuestion(props.game.id)
                       } catch (error) {
                         if (error instanceof GameException) {
                           snackbar.showMessage(error.message)

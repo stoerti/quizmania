@@ -1,4 +1,3 @@
-import {GameCommandService} from "../../services/GameCommandService";
 import {Game, GameQuestion} from "../../domain/GameModel";
 import React from "react";
 import Cookies from "js-cookie";
@@ -8,26 +7,23 @@ import {PlayerGameRoomPanel} from "./gameroom/PlayerGameRoomPanel";
 
 
 export type GameRoomPageProps = {
-  game: Game,
-  gameCommandService: GameCommandService
+  game: Game
 }
 
 const findCurrentQuestion = (game: Game): GameQuestion | undefined => {
   return [...game.questions].sort((q1, q2) => q2.gameQuestionNumber - q1.gameQuestionNumber)[0]
 }
 
-export const GameRoomPage = (props: GameRoomPageProps) => {
-  const game = props.game
-
+export const GameRoomPage = ({game}: GameRoomPageProps) => {
   const username = Cookies.get("username")
   const currentQuestion = findCurrentQuestion(game)!
 
   let container
-  if (props.game.moderator == username) {
-    container = <ModeratorGameRoomPanel game={props.game} currentQuestion={currentQuestion} gameService={props.gameCommandService}/>
+  if (game.moderator == username) {
+    container = <ModeratorGameRoomPanel game={game} currentQuestion={currentQuestion}/>
   } else {
-    const currentUser = props.game.players.find(user => user.name === username)!
-    container = <PlayerGameRoomPanel game={props.game} user={currentUser} currentQuestion={currentQuestion} gameService={props.gameCommandService}/>
+    const currentUser = game.players.find(user => user.name === username)!
+    container = <PlayerGameRoomPanel game={game} user={currentUser} currentQuestion={currentQuestion}/>
   }
 
   return (
@@ -35,7 +31,7 @@ export const GameRoomPage = (props: GameRoomPageProps) => {
       <AppBar position="static">
         <Toolbar>
           <Typography sx={{flex: '1 1 100%'}} variant="h6" component="div">
-            {props.game.name}
+            {game.name}
           </Typography>
         </Toolbar>
       </AppBar>
