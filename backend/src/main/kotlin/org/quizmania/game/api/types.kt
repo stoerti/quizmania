@@ -4,5 +4,5 @@ import java.util.UUID
 
 typealias GameId = UUID
 typealias GameQuestionId = UUID
-typealias GameUserId = UUID
+typealias GamePlayerId = UUID
 typealias GameQuestionNumber = Int

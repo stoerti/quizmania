@@ -54,7 +54,7 @@ class BaseThenStage : Stage<BaseThenStage>() {
     await()
       .atMost(10, TimeUnit.SECONDS)
       .untilAsserted {
-        assertThat(gameReadController.get(gameId).body!!.users).hasSize(numPlayers)
+        assertThat(gameReadController.get(gameId).body!!.players).hasSize(numPlayers)
       }
   }
 }

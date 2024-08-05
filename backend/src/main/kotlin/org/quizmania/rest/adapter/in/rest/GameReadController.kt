@@ -3,7 +3,7 @@ package org.quizmania.rest.adapter.`in`.rest
 import mu.KLogging
 import org.quizmania.rest.application.domain.Game
 import org.quizmania.rest.application.domain.GameStatus
-import org.quizmania.rest.application.domain.GameUser
+import org.quizmania.rest.application.domain.GamePlayer
 import org.quizmania.rest.port.`in`.FindGamePort
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -50,10 +50,10 @@ data class GameDto(
   val creator: String,
   val moderator: String?,
   val status: GameStatus,
-  val users: List<GameUserDto>,
+  val players: List<GamePlayerDto>,
 )
 
-data class GameUserDto(
+data class GamePlayerDto(
   val id: UUID,
   val name: String,
 )
@@ -67,10 +67,10 @@ fun Game.toDto(): GameDto {
     creator = creator,
     moderator = moderator,
     status = status,
-    users = users.map { it.toDto() },
+    players = players.map { it.toDto() },
   )
 }
 
-fun GameUser.toDto(): GameUserDto {
-  return GameUserDto(gameUserId, username)
+fun GamePlayer.toDto(): GamePlayerDto {
+  return GamePlayerDto(gamePlayerId, username)
 }

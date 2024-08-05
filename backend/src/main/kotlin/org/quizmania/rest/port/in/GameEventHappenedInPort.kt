@@ -9,6 +9,6 @@ interface GameEventHappenedInPort {
   fun gameStarted(evt: GameStartedEvent, metadata: EventMetaData)
   fun gameEnded(evt: GameEndedEvent, metadata: EventMetaData)
   fun gameCanceled(evt: GameCanceledEvent, metadata: EventMetaData)
-  fun userAdded(evt: UserAddedEvent, metadata: EventMetaData)
-  fun userRemoved(evt: UserRemovedEvent, metadata: EventMetaData)
+  fun playerAdded(evt: PlayerAddedEvent, metadata: EventMetaData)
+  fun playerRemoved(evt: PlayerRemovedEvent, metadata: EventMetaData)
 }

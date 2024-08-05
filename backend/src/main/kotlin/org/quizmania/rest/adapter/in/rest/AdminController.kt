@@ -1,7 +1,7 @@
 package org.quizmania.rest.adapter.`in`.rest
 
 import org.axonframework.commandhandling.gateway.CommandGateway
-import org.quizmania.game.api.AddUserCommand
+import org.quizmania.game.api.AddPlayerCommand
 import org.quizmania.game.api.CreateGameCommand
 import org.quizmania.game.api.GameConfig
 import org.springframework.http.MediaType
@@ -60,7 +60,7 @@ class AdminController(
     @PutMapping("/create-random-games")
     fun createRandomGames(@RequestParam("numberOfGames") numberOfGames: Int) {
         for (i in 1..numberOfGames) {
-            val shuffledUsers = usernames.shuffled();
+            val shuffledPlayers = usernames.shuffled();
 
             val isModerated = Random.nextBoolean()
             val maxPlayers = Random.nextInt(5, 10)
@@ -68,8 +68,8 @@ class AdminController(
 
             val gameId = UUID.randomUUID()
             val gameNumber = Random.nextInt(1000, 9999)
-            val gameName = if (isModerated) "${shuffledUsers[0]}'s game $gameNumber" else "Game $gameNumber"
-            val users = shuffledUsers.subList(1, numPlayers)
+            val gameName = if (isModerated) "${shuffledPlayers[0]}'s game $gameNumber" else "Game $gameNumber"
+            val players = shuffledPlayers.subList(1, numPlayers)
 
             commandGateway.sendAndWait<Void>(
                 CreateGameCommand(
@@ -80,14 +80,14 @@ class AdminController(
                         numQuestions = 10,
                         questionSetId = "test01"
                     ),
-                    creatorUsername = shuffledUsers[1],
-                    moderatorUsername = if (isModerated) shuffledUsers[0] else null
+                    creatorUsername = shuffledPlayers[1],
+                    moderatorUsername = if (isModerated) shuffledPlayers[0] else null
                 )
             )
 
-            users.forEach {
+            players.forEach {
                 commandGateway.sendAndWait<Void>(
-                    AddUserCommand(
+                    AddPlayerCommand(
                         gameId = gameId,
                         username = it
                     )

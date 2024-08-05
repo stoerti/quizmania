@@ -1,11 +1,34 @@
 import {Client} from "@stomp/stompjs";
 import {GameCreatedEvent, GameEvent,} from "./GameEventTypes";
 import {Game} from "../domain/GameModel";
-import {createContext, useContext} from "react";
 
 
+export type GameEventType =
+  | 'GameCreatedEvent'
+  | 'GameStartedEvent'
+  | 'GameCanceledEvent'
+  | 'GameEndedEvent'
+  | 'PlayerAddedEvent'
+  | 'PlayerRemovedEvent'
+  | 'QuestionAskedEvent'
+  | 'QuestionAnsweredEvent'
+  | 'QuestionAnswerOverriddenEvent'
+  | 'QuestionBuzzedEvent'
+  | 'QuestionBuzzerWonEvent'
+  | 'QuestionClosedEvent'
+  | 'QuestionScoredEvent';
 
+type GameEventWrapper = {
+  gameId: string,
+  eventType: GameEventType,
+  sequenceNumber: number,
+  timestamp: string,
+  payload: GameEvent
+}
 
+interface GameEventHandler {
+  onGameEvent(event: GameEvent, eventType: GameEventType, game: Game): void
+}
 
 export class GameRepository {
   SOCKET_URL = (process.env.NODE_ENV == 'production') ?
@@ -17,21 +40,22 @@ export class GameRepository {
 
   public subscribeToGame(gameId: string, gameEventHandler: GameEventHandler) {
     if (this.client == null) {
-      this.client = new Client({
-        brokerURL: this.SOCKET_URL,
-        onConnect: () => {
-          this.client?.subscribe('/game/' + gameId, message => {
-            const wrapper: GameEventWrapper = JSON.parse(message.body);
-            console.log(wrapper)
-            this.handleEvent(wrapper, gameEventHandler)
-          })
-        },
-        onWebSocketError: (e: Event) => {
-          console.log(e)
-        }
-      });
-
-      this.client?.activate();
+      this.findGame(gameId, () => {
+        this.client = new Client({
+          brokerURL: this.SOCKET_URL,
+          onConnect: () => {
+            this.client?.subscribe('/game/' + gameId, message => {
+              const wrapper: GameEventWrapper = JSON.parse(message.body);
+              console.log(wrapper)
+              this.handleEvent(wrapper, gameEventHandler)
+            })
+          },
+          onWebSocketError: (e: Event) => {
+            console.log(e)
+          }
+        });
+        this.client.activate();
+      })
     } else {
       console.log("Client already active - should not happen")
     }
@@ -41,18 +65,15 @@ export class GameRepository {
     if (this.client != null) {
       this.client.deactivate()
       this.client = undefined
+      this.currentGameState = undefined
     } else {
       console.log("Client not active")
     }
   }
 
   private handleEvent(wrappedEvent: GameEventWrapper, gameEventHandler: GameEventHandler) {
-    if (this.currentGameState == undefined) {
-      this.findGame(wrappedEvent.gameId, (game) => gameEventHandler.onGameEvent(wrappedEvent.payload, wrappedEvent.eventType, game))
-    } else {
-      this.currentGameState = this.currentGameState.onGameEvent(wrappedEvent.payload, wrappedEvent.eventType)
-      gameEventHandler.onGameEvent(wrappedEvent.payload, wrappedEvent.eventType, this.currentGameState)
-    }
+    this.currentGameState = this.currentGameState!.onGameEvent(wrappedEvent.payload, wrappedEvent.eventType)
+    gameEventHandler.onGameEvent(wrappedEvent.payload, wrappedEvent.eventType, this.currentGameState)
   }
 
   public findGame(gameId: string, successHandler: (game: Game) => void, errorHandler: () => void = () => {
@@ -67,6 +88,7 @@ export class GameRepository {
       .then((events) => {
         if (events.length == 0) {
           console.log("game does no exist");
+          errorHandler()
         } else {
           let game = new Game(events[0].payload as GameCreatedEvent)
           for (let i = 1; i < events.length; i++) {
@@ -79,35 +101,9 @@ export class GameRepository {
       })
       .catch((err) => {
         console.log(err.message);
+        errorHandler()
       });
   }
-}
-
-interface GameEventHandler {
-  onGameEvent(event: GameEvent, eventType: GameEventType, game: Game): void
-}
-
-export type GameEventType =
-  | 'GameCreatedEvent'
-  | 'GameStartedEvent'
-  | 'GameCanceledEvent'
-  | 'GameEndedEvent'
-  | 'UserAddedEvent'
-  | 'UserRemovedEvent'
-  | 'QuestionAskedEvent'
-  | 'QuestionAnsweredEvent'
-  | 'QuestionAnswerOverriddenEvent'
-  | 'QuestionBuzzedEvent'
-  | 'QuestionBuzzerWonEvent'
-  | 'QuestionClosedEvent'
-  | 'QuestionRatedEvent';
-
-type GameEventWrapper = {
-  gameId: string,
-  eventType: GameEventType,
-  sequenceNumber: number,
-  timestamp: string,
-  payload: GameEvent
 }
 
 export const gameRepository = new GameRepository()

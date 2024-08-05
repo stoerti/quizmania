@@ -101,7 +101,7 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
         .atMost(10, TimeUnit.SECONDS)
         .untilAsserted {
           val game = exchangeSuccessfully { gameReadController.get(gameId) }
-          assertThat(game.users.filter { it.name == username }).isNotEmpty
+          assertThat(game.players.filter { it.name == username }).isNotEmpty
         }
     }
   }

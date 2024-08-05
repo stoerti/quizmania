@@ -2,7 +2,7 @@ package org.quizmania.rest.application.domain
 
 import java.util.*
 
-data class GameUser(
-  val gameUserId: UUID,
+data class GamePlayer(
+  val gamePlayerId: UUID,
   val username: String,
 )

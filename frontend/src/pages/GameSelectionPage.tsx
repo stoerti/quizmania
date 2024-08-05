@@ -57,7 +57,7 @@ const GameSelectionContainer = (props: GameSelectionContainerProps) => {
                   Creator: {row.creator}
                 </Typography>
               </TableCell>
-              <TableCell align="right">{row.users.length}/{row.maxPlayers}</TableCell>
+              <TableCell align="right">{row.players.length}/{row.maxPlayers}</TableCell>
               <TableCell align="right">
                 <IconButton onClick={() => props.onButtonClickJoinGame(row.id)}>
                   <Login/>

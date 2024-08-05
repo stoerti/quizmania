@@ -13,7 +13,7 @@ class Game(
   var questionTimeout: Long,
   var status: GameStatus,
 
-  var users: MutableList<GameUser> = mutableListOf(),
+  var players: MutableList<GamePlayer> = mutableListOf(),
 ) {
 
   constructor(event: GameCreatedEvent) : this(
@@ -27,12 +27,12 @@ class Game(
     status = GameStatus.CREATED
   )
 
-  fun on(event: UserAddedEvent) {
-    users.add(GameUser(event.gameUserId, event.username))
+  fun on(event: PlayerAddedEvent) {
+    players.add(GamePlayer(event.gamePlayerId, event.username))
   }
 
-  fun on(event: UserRemovedEvent) {
-    users.removeIf { it.gameUserId == event.gameUserId }
+  fun on(event: PlayerRemovedEvent) {
+    players.removeIf { it.gamePlayerId == event.gamePlayerId }
   }
 
   fun on(event: GameStartedEvent) {

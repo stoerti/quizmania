@@ -19,9 +19,9 @@ data class GameQuestion(
   val number: GameQuestionNumber,
   val question: Question,
   val questionMode: GameQuestionMode,
-  private var userAnswers: MutableList<UserAnswer> = mutableListOf(),
-  private var userBuzzes: MutableList<UserBuzz> = mutableListOf(),
-  private var currentBuzzWinner: GameUserId? = null,
+  private var playerAnswers: MutableList<PlayerAnswer> = mutableListOf(),
+  private var playerBuzzes: MutableList<PlayerBuzz> = mutableListOf(),
+  private var currentBuzzWinner: GamePlayerId? = null,
 ) {
   companion object {
     internal fun cleanupAnswerString(answerString: String): String {
@@ -38,25 +38,25 @@ data class GameQuestion(
   var status: GameQuestionStatus = GameQuestionStatus.OPEN
     private set
 
-  fun numAnswers(): Int = userAnswers.size
-  fun hasUserAlreadyAnswered(gameUserId: GameUserId): Boolean = userAnswers.any { it.gameUserId == gameUserId }
+  fun numAnswers(): Int = playerAnswers.size
+  fun hasPlayerAlreadyAnswered(gamePlayerId: GamePlayerId): Boolean = playerAnswers.any { it.gamePlayerId == gamePlayerId }
 
-  fun numBuzzers(): Int = userBuzzes.size
-  fun hasUserAlreadyBuzzed(gameUserId: GameUserId): Boolean = userBuzzes.any { it.gameUserId == gameUserId }
+  fun numBuzzers(): Int = playerBuzzes.size
+  fun hasPlayerAlreadyBuzzed(gamePlayerId: GamePlayerId): Boolean = playerBuzzes.any { it.gamePlayerId == gamePlayerId }
 
   fun isClosed(): Boolean = status == GameQuestionStatus.CLOSED || status == GameQuestionStatus.RATED
   fun isRated(): Boolean = status == GameQuestionStatus.RATED
   fun isBuzzable() = this.question.type.buzzable && this.questionMode == GameQuestionMode.BUZZER
 
-  private fun assertNotAlreadyAnswered(gameUserId: GameUserId) {
-    if (hasUserAlreadyAnswered(gameUserId)) {
-      throw QuestionAlreadyAnsweredProblem(gameId, id, gameUserId)
+  private fun assertNotAlreadyAnswered(gamePlayerId: GamePlayerId) {
+    if (hasPlayerAlreadyAnswered(gamePlayerId)) {
+      throw QuestionAlreadyAnsweredProblem(gameId, id, gamePlayerId)
     }
   }
 
-  private fun assertNotAlreadyBuzzed(gameUserId: GameUserId) {
-    if (hasUserAlreadyBuzzed(gameUserId)) {
-      throw QuestionAlreadyBuzzedProblem(gameId, id, gameUserId)
+  private fun assertNotAlreadyBuzzed(gamePlayerId: GamePlayerId) {
+    if (hasPlayerAlreadyBuzzed(gamePlayerId)) {
+      throw QuestionAlreadyBuzzedProblem(gameId, id, gamePlayerId)
     }
   }
 
@@ -72,60 +72,60 @@ data class GameQuestion(
     }
   }
 
-  fun answer(gameUserId: GameUserId, answer: String) {
+  fun answer(gamePlayerId: GamePlayerId, answer: String) {
     if (this.questionMode == GameQuestionMode.BUZZER) {
       throw QuestionInBuzzerModeProblem(this.gameId, this.id)
     }
 
     assertNotClosed()
-    assertNotAlreadyAnswered(gameUserId)
+    assertNotAlreadyAnswered(gamePlayerId)
 
     AggregateLifecycle.apply(
       QuestionAnsweredEvent(
         gameId = gameId,
         gameQuestionId = id,
-        gameUserId = gameUserId,
-        userAnswerId = UUID.randomUUID(),
+        gamePlayerId = gamePlayerId,
+        playerAnswerId = UUID.randomUUID(),
         answer = answer
       )
     )
   }
 
-  fun overrideAnswer(gameUserId: GameUserId, answer: String) {
+  fun overrideAnswer(gamePlayerId: GamePlayerId, answer: String) {
     if (this.questionMode == GameQuestionMode.BUZZER) {
       throw QuestionInBuzzerModeProblem(this.gameId, this.id)
     }
     assertNotRated()
 
-    if (!hasUserAlreadyAnswered(gameUserId)) {
-      throw AnswerNotFoundProblem(gameId, this.id, gameUserId)
+    if (!hasPlayerAlreadyAnswered(gamePlayerId)) {
+      throw AnswerNotFoundProblem(gameId, this.id, gamePlayerId)
     }
-    val answerId = userAnswers.first { it.gameUserId == gameUserId }.userAnswerId
+    val answerId = playerAnswers.first { it.gamePlayerId == gamePlayerId }.playerAnswerId
 
     AggregateLifecycle.apply(
       QuestionAnswerOverriddenEvent(
         gameId = gameId,
         gameQuestionId = id,
-        gameUserId = gameUserId,
-        userAnswerId = answerId,
+        gamePlayerId = gamePlayerId,
+        playerAnswerId = answerId,
         answer = answer
       )
     )
   }
 
-  fun buzz(gameUserId: GameUserId, buzzerTimestamp: Instant) {
+  fun buzz(gamePlayerId: GamePlayerId, buzzerTimestamp: Instant) {
     if (this.questionMode != GameQuestionMode.BUZZER) {
       throw QuestionNotInBuzzerModeProblem(this.gameId, this.id)
     }
 
     assertNotClosed()
-    assertNotAlreadyBuzzed(gameUserId)
+    assertNotAlreadyBuzzed(gamePlayerId)
 
     AggregateLifecycle.apply(
       QuestionBuzzedEvent(
         gameId = gameId,
         gameQuestionId = id,
-        gameUserId = gameUserId,
+        gamePlayerId = gamePlayerId,
         buzzerTimestamp = buzzerTimestamp
       )
     )
@@ -134,8 +134,8 @@ data class GameQuestion(
   fun evaluateBuzzes() {
     assertNotClosed()
 
-    val buzzWinner = userBuzzes
-      .filterNot { userAnswers.map { a -> a.gameUserId }.toList().contains(it.gameUserId) } // filter users already failed answering
+    val buzzWinner = playerBuzzes
+      .filterNot { playerAnswers.map { a -> a.gamePlayerId }.toList().contains(it.gamePlayerId) } // filter players already failed answering
       .minByOrNull { it.buzzTimestamp } // sort all others ascending by buzzer time
 
     if (buzzWinner != null) {
@@ -143,7 +143,7 @@ data class GameQuestion(
         QuestionBuzzerWonEvent(
           gameId = gameId,
           gameQuestionId = id,
-          gameUserId = buzzWinner.gameUserId
+          gamePlayerId = buzzWinner.gamePlayerId
         )
       )
     } else {
@@ -168,8 +168,8 @@ data class GameQuestion(
         QuestionAnsweredEvent(
           gameId = gameId,
           gameQuestionId = id,
-          gameUserId = this.currentBuzzWinner!!,
-          userAnswerId = UUID.randomUUID(),
+          gamePlayerId = this.currentBuzzWinner!!,
+          playerAnswerId = UUID.randomUUID(),
           answer = question.correctAnswer
         )
       )
@@ -186,8 +186,8 @@ data class GameQuestion(
         QuestionAnsweredEvent(
           gameId = gameId,
           gameQuestionId = id,
-          gameUserId = this.currentBuzzWinner!!,
-          userAnswerId = UUID.randomUUID(),
+          gamePlayerId = this.currentBuzzWinner!!,
+          playerAnswerId = UUID.randomUUID(),
           answer = "" // some empty wrong answer - TODO better concept?
         )
       )
@@ -215,7 +215,7 @@ data class GameQuestion(
   fun rateQuestion() {
     val points = resolvePoints()
     AggregateLifecycle.apply(
-      QuestionRatedEvent(
+      QuestionScoredEvent(
         gameId = gameId,
         gameQuestionId = id,
         points = points
@@ -223,7 +223,7 @@ data class GameQuestion(
     )
   }
 
-  internal fun resolvePoints(): Map<GameUserId, Int> {
+  internal fun resolvePoints(): Map<GamePlayerId, Int> {
     return when (question.type) {
       QuestionType.CHOICE -> resolvePointsChoiceQuestion()
       QuestionType.FREE_INPUT -> resolvePointsFreeInputQuestion()
@@ -231,21 +231,21 @@ data class GameQuestion(
     }
   }
 
-  internal fun resolvePointsChoiceQuestion(): Map<GameUserId, Int> {
-    return userAnswers.filter { it.answer == question.correctAnswer }
-      .associate { it.gameUserId to 10 }
+  internal fun resolvePointsChoiceQuestion(): Map<GamePlayerId, Int> {
+    return playerAnswers.filter { it.answer == question.correctAnswer }
+      .associate { it.gamePlayerId to 10 }
   }
 
-  internal fun resolvePointsFreeInputQuestion(): Map<GameUserId, Int> {
-    return userAnswers.filter {
+  internal fun resolvePointsFreeInputQuestion(): Map<GamePlayerId, Int> {
+    return playerAnswers.filter {
       cleanupAnswerString(it.answer) == cleanupAnswerString(question.correctAnswer)
     }
-      .associate { it.gameUserId to 10 }
+      .associate { it.gamePlayerId to 10 }
   }
 
-  internal fun resolvePointsEstimateQuestion(): Map<GameUserId, Int> {
+  internal fun resolvePointsEstimateQuestion(): Map<GamePlayerId, Int> {
     val correctAnswerInt = question.correctAnswer.toInt()
-    return userAnswers.map { it.gameUserId to (it.answer.toInt().minus(correctAnswerInt)).absoluteValue }
+    return playerAnswers.map { it.gamePlayerId to (it.answer.toInt().minus(correctAnswerInt)).absoluteValue }
       .sortedWith { p1, p2 -> p2.second.compareTo(p1.second) }
       .reversed()
       .mapIndexed { i, pair ->
@@ -261,23 +261,23 @@ data class GameQuestion(
 
   @EventSourcingHandler
   fun on(event: QuestionAnsweredEvent) {
-    this.userAnswers.add(UserAnswer(event.userAnswerId, event.gameUserId, event.answer))
+    this.playerAnswers.add(PlayerAnswer(event.playerAnswerId, event.gamePlayerId, event.answer))
   }
 
   @EventSourcingHandler
   fun on(event: QuestionAnswerOverriddenEvent) {
-    this.userAnswers.removeIf { it.userAnswerId == event.userAnswerId }
-    this.userAnswers.add(UserAnswer(event.userAnswerId, event.gameUserId, event.answer))
+    this.playerAnswers.removeIf { it.playerAnswerId == event.playerAnswerId }
+    this.playerAnswers.add(PlayerAnswer(event.playerAnswerId, event.gamePlayerId, event.answer))
   }
 
   @EventSourcingHandler
   fun on(event: QuestionBuzzedEvent) {
-    this.userBuzzes.add(UserBuzz(event.gameUserId, event.buzzerTimestamp))
+    this.playerBuzzes.add(PlayerBuzz(event.gamePlayerId, event.buzzerTimestamp))
   }
 
   @EventSourcingHandler
   fun on(event: QuestionBuzzerWonEvent) {
-    this.currentBuzzWinner = event.gameUserId
+    this.currentBuzzWinner = event.gamePlayerId
   }
 
   @EventSourcingHandler
@@ -286,7 +286,7 @@ data class GameQuestion(
   }
 
   @EventSourcingHandler
-  fun on(event: QuestionRatedEvent) {
+  fun on(event: QuestionScoredEvent) {
     status = GameQuestionStatus.RATED
   }
 }
@@ -297,13 +297,13 @@ enum class GameQuestionStatus {
   RATED,
 }
 
-data class UserAnswer(
-  val userAnswerId: UUID,
-  val gameUserId: GameUserId,
+data class PlayerAnswer(
+  val playerAnswerId: UUID,
+  val gamePlayerId: GamePlayerId,
   val answer: String
 )
 
-data class UserBuzz(
-  val gameUserId: GameUserId,
+data class PlayerBuzz(
+  val gamePlayerId: GamePlayerId,
   val buzzTimestamp: Instant
 )

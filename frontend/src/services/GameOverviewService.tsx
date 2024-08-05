@@ -6,7 +6,7 @@ export type GameDto = {
   creator: string,
   moderator: string,
   status: GameStatus,
-  users: GameUserDto[]
+  players: PlayerDto[]
 }
 
 export enum GameStatus {
@@ -16,7 +16,7 @@ export enum GameStatus {
   CANCELED = 'CANCELED'
 }
 
-export type GameUserDto = {
+export type PlayerDto = {
   id: string
   name: string,
 }

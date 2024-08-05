@@ -23,10 +23,10 @@
     </changeSet>
 
     <changeSet id="001_create_game_user" author="thielc">
-        <createTable tableName="GAME_USER">
+        <createTable tableName="GAME_PLAYER">
             <column name="GAME_ID" type="UUID" />
-            <column name="GAME_USER_ID" type="UUID" >
-                <constraints primaryKey="true" primaryKeyName="GAME_USER_PK" />
+            <column name="GAME_PLAYER_ID" type="UUID" >
+                <constraints primaryKey="true" primaryKeyName="GAME_PLAYER_PK" />
             </column>
             <column name="USERNAME" type="VARCHAR(255)" />
         </createTable>

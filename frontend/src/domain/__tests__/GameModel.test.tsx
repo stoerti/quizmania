@@ -4,10 +4,10 @@ import {
   GameQuestionMode,
   GameStartedEvent,
   QuestionAnsweredEvent, QuestionAnswerOverriddenEvent,
-  QuestionAskedEvent, QuestionClosedEvent, QuestionRatedEvent,
+  QuestionAskedEvent, QuestionClosedEvent, QuestionScoredEvent,
   QuestionType,
-  UserAddedEvent,
-  UserRemovedEvent
+  PlayerAddedEvent,
+  PlayerRemovedEvent
 } from '../../services/GameEventTypes';
 import { Game, GameStatus } from '../GameModel';
 
@@ -95,7 +95,7 @@ describe('testing game read model', () => {
     game = game.onQuestionAnswered(questionAnswered("question1", "player2", "answer01_02", "bla"))
     game = game.onQuestionAnswered(questionAnswered("question1", "player3", "answer01_03", "foo"))
 
-    game = game.onQuestionRated(questionRated("question1", {
+    game = game.onQuestionScored(questionScored("question1", {
       "player2": 10
     }
     ));
@@ -128,18 +128,18 @@ function gameStartedEvent(): GameStartedEvent {
   }
 }
 
-function playerAddedEvent(id: string, name: string): UserAddedEvent {
+function playerAddedEvent(id: string, name: string): PlayerAddedEvent {
   return {
     gameId: "game1",
-    gameUserId: id,
+    gamePlayerId: id,
     username: name,
   }
 }
 
-function playerRemovedEvent(id: string, name: string): UserRemovedEvent {
+function playerRemovedEvent(id: string, name: string): PlayerRemovedEvent {
   return {
     gameId: "game1",
-    gameUserId: id,
+    gamePlayerId: id,
     username: name,
   }
 }
@@ -166,8 +166,8 @@ function questionAnswered(id: string, playerId: string, answerId: string, answer
   return {
     gameId: "game1",
     gameQuestionId: id,
-    gameUserId: playerId,
-    userAnswerId: answerId,
+    gamePlayerId: playerId,
+    playerAnswerId: answerId,
     answer: answer,
   }
 }
@@ -176,8 +176,8 @@ function questionAnswerOverridden(id: string, playerId: string, answerId: string
   return {
     gameId: "game1",
     gameQuestionId: id,
-    gameUserId: playerId,
-    userAnswerId: answerId,
+    gamePlayerId: playerId,
+    playerAnswerId: answerId,
     answer: answer,
   }
 }
@@ -189,7 +189,7 @@ function questionClosed(id: string): QuestionClosedEvent {
   }
 }
 
-function questionRated(id: string, points: { [key: string]: number }): QuestionRatedEvent {
+function questionScored(id: string, points: { [key: string]: number }): QuestionScoredEvent {
   return {
     gameId: "game1",
     gameQuestionId: id,

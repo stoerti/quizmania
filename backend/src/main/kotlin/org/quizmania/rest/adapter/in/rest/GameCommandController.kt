@@ -45,7 +45,7 @@ class GameCommandController(
 
     if (!newGameDto.withModerator) {
       commandGateway.sendAndWait<Void>(
-        AddUserCommand(
+        AddPlayerCommand(
           gameId,
           username
         )
@@ -61,7 +61,7 @@ class GameCommandController(
     @CookieValue(name = "username", defaultValue = "someUser") username: String,
   ): ResponseEntity<Void> {
     commandGateway.sendAndWait<Void>(
-      AddUserCommand(
+      AddPlayerCommand(
         gameId,
         username
       )
@@ -75,7 +75,7 @@ class GameCommandController(
     @CookieValue(name = "username", defaultValue = "someUser") username: String,
   ): ResponseEntity<Void> {
     commandGateway.sendAndWait<Void>(
-      RemoveUserCommand(
+      RemovePlayerCommand(
         gameId,
         username
       )
@@ -131,7 +131,7 @@ class GameCommandController(
   }
 
   @PostMapping("/{gameId}/buzzer-answer-question")
-  fun buzzQuestion(
+  fun buzzerAnswerQuestion(
     @PathVariable("gameId") gameId: UUID,
     @RequestBody answer: BuzzerAnswerDto
   ): ResponseEntity<Void> {
@@ -154,7 +154,7 @@ class GameCommandController(
       OverrideAnswerCommand(
         gameId = gameId,
         gameQuestionId = answer.gameQuestionId,
-        gameUserId = answer.gameUserId,
+        gamePlayerId = answer.gamePlayerId,
         answer = answer.answer
       )
     )
@@ -178,12 +178,12 @@ class GameCommandController(
     return ResponseEntity.ok().build()
   }
 
-  @PostMapping("/{gameId}/question/{gameQuestionId}/rate")
-  fun rateQuestion(
+  @PostMapping("/{gameId}/question/{gameQuestionId}/score")
+  fun scoreQuestion(
     @PathVariable("gameId") gameId: UUID,
     @PathVariable("gameQuestionId") gameQuestionId: GameQuestionId,
   ): ResponseEntity<Void> {
-    commandGateway.sendAndWait<Void>(RateQuestionCommand(gameId = gameId, gameQuestionId = gameQuestionId))
+    commandGateway.sendAndWait<Void>(ScoreQuestionCommand(gameId = gameId, gameQuestionId = gameQuestionId))
     return ResponseEntity.ok().build()
   }
 }
@@ -211,7 +211,7 @@ data class BuzzerAnswerDto(
 
 data class AnswerOverrideDto(
   val gameQuestionId: UUID,
-  val gameUserId: GameUserId,
-  val userAnswerId: UUID,
+  val gamePlayerId: GamePlayerId,
+  val playerAnswerId: UUID,
   val answer: String
 )

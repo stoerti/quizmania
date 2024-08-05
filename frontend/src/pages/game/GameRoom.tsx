@@ -22,8 +22,8 @@ export const GameRoomPage = ({game}: GameRoomPageProps) => {
   if (game.moderator == username) {
     container = <ModeratorGameRoomPanel game={game} currentQuestion={currentQuestion}/>
   } else {
-    const currentUser = game.players.find(user => user.name === username)!
-    container = <PlayerGameRoomPanel game={game} user={currentUser} currentQuestion={currentQuestion}/>
+    const currentPlayer = game.players.find(player => player.name === username)!
+    container = <PlayerGameRoomPanel game={game} player={currentPlayer} question={currentQuestion}/>
   }
 
   return (

@@ -9,7 +9,6 @@ import org.axonframework.messaging.Message
 import org.axonframework.messaging.interceptors.ExceptionHandler
 import org.axonframework.modelling.command.*
 import org.axonframework.spring.stereotype.Aggregate
-import org.quizmania.common.axon.problem.CommandExecutionProblem
 import org.quizmania.game.api.*
 import org.quizmania.game.command.adapter.out.DeadlineScheduler
 import org.quizmania.game.command.port.out.QuestionPort
@@ -37,7 +36,7 @@ internal class GameAggregate() {
   private var moderatorUsername: String? = null
   private var gameStatus: GameStatus = GameStatus.CREATED
 
-  private var users: MutableList<User> = mutableListOf()
+  private var players: MutableList<Player> = mutableListOf()
 
   @AggregateMember(eventForwardingMode = ForwardMatchingInstances::class)
   private var askedQuestions: MutableList<GameQuestion> = mutableListOf()
@@ -71,12 +70,12 @@ internal class GameAggregate() {
   }
 
   @CommandHandler
-  fun handle(command: AddUserCommand) {
-    logger.info { "Executing AddUserCommand for game ${command.gameId} and user ${command.username}" }
-    if (users.size < config.maxPlayers) {
-      if (!users.containsUsername(command.username) && moderatorUsername != command.username) {
+  fun handle(command: AddPlayerCommand) {
+    logger.info { "Executing AddPlayerCommand for game ${command.gameId} and player ${command.username}" }
+    if (players.size < config.maxPlayers) {
+      if (!players.containsUsername(command.username) && moderatorUsername != command.username) {
         AggregateLifecycle.apply(
-          UserAddedEvent(
+          PlayerAddedEvent(
             command.gameId,
             UUID.randomUUID(),
             command.username
@@ -91,18 +90,18 @@ internal class GameAggregate() {
   }
 
   @CommandHandler
-  fun handle(command: RemoveUserCommand) {
-    logger.info { "Executing RemoveUserCommand for game ${command.gameId} and user ${command.username}" }
-    users.findByUsername(command.username)?.let { user ->
+  fun handle(command: RemovePlayerCommand) {
+    logger.info { "Executing RemovePlayerCommand for game ${command.gameId} and player ${command.username}" }
+    players.findByUsername(command.username)?.let { player ->
       AggregateLifecycle.apply(
-        UserRemovedEvent(
+        PlayerRemovedEvent(
           command.gameId,
-          user.gameUserId,
-          user.username
+          player.gamePlayerId,
+          player.username
         )
       )
 
-      if (command.username == this.moderatorUsername || this.users.size == 0) {
+      if (command.username == this.moderatorUsername || this.players.size == 0) {
         AggregateLifecycle.apply(
           GameCanceledEvent(gameId)
         )
@@ -113,7 +112,7 @@ internal class GameAggregate() {
   @CommandHandler
   fun handle(command: StartGameCommand, questionPort: QuestionPort, deadlineScheduler: DeadlineScheduler) {
     logger.info { "Executing StartGameCommand for game ${command.gameId}" }
-    if (config.useBuzzer && this.users.size < 2) {
+    if (config.useBuzzer && this.players.size < 2) {
       throw InvalidConfigProblem(this.gameId, "Buzzer game needs at least two players")
     }
     if (this.gameStatus != GameStatus.CREATED) {
@@ -129,12 +128,12 @@ internal class GameAggregate() {
     logger.info { "Executing AnswerQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
-    val user = users.getByUsername(command.username)
+    val player = players.getByUsername(command.username)
     val gameQuestion = askedQuestions.getById(command.gameQuestionId)
-    gameQuestion.answer(user.gameUserId, command.answer)
+    gameQuestion.answer(player.gamePlayerId, command.answer)
 
-    // after QuestionAnsweredEvent is applied, the user-answer is actually in the list
-    if (users.size == gameQuestion.numAnswers()) {
+    // after QuestionAnsweredEvent is applied, the player-answer is actually in the list
+    if (players.size == gameQuestion.numAnswers()) {
       gameQuestion.closeQuestion()
       deadlineScheduler.cancel(Deadline.QUESTION_CLOSE, this.gameId)
     }
@@ -146,7 +145,7 @@ internal class GameAggregate() {
     assertStarted()
 
     val gameQuestion = askedQuestions.getById(command.gameQuestionId)
-    gameQuestion.overrideAnswer(command.gameUserId, command.answer)
+    gameQuestion.overrideAnswer(command.gamePlayerId, command.answer)
   }
 
   @CommandHandler
@@ -154,10 +153,10 @@ internal class GameAggregate() {
     logger.info { "Executing BuzzQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
-    val user = users.getByUsername(command.username)
+    val player = players.getByUsername(command.username)
     val gameQuestion = askedQuestions.getById(command.gameQuestionId)
 
-    gameQuestion.buzz(user.gameUserId, command.buzzerTimestamp)
+    gameQuestion.buzz(player.gamePlayerId, command.buzzerTimestamp)
 
     if (gameQuestion.numBuzzers() == 1) {
       deadlineScheduler.schedule(Duration.ofMillis(500), Deadline.QUESTION_BUZZER, this.gameId)
@@ -186,7 +185,7 @@ internal class GameAggregate() {
   }
 
   @CommandHandler
-  fun handle(command: RateQuestionCommand) {
+  fun handle(command: ScoreQuestionCommand) {
     logger.info { "Executing RateQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
@@ -222,13 +221,13 @@ internal class GameAggregate() {
   }
 
   @EventSourcingHandler
-  fun on(event: UserAddedEvent) {
-    this.users.add(User(event.gameUserId, event.username))
+  fun on(event: PlayerAddedEvent) {
+    this.players.add(Player(event.gamePlayerId, event.username))
   }
 
   @EventSourcingHandler
-  fun on(event: UserRemovedEvent) {
-    this.users.removeIf { it.gameUserId == event.gameUserId }
+  fun on(event: PlayerRemovedEvent) {
+    this.players.removeIf { it.gamePlayerId == event.gamePlayerId }
   }
 
   @EventSourcingHandler
@@ -265,8 +264,8 @@ internal class GameAggregate() {
         number = event.gameQuestionNumber,
         questionMode = event.questionMode,
         question = event.question,
-        userAnswers = mutableListOf(),
-        userBuzzes = mutableListOf(),
+        playerAnswers = mutableListOf(),
+        playerBuzzes = mutableListOf(),
         isModerated = moderatorUsername != null,
       )
     )
@@ -346,21 +345,21 @@ internal class GameAggregate() {
     return this.find { it.id == gameQuestionId } ?: throw QuestionNotFoundProblem(gameId, gameQuestionId)
   }
 
-  fun MutableList<User>.findByUsername(username: String): User? {
+  fun MutableList<Player>.findByUsername(username: String): Player? {
     return this.find { it.username == username }
   }
 
-  fun MutableList<User>.getByUsername(username: String): User {
-    return this.find { it.username == username } ?: throw UserNotFoundProblem(gameId, username)
+  fun MutableList<Player>.getByUsername(username: String): Player {
+    return this.find { it.username == username } ?: throw PlayerNotFoundProblem(gameId, username)
   }
 
-  fun MutableList<User>.containsUsername(username: String): Boolean {
+  fun MutableList<Player>.containsUsername(username: String): Boolean {
     return this.find { it.username == username } != null
   }
 }
 
-data class User(
-  val gameUserId: UUID,
+data class Player(
+  val gamePlayerId: UUID,
   val username: String,
 )
 

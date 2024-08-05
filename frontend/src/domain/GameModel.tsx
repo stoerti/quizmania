@@ -9,8 +9,8 @@ import {
   QuestionAskedEvent, QuestionBuzzedEvent, QuestionBuzzerWonEvent,
   QuestionClosedEvent,
   QuestionRatedEvent,
-  UserAddedEvent,
-  UserRemovedEvent
+  PlayerAddedEvent,
+  PlayerRemovedEvent
 } from "../services/GameEventTypes";
 import {GameEventType} from "../services/GameRepository";
 
@@ -24,7 +24,7 @@ export enum GameStatus {
 export enum QuestionStatus {
   OPEN = 'OPEN',
   CLOSED = 'CLOSED',
-  RATED = 'RATED',
+  SCORED = 'SCORED',
 }
 
 
@@ -61,10 +61,10 @@ export class Game {
         return this.onGameEnded(event as GameEndedEvent)
       case "GameCanceledEvent":
         return this.onGameCanceled(event as GameCanceledEvent)
-      case "UserAddedEvent":
-        return this.onPlayerAdded(event as UserAddedEvent)
-      case "UserRemovedEvent":
-        return this.onPlayerRemoved(event as UserRemovedEvent)
+      case "PlayerAddedEvent":
+        return this.onPlayerAdded(event as PlayerAddedEvent)
+      case "PlayerRemovedEvent":
+        return this.onPlayerRemoved(event as PlayerRemovedEvent)
       case "QuestionAskedEvent":
         return this.onQuestionAsked(event as QuestionAskedEvent)
       case "QuestionAnsweredEvent":
@@ -77,8 +77,8 @@ export class Game {
         return this.onQuestionBuzzerWon(event as QuestionBuzzerWonEvent)
       case "QuestionClosedEvent":
         return this.onQuestionClosed(event as QuestionClosedEvent)
-      case "QuestionRatedEvent":
-        return this.onQuestionRated(event as QuestionRatedEvent)
+      case "QuestionScoredEvent":
+        return this.onQuestionScored(event as QuestionRatedEvent)
     }
 
     throw Error("Unknown eventType " + eventType)
@@ -102,18 +102,18 @@ export class Game {
     })
   }
 
-  public onPlayerAdded(event: UserAddedEvent): Game {
+  public onPlayerAdded(event: PlayerAddedEvent): Game {
     return this.copyWith({
       players: [
         ...this.players,
-        new Player(event.gameUserId, event.username)
+        new Player(event.gamePlayerId, event.username)
       ]
     })
   }
 
-  public onPlayerRemoved(event: UserRemovedEvent): Game {
+  public onPlayerRemoved(event: PlayerRemovedEvent): Game {
     return this.copyWith({
-      players: this.players.filter(player => player.id != event.gameUserId)
+      players: this.players.filter(player => player.id != event.gamePlayerId)
     })
   }
 
@@ -160,9 +160,9 @@ export class Game {
     return this.updateQuestion(event.gameQuestionId, question => question.onQuestionClosed(event))
   }
 
-  public onQuestionRated(event: QuestionRatedEvent): Game {
+  public onQuestionScored(event: QuestionRatedEvent): Game {
     // TODO optionally optimize, game is copied twice here
-    const game = this.updateQuestion(event.gameQuestionId, question => question.onQuestionRated(event))
+    const game = this.updateQuestion(event.gameQuestionId, question => question.onQuestionScored(event))
 
     const newPlayers = game.players.map(player => {
       if (event.points[player.id] != undefined) {
@@ -231,7 +231,7 @@ export class GameQuestion {
   public onQuestionAnswerOverridden(event: QuestionAnswerOverriddenEvent): GameQuestion {
     return this.copyWith({
       answers: [
-        ...this.answers.filter(answer => answer.gamePlayerId != event.gameUserId),
+        ...this.answers.filter(answer => answer.gamePlayerId != event.gamePlayerId),
         new Answer(event)
       ]
     })
@@ -239,13 +239,13 @@ export class GameQuestion {
 
   public onQuestionBuzzed(event: QuestionBuzzedEvent): GameQuestion {
     return this.copyWith({
-      buzzedPlayerIds: [...this.buzzedPlayerIds, event.gameUserId]
+      buzzedPlayerIds: [...this.buzzedPlayerIds, event.gamePlayerId]
     })
   }
 
   public onQuestionBuzzerWon(event: QuestionBuzzerWonEvent): GameQuestion {
     return this.copyWith({
-      currentBuzzWinnerId: event.gameUserId
+      currentBuzzWinnerId: event.gamePlayerId
     })
   }
 
@@ -255,7 +255,7 @@ export class GameQuestion {
     })
   }
 
-  public onQuestionRated(event: QuestionRatedEvent): GameQuestion {
+  public onQuestionScored(event: QuestionRatedEvent): GameQuestion {
     const newAnswers = this.answers.map(answer => {
       if (event.points[answer.gamePlayerId] != undefined) {
         return {
@@ -268,7 +268,7 @@ export class GameQuestion {
     })
 
     return this.copyWith({
-      status: QuestionStatus.RATED,
+      status: QuestionStatus.SCORED,
       answers: newAnswers
     })
   }
@@ -282,8 +282,8 @@ export class Answer {
   readonly points: number = 0;
 
   constructor(event: QuestionAnsweredEvent) {
-    this.id = event.userAnswerId
-    this.gamePlayerId = event.gameUserId
+    this.id = event.playerAnswerId
+    this.gamePlayerId = event.gamePlayerId
     this.answer = event.answer
   }
 }

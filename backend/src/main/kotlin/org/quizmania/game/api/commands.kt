@@ -18,13 +18,13 @@ data class CreateGameCommand(
   val moderatorUsername: String?
 ): GameCommand
 
-data class AddUserCommand(
+data class AddPlayerCommand(
     @TargetAggregateIdentifier
     override val gameId: UUID,
     val username: String,
 ): GameCommand
 
-data class RemoveUserCommand(
+data class RemovePlayerCommand(
     @TargetAggregateIdentifier
     override val gameId: UUID,
     val username: String,
@@ -52,7 +52,7 @@ data class OverrideAnswerCommand(
     @TargetAggregateIdentifier
     override val gameId: UUID,
     val gameQuestionId: UUID,
-    val gameUserId: UUID,
+    val gamePlayerId: UUID,
     val answer: String
 ): GameCommand
 
@@ -82,7 +82,7 @@ data class CloseQuestionCommand(
     val gameQuestionId: UUID,
 ): GameCommand
 
-data class RateQuestionCommand(
+data class ScoreQuestionCommand(
     @TargetAggregateIdentifier
     override val gameId: UUID,
     val gameQuestionId: UUID,

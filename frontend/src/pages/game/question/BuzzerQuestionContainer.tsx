@@ -3,6 +3,8 @@ import {Button, Stack, useTheme} from "@mui/material";
 import React from "react";
 import {QuestionPhrasePanel} from "./QuestionPhrasePanel";
 import {QuestionType} from "../../../services/GameEventTypes";
+import {Simulate} from "react-dom/test-utils";
+import play = Simulate.play;
 
 enum BuzzerStatus {
   OPEN,
@@ -48,36 +50,36 @@ const Buzzer = (props: BuzzerProps) => {
 
 export type BuzzerQuestionContainerProps = {
   gameQuestion: GameQuestion
-  gameUser: Player
+  player: Player
   onBuzzQuestion: () => void
 }
 
-export const BuzzerQuestionContainer = (props: BuzzerQuestionContainerProps) => {
+export const BuzzerQuestionContainer = ({gameQuestion, player, onBuzzQuestion}: BuzzerQuestionContainerProps) => {
   let answerContainer = null
-  if (props.gameQuestion.question.type === QuestionType.CHOICE) {
+  if (gameQuestion.question.type === QuestionType.CHOICE) {
     answerContainer = <Stack spacing={2} direction="column" justifyContent="center" alignItems="center" useFlexGap
                              flexWrap="wrap">
-      {props.gameQuestion.question.answerOptions.map((answer, index) =>
+      {gameQuestion.question.answerOptions.map((answer, index) =>
         <Button key={index} variant="contained" sx={{width: '80%', maxWidth: '300px'}}>{answer}</Button>)}
     </Stack>
   }
 
   let buzzerContainer
-  if (props.gameQuestion.buzzedPlayerIds.includes(props.gameUser.id)) {
-    if (props.gameQuestion.currentBuzzWinnerId === props.gameUser.id) {
+  if (gameQuestion.buzzedPlayerIds.includes(player.id)) {
+    if (gameQuestion.currentBuzzWinnerId === player.id) {
       buzzerContainer = <Buzzer status={BuzzerStatus.SUCCESS} onClick={() => {}}/>
-    } else if(props.gameQuestion.currentBuzzWinnerId === null) {
+    } else if(gameQuestion.currentBuzzWinnerId == null) {
       buzzerContainer = <Buzzer status={BuzzerStatus.WAITING} onClick={() => {}}/>
     } else {
       buzzerContainer = <Buzzer status={BuzzerStatus.FAIL} onClick={() => {}}/>
     }
   } else {
-    buzzerContainer = <Buzzer status={BuzzerStatus.OPEN} onClick={props.onBuzzQuestion}/>
+    buzzerContainer = <Buzzer status={BuzzerStatus.OPEN} onClick={onBuzzQuestion}/>
   }
 
   return (
     <div style={{width: '100%'}}>
-      <QuestionPhrasePanel gameQuestion={props.gameQuestion}/>
+      <QuestionPhrasePanel gameQuestion={gameQuestion}/>
       <br/>
       {answerContainer}
       <Stack sx={{my: 4, mx: 4}} spacing={2} direction="column" justifyContent="center" alignItems="center" useFlexGap

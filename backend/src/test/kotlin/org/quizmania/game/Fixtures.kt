@@ -7,16 +7,16 @@ import java.util.*
 
 val GAME_UUID: GameId = UUID.randomUUID()
 val GAME_NAME: String = "Game 1"
-val GAME_USER_1: GameUserId = UUID.randomUUID()
-val GAME_USER_2: GameUserId = UUID.randomUUID()
-val GAME_USER_3: GameUserId = UUID.randomUUID()
+val GAME_PLAYER_1: GamePlayerId = UUID.randomUUID()
+val GAME_PLAYER_2: GamePlayerId = UUID.randomUUID()
+val GAME_PLAYER_3: GamePlayerId = UUID.randomUUID()
 val USERNAME_1: String = "User 1"
 val USERNAME_2: String = "User 2"
 val GAME_QUESTION_1: GameQuestionId = UUID.randomUUID()
 val GAME_QUESTION_2: GameQuestionId = UUID.randomUUID()
-val USER_ANSWER_1: GameQuestionId = UUID.randomUUID()
-val USER_ANSWER_2: GameQuestionId = UUID.randomUUID()
-val USER_ANSWER_3: GameQuestionId = UUID.randomUUID()
+val PLAYER_ANSWER_1: GameQuestionId = UUID.randomUUID()
+val PLAYER_ANSWER_2: GameQuestionId = UUID.randomUUID()
+val PLAYER_ANSWER_3: GameQuestionId = UUID.randomUUID()
 
 val QUESTION_SET_ID: QuestionSetId = UUID.randomUUID().toString()
 val QUESTION_ID_1: QuestionSetId = UUID.randomUUID().toString()
@@ -37,15 +37,15 @@ class GameCommandFixtures {
       )
     }
 
-    fun addUser(username: String): AddUserCommand {
-      return AddUserCommand(
+    fun addPlayer(username: String): AddPlayerCommand {
+      return AddPlayerCommand(
         gameId = GAME_UUID,
         username = username
       )
     }
 
-    fun removeUser(username: String): RemoveUserCommand {
-      return RemoveUserCommand(
+    fun removePlayer(username: String): RemovePlayerCommand {
+      return RemovePlayerCommand(
         gameId = GAME_UUID,
         username = username
       )
@@ -73,8 +73,8 @@ class GameCommandFixtures {
       )
     }
 
-    fun rateQuestion(gameQuestionId: UUID): RateQuestionCommand {
-      return RateQuestionCommand(
+    fun scoreQuestion(gameQuestionId: UUID): ScoreQuestionCommand {
+      return ScoreQuestionCommand(
         gameId = GAME_UUID,
         gameQuestionId = gameQuestionId,
       )
@@ -99,19 +99,19 @@ class GameEventFixtures {
       )
     }
 
-    fun userAdded(username: String = USERNAME_1, gameUserId: UUID = GAME_USER_1): UserAddedEvent {
-      return UserAddedEvent(
+    fun playerAdded(username: String = USERNAME_1, gamePlayerId: UUID = GAME_PLAYER_1): PlayerAddedEvent {
+      return PlayerAddedEvent(
         gameId = GAME_UUID,
         username = username,
-        gameUserId = gameUserId
+        gamePlayerId = gamePlayerId
       )
     }
 
-    fun userRemoved(username: String = USERNAME_1, gameUserId: UUID = GAME_USER_1): UserRemovedEvent {
-      return UserRemovedEvent(
+    fun playerRemoved(username: String = USERNAME_1, gamePlayerId: UUID = GAME_PLAYER_1): PlayerRemovedEvent {
+      return PlayerRemovedEvent(
         gameId = GAME_UUID,
         username = username,
-        gameUserId = gameUserId
+        gamePlayerId = gamePlayerId
       )
     }
 
@@ -141,29 +141,29 @@ class GameEventFixtures {
 
     fun questionAnswered(
       gameQuestionId: UUID,
-      gameUserId: UUID,
-      userAnswerId: UUID,
+      gamePlayerId: UUID,
+      playerAnswerId: UUID,
       answer: String
     ): QuestionAnsweredEvent {
       return QuestionAnsweredEvent(
         gameId = GAME_UUID,
         gameQuestionId = gameQuestionId,
-        gameUserId = gameUserId,
-        userAnswerId = userAnswerId,
+        gamePlayerId = gamePlayerId,
+        playerAnswerId = playerAnswerId,
         answer = answer
       )
     }
     fun questionAnswerOverridden(
       gameQuestionId: UUID,
-      gameUserId: UUID,
-      userAnswerId: UUID,
+      gamePlayerId: UUID,
+      playerAnswerId: UUID,
       answer: String
     ): QuestionAnswerOverriddenEvent {
       return QuestionAnswerOverriddenEvent(
         gameId = GAME_UUID,
         gameQuestionId = gameQuestionId,
-        gameUserId = gameUserId,
-        userAnswerId = userAnswerId,
+        gamePlayerId = gamePlayerId,
+        playerAnswerId = playerAnswerId,
         answer = answer
       )
     }

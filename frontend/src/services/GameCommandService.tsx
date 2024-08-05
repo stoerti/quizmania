@@ -23,8 +23,8 @@ export type AnswerQuestionCommand = {
 export type OverrideAnswerCommand = {
   gameId: string,
   gameQuestionId: string,
-  gameUserId: string,
-  userAnswerId: string,
+  gamePlayerId: string,
+  playerAnswerId: string,
   answer: string
 }
 
@@ -86,8 +86,8 @@ export class GameCommandService {
     await this.genericPost('api/game/' + gameId + '/question/' + gameQuestionId + '/close')
   }
 
-  public async rateQuestion(gameId: string, gameQuestionId: string) {
-    await this.genericPost('api/game/' + gameId + '/question/' + gameQuestionId + '/rate')
+  public async scoreQuestion(gameId: string, gameQuestionId: string) {
+    await this.genericPost('api/game/' + gameId + '/question/' + gameQuestionId + '/score')
   }
 
   public async overrideAnswer(answer: OverrideAnswerCommand) {

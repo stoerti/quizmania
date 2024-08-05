@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo} from "react";
-import {UserRemovedEvent} from "../../services/GameEventTypes";
+import {PlayerRemovedEvent} from "../../services/GameEventTypes";
 import {useSnackbar} from "material-ui-snackbar-provider";
 import Cookies from "js-cookie";
 import {GameLobbyPage} from "./GameLobby";
@@ -36,8 +36,8 @@ const GamePage = ({gameId, onGameEnded}: GamePageProps) => {
           gameRepository.unsubscribeFromGame()
           onGameEnded()
           snackbar.showMessage("Game was canceled by creator or system")
-        } else if (eventType === 'UserRemovedEvent') {
-          if ((event as UserRemovedEvent).username === Cookies.get('username')) {
+        } else if (eventType === 'PlayerRemovedEvent') {
+          if ((event as PlayerRemovedEvent).username === Cookies.get('username')) {
             // I left the game - return to game selection page
             gameRepository.unsubscribeFromGame()
             onGameEnded()

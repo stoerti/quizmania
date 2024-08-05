@@ -19,8 +19,7 @@ import org.springframework.web.socket.messaging.SessionUnsubscribeEvent
 class WebSocketConfig : WebSocketMessageBrokerConfigurer {
 
     override fun configureMessageBroker(config: MessageBrokerRegistry) {
-        config.enableSimpleBroker("/chat", "/quiz", "/game")
-        config.setApplicationDestinationPrefixes("/quizmania")
+        config.enableSimpleBroker( "/game")
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {

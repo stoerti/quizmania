@@ -68,19 +68,19 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {props.game.players.sort((a1, a2) => a1.name.localeCompare(a2.name)).map(user => {
+                {props.game.players.sort((a1, a2) => a1.name.localeCompare(a2.name)).map(player => {
                   let icon;
-                  if (question.hasPlayerAlreadyAnswered(user.id)) {
+                  if (question.hasPlayerAlreadyAnswered(player.id)) {
                     icon = <MarkEmailRead color='success'/>
                   } else {
                     icon = <QuestionMark color='info'/>
                   }
                   return (
-                    <TableRow key={user.id} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
+                    <TableRow key={player.id} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
                       <TableCell align="left">{icon}</TableCell>
                       <TableCell component="th" scope="row">
                         <Typography variant="body1" component="div">
-                          {user.name}
+                          {player.name}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -152,7 +152,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
         <QuestionPhrasePanel gameQuestion={question}/>
         <CorrectAnswerContainer correctAnswer={question.question.correctAnswer} />
         <Button id="rateQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
-                onClick={() => gameCommandService.rateQuestion(props.game.id, question.gameQuestionId)}
+                onClick={() => gameCommandService.scoreQuestion(props.game.id, question.gameQuestionId)}
         >Rate question</Button>
         <Table aria-label="simple table">
           <TableHead>
@@ -175,8 +175,8 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
                         await gameCommandService.overrideAnswer({
                           gameId: game.id,
                           gameQuestionId: question.gameQuestionId,
-                          gameUserId: answer.gamePlayerId,
-                          userAnswerId: answer.id,
+                          gamePlayerId: answer.gamePlayerId,
+                          playerAnswerId: answer.id,
                           answer: question.question.correctAnswer
                         })
                       } catch (error) {
@@ -208,7 +208,7 @@ export const ModeratorGameRoomPanel = (props: ModeratorGameRoomPanelProps) => {
         </Table>
       </Stack>
     )
-  } else if (question.status === QuestionStatus.RATED) {
+  } else if (question.status === QuestionStatus.SCORED) {
     return (
       <Stack spacing={2}>
         <QuestionPhrasePanel gameQuestion={question}/>

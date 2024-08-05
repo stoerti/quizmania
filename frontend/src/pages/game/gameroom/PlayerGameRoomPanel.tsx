@@ -16,28 +16,25 @@ import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
 
 export type PlayerGameRoomPanelProps = {
   game: Game,
-  user: Player,
-  currentQuestion: GameQuestion,
+  player: Player,
+  question: GameQuestion,
 }
 
 
-export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
-  const question = props.currentQuestion
-  const user = props.user
-
+export const PlayerGameRoomPanel = ({game, question, player}: PlayerGameRoomPanelProps) => {
   const snackbar = useSnackbar()
 
   let container = undefined
   if (question === undefined) {
     container = <div>Waiting for first question</div>
   } else if (question.status === QuestionStatus.OPEN) {
-    if (question.hasPlayerAlreadyAnswered(user.id)) {
+    if (question.hasPlayerAlreadyAnswered(player.id)) {
       container = <Stack spacing={2}>
         <QuestionPhrasePanel gameQuestion={question}/>
         <Paper sx={{padding: 2}}>
           <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
             <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h4" component="div">
-              {question.answers.length} of {props.game.players.length} players answered
+              {question.answers.length} of {game.players.length} players answered
             </Typography>
             <Box sx={{display: 'flex', justifyContent: 'center'}}>
               <CircularProgress/>
@@ -50,7 +47,7 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
         const onAnswerQuestion = async (answer: string) => {
           try {
             await gameCommandService.answerQuestion({
-              gameId: props.game.id,
+              gameId: game.id,
               gameQuestionId: question.gameQuestionId,
               answer: answer
             })
@@ -66,7 +63,7 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
         const onBuzzQuestion = async () => {
           try {
             await gameCommandService.buzzQuestion({
-              gameId: props.game.id,
+              gameId: game.id,
               gameQuestionId: question.gameQuestionId,
               buzzerTimestamp: new Date().toISOString()
             })
@@ -76,16 +73,16 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
             }
           }
         }
-        container = <BuzzerQuestionContainer gameQuestion={question} gameUser={user} onBuzzQuestion={onBuzzQuestion}/>
+        container = <BuzzerQuestionContainer gameQuestion={question} player={player} onBuzzQuestion={onBuzzQuestion}/>
       } else {
         container = <div>Unknown gameQuestionMode {question.questionMode}</div>
       }
     }
-  } else if (question.status === QuestionStatus.CLOSED || question.status === QuestionStatus.RATED) {
+  } else if (question.status === QuestionStatus.CLOSED || question.status === QuestionStatus.SCORED) {
     let nextButton;
     const onNextQuestion = async () => {
       try {
-        await gameCommandService.askNextQuestion(props.game.id)
+        await gameCommandService.askNextQuestion(game.id)
       } catch (error) {
         if (error instanceof GameException) {
           snackbar.showMessage(error.message)
@@ -94,7 +91,7 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
     }
 
 
-    if (question.status === QuestionStatus.RATED && props.game.creator === Cookies.get('username')) {
+    if (question.status === QuestionStatus.SCORED && game.creator === Cookies.get('username')) {
       nextButton = <div style={{display: "flex", alignItems: "center"}}>
         <Button id="nextQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
                 onClick={onNextQuestion}>Next question</Button>
@@ -115,9 +112,9 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {[...question.answers].sort((a1, a2) => a1.points - a2.points || props.game.findPlayerName(a1.gamePlayerId).localeCompare(props.game.findPlayerName(a2.gamePlayerId))).map(answer => {
+            {[...question.answers].sort((a1, a2) => a1.points - a2.points || game.findPlayerName(a1.gamePlayerId).localeCompare(game.findPlayerName(a2.gamePlayerId))).map(answer => {
               let icon;
-              if (question.status === QuestionStatus.RATED) {
+              if (question.status === QuestionStatus.SCORED) {
                 if (answer.points > 0) {
                   icon = <CheckCircle color='success'/>
                 } else {
@@ -131,7 +128,7 @@ export const PlayerGameRoomPanel = (props: PlayerGameRoomPanelProps) => {
                   <TableCell align="left">{icon}</TableCell>
                   <TableCell component="th" scope="row">
                     <Typography variant="body1" component="div">
-                      {props.game.findPlayerName(answer.gamePlayerId)}
+                      {game.findPlayerName(answer.gamePlayerId)}
                     </Typography>
                   </TableCell>
                   <TableCell component="th" scope="row">

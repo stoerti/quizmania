@@ -45,15 +45,15 @@ export type GameCanceledEvent = {
   gameId: string,
 }
 
-export type UserAddedEvent = {
+export type PlayerAddedEvent = {
   gameId: string,
-  gameUserId: string,
+  gamePlayerId: string,
   username: string,
 }
 
-export type UserRemovedEvent = {
+export type PlayerRemovedEvent = {
   gameId: string,
-  gameUserId: string,
+  gamePlayerId: string,
   username: string,
 }
 
@@ -70,30 +70,30 @@ export type QuestionAskedEvent = {
 export type QuestionAnsweredEvent = {
   gameId: string,
   gameQuestionId: string,
-  gameUserId: string,
-  userAnswerId: string,
+  gamePlayerId: string,
+  playerAnswerId: string,
   answer: string,
 }
 
 export type QuestionAnswerOverriddenEvent = {
   gameId: string,
   gameQuestionId: string,
-  gameUserId: string,
-  userAnswerId: string,
+  gamePlayerId: string,
+  playerAnswerId: string,
   answer: string
 }
 
 export type QuestionBuzzedEvent = {
   gameId: string,
   gameQuestionId: string,
-  gameUserId: string,
+  gamePlayerId: string,
   buzzerTimestamp: string
 }
 
 export type QuestionBuzzerWonEvent = {
   gameId: string,
   gameQuestionId: string,
-  gameUserId: string,
+  gamePlayerId: string,
 }
 
 export type QuestionClosedEvent = {
@@ -105,7 +105,7 @@ export interface GamePoints {
   [key: string]: number
 }
 
-export type QuestionRatedEvent = {
+export type QuestionScoredEvent = {
   gameId: string,
   gameQuestionId: string,
   points: GamePoints,

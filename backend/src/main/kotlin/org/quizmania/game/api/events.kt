@@ -27,15 +27,15 @@ data class GameCreatedEvent(
   val moderatorUsername: String?,
 ) : GameEvent
 
-data class UserAddedEvent(
+data class PlayerAddedEvent(
   override val gameId: GameId,
-  val gameUserId: GameUserId,
+  val gamePlayerId: GamePlayerId,
   val username: String,
 ) : GameEvent
 
-data class UserRemovedEvent(
+data class PlayerRemovedEvent(
   override val gameId: GameId,
-  val gameUserId: GameUserId,
+  val gamePlayerId: GamePlayerId,
   val username: String,
 ) : GameEvent
 
@@ -64,30 +64,30 @@ data class QuestionAskedEvent(
 data class QuestionAnsweredEvent(
   override val gameId: GameId,
   override val gameQuestionId: GameQuestionId,
-  val gameUserId: GameUserId,
-  val userAnswerId: UUID,
+  val gamePlayerId: GamePlayerId,
+  val playerAnswerId: UUID,
   val answer: String
 ) : GameQuestionEvent
 
 data class QuestionAnswerOverriddenEvent(
   override val gameId: GameId,
   override val gameQuestionId: GameQuestionId,
-  val gameUserId: GameUserId,
-  val userAnswerId: UUID,
+  val gamePlayerId: GamePlayerId,
+  val playerAnswerId: UUID,
   val answer: String
 ) : GameQuestionEvent
 
 data class QuestionBuzzedEvent(
   override val gameId: GameId,
   override val gameQuestionId: GameQuestionId,
-  val gameUserId: GameUserId,
+  val gamePlayerId: GamePlayerId,
   val buzzerTimestamp: Instant
 ) : GameQuestionEvent
 
 data class QuestionBuzzerWonEvent(
   override val gameId: GameId,
   override val gameQuestionId: GameQuestionId,
-  val gameUserId: GameUserId,
+  val gamePlayerId: GamePlayerId,
 ) : GameQuestionEvent
 
 data class QuestionClosedEvent(
@@ -95,13 +95,13 @@ data class QuestionClosedEvent(
   override val gameQuestionId: GameQuestionId,
 ) : GameQuestionEvent
 
-data class QuestionRatedEvent(
+data class QuestionScoredEvent(
   override val gameId: GameId,
   override val gameQuestionId: GameQuestionId,
   /**
-   * key = gameUserId
+   * key = gamePlayerId
    */
-  val points: Map<GameUserId, Int>,
+  val points: Map<GamePlayerId, Int>,
 ) : GameQuestionEvent
 
 data class GameFinishedEvent(

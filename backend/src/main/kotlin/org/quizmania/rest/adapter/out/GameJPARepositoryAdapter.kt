@@ -4,7 +4,7 @@ import jakarta.persistence.*
 import org.quizmania.game.api.GameId
 import org.quizmania.rest.application.domain.Game
 import org.quizmania.rest.application.domain.GameStatus
-import org.quizmania.rest.application.domain.GameUser
+import org.quizmania.rest.application.domain.GamePlayer
 import org.quizmania.rest.port.out.GameRepository
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -52,7 +52,7 @@ class GameEntity(
 
   @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
   @JoinColumn(name = "game_id")
-  var users: MutableList<GameUserEntity> = mutableListOf(),
+  var players: MutableList<GamePlayerEntity> = mutableListOf(),
 ) {
 
   companion object {
@@ -66,7 +66,7 @@ class GameEntity(
         moderator = model.moderator,
         questionTimeout = model.questionTimeout,
         status = model.status,
-        users = model.users.map { GameUserEntity.fromModel(it) }.toMutableList() // mutability needed for JPA?
+        players = model.players.map { GamePlayerEntity.fromModel(it) }.toMutableList() // mutability needed for JPA?
       )
     }
   }
@@ -80,28 +80,28 @@ class GameEntity(
     moderator = this.moderator,
     questionTimeout = this.questionTimeout,
     status = this.status,
-    users = this.users.map { it.toModel() }.toMutableList()
+    players = this.players.map { it.toModel() }.toMutableList()
   )
 }
 
-@Entity(name = "GAME_USER")
-class GameUserEntity(
+@Entity(name = "GAME_PLAYER")
+class GamePlayerEntity(
   @Id
-  val gameUserId: UUID,
+  val gamePlayerId: UUID,
   var username: String,
 ) {
 
   companion object {
-    fun fromModel(model: GameUser): GameUserEntity {
-      return GameUserEntity(
-        gameUserId = model.gameUserId,
+    fun fromModel(model: GamePlayer): GamePlayerEntity {
+      return GamePlayerEntity(
+        gamePlayerId = model.gamePlayerId,
         username = model.username,
       )
     }
   }
 
-  fun toModel(): GameUser = GameUser(
-    gameUserId = this.gameUserId,
+  fun toModel(): GamePlayer = GamePlayer(
+    gamePlayerId = this.gamePlayerId,
     username = this.username,
   )
 }

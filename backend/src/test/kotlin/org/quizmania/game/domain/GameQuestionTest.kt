@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.quizmania.game.*
 import org.quizmania.game.api.GameQuestionMode
 import org.quizmania.game.command.application.domain.GameQuestion
-import org.quizmania.game.command.application.domain.UserAnswer
+import org.quizmania.game.command.application.domain.PlayerAnswer
 import org.quizmania.question.api.EstimateQuestion
 import org.quizmania.question.api.FreeInputQuestion
 import java.util.*
@@ -27,18 +27,18 @@ class GameQuestionTest {
       ),
       GameQuestionMode.COLLECTIVE,
       mutableListOf(
-        UserAnswer(USER_ANSWER_1, GAME_USER_1, "90"),
-        UserAnswer(USER_ANSWER_2, GAME_USER_2, "98"),
-        UserAnswer(USER_ANSWER_3, GAME_USER_3, "103"),
+        PlayerAnswer(PLAYER_ANSWER_1, GAME_PLAYER_1, "90"),
+        PlayerAnswer(PLAYER_ANSWER_2, GAME_PLAYER_2, "98"),
+        PlayerAnswer(PLAYER_ANSWER_3, GAME_PLAYER_3, "103"),
       ),
     )
 
     val result = gameQuestion.resolvePoints()
 
       Assertions.assertThat(result).containsExactlyInAnyOrderEntriesOf(mapOf(
-        GAME_USER_1 to 5,
-        GAME_USER_2 to 20,
-        GAME_USER_3 to 10,
+        GAME_PLAYER_1 to 5,
+        GAME_PLAYER_2 to 20,
+        GAME_PLAYER_3 to 10,
       ))
   }
 
@@ -54,7 +54,7 @@ class GameQuestionTest {
     "Ironman,Ironman!,true",
     "Ironman,Lronman,false",
   )
-  fun createGame_ok(correctAnswer: String, userAnswer: String, correct: Boolean) {
+  fun createGame_ok(correctAnswer: String, playerAnswer: String, correct: Boolean) {
     val gameQuestion = GameQuestion(
       gameId = GAME_UUID,
       isModerated = false,
@@ -66,13 +66,13 @@ class GameQuestionTest {
         correctAnswer = correctAnswer
       ),
       GameQuestionMode.COLLECTIVE,
-      mutableListOf(UserAnswer(USER_ANSWER_1, GAME_USER_1, userAnswer)),
+      mutableListOf(PlayerAnswer(PLAYER_ANSWER_1, GAME_PLAYER_1, playerAnswer)),
     )
 
     val result = gameQuestion.resolvePoints()
 
     if (correct) {
-      Assertions.assertThat(result).containsExactlyInAnyOrderEntriesOf(mapOf(GAME_USER_1 to 10))
+      Assertions.assertThat(result).containsExactlyInAnyOrderEntriesOf(mapOf(GAME_PLAYER_1 to 10))
     } else {
       Assertions.assertThat(result).isEmpty()
     }
