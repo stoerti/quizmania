@@ -1,22 +1,6 @@
 import {Game, GameQuestion, QuestionStatus} from "../../../domain/GameModel";
-import {gameCommandService, GameCommandService, GameException} from "../../../services/GameCommandService";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography, useTheme
-} from "@mui/material";
+import {gameCommandService, GameException} from "../../../services/GameCommandService";
+import {Box, Button, CircularProgress, IconButton, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import Cancel from "@mui/icons-material/Cancel";

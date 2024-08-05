@@ -23,9 +23,6 @@ class BaseThenStage : Stage<BaseThenStage>() {
   @ExpectedScenarioState
   private lateinit var gameId: GameId
 
-  @ProvidedScenarioState
-  private lateinit var lastAnsweredQuestionId: GameQuestionId
-
   fun `the game can be queried`() = step {
     await()
       .atMost(10, TimeUnit.SECONDS)

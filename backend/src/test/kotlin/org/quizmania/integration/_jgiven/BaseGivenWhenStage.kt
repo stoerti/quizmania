@@ -32,9 +32,6 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
   @ProvidedScenarioState
   private lateinit var gameId: GameId
 
-  @ProvidedScenarioState
-  private lateinit var lastAnsweredQuestionId: GameQuestionId
-
   fun `a game is created by user $`(
     @Quoted username: String,
   ) = `a game is created`(

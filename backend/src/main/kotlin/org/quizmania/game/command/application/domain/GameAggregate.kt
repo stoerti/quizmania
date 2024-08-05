@@ -233,7 +233,7 @@ internal class GameAggregate() {
   @EventSourcingHandler
   fun on(event: GameCreatedEvent) {
     this.gameId = event.gameId
-    this.config = event.config;
+    this.config = event.config
     this.moderatorUsername = event.moderatorUsername
     this.gameStatus = GameStatus.CREATED
     this.questionList = event.questionList

@@ -60,7 +60,7 @@ class AdminController(
     @PutMapping("/create-random-games")
     fun createRandomGames(@RequestParam("numberOfGames") numberOfGames: Int) {
         for (i in 1..numberOfGames) {
-            val shuffledPlayers = usernames.shuffled();
+            val shuffledPlayers = usernames.shuffled()
 
             val isModerated = Random.nextBoolean()
             val maxPlayers = Random.nextInt(5, 10)

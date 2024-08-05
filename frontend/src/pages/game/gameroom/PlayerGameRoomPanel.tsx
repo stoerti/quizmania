@@ -1,6 +1,6 @@
 import {Game, GameQuestion, Player, QuestionStatus} from "../../../domain/GameModel";
-import {gameCommandService, GameCommandService, GameException} from "../../../services/GameCommandService";
-import {Box, Button, CircularProgress, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, useTheme} from "@mui/material";
+import {gameCommandService, GameException} from "../../../services/GameCommandService";
+import {Box, Button, CircularProgress, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import {QuestionContainer} from "../question/QuestionContainer";
 import Cookies from "js-cookie";
@@ -24,7 +24,7 @@ export type PlayerGameRoomPanelProps = {
 export const PlayerGameRoomPanel = ({game, question, player}: PlayerGameRoomPanelProps) => {
   const snackbar = useSnackbar()
 
-  let container = undefined
+  let container
   if (question === undefined) {
     container = <div>Waiting for first question</div>
   } else if (question.status === QuestionStatus.OPEN) {

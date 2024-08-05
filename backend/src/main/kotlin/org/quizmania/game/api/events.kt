@@ -103,8 +103,3 @@ data class QuestionScoredEvent(
    */
   val points: Map<GamePlayerId, Int>,
 ) : GameQuestionEvent
-
-data class GameFinishedEvent(
-  override val gameId: GameId,
-  val points: Map<String, Int> //(username, points)
-) : GameEvent

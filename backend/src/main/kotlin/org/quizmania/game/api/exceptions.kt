@@ -37,26 +37,26 @@ class PlayerNotFoundProblem(gameId: UUID, username: String) :
 class QuestionNotFoundProblem(gameId: UUID, gameQuestionId: UUID) :
   GameProblem(gameId, "urn:quizmania:game:questionNotFound", "Question not found in game", "The question $gameQuestionId was not found in the game")
 
-class QuestionAlreadyClosedProblem(gameId: UUID, val gameQuestionId: UUID) :
+class QuestionAlreadyClosedProblem(gameId: UUID, gameQuestionId: UUID) :
   GameProblem(gameId, "urn:quizmania:question:alreadyClosed", "Question is already closed", null, mapOf("gameQuestionId" to gameQuestionId))
 
-class QuestionAlreadyAnsweredProblem(gameId: UUID, val gameQuestionId: UUID, gamePlayerId: GamePlayerId) :
+class QuestionAlreadyAnsweredProblem(gameId: UUID, gameQuestionId: UUID, gamePlayerId: GamePlayerId) :
   GameProblem(gameId, "urn:quizmania:question:alreadyAnswered", "Player has already answered the question", null, mapOf("gameQuestionId" to gameQuestionId, "gamePlayerId" to gamePlayerId))
 
-class AnswerNotFoundProblem(gameId: UUID, val gameQuestionId: UUID, gamePlayerId: GamePlayerId) :
+class AnswerNotFoundProblem(gameId: UUID, gameQuestionId: UUID, gamePlayerId: GamePlayerId) :
   GameProblem(gameId, "urn:quizmania:question:answerNotFound", "Player answer not found in question", "The answer of player=$gamePlayerId was not found in the question=$gameQuestionId", mapOf("gameQuestionId" to gameQuestionId, "gamePlayerId" to gamePlayerId))
 
-class QuestionAlreadyBuzzedProblem(gameId: UUID, val gameQuestionId: UUID, gamePlayerId: GamePlayerId) :
+class QuestionAlreadyBuzzedProblem(gameId: UUID, gameQuestionId: UUID, gamePlayerId: GamePlayerId) :
   GameProblem(gameId, "urn:quizmania:question:alreadyBuzzed", "Player has already buzzed the question", null, mapOf("gameQuestionId" to gameQuestionId, "gamePlayerId" to gamePlayerId))
 
-class QuestionInBuzzerModeProblem(gameId: UUID, val gameQuestionId: UUID) :
+class QuestionInBuzzerModeProblem(gameId: UUID, gameQuestionId: UUID) :
   GameProblem(gameId, "urn:quizmania:question:buzzerMode", "Question is in buzzer mode", "The question is in buzzer mode and therefore cannot be answered regularly", mapOf("gameQuestionId" to gameQuestionId))
 
-class QuestionNotInBuzzerModeProblem(gameId: UUID, val gameQuestionId: UUID) :
+class QuestionNotInBuzzerModeProblem(gameId: UUID, gameQuestionId: UUID) :
   GameProblem(gameId, "urn:quizmania:question:noBuzzerMode", "Question is not in buzzer mode", "The question is not in buzzer mode and therefore must be answered regularly", mapOf("gameQuestionId" to gameQuestionId))
 
-class NoBuzzerWinnerProblem(gameId: UUID, val gameQuestionId: UUID) :
+class NoBuzzerWinnerProblem(gameId: UUID, gameQuestionId: UUID) :
   GameProblem(gameId, "urn:quizmania:question:noBuzzerWinner", "THe current question has no buzzer winner", null, mapOf("gameQuestionId" to gameQuestionId))
 
-class QuestionAlreadyRatedProblem(gameId: UUID, val gameQuestionId: UUID) :
+class QuestionAlreadyRatedProblem(gameId: UUID, gameQuestionId: UUID) :
   GameProblem(gameId, "urn:quizmania:question:alreadyRated", "Question is already rated", null, mapOf("gameQuestionId" to gameQuestionId))

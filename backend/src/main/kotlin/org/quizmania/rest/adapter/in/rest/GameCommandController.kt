@@ -52,7 +52,7 @@ class GameCommandController(
       )
     }
 
-    return ResponseEntity.ok(gameId.toString());
+    return ResponseEntity.ok(gameId.toString())
   }
 
   @PostMapping("/{gameId}/join")

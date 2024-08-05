@@ -4,7 +4,7 @@ import React from "react";
 import {QuestionPhrasePanel} from "./QuestionPhrasePanel";
 import {QuestionType} from "../../../services/GameEventTypes";
 import {Simulate} from "react-dom/test-utils";
-import play = Simulate.play;
+
 
 enum BuzzerStatus {
   OPEN,

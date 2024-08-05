@@ -22,7 +22,6 @@ const GamePage = ({gameId, onGameEnded}: GamePageProps) => {
   const gameRepository = useMemo(() =>
       new GameRepository()
     , []);
-  const gameCommandService = new GameCommandService()
   const snackbar = useSnackbar()
 
   useEffect(() => {

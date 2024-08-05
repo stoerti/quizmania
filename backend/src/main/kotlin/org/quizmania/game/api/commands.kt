@@ -35,11 +35,6 @@ data class StartGameCommand(
     override val gameId: UUID,
 ): GameCommand
 
-data class CancelGameCommand(
-    @TargetAggregateIdentifier
-    override val gameId: UUID,
-): GameCommand
-
 data class AnswerQuestionCommand(
     @TargetAggregateIdentifier
     override val gameId: UUID,
