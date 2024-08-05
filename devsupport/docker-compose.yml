@@ -10,7 +10,7 @@ services:
     ports:
       - '5432:5432'
   axonserver:
-    image: axoniq/axonserver:2024.0.2-jdk-17
+    image: axoniq/axonserver:2024.1.0-jdk-17
     hostname: axonserver
     environment:
       AXONIQ_AXONSERVER_STANDALONE: "true"

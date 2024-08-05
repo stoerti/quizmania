@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-  implementation(platform("org.testcontainers:testcontainers-bom:1.19.8")) //import bom
+  implementation(platform("org.testcontainers:testcontainers-bom:1.20.0")) //import bom
 
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -34,7 +34,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.session:spring-session-core")
 
-  implementation("org.axonframework:axon-spring-boot-starter:4.9.3")
+  implementation("org.axonframework:axon-spring-boot-starter:4.10.0")
   implementation("org.springframework.boot:spring-boot-starter-quartz")
 
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
@@ -62,7 +62,7 @@ dependencies {
   testImplementation("org.testcontainers:testcontainers")
   testImplementation("org.testcontainers:junit-jupiter")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("org.axonframework:axon-test:4.9.3")
+  testImplementation("org.axonframework:axon-test:4.10.0")
   testRuntimeOnly("org.postgresql:postgresql")
 }
 
