@@ -113,9 +113,16 @@ data class GameQuestion(
     )
   }
 
-  fun buzz(gamePlayerId: GamePlayerId, buzzerTimestamp: Instant) {
+  fun buzz(gamePlayerId: GamePlayerId, clientBuzzerTimestamp: Instant) {
     if (this.questionMode != GameQuestionMode.BUZZER) {
       throw QuestionNotInBuzzerModeProblem(this.gameId, this.id)
+    }
+
+    val now = Instant.now()
+    val buzzerTimestamp = if (clientBuzzerTimestamp.isBefore(now.minusMillis(500))) {
+      now
+    } else {
+      clientBuzzerTimestamp
     }
 
     assertNotClosed()

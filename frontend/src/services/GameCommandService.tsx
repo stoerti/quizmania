@@ -1,4 +1,5 @@
 import {ProblemJson, registerProblemFactory} from "./problem/ProblemInterceptor.tsx";
+import {currentServerTime} from "./ServerTimeSync.tsx";
 
 export type NewGameCommand = {
   name: string,
@@ -31,7 +32,6 @@ export type OverrideAnswerCommand = {
 export type BuzzQuestionCommand = {
   gameId: string,
   gameQuestionId: string,
-  buzzerTimestamp: string
 }
 
 export type AnswerBuzzerQuestionCommand = {
@@ -99,7 +99,11 @@ export class GameCommandService {
   }
 
   public async buzzQuestion(buzz: BuzzQuestionCommand) {
-    await this.genericPost('/api/game/' + buzz.gameId + '/buzz-question', JSON.stringify(buzz))
+    await this.genericPost('/api/game/' + buzz.gameId + '/buzz-question', JSON.stringify({
+      gameId: buzz.gameId,
+      gameQuestionId: buzz.gameQuestionId,
+      buzzerTimestamp: currentServerTime().toISOString()
+    }))
   }
 
   public async answerBuzzerQuestion(answer: AnswerBuzzerQuestionCommand) {
