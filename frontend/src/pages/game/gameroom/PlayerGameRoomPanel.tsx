@@ -28,7 +28,7 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
     container = <div>Waiting for first question</div>
   } else if (question.status === QuestionStatus.OPEN) {
     if (question.hasPlayerAlreadyAnswered(player.id)) {
-      container = <Stack spacing={2}>
+      return <Stack spacing={2} alignItems={"center"}>
         <QuestionPhrasePanel gameQuestion={question}/>
         <Paper sx={{padding: 2}}>
           <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
@@ -57,7 +57,7 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
           }
         }
 
-        container = <QuestionContainer gameQuestion={question} onAnswerQuestion={onAnswerQuestion}/>
+        return <QuestionContainer gameQuestion={question} onAnswerQuestion={onAnswerQuestion}/>
       } else if (question.questionMode === GameQuestionMode.BUZZER) {
         const onBuzzQuestion = async () => {
           try {
@@ -71,14 +71,13 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
             }
           }
         }
-        container = <BuzzerQuestionContainer gameQuestion={question} player={player} onBuzzQuestion={onBuzzQuestion}/>
+        return <BuzzerQuestionContainer gameQuestion={question} player={player} onBuzzQuestion={onBuzzQuestion}/>
       } else {
-        container = <div>Unknown gameQuestionMode {question.questionMode}</div>
+        return <div>Unknown gameQuestionMode {question.questionMode}</div>
       }
     }
   } else if (question.status === QuestionStatus.CLOSED) {
-    container =
-      <Stack spacing={2}>
+    return <Stack spacing={2} alignItems={"center"}>
         <QuestionPhrasePanel gameQuestion={question}/>
         <CorrectAnswerContainer correctAnswer={question.question.correctAnswer} />
         <Table aria-label="simple table">
@@ -128,8 +127,7 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
                 onClick={onNextQuestion}>Next question</Button>
       </div>
     }
-    container =
-      <Stack spacing={2}>
+    return <Stack spacing={2} alignItems={"center"}>
         <QuestionPhrasePanel gameQuestion={question}/>
         <CorrectAnswerContainer correctAnswer={question.question.correctAnswer} />
         {nextButton}
@@ -137,10 +135,10 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
       </Stack>
 
   } else {
-    container = <div>Unknown state</div>
+    return <div>Unknown state</div>
   }
 
-  return <Box sx={{ width: '100%'}}>
+  return <Box sx={{ width: '100%', alignItems: 'center'}}>
     {container}
   </Box>
 }

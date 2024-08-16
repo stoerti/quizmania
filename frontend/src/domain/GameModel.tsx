@@ -91,13 +91,15 @@ export class Game {
 
   public onGameCanceled(event: GameCanceledEvent): Game {
     return this.copyWith({
-      status: GameStatus.CANCELED
+      status: GameStatus.CANCELED,
+      currentQuestion: undefined
     })
   }
 
   public onGameEnded(event: GameEndedEvent): Game {
     return this.copyWith({
-      status: GameStatus.ENDED
+      status: GameStatus.ENDED,
+      currentQuestion: undefined
     })
   }
 

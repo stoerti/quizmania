@@ -165,7 +165,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
     )
   } else if (question.status === QuestionStatus.SCORED) {
     return (
-      <Stack spacing={2}>
+      <Stack spacing={2} alignItems={"center"}>
         <QuestionPhrasePanel gameQuestion={question}/>
         <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
         <div style={{display: "flex", alignItems: "center"}}>
