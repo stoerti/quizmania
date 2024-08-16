@@ -6,12 +6,13 @@ import React, {useEffect} from "react";
 import {GameCreationDialog} from "./GameCreationDialog";
 import {useSnackbar} from "material-ui-snackbar-provider";
 import {GameAlreadyFullException, gameCommandService, GameException, NewGameCommand, UsernameAlreadyTakenException} from "../services/GameCommandService";
-import {TransferWithinAStation} from "@mui/icons-material";
+import {TransferWithinAStation, Visibility} from "@mui/icons-material";
 import {GameDto, gameOverviewService} from "../services/GameOverviewService";
 
 type GameSelectionContainerProps = {
   games: GameDto[]
   onButtonClickJoinGame: (gameId: string) => void
+  onButtonClickJoinGameAsSpectator: (gameId: string) => void
 }
 type GameSelectionPageProps = {
   onGameSelected: (gameId: string) => void
@@ -62,6 +63,9 @@ const GameSelectionContainer = (props: GameSelectionContainerProps) => {
                 <IconButton onClick={() => props.onButtonClickJoinGame(row.id)}>
                   <Login/>
                 </IconButton>
+                <IconButton onClick={() => props.onButtonClickJoinGameAsSpectator(row.id)}>
+                  <Visibility/>
+                </IconButton>
               </TableCell>
             </TableRow>
           ))}
@@ -102,6 +106,9 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
         snackbar.showMessage("Something went wrong")
       }
     }
+  }
+  const onButtonClickJoinGameAsSpectator = async (gameId: string) => {
+      props.onGameSelected(gameId)
   }
 
   const onCloseNewGameDialog = () => {
@@ -158,7 +165,8 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
         </Toolbar>
       </AppBar>
       <GameSelectionContainer games={games}
-                              onButtonClickJoinGame={onButtonClickJoinGame}/>
+                              onButtonClickJoinGame={onButtonClickJoinGame}
+                              onButtonClickJoinGameAsSpectator={onButtonClickJoinGameAsSpectator}/>
     </div>
   )
 }

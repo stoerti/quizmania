@@ -8,7 +8,7 @@ import {
   QuestionAnswerOverriddenEvent,
   QuestionAskedEvent, QuestionBuzzedEvent, QuestionBuzzerWonEvent,
   QuestionClosedEvent,
-  QuestionRatedEvent,
+  QuestionScoredEvent,
   PlayerAddedEvent,
   PlayerRemovedEvent
 } from "../services/GameEventTypes";
@@ -78,7 +78,7 @@ export class Game {
       case "QuestionClosedEvent":
         return this.onQuestionClosed(event as QuestionClosedEvent)
       case "QuestionScoredEvent":
-        return this.onQuestionScored(event as QuestionRatedEvent)
+        return this.onQuestionScored(event as QuestionScoredEvent)
     }
 
     throw Error("Unknown eventType " + eventType)
@@ -160,7 +160,7 @@ export class Game {
     return this.updateQuestion(event.gameQuestionId, question => question.onQuestionClosed(event))
   }
 
-  public onQuestionScored(event: QuestionRatedEvent): Game {
+  public onQuestionScored(event: QuestionScoredEvent): Game {
     // TODO optionally optimize, game is copied twice here
     const game = this.updateQuestion(event.gameQuestionId, question => question.onQuestionScored(event))
 
@@ -186,6 +186,14 @@ export class Game {
 
   public findPlayerPoints(gamePlayerId: string): number {
     return this.players.find(player => player.id === gamePlayerId)?.points ?? 0
+  }
+
+  public findLastQuestion(): GameQuestion | undefined {
+    if (this.questions.length === 0)
+      return undefined
+
+    const latestQuestionNumber = Math.max(...this.questions.map((question) => question.gameQuestionNumber))
+    return this.questions.find((q) => q.gameQuestionNumber === latestQuestionNumber)
   }
 }
 
@@ -255,7 +263,7 @@ export class GameQuestion {
     })
   }
 
-  public onQuestionScored(event: QuestionRatedEvent): GameQuestion {
+  public onQuestionScored(event: QuestionScoredEvent): GameQuestion {
     const newAnswers = this.answers.map(answer => {
       if (event.points[answer.gamePlayerId] != undefined) {
         return {

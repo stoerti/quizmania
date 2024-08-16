@@ -44,6 +44,10 @@ export const GameFinishedPage = (props: GameFinishedPageProps) => {
       }}>
         <Box sx={{maxWidth: '650px', width: '100%', margin: 'auto'}}>
           <Stack spacing={2}>
+            <div style={{display: "flex", alignItems: "center"}}>
+              <Button sx={{margin: 'auto'}} startIcon={<Logout/>} variant="contained"
+                      onClick={props.onClickLeaveGame}>Leave game</Button>
+            </div>
             <Table aria-label="simple table" sx={{width: '100%'}}>
               <TableHead>
                 <TableRow>
@@ -86,13 +90,9 @@ export const GameFinishedPage = (props: GameFinishedPageProps) => {
                 })}
               </TableBody>
             </Table>
-            <div style={{display: "flex", alignItems: "center"}}>
-              <Button sx={{margin: 'auto'}} startIcon={<Logout/>} variant="contained"
-                      onClick={props.onClickLeaveGame}>Leave game</Button>
-            </div>
           </Stack>
         </Box>
       </Box>
     </div>
-)
+  )
 }

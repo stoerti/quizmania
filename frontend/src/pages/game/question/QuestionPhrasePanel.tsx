@@ -15,7 +15,7 @@ export const QuestionPhrasePanel = (props: QuestionPhrasePanelProps) => {
     questionImage = <img src={props.gameQuestion.question.imagePath} style={{maxWidth: '100%', maxHeight: '250px', margin: 'auto'}}/>
   }
 
-  return (<Paper sx={{padding: 2, backgroundColor: theme.palette.primary.contrastText}} elevation={5}>
+  return (<Paper sx={{padding: 2, backgroundColor: theme.palette.primary.contrastText, maxWidth: 650, width: '100%'}} elevation={5}>
     <Typography sx={{flex: '1 1 100%'}} variant="overline" component="div">
       Question {props.gameQuestion.gameQuestionNumber}
     </Typography>

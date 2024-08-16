@@ -60,8 +60,11 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.waitForText(username2)
   I.waitForText(username3)
 
+  I.wait(5)
+
   gameRoomPage.startGame()
 
+  I.wait(1)
   session('player1', () => {
     gameRoomPage.answerChoiceQuestion("Banone")
   })
@@ -79,14 +82,19 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.waitForText("Banone", 5, "tr:has-text('"+username2+"')")
   I.waitForText("Gürkin", 5, "tr:has-text('"+username3+"')")
 
+  I.wait(10000)
+
   gameRoomPage.nextQuestion()
 
+  I.wait(1)
   session('player1', () => {
     gameRoomPage.answerEstimateQuestion(800)
   })
+  I.wait(1)
   session('player2', () => {
     gameRoomPage.answerEstimateQuestion(900)
   })
+  I.wait(1)
   session('player3', () => {
     gameRoomPage.answerEstimateQuestion(1000)
   })
@@ -95,7 +103,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.waitForText("900", 5, "tr:has-text('"+username2+"')")
   I.waitForText("1000", 5, "tr:has-text('"+username3+"')")
 
-  I.wait(1)
+  I.wait(10)
   gameRoomPage.nextQuestion()
 
   session('player1', () => {
@@ -116,5 +124,46 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
 
   I.waitForText("Results")
 
+  I.wait(10)
+});
+
+
+
+Scenario('many_multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
+  const gameName = "Game " + Math.floor(Math.random() * 100000)
+  const numPlayers = 30
+
+  const moderator = "Moderator " + Math.floor(Math.random() * 100000)
+  const players = [...Array(numPlayers)].map((_, index) => { return "User "+index + Math.floor(Math.random() * 100000)})
+
+
+  loginPage.logInWithUsername(moderator)
   I.wait(1)
+
+  lobbyPage.createGame(gameName, "test01", true)
+  I.wait(1)
+
+  players.forEach((player, index) => {
+    session('player'+index, () => {
+      loginPage.logInWithUsername(player)
+      lobbyPage.joinGame(gameName)
+    });
+  })
+
+  players.forEach((player) => {
+    I.waitForText(player)
+  })
+
+  I.wait(5)
+
+  gameRoomPage.startGame()
+
+  I.wait(1)
+
+  players.forEach((player, index) => {
+    session('player'+index, () => {
+      gameRoomPage.answerChoiceQuestion(Math.random() < 0.5 ? "Banone" : "Gürkin")
+    })
+  })
+
 });

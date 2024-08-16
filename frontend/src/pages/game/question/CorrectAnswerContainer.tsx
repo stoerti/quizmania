@@ -8,7 +8,7 @@ export type CorrectAnswerContainerProps = {
 export const CorrectAnswerContainer = (props: CorrectAnswerContainerProps) => {
   const theme = useTheme()
 
-  return <Paper sx={{backgroundColor: theme.palette.secondary.main, padding: 2}} elevation={5}>
+  return <Paper sx={{backgroundColor: theme.palette.secondary.main, padding: 2, maxWidth: 650, width: '100%'}} elevation={5}>
     <Typography variant="body2" component="div">
       Answer
     </Typography>

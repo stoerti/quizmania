@@ -1,29 +1,29 @@
-import {Game, GameQuestion} from "../../domain/GameModel";
+import {Game} from "../../domain/GameModel";
 import React from "react";
 import Cookies from "js-cookie";
 import {AppBar, Box, Toolbar, Typography} from "@mui/material";
 import {ModeratorGameRoomPanel} from "./gameroom/ModeratorGameRoomPanel";
 import {PlayerGameRoomPanel} from "./gameroom/PlayerGameRoomPanel";
+import {SpectatorGameRoomPanel} from "./gameroom/SpectatorGameRoomPanel.tsx";
 
 
 export type GameRoomPageProps = {
   game: Game
 }
 
-const findCurrentQuestion = (game: Game): GameQuestion | undefined => {
-  return [...game.questions].sort((q1, q2) => q2.gameQuestionNumber - q1.gameQuestionNumber)[0]
-}
-
 export const GameRoomPage = ({game}: GameRoomPageProps) => {
   const username = Cookies.get("username")
-  const currentQuestion = findCurrentQuestion(game)!
+
+  const userIsPlayer = game.players.find(p => p.name === username)
 
   let container
   if (game.moderator == username) {
-    container = <ModeratorGameRoomPanel game={game} currentQuestion={currentQuestion}/>
+    container = <ModeratorGameRoomPanel game={game}/>
+  } else if (!userIsPlayer) {
+    container = <SpectatorGameRoomPanel game={game}/>
   } else {
     const currentPlayer = game.players.find(player => player.name === username)!
-    container = <PlayerGameRoomPanel game={game} player={currentPlayer} question={currentQuestion}/>
+    container = <PlayerGameRoomPanel game={game} player={currentPlayer}/>
   }
 
   return (

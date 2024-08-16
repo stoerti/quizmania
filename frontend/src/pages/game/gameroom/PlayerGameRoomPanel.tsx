@@ -1,28 +1,27 @@
-import {Game, GameQuestion, Player, QuestionStatus} from "../../../domain/GameModel";
+import {Game, Player, QuestionStatus} from "../../../domain/GameModel";
 import {gameCommandService, GameException} from "../../../services/GameCommandService";
 import {Box, Button, CircularProgress, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
-import CheckCircle from "@mui/icons-material/CheckCircle";
 import {QuestionContainer} from "../question/QuestionContainer";
 import Cookies from "js-cookie";
 import PlayArrow from "@mui/icons-material/PlayArrow";
-import Cancel from "@mui/icons-material/Cancel";
 import React from "react";
-import {QuestionMark} from "@mui/icons-material";
 import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
 import {GameQuestionMode} from "../../../services/GameEventTypes";
 import {BuzzerQuestionContainer} from "../question/BuzzerQuestionContainer";
 import {useSnackbar} from "material-ui-snackbar-provider";
 import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
+import {Scoreboard} from "./Scoreboard.tsx";
 
 export type PlayerGameRoomPanelProps = {
   game: Game,
   player: Player,
-  question: GameQuestion,
 }
 
 
-export const PlayerGameRoomPanel = ({game, question, player}: PlayerGameRoomPanelProps) => {
+export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) => {
   const snackbar = useSnackbar()
+
+  const question = game.findLastQuestion()
 
   let container
   if (question === undefined) {
@@ -64,8 +63,7 @@ export const PlayerGameRoomPanel = ({game, question, player}: PlayerGameRoomPane
           try {
             await gameCommandService.buzzQuestion({
               gameId: game.id,
-              gameQuestionId: question.gameQuestionId,
-              buzzerTimestamp: new Date().toISOString()
+              gameQuestionId: question.gameQuestionId
             })
           } catch (error) {
             if (error instanceof GameException) {
@@ -78,7 +76,40 @@ export const PlayerGameRoomPanel = ({game, question, player}: PlayerGameRoomPane
         container = <div>Unknown gameQuestionMode {question.questionMode}</div>
       }
     }
-  } else if (question.status === QuestionStatus.CLOSED || question.status === QuestionStatus.SCORED) {
+  } else if (question.status === QuestionStatus.CLOSED) {
+    container =
+      <Stack spacing={2}>
+        <QuestionPhrasePanel gameQuestion={question}/>
+        <CorrectAnswerContainer correctAnswer={question.question.correctAnswer} />
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Username</TableCell>
+              <TableCell>Answer</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {[...question.answers].sort((a1, a2) => game.findPlayerName(a1.gamePlayerId).localeCompare(game.findPlayerName(a2.gamePlayerId))).map(answer => {
+              return (
+                <TableRow key={answer.id} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
+                  <TableCell component="th" scope="row">
+                    <Typography variant="body1" component="div">
+                      {game.findPlayerName(answer.gamePlayerId)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    <Typography variant="body1" component="div">
+                      {answer.answer}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </Stack>
+
+  } else if (question.status === QuestionStatus.SCORED) {
     let nextButton;
     const onNextQuestion = async () => {
       try {
@@ -102,53 +133,14 @@ export const PlayerGameRoomPanel = ({game, question, player}: PlayerGameRoomPane
         <QuestionPhrasePanel gameQuestion={question}/>
         <CorrectAnswerContainer correctAnswer={question.question.correctAnswer} />
         {nextButton}
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell>Username</TableCell>
-              <TableCell>Answer</TableCell>
-              <TableCell align="right">Points</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {[...question.answers].sort((a1, a2) => a1.points - a2.points || game.findPlayerName(a1.gamePlayerId).localeCompare(game.findPlayerName(a2.gamePlayerId))).map(answer => {
-              let icon;
-              if (question.status === QuestionStatus.SCORED) {
-                if (answer.points > 0) {
-                  icon = <CheckCircle color='success'/>
-                } else {
-                  icon = <Cancel color='error'/>
-                }
-              } else {
-                icon = <QuestionMark color='info'/>
-              }
-              return (
-                <TableRow key={answer.id} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
-                  <TableCell align="left">{icon}</TableCell>
-                  <TableCell component="th" scope="row">
-                    <Typography variant="body1" component="div">
-                      {game.findPlayerName(answer.gamePlayerId)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    <Typography variant="body1" component="div">
-                      {answer.answer}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">{answer.points}</TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
+        <Scoreboard game={game} />
       </Stack>
 
   } else {
     container = <div>Unknown state</div>
   }
 
-  return <Box sx={{maxWidth: '650px', width: '100%'}}>
+  return <Box sx={{ width: '100%'}}>
     {container}
   </Box>
 }
