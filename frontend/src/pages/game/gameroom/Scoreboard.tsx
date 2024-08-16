@@ -1,20 +1,11 @@
-import {Game, GameQuestion, Player, QuestionStatus} from "../../../domain/GameModel";
-import {Box, Button, CircularProgress, Grid, IconButton, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
+import {Game, Player} from "../../../domain/GameModel";
+import {Box, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
-import PlayArrow from "@mui/icons-material/PlayArrow";
 import Cancel from "@mui/icons-material/Cancel";
 import React, {useState} from "react";
-import {ArrowBack, ArrowForward, Build, MarkEmailRead, QuestionMark, StopCircle} from "@mui/icons-material";
-import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
-import Countdown from "react-countdown";
-import {QuestionCountdownBar} from "../question/QuestionCountdownBar";
-import {GameQuestionMode} from "../../../services/GameEventTypes";
-import {useSnackbar} from "material-ui-snackbar-provider";
-import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
+import {ArrowBack, ArrowForward} from "@mui/icons-material";
 import {Simulate} from "react-dom/test-utils";
-import play = Simulate.play;
 import useWindowDimensions from "../../../hooks/useWindowDimensions.tsx";
-import {gameCommandService, GameException} from "../../../services/GameCommandService.tsx";
 
 
 const comparePlayersByPointsAndName = function (p1: Player, p2: Player): number {
