@@ -4,7 +4,6 @@ import CheckCircle from "@mui/icons-material/CheckCircle";
 import Cancel from "@mui/icons-material/Cancel";
 import React, {useState} from "react";
 import {ArrowBack, ArrowForward} from "@mui/icons-material";
-import {Simulate} from "react-dom/test-utils";
 import useWindowDimensions from "../../../hooks/useWindowDimensions.tsx";
 
 
@@ -28,7 +27,7 @@ export type ScoreboardPageProps = {
 }
 
 const ScoreboardPage = ({game, page, pageSize}: ScoreboardPageProps) => {
-  const lastQuestion = game.findLastQuestion()!
+  const lastQuestion = game.currentQuestion
 
   const first = page * pageSize
   const last = (page + 1) * pageSize
@@ -48,7 +47,7 @@ const ScoreboardPage = ({game, page, pageSize}: ScoreboardPageProps) => {
         .map((player, index) => {
           let icon
           let questionPoints
-          const playerAnswer = lastQuestion.answers.find(p => p.gamePlayerId === player.id)
+          const playerAnswer = lastQuestion?.answers.find(p => p.gamePlayerId === player.id)
 
           if (playerAnswer !== undefined) {
             icon = playerAnswer.points > 0 ? <CheckCircle sx={{verticalAlign: 'bottom'}} color='success'/> :

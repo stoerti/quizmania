@@ -36,7 +36,7 @@ export class Game {
   readonly moderator: string | undefined;
   readonly status: GameStatus;
   readonly players: Player[];
-  readonly questions: GameQuestion[];
+  readonly currentQuestion: GameQuestion | undefined;
 
   constructor(event: GameCreatedEvent) {
     this.id = event.gameId
@@ -46,7 +46,6 @@ export class Game {
     this.moderator = event.moderatorUsername
     this.status = GameStatus.CREATED
     this.players = []
-    this.questions = []
   }
 
   public copyWith(modifyObject: { [P in keyof Game]?: Game[P] }): Game {
@@ -119,21 +118,15 @@ export class Game {
 
   public onQuestionAsked(event: QuestionAskedEvent): Game {
     return this.copyWith({
-      questions: [
-        ...this.questions,
+      currentQuestion:
         new GameQuestion(event)
-      ]
     })
   }
 
   private updateQuestion(questionId: string, questionUpdater: (question: GameQuestion) => GameQuestion): Game {
-    const i = this.questions.findIndex(q => q.gameQuestionId == questionId)
-    if (i !== -1) {
-      const questionsCopy = [...this.questions]
-      questionsCopy[i] = questionUpdater(this.questions[i])
-
+    if (this.currentQuestion === undefined || this.currentQuestion.gameQuestionId === questionId) {
       return this.copyWith({
-        questions: questionsCopy
+        currentQuestion: questionUpdater(this.currentQuestion!)
       })
     } else {
       return this
@@ -186,14 +179,6 @@ export class Game {
 
   public findPlayerPoints(gamePlayerId: string): number {
     return this.players.find(player => player.id === gamePlayerId)?.points ?? 0
-  }
-
-  public findLastQuestion(): GameQuestion | undefined {
-    if (this.questions.length === 0)
-      return undefined
-
-    const latestQuestionNumber = Math.max(...this.questions.map((question) => question.gameQuestionNumber))
-    return this.questions.find((q) => q.gameQuestionNumber === latestQuestionNumber)
   }
 }
 

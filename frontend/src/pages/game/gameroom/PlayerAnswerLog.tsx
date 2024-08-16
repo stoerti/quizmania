@@ -1,4 +1,4 @@
-import {Game, Player} from "../../../domain/GameModel";
+import {Game} from "../../../domain/GameModel";
 import {Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import React from "react";
 import {MarkEmailRead, QuestionMark} from "@mui/icons-material";
@@ -9,9 +9,9 @@ export type PlayerAnswerLogProps = {
 
 export const PlayerAnswerLog = ({game}: PlayerAnswerLogProps) => {
 
-  const lastQuestion = game.findLastQuestion()!
+  const lastQuestion = game.currentQuestion!
 
-  return             <Table aria-label="simple table">
+  return <Table aria-label="simple table">
     <TableHead>
       <TableRow>
         <TableCell></TableCell>

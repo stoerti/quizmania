@@ -1,14 +1,12 @@
 import React, {useEffect, useMemo} from "react";
-import {PlayerRemovedEvent} from "../../services/GameEventTypes";
+import {GameEvent, PlayerRemovedEvent} from "../../services/GameEventTypes";
 import {useSnackbar} from "material-ui-snackbar-provider";
 import Cookies from "js-cookie";
 import {GameLobbyPage} from "./GameLobby";
 import {GameRoomPage} from "./GameRoom";
-import {GameCommandService} from "../../services/GameCommandService";
 import {GameFinishedPage} from "./GameFinished";
 import {GameEventType, GameRepository} from "../../services/GameRepository";
 import {Game, GameStatus} from "../../domain/GameModel";
-import {GameEvent} from "../../services/GameEventTypes";
 
 type GamePageProps = {
   gameId: string,

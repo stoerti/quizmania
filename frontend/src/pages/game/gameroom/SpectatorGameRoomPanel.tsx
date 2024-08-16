@@ -1,9 +1,8 @@
-import {Game, GameQuestion, QuestionStatus} from "../../../domain/GameModel";
+import {Game, QuestionStatus} from "../../../domain/GameModel";
 import {Box, Button, CircularProgress, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import Cancel from "@mui/icons-material/Cancel";
 import React from "react";
-import {MarkEmailRead, QuestionMark} from "@mui/icons-material";
 import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
 import Countdown from "react-countdown";
 import {QuestionCountdownBar} from "../question/QuestionCountdownBar";
@@ -19,7 +18,7 @@ export type SpectatorGameRoomPanelProps = {
 
 export const SpectatorGameRoomPanel = ({game}: SpectatorGameRoomPanelProps) => {
 
-  const question = game.findLastQuestion()
+  const question = game.currentQuestion
 
   if (question === undefined) {
     return <div>Waiting for first question</div>

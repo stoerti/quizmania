@@ -1,19 +1,8 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogTitle,
-  FormControlLabel,
-  FormGroup,
-  MenuItem,
-  Select,
-  Switch,
-  TextField
-} from "@mui/material";
+import {Box, Button, Dialog, DialogTitle, FormControlLabel, FormGroup, MenuItem, Select, Switch, TextField} from "@mui/material";
 import React, {useEffect} from "react";
 import {NewGameCommand} from "../services/GameCommandService";
 import {QuestionSetDto} from "../services/QuestionSetServiceTypes";
-import {questionSetService, QuestionSetService} from "../services/QuestionSetService";
+import {questionSetService} from "../services/QuestionSetService";
 
 type GameCreationDialogProps = {
   open: boolean

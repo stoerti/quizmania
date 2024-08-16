@@ -5,7 +5,7 @@ export type CorrectAnswerContainerProps = {
   correctAnswer: string
 }
 
-export const CorrectAnswerContainer = (props: CorrectAnswerContainerProps) => {
+export const CorrectAnswerContainer = ({correctAnswer}: CorrectAnswerContainerProps) => {
   const theme = useTheme()
 
   return <Paper sx={{backgroundColor: theme.palette.secondary.main, padding: 2, maxWidth: 650, width: '100%'}} elevation={5}>
@@ -13,7 +13,7 @@ export const CorrectAnswerContainer = (props: CorrectAnswerContainerProps) => {
       Answer
     </Typography>
     <Typography variant="h4" component="div">
-      {props.correctAnswer}
+      {correctAnswer}
     </Typography>
   </Paper>
 }

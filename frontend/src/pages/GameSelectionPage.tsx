@@ -108,7 +108,7 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
     }
   }
   const onButtonClickJoinGameAsSpectator = async (gameId: string) => {
-      props.onGameSelected(gameId)
+    props.onGameSelected(gameId)
   }
 
   const onCloseNewGameDialog = () => {

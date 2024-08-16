@@ -21,7 +21,7 @@ export type PlayerGameRoomPanelProps = {
 export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) => {
   const snackbar = useSnackbar()
 
-  const question = game.findLastQuestion()
+  const question = game.currentQuestion
 
   let container
   if (question === undefined) {

@@ -1,11 +1,11 @@
-import {Game, GameQuestion, QuestionStatus} from "../../../domain/GameModel";
+import {Game, QuestionStatus} from "../../../domain/GameModel";
 import {gameCommandService, GameException} from "../../../services/GameCommandService";
 import {Box, Button, CircularProgress, IconButton, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import Cancel from "@mui/icons-material/Cancel";
 import React from "react";
-import {Build, MarkEmailRead, QuestionMark, StopCircle} from "@mui/icons-material";
+import {Build, StopCircle} from "@mui/icons-material";
 import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
 import Countdown from "react-countdown";
 import {QuestionCountdownBar} from "../question/QuestionCountdownBar";
@@ -22,8 +22,7 @@ export type ModeratorGameRoomPanelProps = {
 
 export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
   const snackbar = useSnackbar()
-
-  const question = game.findLastQuestion()
+  const question = game.currentQuestion
 
   if (question === undefined) {
     return <div>Waiting for first question</div>

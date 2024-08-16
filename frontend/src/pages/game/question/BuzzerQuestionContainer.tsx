@@ -3,7 +3,6 @@ import {Button, Stack, useTheme} from "@mui/material";
 import React from "react";
 import {QuestionPhrasePanel} from "./QuestionPhrasePanel";
 import {QuestionType} from "../../../services/GameEventTypes";
-import {Simulate} from "react-dom/test-utils";
 
 
 enum BuzzerStatus {

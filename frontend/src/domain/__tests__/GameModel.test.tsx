@@ -64,11 +64,9 @@ describe('testing game read model', () => {
     game = game.onQuestionAsked(questionAsked("question2", 2, "Foo2", "Bar2"))
     game = game.onQuestionAsked(questionAsked("question3", 3, "Foo3", "Bar3"))
 
-    expect(game.questions.length).toBe(3);
-
-    const question = game.questions.find(q => q.gameQuestionId == "question3")
-    expect(question).toBeDefined()
-    expect(question!.question.phrase).toBe("Foo3");
+    expect(game.currentQuestion).toBeDefined();
+    expect(game.currentQuestion?.gameQuestionId).toBe("question3");
+    expect(game.currentQuestion?.question.phrase).toBe("Foo3");
   });
 
   test('question can be answered', () => {
@@ -78,12 +76,11 @@ describe('testing game read model', () => {
 
     game = game.onQuestionAnswered(questionAnswered("question1", "player2", "answer01_02", "bla"))
 
-    expect(game.questions.length).toBe(1);
-    expect(game.questions[0].answers.length).toBe(1);
+    expect(game.currentQuestion).toBeDefined();
+    expect(game.currentQuestion?.answers.length).toBe(1);
 
-    const question = game.questions.find(q => q.gameQuestionId == "question1")
-    expect(question!.answers).toHaveLength(1)
-    expect(question!.answers[0].answer).toBe("bla");
+    expect(game.currentQuestion!.answers).toHaveLength(1)
+    expect(game.currentQuestion!.answers[0].answer).toBe("bla");
   });
 
   test('question can be rated', () => {
@@ -100,7 +97,7 @@ describe('testing game read model', () => {
     }
     ));
 
-    expect(game.questions[0].answers.length).toBe(2);
+    expect(game.currentQuestion?.answers.length).toBe(2);
     expect(game.findPlayerPoints("player2")).toBe(10)
     expect(game.findPlayerPoints("player3")).toBe(0)
   });

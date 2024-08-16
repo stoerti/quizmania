@@ -1,18 +1,6 @@
 import {Game} from "../../domain/GameModel";
-import {GameCommandService} from "../../services/GameCommandService";
 import React from "react";
-import {
-  AppBar,
-  Box,
-  Button, Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Toolbar,
-  Typography
-} from "@mui/material";
+import {AppBar, Box, Button, Stack, Table, TableBody, TableCell, TableHead, TableRow, Toolbar, Typography} from "@mui/material";
 import Logout from "@mui/icons-material/Logout";
 import EmojiEvents from "@mui/icons-material/EmojiEvents";
 import {amber, brown, grey} from "@mui/material/colors";

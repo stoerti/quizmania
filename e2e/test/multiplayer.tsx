@@ -82,7 +82,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.waitForText("Banone", 5, "tr:has-text('"+username2+"')")
   I.waitForText("Gürkin", 5, "tr:has-text('"+username3+"')")
 
-  I.wait(10000)
+  I.wait(3)
 
   gameRoomPage.nextQuestion()
 
