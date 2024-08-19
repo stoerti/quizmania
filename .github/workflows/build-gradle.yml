@@ -22,7 +22,7 @@ jobs:
       - name: Test
         run: ./gradlew test jacocoTestReport
       - name: Build Image
-        run: ./gradlew jibDockerBuild
+        run: ./gradlew jib
       - name: Test Results
         uses: dorny/test-reporter@v1
         if: always()

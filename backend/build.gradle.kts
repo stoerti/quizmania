@@ -105,6 +105,6 @@ jib {
     }
   }
   to {
-    image = "quizmania"
+    image = "ghcr.io/stoerti/quizmania:${project.version}"
   }
 }
