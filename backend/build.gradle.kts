@@ -67,6 +67,7 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
+  dependsOn(":frontend:appNpmBuild")
   kotlinOptions {
     freeCompilerArgs = listOf("-Xjsr305=strict")
     jvmTarget = "17"
@@ -95,6 +96,10 @@ jib {
     platforms {
       platform {
         architecture = "arm64"
+        os = "linux"
+      }
+      platform {
+        architecture = "amd64"
         os = "linux"
       }
     }
