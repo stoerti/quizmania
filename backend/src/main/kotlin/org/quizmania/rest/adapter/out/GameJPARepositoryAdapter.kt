@@ -27,13 +27,13 @@ class GameJPARepositoryAdapter(
     return repository.findAll().map { it.toModel() } .toList()
   }
 
-  override fun findByStatus(status: GameStatus): List<Game> {
-    return repository.findByStatus(status).map { it.toModel() }
+  override fun findByStatus(status: Set<GameStatus>): List<Game> {
+    return repository.findByStatusIn(status).map { it.toModel() }
   }
 }
 
 interface GameJPARepository : CrudRepository<GameEntity, GameId> {
-  fun findByStatus(status: GameStatus): List<GameEntity>
+  fun findByStatusIn(status: Set<GameStatus>): List<GameEntity>
 }
 
 @Entity(name = "GAME")

@@ -45,13 +45,13 @@ export type GameCanceledEvent = {
   gameId: string,
 }
 
-export type PlayerAddedEvent = {
+export type PlayerJoinedGameEvent = {
   gameId: string,
   gamePlayerId: string,
   username: string,
 }
 
-export type PlayerRemovedEvent = {
+export type PlayerLeftGameEvent = {
   gameId: string,
   gamePlayerId: string,
   username: string,

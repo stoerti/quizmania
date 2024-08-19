@@ -12,5 +12,5 @@ interface GameRepository {
 
   fun findAll(): List<Game>
 
-  fun findByStatus(status: GameStatus): List<Game>
+  fun findByStatus(status: Set<GameStatus>): List<Game>
 }

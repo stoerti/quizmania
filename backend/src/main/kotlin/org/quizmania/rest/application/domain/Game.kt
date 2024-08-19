@@ -27,11 +27,11 @@ class Game(
     status = GameStatus.CREATED
   )
 
-  fun on(event: PlayerAddedEvent) {
+  fun on(event: PlayerJoinedGameEvent) {
     players.add(GamePlayer(event.gamePlayerId, event.username))
   }
 
-  fun on(event: PlayerRemovedEvent) {
+  fun on(event: PlayerLeftGameEvent) {
     players.removeIf { it.gamePlayerId == event.gamePlayerId }
   }
 

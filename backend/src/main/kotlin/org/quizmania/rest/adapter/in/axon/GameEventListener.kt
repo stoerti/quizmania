@@ -28,13 +28,13 @@ class GameEventListener(
   }
 
   @EventHandler
-  fun on(event: PlayerAddedEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
+  fun on(event: PlayerJoinedGameEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
     logger.info { "Received PlayerAddedEvent $event" }
     gameEventHappenedInPort.playerAdded(event, EventMetaData(seqNo, timestamp))
   }
 
   @EventHandler
-  fun on(event: PlayerRemovedEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
+  fun on(event: PlayerLeftGameEvent, @SequenceNumber seqNo: Long, @Timestamp timestamp: Instant) {
     logger.info { "Received PlayerRemovedEvent $event" }
     gameEventHappenedInPort.playerRemoved(event, EventMetaData(seqNo, timestamp))
   }

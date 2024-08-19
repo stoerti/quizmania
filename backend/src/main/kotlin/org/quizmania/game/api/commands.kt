@@ -18,13 +18,13 @@ data class CreateGameCommand(
   val moderatorUsername: String?
 ): GameCommand
 
-data class AddPlayerCommand(
+data class JoinGameCommand(
     @TargetAggregateIdentifier
     override val gameId: UUID,
     val username: String,
 ): GameCommand
 
-data class RemovePlayerCommand(
+data class LeaveGameCommand(
     @TargetAggregateIdentifier
     override val gameId: UUID,
     val username: String,

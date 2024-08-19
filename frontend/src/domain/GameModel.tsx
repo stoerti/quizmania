@@ -9,8 +9,8 @@ import {
   QuestionAskedEvent, QuestionBuzzedEvent, QuestionBuzzerWonEvent,
   QuestionClosedEvent,
   QuestionScoredEvent,
-  PlayerAddedEvent,
-  PlayerRemovedEvent
+  PlayerJoinedGameEvent,
+  PlayerLeftGameEvent
 } from "../services/GameEventTypes";
 import {GameEventType} from "../services/GameRepository";
 
@@ -60,10 +60,10 @@ export class Game {
         return this.onGameEnded(event as GameEndedEvent)
       case "GameCanceledEvent":
         return this.onGameCanceled(event as GameCanceledEvent)
-      case "PlayerAddedEvent":
-        return this.onPlayerAdded(event as PlayerAddedEvent)
-      case "PlayerRemovedEvent":
-        return this.onPlayerRemoved(event as PlayerRemovedEvent)
+      case "PlayerJoinedGameEvent":
+        return this.onPlayerJoined(event as PlayerJoinedGameEvent)
+      case "PlayerLeftGameEvent":
+        return this.onPlayerLeft(event as PlayerLeftGameEvent)
       case "QuestionAskedEvent":
         return this.onQuestionAsked(event as QuestionAskedEvent)
       case "QuestionAnsweredEvent":
@@ -103,7 +103,7 @@ export class Game {
     })
   }
 
-  public onPlayerAdded(event: PlayerAddedEvent): Game {
+  public onPlayerJoined(event: PlayerJoinedGameEvent): Game {
     return this.copyWith({
       players: [
         ...this.players,
@@ -112,7 +112,7 @@ export class Game {
     })
   }
 
-  public onPlayerRemoved(event: PlayerRemovedEvent): Game {
+  public onPlayerLeft(event: PlayerLeftGameEvent): Game {
     return this.copyWith({
       players: this.players.filter(player => player.id != event.gamePlayerId)
     })

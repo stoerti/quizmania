@@ -56,7 +56,7 @@ class GameAggregateTest {
 
   @Test
   fun addPlayer_ok() {
-    fixture.registerIgnoredField(PlayerAddedEvent::class.java, "gamePlayerId")
+    fixture.registerIgnoredField(PlayerJoinedGameEvent::class.java, "gamePlayerId")
     fixture.given(gameCreated())
       .`when`(GameCommandFixtures.addPlayer(USERNAME_1))
       .expectEvents(playerAdded(USERNAME_1))

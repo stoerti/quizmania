@@ -103,7 +103,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.waitForText("900", 5, "tr:has-text('"+username2+"')")
   I.waitForText("1000", 5, "tr:has-text('"+username3+"')")
 
-  I.wait(10)
+  I.wait(10000)
   gameRoomPage.nextQuestion()
 
   session('player1', () => {
@@ -131,7 +131,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
 
 Scenario('many_multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   const gameName = "Game " + Math.floor(Math.random() * 100000)
-  const numPlayers = 30
+  const numPlayers = 50
 
   const moderator = "Moderator " + Math.floor(Math.random() * 100000)
   const players = [...Array(numPlayers)].map((_, index) => { return "User "+index + Math.floor(Math.random() * 100000)})

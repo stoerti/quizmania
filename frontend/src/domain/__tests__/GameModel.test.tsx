@@ -6,8 +6,8 @@ import {
   QuestionAnsweredEvent, QuestionAnswerOverriddenEvent,
   QuestionAskedEvent, QuestionClosedEvent, QuestionScoredEvent,
   QuestionType,
-  PlayerAddedEvent,
-  PlayerRemovedEvent
+  PlayerJoinedGameEvent,
+  PlayerLeftGameEvent
 } from '../../services/GameEventTypes';
 import { Game, GameStatus } from '../GameModel';
 
@@ -31,9 +31,9 @@ describe('testing game read model', () => {
   test('added players should appear in player list', () => {
     let game = new Game(gameCreatedEvent())
 
-    game = game.onPlayerAdded(playerAddedEvent("player2", "Player 2"))
-    game = game.onPlayerAdded(playerAddedEvent("player3", "Player 3"))
-    game = game.onPlayerAdded(playerAddedEvent("player4", "Player 4"))
+    game = game.onPlayerJoined(playerAddedEvent("player2", "Player 2"))
+    game = game.onPlayerJoined(playerAddedEvent("player3", "Player 3"))
+    game = game.onPlayerJoined(playerAddedEvent("player4", "Player 4"))
 
     expect(game.players.length).toBe(3);
     expect(game.players.find(p => p.id == "player2")).toBeDefined()
@@ -44,11 +44,11 @@ describe('testing game read model', () => {
   test('removed player should not appear in filled user list', () => {
     let game = new Game(gameCreatedEvent())
 
-    game = game.onPlayerAdded(playerAddedEvent("player2", "Player 2"))
-    game = game.onPlayerAdded(playerAddedEvent("player3", "Player 3"))
-    game = game.onPlayerAdded(playerAddedEvent("player4", "Player 4"))
+    game = game.onPlayerJoined(playerAddedEvent("player2", "Player 2"))
+    game = game.onPlayerJoined(playerAddedEvent("player3", "Player 3"))
+    game = game.onPlayerJoined(playerAddedEvent("player4", "Player 4"))
 
-    game = game.onPlayerRemoved(playerRemovedEvent("player2", "Player 2"))
+    game = game.onPlayerLeft(playerRemovedEvent("player2", "Player 2"))
 
     expect(game.players.length).toBe(2);
     expect(game.players.find(p => p.id == "player2")).not.toBeDefined()
@@ -58,7 +58,7 @@ describe('testing game read model', () => {
 
   test('asked question should appear in question list', () => {
     let game = new Game(gameCreatedEvent())
-    game = game.onPlayerAdded(playerAddedEvent("player2", "Player 2"))
+    game = game.onPlayerJoined(playerAddedEvent("player2", "Player 2"))
 
     game = game.onQuestionAsked(questionAsked("question1", 1, "Foo1", "Bar1"))
     game = game.onQuestionAsked(questionAsked("question2", 2, "Foo2", "Bar2"))
@@ -71,7 +71,7 @@ describe('testing game read model', () => {
 
   test('question can be answered', () => {
     let game = new Game(gameCreatedEvent())
-    game = game.onPlayerAdded(playerAddedEvent("player2", "Player 2"))
+    game = game.onPlayerJoined(playerAddedEvent("player2", "Player 2"))
     game = game.onQuestionAsked(questionAsked("question1", 1, "Foo1", "Bar1"))
 
     game = game.onQuestionAnswered(questionAnswered("question1", "player2", "answer01_02", "bla"))
@@ -85,8 +85,8 @@ describe('testing game read model', () => {
 
   test('question can be rated', () => {
     let game = new Game(gameCreatedEvent())
-    game = game.onPlayerAdded(playerAddedEvent("player2", "Player 2"))
-    game = game.onPlayerAdded(playerAddedEvent("player3", "Player 3"))
+    game = game.onPlayerJoined(playerAddedEvent("player2", "Player 2"))
+    game = game.onPlayerJoined(playerAddedEvent("player3", "Player 3"))
     game = game.onQuestionAsked(questionAsked("question1", 1, "Foo1", "Bar1"))
 
     game = game.onQuestionAnswered(questionAnswered("question1", "player2", "answer01_02", "bla"))
@@ -125,7 +125,7 @@ function gameStartedEvent(): GameStartedEvent {
   }
 }
 
-function playerAddedEvent(id: string, name: string): PlayerAddedEvent {
+function playerAddedEvent(id: string, name: string): PlayerJoinedGameEvent {
   return {
     gameId: "game1",
     gamePlayerId: id,
@@ -133,7 +133,7 @@ function playerAddedEvent(id: string, name: string): PlayerAddedEvent {
   }
 }
 
-function playerRemovedEvent(id: string, name: string): PlayerRemovedEvent {
+function playerRemovedEvent(id: string, name: string): PlayerLeftGameEvent {
   return {
     gameId: "game1",
     gamePlayerId: id,

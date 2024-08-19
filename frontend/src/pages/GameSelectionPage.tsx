@@ -7,7 +7,7 @@ import {GameCreationDialog} from "./GameCreationDialog";
 import {useSnackbar} from "material-ui-snackbar-provider";
 import {GameAlreadyFullException, gameCommandService, GameException, NewGameCommand, UsernameAlreadyTakenException} from "../services/GameCommandService";
 import {TransferWithinAStation, Visibility} from "@mui/icons-material";
-import {GameDto, gameOverviewService} from "../services/GameOverviewService";
+import {GameDto, gameOverviewService, GameStatus} from "../services/GameOverviewService";
 
 type GameSelectionContainerProps = {
   games: GameDto[]
@@ -60,9 +60,9 @@ const GameSelectionContainer = (props: GameSelectionContainerProps) => {
               </TableCell>
               <TableCell align="right">{row.players.length}/{row.maxPlayers}</TableCell>
               <TableCell align="right">
-                <IconButton onClick={() => props.onButtonClickJoinGame(row.id)}>
+                {row.status == GameStatus.CREATED ? <IconButton onClick={() => props.onButtonClickJoinGame(row.id)}>
                   <Login/>
-                </IconButton>
+                </IconButton> : null}
                 <IconButton onClick={() => props.onButtonClickJoinGameAsSpectator(row.id)}>
                   <Visibility/>
                 </IconButton>

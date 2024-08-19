@@ -37,15 +37,15 @@ class GameCommandFixtures {
       )
     }
 
-    fun addPlayer(username: String): AddPlayerCommand {
-      return AddPlayerCommand(
+    fun addPlayer(username: String): JoinGameCommand {
+      return JoinGameCommand(
         gameId = GAME_UUID,
         username = username
       )
     }
 
-    fun removePlayer(username: String): RemovePlayerCommand {
-      return RemovePlayerCommand(
+    fun removePlayer(username: String): LeaveGameCommand {
+      return LeaveGameCommand(
         gameId = GAME_UUID,
         username = username
       )
@@ -99,16 +99,16 @@ class GameEventFixtures {
       )
     }
 
-    fun playerAdded(username: String = USERNAME_1, gamePlayerId: UUID = GAME_PLAYER_1): PlayerAddedEvent {
-      return PlayerAddedEvent(
+    fun playerAdded(username: String = USERNAME_1, gamePlayerId: UUID = GAME_PLAYER_1): PlayerJoinedGameEvent {
+      return PlayerJoinedGameEvent(
         gameId = GAME_UUID,
         username = username,
         gamePlayerId = gamePlayerId
       )
     }
 
-    fun playerRemoved(username: String = USERNAME_1, gamePlayerId: UUID = GAME_PLAYER_1): PlayerRemovedEvent {
-      return PlayerRemovedEvent(
+    fun playerRemoved(username: String = USERNAME_1, gamePlayerId: UUID = GAME_PLAYER_1): PlayerLeftGameEvent {
+      return PlayerLeftGameEvent(
         gameId = GAME_UUID,
         username = username,
         gamePlayerId = gamePlayerId

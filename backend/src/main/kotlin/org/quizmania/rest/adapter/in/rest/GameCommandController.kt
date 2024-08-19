@@ -45,7 +45,7 @@ class GameCommandController(
 
     if (!newGameDto.withModerator) {
       commandGateway.sendAndWait<Void>(
-        AddPlayerCommand(
+        JoinGameCommand(
           gameId,
           username
         )
@@ -61,7 +61,7 @@ class GameCommandController(
     @CookieValue(name = "username", defaultValue = "someUser") username: String,
   ): ResponseEntity<Void> {
     commandGateway.sendAndWait<Void>(
-      AddPlayerCommand(
+      JoinGameCommand(
         gameId,
         username
       )
@@ -75,7 +75,7 @@ class GameCommandController(
     @CookieValue(name = "username", defaultValue = "someUser") username: String,
   ): ResponseEntity<Void> {
     commandGateway.sendAndWait<Void>(
-      RemovePlayerCommand(
+      LeaveGameCommand(
         gameId,
         username
       )

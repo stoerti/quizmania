@@ -30,7 +30,7 @@ class GameEventHappenedUseCase(
 
   override fun gameCanceled(evt: GameCanceledEvent, metadata: EventMetaData) = update(evt, metadata) { it.on(evt) }
 
-  override fun playerAdded(evt: PlayerAddedEvent, metadata: EventMetaData) = update(evt, metadata) { it.on(evt) }
+  override fun playerAdded(evt: PlayerJoinedGameEvent, metadata: EventMetaData) = update(evt, metadata) { it.on(evt) }
 
-  override fun playerRemoved(evt: PlayerRemovedEvent, metadata: EventMetaData) = update(evt, metadata) { it.on(evt) }
+  override fun playerRemoved(evt: PlayerLeftGameEvent, metadata: EventMetaData) = update(evt, metadata) { it.on(evt) }
 }

@@ -35,7 +35,7 @@ const ScoreboardPage = ({game, page, pageSize}: ScoreboardPageProps) => {
   const last = (page + 1) * pageSize
 
   if (lastQuestion !== undefined) {
-    return <Table style={{width: '100%', minWidth: 400, maxWidth: 1000}} size={"small"} aria-label="simple table">
+    return <Table style={{width: '100%', minWidth: 400, maxWidth: 1000, margin: 'auto'}} size={"small"} aria-label="simple table">
       <TableHead>
         <TableRow>
           <TableCell></TableCell>
@@ -84,7 +84,7 @@ const ScoreboardPage = ({game, page, pageSize}: ScoreboardPageProps) => {
       </TableBody>
     </Table>
   } else {
-    return <Table style={{width: '100%', minWidth: 400, maxWidth: 1000}} size={"small"} aria-label="simple table">
+    return <Table style={{width: '100%', minWidth: 400, maxWidth: 1000, margin: 'auto'}} size={"small"} aria-label="simple table">
       <TableHead>
         <TableRow>
           <TableCell></TableCell>
@@ -145,7 +145,7 @@ export const Scoreboard = ({game}: ScoreboardProps) => {
     </Stack>
   } else {
     return (
-      <Stack direction="row" justifyContent={"center"} spacing={2} sx={{width: '100%', maxWidth: 650}}>
+      <Stack direction="row" justifyContent={"center"} alignItems={"center"} spacing={2} sx={{width: '100%', maxWidth: 650}}>
         <ScoreboardPage game={game} page={0} pageSize={game.players.length}/>
       </Stack>)
   }

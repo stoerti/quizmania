@@ -1,7 +1,7 @@
 package org.quizmania.rest.adapter.`in`.rest
 
 import org.axonframework.commandhandling.gateway.CommandGateway
-import org.quizmania.game.api.AddPlayerCommand
+import org.quizmania.game.api.JoinGameCommand
 import org.quizmania.game.api.CreateGameCommand
 import org.quizmania.game.api.GameConfig
 import org.springframework.http.MediaType
@@ -87,7 +87,7 @@ class AdminController(
 
             players.forEach {
                 commandGateway.sendAndWait<Void>(
-                    AddPlayerCommand(
+                    JoinGameCommand(
                         gameId = gameId,
                         username = it
                     )

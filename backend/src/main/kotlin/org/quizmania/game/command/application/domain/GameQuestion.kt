@@ -154,6 +154,7 @@ data class GameQuestion(
         )
       )
     } else {
+      // todo reopen buzzers instead of close the question
       // apparently no one else buzzed
       closeQuestion()
     }
@@ -200,6 +201,17 @@ data class GameQuestion(
       )
 
       evaluateBuzzes()
+    }
+  }
+
+  fun removePlayer(gamePlayerId: GamePlayerId) {
+    if (isBuzzable()) {
+      this.playerBuzzes.removeIf { it.gamePlayerId == gamePlayerId }
+      if (this.currentBuzzWinner == gamePlayerId) {
+        evaluateBuzzes()
+      }
+    } else {
+      this.playerAnswers.removeIf { it.gamePlayerId == gamePlayerId }
     }
   }
 

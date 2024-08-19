@@ -19,7 +19,7 @@ class FindGameUseCase(
     return gameRepository.findById(gameId)
   }
 
-  override fun findByStatus(gameStatus: GameStatus): List<Game> {
+  override fun findByStatus(gameStatus: Set<GameStatus>): List<Game> {
     return gameRepository.findByStatus(gameStatus)
   }
 }

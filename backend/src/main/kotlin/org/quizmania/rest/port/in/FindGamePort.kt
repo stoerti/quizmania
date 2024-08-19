@@ -10,5 +10,5 @@ interface FindGamePort {
 
   fun findById(gameId: GameId): Game?
 
-  fun findByStatus(gameStatus: GameStatus): List<Game>
+  fun findByStatus(gameStatus: Set<GameStatus>): List<Game>
 }

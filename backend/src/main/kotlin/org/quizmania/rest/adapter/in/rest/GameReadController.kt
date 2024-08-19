@@ -24,11 +24,11 @@ class GameReadController(
   @GetMapping("/")
   fun search(
     @RequestParam(
-      name = "gameStatus",
+      name = "gameStatusList",
       required = false
-    ) gameStatus: GameStatus?
+    ) gameStatusList: Set<GameStatus>?
   ): ResponseEntity<List<GameDto>> {
-    val games = if (gameStatus != null) findGamePort.findByStatus(gameStatus) else findGamePort.findAll()
+    val games = if (!gameStatusList.isNullOrEmpty()) findGamePort.findByStatus(gameStatusList) else findGamePort.findAll()
     return ResponseEntity.ok(games.map { it.toDto() })
   }
 

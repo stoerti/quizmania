@@ -24,7 +24,7 @@ export type PlayerDto = {
 export class GameOverviewService {
   public searchOpenGames(responseHandler: (games: GameDto[]) => void, errorHandler: (err: any) => void = () => {
   }) {
-    fetch('/api/game/?gameStatus=CREATED', {
+    fetch('/api/game/?gameStatusList=CREATED,STARTED', {
       method: 'GET',
       headers: {
         'Content-type': 'application/json; charset=UTF-8',

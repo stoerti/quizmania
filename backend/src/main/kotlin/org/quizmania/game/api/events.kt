@@ -27,13 +27,13 @@ data class GameCreatedEvent(
   val moderatorUsername: String?,
 ) : GameEvent
 
-data class PlayerAddedEvent(
+data class PlayerJoinedGameEvent(
   override val gameId: GameId,
   val gamePlayerId: GamePlayerId,
   val username: String,
 ) : GameEvent
 
-data class PlayerRemovedEvent(
+data class PlayerLeftGameEvent(
   override val gameId: GameId,
   val gamePlayerId: GamePlayerId,
   val username: String,
