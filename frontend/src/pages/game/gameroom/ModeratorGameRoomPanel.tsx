@@ -71,9 +71,14 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
       } else {
         answerContainer =
           <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
-            <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h4" component="div" id="buzzWinner">
-              {game.findPlayerName(question.currentBuzzWinnerId)}
-            </Typography>
+            <Box sx={{marginTop: 5, marginBottom: 10}}>
+              <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="body1" component="div">
+                Player on the clock:
+              </Typography>
+              <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h2" component="div" id="buzzWinner">
+                {game.findPlayerName(question.currentBuzzWinnerId)}
+              </Typography>
+            </Box>
             <Box sx={{mt: 3, display: 'flex', justifyContent: 'center'}}>
               <Button id="acceptAnswer" sx={{margin: 'auto'}} startIcon={<CheckCircle/>} variant="contained" color="success"
                       onClick={() => gameCommandService.answerBuzzerQuestion({

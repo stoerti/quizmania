@@ -19,7 +19,7 @@ export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
   const snackbar = useSnackbar()
   const username = Cookies.get("username")
 
-  const userIsPlayer = game.players.find(p => p.name === username)
+  const currentPlayer = game.players.find(player => player.name === username)
 
   let container
   let onClickLeaveGame
@@ -34,11 +34,10 @@ export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
         }
       }
     }
-  } else if (!userIsPlayer) {
+  } else if (!currentPlayer) {
     container = <SpectatorGameRoomPanel game={game}/>
     onClickLeaveGame = onLeaveGame
   } else {
-    const currentPlayer = game.players.find(player => player.name === username)!
     container = <PlayerGameRoomPanel game={game} player={currentPlayer}/>
     onClickLeaveGame = async () => {
       try {
@@ -56,7 +55,7 @@ export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
       <AppBar position="static">
         <Toolbar>
           <Typography sx={{flex: '1 1 100%'}} variant="h6" component="div">
-            {game.name}
+            {game.name}{game.currentQuestion !== undefined ? "  -  Question " + game.currentQuestion.gameQuestionNumber + "/" + game.config.numQuestions : null}
           </Typography>
           <Tooltip title="Leave game">
             <IconButton color="inherit" onClick={onClickLeaveGame}>
@@ -70,6 +69,17 @@ export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
         justifyContent: "center",
         margin: 2
       }}>{container}</Box>
+      {currentPlayer !== undefined ?
+      <AppBar position="fixed" sx={{top: 'auto', bottom: 0}}>
+        <Toolbar variant={"dense"}>
+          <Typography sx={{flex: '1 1 100%'}} variant="body1" component="div">
+            {currentPlayer.name}
+          </Typography>
+          <Typography sx={{flex: '1 1 100%', textAlign: 'right'}} variant="body1" component="div">
+            {'Points: ' + currentPlayer.points}
+          </Typography>
+        </Toolbar>
+      </AppBar> : null }
     </div>
   )
 }
