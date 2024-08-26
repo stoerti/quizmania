@@ -14,17 +14,16 @@ import org.quizmania.game.GameCommandFixtures.Companion.startGame
 import org.quizmania.game.GameEventFixtures.Companion.gameCanceled
 import org.quizmania.game.GameEventFixtures.Companion.gameCreated
 import org.quizmania.game.GameEventFixtures.Companion.gameStarted
+import org.quizmania.game.GameEventFixtures.Companion.playerAdded
+import org.quizmania.game.GameEventFixtures.Companion.playerRemoved
 import org.quizmania.game.GameEventFixtures.Companion.questionAnswerOverridden
 import org.quizmania.game.GameEventFixtures.Companion.questionAnswered
 import org.quizmania.game.GameEventFixtures.Companion.questionAsked
-import org.quizmania.game.GameEventFixtures.Companion.playerAdded
-import org.quizmania.game.GameEventFixtures.Companion.playerRemoved
 import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
 import org.quizmania.game.QuestionFixtures.Companion.estimateQuestion
 import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
 import org.quizmania.game.QuestionFixtures.Companion.questionSet
 import org.quizmania.game.api.*
-import org.quizmania.game.command.adapter.out.DeadlineScheduler
 import org.quizmania.game.command.application.domain.GameAggregate
 import org.quizmania.game.command.port.out.QuestionPort
 import java.util.*
@@ -33,16 +32,13 @@ class GameAggregateTest {
 
   private lateinit var fixture: AggregateTestFixture<GameAggregate>
   private lateinit var questionPort: QuestionPort
-  private lateinit var deadlineScheduler: DeadlineScheduler
 
   @BeforeEach
   fun before() {
     this.questionPort = Mockito.mock(QuestionPort::class.java)
-    this.deadlineScheduler = Mockito.mock(DeadlineScheduler::class.java)
 
     this.fixture = AggregateTestFixture(GameAggregate::class.java)
     this.fixture.registerInjectableResource(questionPort)
-    this.fixture.registerInjectableResource(deadlineScheduler)
   }
 
   @Test
