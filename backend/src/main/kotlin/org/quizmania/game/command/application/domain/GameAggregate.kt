@@ -60,13 +60,13 @@ internal class GameAggregate() {
         command.config.copy(
           numQuestions = realNumQuestions // adjust question number to questionSet
         ),
-        questionSet.questions.take(realNumQuestions),
+        questionSet.questions.take(realNumQuestions).shuffled(),
         command.creatorUsername,
         command.moderatorUsername
       )
     )
 
-    deadlineManager.schedule(Duration.ofMinutes(30), Deadline.GAME_ABANDONED)
+    deadlineManager.schedule(Duration.ofDays(1), Deadline.GAME_ABANDONED)
   }
 
   @CommandHandler

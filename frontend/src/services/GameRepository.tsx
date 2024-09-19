@@ -44,7 +44,7 @@ export class GameRepository {
         this.client = new Client({
           brokerURL: this.SOCKET_URL,
           onConnect: () => {
-            this.client?.subscribe('/game/' + gameId, message => {
+            this.client!.subscribe('/game/' + gameId, message => {
               const wrapper: GameEventWrapper = JSON.parse(message.body);
               console.log(wrapper)
               this.handleEvent(wrapper, gameEventHandler)
@@ -94,8 +94,8 @@ export class GameRepository {
           for (let i = 1; i < events.length; i++) {
             game = game.onGameEvent(events[i].payload, events[i].eventType)
           }
-
           this.currentGameState = game
+
           successHandler(game)
         }
       })

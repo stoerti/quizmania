@@ -1,0 +1,16 @@
+[
+  {
+    "id": "axonconf_01",
+    "type": "CHOICE",
+    "phrase": "When was the first commit for the Axon Framework on Github?",
+    "correctAnswer": "2010",
+    "answerOptions": ["2001", "2007", "2010", "2013"]
+  },
+  {
+    "id": "axonconf_02",
+    "type": "CHOICE",
+    "phrase": "Who did the most commits to the Axon Framework on Github?",
+    "correctAnswer": "Steven van Beelen",
+    "answerOptions": ["Allard Buijze", "Dependabot", "Steven van Beelen"]
+  }
+]

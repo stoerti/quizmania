@@ -1,0 +1,205 @@
+[
+  {
+    "id": "werkstaettchen_choice_01",
+    "type": "CHOICE",
+    "phrase": "Welcher Fussballverein hat die zweitmeisten DFB-Pokal-Siege?",
+    "correctAnswer": "Werder Bremen",
+    "answerOptions": ["Borussia Dortmund", "Werder Bremen", "1. FC. Nürnberg", "Hamburger SV"]
+  },
+  {
+    "id": "werkstaettchen_choice_02",
+    "type": "CHOICE",
+    "phrase": "Mit welchem dieser Sprünge können Leichtathleten keine Medaille gewinnen?",
+    "correctAnswer": "Hammelsprung",
+    "answerOptions": ["Hammelsprung", "Weitsprung", "Hochstrung", "Dreisprung"]
+  },
+  {
+    "id": "werkstaettchen_choice_03",
+    "type": "CHOICE",
+    "phrase": "In welchem Land fanden noch nie Olympische Spiele statt?",
+    "correctAnswer": "Dänemark",
+    "answerOptions": ["Dänemark", "Schweden", "Belgien", "Niederlande"]
+  },
+  {
+    "id": "werkstaettchen_choice_04",
+    "type": "CHOICE",
+    "phrase": "Welcher Staat startete bei den Olympischen Winterspielen 1988 in Calgary erstmals mit einer eigenen Mannschaft im Bobsport?",
+    "correctAnswer": "Jamaika",
+    "answerOptions": ["Rumänien", "Jamaika", "Großbritannien", "Belgien"]
+  },
+  {
+    "id": "werkstaettchen_choice_05",
+    "type": "CHOICE",
+    "phrase": "Aus welchem Film stammt das berühmte Filmzitat: \"Ich liebe den Geruch von Napalm am Morgen\"?",
+    "correctAnswer": "Apocalypse Now",
+    "answerOptions": ["Apocalypse Now", "Die Faust im Nacken", "Der Soldat James Ryan", "The Killing Fields"]
+  },
+  {
+    "id": "werkstaettchen_choice_06",
+    "type": "CHOICE",
+    "phrase": "Aus welchem Land kommen ursprünglich Mangas?",
+    "correctAnswer": "Japan",
+    "answerOptions": ["China", "Japan", "Kanada", "Südkorea"]
+  },
+  {
+    "id": "werkstaettchen_choice_07",
+    "type": "CHOICE",
+    "phrase": "Farrokh Bulsara ist der reale Name von welchem britischen Rockmusiker?",
+    "correctAnswer": "Freddy Mercury",
+    "answerOptions": ["David Bowie", "John Lennon", "Freddy Mercury", "Mick Jagger"]
+  },
+  {
+    "id": "werkstaettchen_choice_08",
+    "type": "CHOICE",
+    "phrase": "Welchen Namen trägt die Zeitmaschine aus der TV-Serie \"Doctor Who\"?",
+    "correctAnswer": "TARDIS",
+    "answerOptions": ["Cerebro", "Stargate", "The Time Machine", "TARDIS"]
+  },
+  {
+    "id": "werkstaettchen_choice_09",
+    "type": "CHOICE",
+    "phrase": "Welches dieser Körperteile hat die meisten Knochen?",
+    "correctAnswer": "Hand",
+    "answerOptions": ["Brustkorb", "Schädel", "Fuß", "Hand"]
+  },
+  {
+    "id": "werkstaettchen_choice_10",
+    "type": "CHOICE",
+    "phrase": "Wo werden rote Blutkörperchen gebildet?",
+    "correctAnswer": "Knochen",
+    "answerOptions": ["Herz", "Rückenmark", "Knochen", "Gehirn"]
+  },
+  {
+    "id": "werkstaettchen_choice_11",
+    "type": "CHOICE",
+    "phrase": "Welcher Fluss bildet die Grenze zwischen den USA und Mexiko?",
+    "correctAnswer": "Rio Grande",
+    "answerOptions": ["Mississippi", "Rio Grande", "Red River", "Sonora River"]
+  },
+  {
+    "id": "werkstaettchen_choice_12",
+    "type": "CHOICE",
+    "phrase": "Welches Tier hat einen zweiten Kiefer, um die Beute in den Schlund zu befördern?",
+    "correctAnswer": "Muräne",
+    "answerOptions": ["Muräne", "Boa Constrictor", "Tukan", "Chamäleon"]
+  },
+  {
+    "id": "werkstaettchen_choice_13",
+    "type": "CHOICE",
+    "phrase": "Was war Macbeth?",
+    "correctAnswer": "Schottischer König",
+    "answerOptions": ["Irischer Graf", "Englischer Feldherr", "Schottischer König", "Kaiser der Mauren"]
+  },
+  {
+    "id": "werkstaettchen_choice_14",
+    "type": "CHOICE",
+    "phrase": "Was ist die elektrische Einheit der Kapazität?",
+    "correctAnswer": "Farad",
+    "answerOptions": ["Farad", "Coulomb", "Tesla", "Henry"]
+  },
+  {
+    "id": "werkstaettchen_choice_15",
+    "type": "CHOICE",
+    "phrase": "Welcher Römer wurde nicht ermordet?",
+    "correctAnswer": "Augustus",
+    "answerOptions": ["Cicero", "Augustus", "Caesar", "Caligula"]
+  },
+  {
+    "id": "werkstaettchen_choice_16",
+    "type": "CHOICE",
+    "phrase": "In welchem Land entspringt der Blaue Nil?",
+    "correctAnswer": "Äthiopien",
+    "answerOptions": ["Kenia", "Tansania", "Mosambik", "Äthiopien"]
+  },
+  {
+    "id": "werkstaettchen_choice_17",
+    "type": "CHOICE",
+    "phrase": "Wie groß ist die Wahrscheinlichkeit, dass die Summe der Augenzahlen zweier Würfel gleich 2 ist?",
+    "correctAnswer": "1:36",
+    "answerOptions": ["1:16", "1:36", "1:6", "1:2"]
+  },
+  {
+    "id": "werkstaettchen_choice_18",
+    "type": "CHOICE",
+    "phrase": "Wie nennt man einen warmen trockenen Fallwind auf der Leeseite eines Berges?",
+    "correctAnswer": "Föhn",
+    "answerOptions": ["Föhn", "Jungwind", "Zephir", "Aufwind"]
+  },
+  {
+    "id": "werkstaettchen_choice_19",
+    "type": "CHOICE",
+    "phrase": "Welcher Adler existiert nicht?",
+    "correctAnswer": "Waldadler",
+    "answerOptions": ["Steppenadler", "Schreiadler", "Steinadler", "Waldadler"]
+  },
+  {
+    "id": "werkstaettchen_choice_20",
+    "type": "CHOICE",
+    "phrase": "Accra ist die Hauptstadt von...?",
+    "correctAnswer": "Ghana",
+    "answerOptions": ["Lybien", "Mauretanien", "Ghana", "Kenia"]
+  },
+  {
+    "id": "werkstaettchen_choice_21",
+    "type": "CHOICE",
+    "phrase": "An welchem Ufer finden wir die Bronzefigur namens \"Kleine Meerjungfrau\"?",
+    "correctAnswer": "Kopenhagen",
+    "answerOptions": ["Hamburg", "Rotterdam", "Kopenhagen", "Lübeck"]
+  },
+  {
+    "id": "werkstaettchen_choice_22",
+    "type": "CHOICE",
+    "phrase": "Welche Farbe hat einen RGB-Wert von (255, 0, 255)?",
+    "correctAnswer": "Magenta",
+    "answerOptions": ["Gelb", "Cyan", "Magenta", "Grün"]
+  },
+  {
+    "id": "werkstaettchen_choice_23",
+    "type": "CHOICE",
+    "phrase": "Wie nennt man in der Musik ein Intervall von 12 Halbtonschritten?",
+    "correctAnswer": "reine Oktave",
+    "answerOptions": ["reine Fermate", "reine Prime", "reine Quinte", "reine Oktave"]
+  },
+  {
+    "id": "werkstaettchen_choice_24",
+    "type": "CHOICE",
+    "phrase": "Welches dieser Wörter ist richtig geschrieben?",
+    "correctAnswer": "unbezähmbar",
+    "answerOptions": ["mißerabel", "unbezähmbar", "stichaltig", "hartgesotten"]
+  },
+  {
+    "id": "werkstaettchen_choice_25",
+    "type": "CHOICE",
+    "phrase": "Welche Pflanze produziert KEINE Samen?",
+    "correctAnswer": "Farn",
+    "answerOptions": ["Gänseblume", "Eiche", "Farn", "Distel"]
+  },
+  {
+    "id": "werkstaettchen_choice_26",
+    "type": "CHOICE",
+    "phrase": "Die Handlung welches Films spielt in Wien?",
+    "correctAnswer": "The Third Man",
+    "answerOptions": ["A Clockwork Orange", "Casablanca", "Schindler's List", "The Third Man"]
+  },
+  {
+    "id": "werkstaettchen_choice_27",
+    "type": "CHOICE",
+    "phrase": "Welches Mineral wurde seit der Antike als grünes Pigment für Farbe verwendet?",
+    "correctAnswer": "Malachit",
+    "answerOptions": ["Malachit", "Bauxit", "Zinnober", "Graphit"]
+  },
+  {
+    "id": "werkstaettchen_choice_28",
+    "type": "CHOICE",
+    "phrase": "Welches Land hat die meisten Inseln?",
+    "correctAnswer": "Schweden",
+    "answerOptions": ["Finnland", "Philippinen", "Micronesien", "Schweden"]
+  },
+  {
+    "id": "werkstaettchen_choice_29",
+    "type": "CHOICE",
+    "phrase": "Wer wurde 2004 zum ersten Dschungelkönig gekrönt?",
+    "correctAnswer": "Costa Cordalis",
+    "answerOptions": ["Costa Cordalis", "Ross Antony", "Désirée Nick", "Marc Terenzi"]
+  }
+]

@@ -10,7 +10,7 @@ Scenario('multiplayer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   loginPage.logInWithUsername(username1)
   I.wait(1)
 
-  lobbyPage.createGame(gameName, "test01")
+  lobbyPage.createGame(gameName, "werkstatt")
   I.wait(1)
 
   session('player2', () => {
@@ -38,7 +38,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   loginPage.logInWithUsername(moderator)
   I.wait(1)
 
-  lobbyPage.createGame(gameName, "test01", true)
+  lobbyPage.createGame(gameName, "werkstatt", true)
   I.wait(1)
 
   session('player1', () => {
@@ -64,7 +64,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
 
   gameRoomPage.startGame()
 
-  I.wait(1)
+  I.wait(1000)
   session('player1', () => {
     gameRoomPage.answerChoiceQuestion("Banone")
   })

@@ -38,3 +38,7 @@ out/
 /backend/src/main/resources/public/
 /frontend/dist/
 jgiven-reports/
+
+### Doc ###
+/doc/*.png
+/doc/*.bkp

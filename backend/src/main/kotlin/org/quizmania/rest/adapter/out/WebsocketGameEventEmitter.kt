@@ -20,7 +20,6 @@ class WebsocketGameEventEmitter(
   companion object : KLogging()
 
   override fun emitGameChangeEventToPlayers(evt: GameEvent, eventMetaData: EventMetaData) {
-    val channel = "/game/${evt.gameId}"
     val wrappedEvent = GameEventWrapperDto(
       gameId = evt.gameId,
       sequenceNumber = eventMetaData.sequenceNumber,
@@ -28,6 +27,7 @@ class WebsocketGameEventEmitter(
       eventType = evt.javaClass.simpleName,
       payload = objectMapper.writeValueAsString(evt)
     )
+    val channel = "/game/${evt.gameId}"
     logger.trace { "Forwarding event $wrappedEvent to websocket clients on $channel" }
     template.convertAndSend(channel, wrappedEvent)
   }

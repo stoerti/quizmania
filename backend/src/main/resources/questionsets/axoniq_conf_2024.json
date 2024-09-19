@@ -1,0 +1,9 @@
+{
+  "id": "axoniq_conf",
+  "name": "AxonIQ Conf 2024",
+  "minPlayers": 1,
+  "questions": [
+    "axonconf_01",
+    "axonconf_02"
+  ]
+}

@@ -1,16 +1,16 @@
 Feature('create_game');
 
 Scenario('multiplayer_buzzer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
-  let gameName = "Game " + Math.floor(Math.random() * 100000)
-  let moderator = "Moderator " + Math.floor(Math.random() * 100000)
-  let username1 = "User " + Math.floor(Math.random() * 100000)
-  let username2 = "User " + Math.floor(Math.random() * 100000)
-  let username3 = "User " + Math.floor(Math.random() * 100000)
+  let gameName = "Middle earth quiz"
+  let moderator = "Elrond"
+  let username1 = "Frodo"
+  let username2 = "Gimli"
+  let username3 = "Legolas"
 
   loginPage.logInWithUsername(moderator)
   I.wait(1)
 
-  lobbyPage.createGame(gameName, "test02", true, true)
+  lobbyPage.createGame(gameName, "werkstatt_finale", true, true)
 
   session('player1', () => {
     loginPage.logInWithUsername(username1)
@@ -31,9 +31,11 @@ Scenario('multiplayer_buzzer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.waitForText(username2)
   I.waitForText(username3)
 
+  I.wait(10)
+
   gameRoomPage.startGame()
 
-  I.wait(1)
+  I.wait(1000)
 
   // -----------------------------
   // QUESTION 1
@@ -54,6 +56,9 @@ Scenario('multiplayer_buzzer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   })
 
   I.waitForText(username1, 5, {id: 'buzzWinner'})
+
+  I.wait(1000)
+
   gameRoomPage.acceptBuzzerAnswer()
   gameRoomPage.nextQuestion()
 

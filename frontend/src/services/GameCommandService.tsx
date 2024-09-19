@@ -1,5 +1,5 @@
 import {ProblemJson, registerProblemFactory} from "./problem/ProblemInterceptor.tsx";
-import {currentServerTime} from "./ServerTimeSync.tsx";
+import {getCurrentServerTime} from "./ServerTimeSync.tsx";
 
 export type NewGameCommand = {
   name: string,
@@ -102,7 +102,7 @@ export class GameCommandService {
     await this.genericPost('/api/game/' + buzz.gameId + '/buzz-question', JSON.stringify({
       gameId: buzz.gameId,
       gameQuestionId: buzz.gameQuestionId,
-      buzzerTimestamp: currentServerTime().toISOString()
+      buzzerTimestamp: getCurrentServerTime().toISOString()
     }))
   }
 

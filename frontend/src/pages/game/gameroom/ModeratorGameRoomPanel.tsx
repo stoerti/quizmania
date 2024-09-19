@@ -71,6 +71,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
       } else {
         answerContainer =
           <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
+            <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
             <Box sx={{marginTop: 5, marginBottom: 10}}>
               <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="body1" component="div">
                 Player on the clock:

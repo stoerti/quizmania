@@ -1,14 +1,16 @@
-version: '2'
+version: '3.8'
 
 services:
   app:
-    image: quizmania:latest
-#    container_name: quizmania
+    image: ghcr.io/stoerti/quizmania:latest
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/quizmania
       - AXON_AXONSERVER_SERVERS=axonserver
     ports:
       - '8080'
+    depends_on:
+      - db
+      - axonserver
   nginx:
     image: nginx:latest
     volumes:
@@ -38,3 +40,9 @@ services:
       - '8024:8024'
       - '8124:8124'
       - '8224:8224'
+    healthcheck:
+      test: "curl --fail --silent localhost:8024/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

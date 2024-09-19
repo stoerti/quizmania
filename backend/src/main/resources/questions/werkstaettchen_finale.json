@@ -1,0 +1,101 @@
+[
+  {
+    "id": "werkstaettchen_finale_freeinput_01",
+    "type": "FREE_INPUT",
+    "phrase": "Was bekommt der Sohn bei Loriot's \"Weihnachten bei Hoppenstedts\" geschenkt?",
+    "correctAnswer": "Atomkraftwerk"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_02",
+    "type": "FREE_INPUT",
+    "phrase": "Welches jährliche Kunstfestival findet jedes Jahr in der Black Rock Desert in Nevada USA statt?",
+    "correctAnswer": "Burning Man"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_03",
+    "type": "FREE_INPUT",
+    "phrase": "Wie viele Jahre dauert die Ausbildung in Harry Potter's Hogwarts?",
+    "correctAnswer": "7"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_04",
+    "type": "FREE_INPUT",
+    "phrase": "Wie lautet der vierte Buchstabe des Alphabets?",
+    "correctAnswer": "Delta"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_05",
+    "type": "FREE_INPUT",
+    "phrase": "Wie viele Punkte gibt es auf einem sechsseitigen Würfel?",
+    "correctAnswer": "21"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_06",
+    "type": "FREE_INPUT",
+    "phrase": "Wer überquerte auf dem Weg in den Krieg gegen die Römer mit Elefanten die Alpen?",
+    "correctAnswer": "Hannibal"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_07",
+    "type": "FREE_INPUT",
+    "phrase": "Welches Land hat als einziges keine rechteckige Nationalflagge?",
+    "correctAnswer": "Nepal"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_08",
+    "type": "FREE_INPUT",
+    "phrase": "Wer war der erste Bundeskanzler der BRD?",
+    "correctAnswer": "Konrad Adenauer"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_09",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle?",
+    "imagePath": "https://e00-marca.uecdn.es/assets/multimedia/imagenes/2020/12/30/16093267916320.jpg",
+    "correctAnswer": "Mitch Buchannon"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_10",
+    "type": "FREE_INPUT",
+    "phrase": "Wie viele Nazgul gibt es in Herr der Ringe?",
+    "correctAnswer": "9"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_10",
+    "type": "FREE_INPUT",
+    "phrase": "Wer wohnt hier?",
+    "imagePath": "https://i.pinimg.com/originals/ef/6e/dc/ef6edcd9b4e3e5ad0fde9d21db933beb.jpg",
+    "correctAnswer": "Gummibärenbande"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_11",
+    "type": "FREE_INPUT",
+    "phrase": "Wann läuft diese TÜV-Plakette ab?",
+    "imagePath": "assets/tuev.png",
+    "correctAnswer": "Februar 2022"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_12",
+    "type": "FREE_INPUT",
+    "phrase": "Welches Land wird auch Land der aufgehenden Sonne\" genannt?",
+    "correctAnswer": "Japan"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_13",
+    "type": "FREE_INPUT",
+    "phrase": "Was mache ich am Cheep-Cheep-Strand, der Kuhmuh-Weide, im Ticktack-Trauma oder in der Grusel-Wusel-Villa?",
+    "correctAnswer": "Mario Kart spielen"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_14",
+    "type": "FREE_INPUT",
+    "phrase": "Wenn ich mit dem Flugzeug von CDG nach SFO fliege, von wo nach wo fliege ich dann?",
+    "correctAnswer": "Von Paris nach San Francisco"
+  },
+  {
+    "id": "werkstaettchen_finale_freeinput_15",
+    "type": "FREE_INPUT",
+    "phrase": "Wofür steht die Abkürzung TS beim Burger Royal TS?",
+    "correctAnswer": "Tomate Salat"
+  }
+]

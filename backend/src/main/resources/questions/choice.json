@@ -2,9 +2,9 @@
   {
     "id": "choice_01",
     "type": "CHOICE",
-    "phrase": "Was ist gelb und schießt durch den Wald?",
-    "correctAnswer": "Banone",
-    "answerOptions": ["Banone", "Gürkin", "Hagenutte", "Nuschel"]
+    "phrase": "How many Nazgul are there?",
+    "correctAnswer": "9",
+    "answerOptions": ["3", "7", "9", "42"]
   },
   {
     "id": "choice_02",
