@@ -1,5 +1,4 @@
-import {gameCommandService, GameCommandService, GameException} from "../../services/GameCommandService";
-import Cookies from "js-cookie";
+import {gameCommandService, GameException} from "../../services/GameCommandService";
 import {
   AppBar,
   Button,
@@ -20,6 +19,7 @@ import Person from "@mui/icons-material/Person";
 import React from "react";
 import {Game} from "../../domain/GameModel";
 import {useSnackbar} from "material-ui-snackbar-provider";
+import {useUsername} from "../../hooks/useUsername.ts";
 
 export type GameLobbyPageProps = {
   game: Game,
@@ -27,6 +27,7 @@ export type GameLobbyPageProps = {
 
 export const GameLobbyPage = (props: GameLobbyPageProps) => {
   const snackbar = useSnackbar()
+  const {username} = useUsername()
 
   const onClickLeaveGame = async () => {
     try {
@@ -49,7 +50,7 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
   }
 
   let startButton;
-  if (props.game.moderator === Cookies.get('username') || props.game.creator === Cookies.get('username')) {
+  if (props.game.moderator === username || props.game.creator === username) {
     startButton = <div
       style={{
         display: "flex",

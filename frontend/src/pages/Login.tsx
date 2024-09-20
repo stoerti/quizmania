@@ -1,11 +1,25 @@
 import {Box, Button, CssBaseline, Grid, Paper, TextField} from "@mui/material";
-import React from "react";
+import React, {useEffect} from "react";
+import {useUsername} from "../hooks/useUsername.ts";
+import {useNavigate} from "react-router";
 
+const LoginPage = () => {
 
-type LoginPageProps = {
-  loginSuccessAction: (username: string) => void
-}
-const LoginPage = ({loginSuccessAction}: LoginPageProps) => {
+  const {username, setUsername} = useUsername();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (username !== undefined) {
+      console.log('already logged in as', username, 'continue to overview')
+      navigate('/');
+    }
+  }, [username, navigate]);
+
+  const loginSuccessAction = (username: string) => {
+    setUsername(username);
+    navigate('/');
+  }
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);

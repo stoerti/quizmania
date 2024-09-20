@@ -5,7 +5,7 @@ import Cancel from "@mui/icons-material/Cancel";
 import React, {useState} from "react";
 import {ArrowBack, ArrowForward} from "@mui/icons-material";
 import useWindowDimensions from "../../../hooks/useWindowDimensions.tsx";
-import Cookies from "js-cookie";
+import {useUsername} from "../../../hooks/useUsername.ts";
 
 
 const comparePlayersByPointsAndName = function (p1: Player, p2: Player): number {
@@ -29,7 +29,7 @@ export type ScoreboardPageProps = {
 
 const ScoreboardPage = ({game, page, pageSize}: ScoreboardPageProps) => {
   const lastQuestion = game.currentQuestion
-  const username = Cookies.get("username")
+  const {username} = useUsername()
 
   const first = page * pageSize
   const last = (page + 1) * pageSize
