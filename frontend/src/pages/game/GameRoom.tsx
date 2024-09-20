@@ -1,6 +1,5 @@
 import {Game} from "../../domain/GameModel";
 import React from "react";
-import Cookies from "js-cookie";
 import {AppBar, Box, IconButton, Toolbar, Tooltip, Typography} from "@mui/material";
 import {ModeratorGameRoomPanel} from "./gameroom/ModeratorGameRoomPanel";
 import {PlayerGameRoomPanel} from "./gameroom/PlayerGameRoomPanel";
@@ -8,6 +7,7 @@ import {SpectatorGameRoomPanel} from "./gameroom/SpectatorGameRoomPanel.tsx";
 import Logout from "@mui/icons-material/Logout";
 import {gameCommandService, GameException} from "../../services/GameCommandService.tsx";
 import {useSnackbar} from "material-ui-snackbar-provider";
+import {useUsername} from "../../hooks/useUsername.ts";
 
 
 export type GameRoomPageProps = {
@@ -17,7 +17,7 @@ export type GameRoomPageProps = {
 
 export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
   const snackbar = useSnackbar()
-  const username = Cookies.get("username")
+  const {username} = useUsername()
 
   const currentPlayer = game.players.find(player => player.name === username)
 

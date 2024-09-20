@@ -1,9 +1,9 @@
 import React from 'react';
 
 import {SnackbarProvider} from 'material-ui-snackbar-provider'
-
-import QuizmaniaMainUI from "./pages/QuizmaniaMainUI";
 import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
+import {RouterProvider} from "react-router";
+import {router} from "./router.tsx";
 
 const App = () => {
   const theme = createTheme({
@@ -86,7 +86,7 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline/>
         <SnackbarProvider SnackbarProps={{autoHideDuration: 4000}}>
-          <QuizmaniaMainUI/>
+          <RouterProvider router={router}/>
         </SnackbarProvider>
       </ThemeProvider>
     </div>

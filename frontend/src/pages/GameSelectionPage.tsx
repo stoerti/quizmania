@@ -2,23 +2,20 @@ import {AppBar, Box, IconButton, Table, TableBody, TableCell, TableHead, TableRo
 import Add from "@mui/icons-material/Add"
 import Login from "@mui/icons-material/Login"
 import Refresh from "@mui/icons-material/Refresh"
-import React, {useEffect} from "react";
+import React, {useCallback, useEffect} from "react";
 import {GameCreationDialog} from "./GameCreationDialog";
 import {useSnackbar} from "material-ui-snackbar-provider";
 import {GameAlreadyFullException, gameCommandService, GameException, NewGameCommand, UsernameAlreadyTakenException} from "../services/GameCommandService";
 import {TransferWithinAStation, Visibility} from "@mui/icons-material";
 import {GameDto, gameOverviewService, GameStatus} from "../services/GameOverviewService";
+import {useNavigate} from "react-router";
+import { useUsername } from "../hooks/useUsername";
 
 type GameSelectionContainerProps = {
   games: GameDto[]
   onButtonClickJoinGame: (gameId: string) => void
   onButtonClickJoinGameAsSpectator: (gameId: string) => void
 }
-type GameSelectionPageProps = {
-  onGameSelected: (gameId: string) => void
-  onLogout: () => void
-}
-
 
 const GameSelectionContainer = (props: GameSelectionContainerProps) => {
 
@@ -74,16 +71,32 @@ const GameSelectionContainer = (props: GameSelectionContainerProps) => {
     </Box>
   )
 }
-const GameSelectionPage = (props: GameSelectionPageProps) => {
+const GameSelectionPage = () => {
+
+  const navigate = useNavigate()
+  const {username} = useUsername();
 
   const [newGameDialogOpen, setNewGameDialogOpen] = React.useState(false)
   const [games, setGames] = React.useState<GameDto[]>([])
 
   const snackbar = useSnackbar()
 
+  useEffect(() => {if (username === undefined) {
+    console.log('no username set, redirect to login');
+    navigate('/login');
+  }}, [username]);
+
   useEffect(() => {
     gameOverviewService.searchOpenGames(setGames)
   }, []);
+
+  const onGameSelected = useCallback((gameId: string) => {
+    navigate(`/game/${gameId}`)
+  }, [navigate])
+
+  const onLogout = () => {
+    navigate('/logout');
+  }
 
   const onButtonClickNewGame = () => {
     setNewGameDialogOpen(true)
@@ -96,7 +109,7 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
   const onButtonClickJoinGame = async (gameId: string) => {
     try {
       await gameCommandService.joinGame(gameId)
-      props.onGameSelected(gameId)
+      onGameSelected(gameId)
     } catch (error) {
       if (error instanceof GameAlreadyFullException) {
         snackbar.showMessage("The selected game is already full")
@@ -108,7 +121,7 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
     }
   }
   const onButtonClickJoinGameAsSpectator = async (gameId: string) => {
-    props.onGameSelected(gameId)
+    onGameSelected(gameId)
   }
 
   const onCloseNewGameDialog = () => {
@@ -118,7 +131,7 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
   const onCreateNewGame = async (newGame: NewGameCommand) => {
     try {
       const gameId = await gameCommandService.createNewGame(newGame)
-      props.onGameSelected(gameId)
+      onGameSelected(gameId)
       snackbar.showMessage(
         `Created game ${newGame.name} for ${newGame.config.maxPlayers} players, ${newGame.config.numQuestions} questions and ${newGame.withModerator ? 'with' : 'without'} moderator`
       )
@@ -148,7 +161,7 @@ const GameSelectionPage = (props: GameSelectionPageProps) => {
             Games
           </Typography>
           <Tooltip title="Change username">
-            <IconButton id="changeUsername" color="inherit" onClick={props.onLogout}>
+            <IconButton id="changeUsername" color="inherit" onClick={onLogout}>
               <TransferWithinAStation/>
             </IconButton>
           </Tooltip>

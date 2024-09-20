@@ -1,19 +1,25 @@
-import React, {useEffect, useMemo} from "react";
+import React, {useCallback, useEffect, useMemo} from "react";
 import {GameEvent, PlayerLeftGameEvent} from "../../services/GameEventTypes";
 import {useSnackbar} from "material-ui-snackbar-provider";
-import Cookies from "js-cookie";
 import {GameLobbyPage} from "./GameLobby";
 import {GameRoomPage} from "./GameRoom";
 import {GameFinishedPage} from "./GameFinished";
 import {GameEventType, GameRepository} from "../../services/GameRepository";
 import {Game, GameStatus} from "../../domain/GameModel";
+import {useNavigate, useParams} from "react-router";
+import { useUsername } from "../../hooks/useUsername";
 
-type GamePageProps = {
-  gameId: string,
-  onGameEnded(): void
-}
+const GamePage = () => {
 
-const GamePage = ({gameId, onGameEnded}: GamePageProps) => {
+  const {gameId} = useParams();
+
+  if (gameId === undefined) {
+    // should never actually happen, but makes the compiler happy
+    throw new Error('gameId is not set')
+  }
+
+  const navigate = useNavigate()
+  const {username} = useUsername()
 
   const [game, setGame] = React.useState<Game | undefined>(undefined)
 
@@ -21,6 +27,10 @@ const GamePage = ({gameId, onGameEnded}: GamePageProps) => {
       new GameRepository()
     , []);
   const snackbar = useSnackbar()
+
+  const onGameEnded = useCallback(() => {
+    navigate('/')
+  }, []);
 
   useEffect(() => {
     gameRepository.findGame(gameId, setGame, () => {
@@ -34,7 +44,7 @@ const GamePage = ({gameId, onGameEnded}: GamePageProps) => {
           onGameEnded()
           snackbar.showMessage("Game was canceled by creator or system")
         } else if (eventType === 'PlayerLeftGameEvent') {
-          if ((event as PlayerLeftGameEvent).username === Cookies.get('username')) {
+          if ((event as PlayerLeftGameEvent).username === username) {
             // I left the game - return to game selection page
             gameRepository.unsubscribeFromGame()
             onGameEnded()

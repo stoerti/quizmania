@@ -2,7 +2,6 @@ import {Game, Player, QuestionStatus} from "../../../domain/GameModel";
 import {gameCommandService, GameException} from "../../../services/GameCommandService";
 import {Box, Button, CircularProgress, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import {QuestionContainer} from "../question/QuestionContainer";
-import Cookies from "js-cookie";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import React from "react";
 import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
@@ -11,6 +10,7 @@ import {BuzzerQuestionContainer} from "../question/BuzzerQuestionContainer";
 import {useSnackbar} from "material-ui-snackbar-provider";
 import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
 import {Scoreboard} from "./Scoreboard.tsx";
+import {useUsername} from "../../../hooks/useUsername.ts";
 
 export type PlayerGameRoomPanelProps = {
   game: Game,
@@ -20,6 +20,7 @@ export type PlayerGameRoomPanelProps = {
 
 export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) => {
   const snackbar = useSnackbar()
+  const {username} = useUsername()
 
   const question = game.currentQuestion
 
@@ -121,7 +122,7 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
     }
 
 
-    if (question.status === QuestionStatus.SCORED && game.creator === Cookies.get('username')) {
+    if (question.status === QuestionStatus.SCORED && game.creator === username) {
       nextButton = <div style={{display: "flex", alignItems: "center"}}>
         <Button id="nextQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
                 onClick={onNextQuestion}>Next question</Button>
