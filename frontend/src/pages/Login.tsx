@@ -1,4 +1,4 @@
-import {Box, Button, CssBaseline, Grid, Paper, TextField} from "@mui/material";
+import {Box, Button, CssBaseline, Grid, Paper, Stack, TextField, Typography, useTheme} from "@mui/material";
 import React, {useEffect} from "react";
 import {useUsername} from "../hooks/useUsername.ts";
 import {useNavigate} from "react-router";
@@ -7,6 +7,7 @@ const LoginPage = () => {
 
   const {username, setUsername} = useUsername();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   useEffect(() => {
     if (username !== undefined) {
@@ -37,15 +38,27 @@ const LoginPage = () => {
       <CssBaseline/>
       <Paper elevation={8} sx={{
         maxWidth: 400,
-        alignSelf: "center"
+        alignSelf: "center",
+        backgroundColor: theme.palette.primary.contrastText,
+        my: 4,
+        mx: 4
       }}>
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{
+        <Stack spacing={5} component="form" noValidate onSubmit={handleSubmit} sx={{
           my: 4,
           mx: 4,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
+          alignItems: 'center'
         }}>
+          <Typography variant={"h6"}>
+            Welcome to Quizmania
+          </Typography>
+          <Typography variant={"body1"}>
+            To play Quizmania, first choose a guest username. Then you can either create a new game or join an existing one.
+          </Typography>
+          <Typography variant={"body1"}>
+            AxonIQ Conference special: Join the Game "AxonIQ Quiz" by clicking on the quiz name.
+          </Typography>
           <TextField margin="normal"
                      required
                      fullWidth
@@ -62,8 +75,8 @@ const LoginPage = () => {
             fullWidth
             variant="contained"
             sx={{ml: 2, mr: 2, mb: 2}}
-          >Sign In</Button>
-        </Box>
+          >Choose username</Button>
+        </Stack>
       </Paper>
     </Grid>
   )
