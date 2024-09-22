@@ -42,17 +42,17 @@ const App = () => {
 @font-face {
   font-family: 'Klarheit Kurrent';
   font-weight: 400;
-  src: url(https://atomic-playfulness.holisticon.de/fonts/ESKlarheitKurrent-Rg.woff2) format("woff2");
+  src: url(https://hap-cdn.holisticon.de/fonts/ESKlarheitKurrent-Rg.woff2) format("woff2");
 }
 @font-face {
   font-family: 'Klarheit Kurrent';
   font-weight: 500;
-  src: url(https://atomic-playfulness.holisticon.de/fonts/ESKlarheitKurrent-Md.woff2) format("woff2");
+  src: url(https://hap-cdn.holisticon.de/fonts/ESKlarheitKurrent-Md.woff2) format("woff2");
 }
 @font-face {
   font-family: 'Klarheit Kurrent';
   font-weight: 600;
-  src: url(https://atomic-playfulness.holisticon.de/fonts/ESKlarheitKurrent-Bd.woff2) format("woff2");
+  src: url(https://hap-cdn.holisticon.de/fonts/ESKlarheitKurrent-Bd.woff2) format("woff2");
 }
 `
       },
