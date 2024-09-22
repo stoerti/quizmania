@@ -9,7 +9,7 @@ import {GameAlreadyFullException, gameCommandService, GameException, NewGameComm
 import {TransferWithinAStation, Visibility} from "@mui/icons-material";
 import {GameDto, gameOverviewService, GameStatus} from "../services/GameOverviewService";
 import {useNavigate} from "react-router";
-import { useUsername } from "../hooks/useUsername";
+import {useUsername} from "../hooks/useUsername";
 
 type GameSelectionContainerProps = {
   games: GameDto[]
@@ -35,37 +35,41 @@ const GameSelectionContainer = (props: GameSelectionContainerProps) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.games.map((row) => (
-            <TableRow
-              key={row.id}
-              sx={{'&:last-child td, &:last-child th': {border: 0}}}
-            >
-              <TableCell component="th" scope="row">
-                <Typography
-                  variant="body1"
-                  component="div"
-                >
-                  {row.name}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  id="tableTitle"
-                  component="div"
-                >
-                  Creator: {row.creator}
-                </Typography>
-              </TableCell>
-              <TableCell align="right">{row.players.length}/{row.maxPlayers}</TableCell>
-              <TableCell align="right">
-                {row.status == GameStatus.CREATED ? <IconButton onClick={() => props.onButtonClickJoinGame(row.id)}>
-                  <Login/>
-                </IconButton> : null}
-                <IconButton onClick={() => props.onButtonClickJoinGameAsSpectator(row.id)}>
-                  <Visibility/>
-                </IconButton>
-              </TableCell>
-            </TableRow>
-          ))}
+          {props.games.map((row) => {
+            const joinGameAction = () => props.onButtonClickJoinGame(row.id)
+
+            return (
+              <TableRow
+                key={row.id}
+                sx={{'&:last-child td, &:last-child th': {border: 0}}}
+              >
+                <TableCell component="th" scope="row" onClick={joinGameAction}>
+                  <Typography
+                    variant="body1"
+                    component="div"
+                  >
+                    {row.name}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    id="tableTitle"
+                    component="div"
+                  >
+                    Creator: {row.creator}
+                  </Typography>
+                </TableCell>
+                <TableCell align="right" onClick={joinGameAction}>{row.players.length}/{row.maxPlayers}</TableCell>
+                <TableCell align="right">
+                  {row.status == GameStatus.CREATED ? <IconButton onClick={() => props.onButtonClickJoinGame(row.id)}>
+                    <Login/>
+                  </IconButton> : null}
+                  <IconButton onClick={() => props.onButtonClickJoinGameAsSpectator(row.id)}>
+                    <Visibility/>
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
     </Box>
@@ -81,10 +85,12 @@ const GameSelectionPage = () => {
 
   const snackbar = useSnackbar()
 
-  useEffect(() => {if (username === undefined) {
-    console.log('no username set, redirect to login');
-    navigate('/login');
-  }}, [username]);
+  useEffect(() => {
+    if (username === undefined) {
+      console.log('no username set, redirect to login');
+      navigate('/login');
+    }
+  }, [username]);
 
   useEffect(() => {
     gameOverviewService.searchOpenGames(setGames)
