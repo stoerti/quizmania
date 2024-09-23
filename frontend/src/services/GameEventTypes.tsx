@@ -73,6 +73,7 @@ export type QuestionAnsweredEvent = {
   gamePlayerId: string,
   playerAnswerId: string,
   answer: string,
+  timeToAnswer: number
 }
 
 export type QuestionAnswerOverriddenEvent = {

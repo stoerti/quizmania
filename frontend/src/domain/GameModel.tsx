@@ -36,6 +36,7 @@ export class Game {
   readonly moderator: string | undefined;
   readonly status: GameStatus;
   readonly players: Player[];
+  readonly numQuestions: number = 0;
   readonly currentQuestion: GameQuestion | undefined;
 
   constructor(event: GameCreatedEvent) {
@@ -120,6 +121,7 @@ export class Game {
 
   public onQuestionAsked(event: QuestionAskedEvent): Game {
     return this.copyWith({
+      numQuestions: this.numQuestions + 1,
       currentQuestion:
         new GameQuestion(event)
     })
@@ -136,7 +138,22 @@ export class Game {
   }
 
   public onQuestionAnswered(event: QuestionAnsweredEvent): Game {
-    return this.updateQuestion(event.gameQuestionId, question => question.onQuestionAnswered(event))
+    const game = this.updateQuestion(event.gameQuestionId, question => question.onQuestionAnswered(event))
+
+    const newPlayers = game.players.map(player => {
+      if (event.gamePlayerId === player.id) {
+        return {
+          ...player,
+          totalAnswerTime: player.totalAnswerTime + event.timeToAnswer
+        }
+      } else {
+        return player
+      }
+    })
+
+    return game.copyWith({
+      players: newPlayers
+    })
   }
 
   public onQuestionAnswerOverridden(event: QuestionAnswerOverriddenEvent): Game {
@@ -181,6 +198,11 @@ export class Game {
 
   public findPlayerPoints(gamePlayerId: string): number {
     return this.players.find(player => player.id === gamePlayerId)?.points ?? 0
+  }
+
+  public findAverageAnswerTime(gamePlayerId: string): number {
+    const totalAnswerTime = this.players.find(player => player.id === gamePlayerId)?.totalAnswerTime ?? 0
+    return totalAnswerTime / this.numQuestions
   }
 }
 
@@ -227,7 +249,7 @@ export class GameQuestion {
     return this.copyWith({
       answers: [
         ...this.answers.filter(answer => answer.gamePlayerId != event.gamePlayerId),
-        new Answer(event)
+        new Answer({...event, timeToAnswer: 0})
       ]
     })
   }
@@ -287,6 +309,7 @@ export class Player {
   readonly id: string;
   readonly name: string;
   readonly points: number = 0;
+  readonly totalAnswerTime: number = 0;
 
   constructor(id: string, name: string) {
     this.id = id

@@ -1,5 +1,6 @@
 package org.quizmania.game.command.application.domain
 
+import org.axonframework.eventhandling.Timestamp
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.modelling.command.AggregateLifecycle
 import org.axonframework.modelling.command.EntityId
@@ -19,6 +20,7 @@ data class GameQuestion(
   val number: GameQuestionNumber,
   val question: Question,
   val questionMode: GameQuestionMode,
+  val questionAskedTimestamp: Instant,
   private var playerAnswers: MutableList<PlayerAnswer> = mutableListOf(),
   private var playerBuzzes: MutableList<PlayerBuzz> = mutableListOf(),
   private var currentBuzzWinner: GamePlayerId? = null,
@@ -72,7 +74,7 @@ data class GameQuestion(
     }
   }
 
-  fun answer(gamePlayerId: GamePlayerId, answer: String) {
+  fun answer(gamePlayerId: GamePlayerId, answer: String, answerTimestamp: Instant) {
     if (this.questionMode == GameQuestionMode.BUZZER) {
       throw QuestionInBuzzerModeProblem(this.gameId, this.id)
     }
@@ -86,7 +88,8 @@ data class GameQuestion(
         gameQuestionId = id,
         gamePlayerId = gamePlayerId,
         playerAnswerId = UUID.randomUUID(),
-        answer = answer
+        answer = answer,
+        answerTimestamp.toEpochMilli() - this.questionAskedTimestamp.toEpochMilli()
       )
     )
   }
@@ -178,7 +181,8 @@ data class GameQuestion(
           gameQuestionId = id,
           gamePlayerId = this.currentBuzzWinner!!,
           playerAnswerId = UUID.randomUUID(),
-          answer = question.correctAnswer
+          answer = question.correctAnswer,
+          0
         )
       )
       AggregateLifecycle.apply(
@@ -196,7 +200,8 @@ data class GameQuestion(
           gameQuestionId = id,
           gamePlayerId = this.currentBuzzWinner!!,
           playerAnswerId = UUID.randomUUID(),
-          answer = "" // some empty wrong answer - TODO better concept?
+          answer = "", // some empty wrong answer - TODO better concept?
+          0L
         )
       )
 

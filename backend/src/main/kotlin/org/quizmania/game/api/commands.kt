@@ -40,7 +40,8 @@ data class AnswerQuestionCommand(
     override val gameId: UUID,
     val gameQuestionId: UUID,
     val username: String,
-    val answer: String
+    val answer: String,
+    val answerTimestamp: Instant,
 ): GameCommand
 
 data class OverrideAnswerCommand(

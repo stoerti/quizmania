@@ -60,7 +60,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.waitForText(username2)
   I.waitForText(username3)
 
-  I.wait(5)
+  I.wait(5000)
 
   gameRoomPage.startGame()
 

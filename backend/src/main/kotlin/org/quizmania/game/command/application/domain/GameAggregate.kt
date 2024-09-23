@@ -141,7 +141,7 @@ internal class GameAggregate() {
 
     val player = players.getByUsername(command.username)
     val gameQuestion = askedQuestions.getById(command.gameQuestionId)
-    gameQuestion.answer(player.gamePlayerId, command.answer)
+    gameQuestion.answer(player.gamePlayerId, command.answer, command.answerTimestamp)
 
     // after QuestionAnsweredEvent is applied, the player-answer is actually in the list
     if (players.size == gameQuestion.numAnswers()) {
@@ -278,6 +278,7 @@ internal class GameAggregate() {
         playerAnswers = mutableListOf(),
         playerBuzzes = mutableListOf(),
         isModerated = moderatorUsername != null,
+        questionAskedTimestamp = event.questionTimestamp
       )
     )
   }

@@ -37,6 +37,7 @@ export class GameRepository {
 
   client?: Client;
   currentGameState: Game | undefined
+  lastReceivedSeqNo: number = -1
 
   public subscribeToGame(gameId: string, gameEventHandler: GameEventHandler) {
     if (this.client == null) {
@@ -66,12 +67,18 @@ export class GameRepository {
       this.client.deactivate()
       this.client = undefined
       this.currentGameState = undefined
+      this.lastReceivedSeqNo = -1
     } else {
       console.log("Client not active")
     }
   }
 
   private handleEvent(wrappedEvent: GameEventWrapper, gameEventHandler: GameEventHandler) {
+    if (wrappedEvent.sequenceNumber <= this.lastReceivedSeqNo) {
+      console.log("Ignoring event with SeqNo ", wrappedEvent.sequenceNumber)
+      return
+    }
+    this.lastReceivedSeqNo = wrappedEvent.sequenceNumber
     this.currentGameState = this.currentGameState!.onGameEvent(wrappedEvent.payload, wrappedEvent.eventType)
     gameEventHandler.onGameEvent(wrappedEvent.payload, wrappedEvent.eventType, this.currentGameState)
   }

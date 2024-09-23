@@ -95,7 +95,13 @@ export class GameCommandService {
   }
 
   public async answerQuestion(answer: AnswerQuestionCommand) {
-    await this.genericPost('/api/game/' + answer.gameId + '/answer-question', JSON.stringify(answer))
+    await this.genericPost('/api/game/' + answer.gameId + '/answer-question',
+      JSON.stringify({
+        gameId: answer.gameId,
+        gameQuestionId: answer.gameQuestionId,
+        answer: answer.answer,
+        answerTimestamp: getCurrentServerTime().toISOString()
+      }))
   }
 
   public async buzzQuestion(buzz: BuzzQuestionCommand) {

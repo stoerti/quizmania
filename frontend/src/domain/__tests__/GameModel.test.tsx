@@ -166,6 +166,7 @@ function questionAnswered(id: string, playerId: string, answerId: string, answer
     gamePlayerId: playerId,
     playerAnswerId: answerId,
     answer: answer,
+    timeToAnswer: 0,
   }
 }
 

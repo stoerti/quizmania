@@ -8,13 +8,13 @@ import useWindowDimensions from "../../../hooks/useWindowDimensions.tsx";
 import {useUsername} from "../../../hooks/useUsername.ts";
 
 
-const comparePlayersByPointsAndName = function (p1: Player, p2: Player): number {
+const comparePlayersByPointsAndAnswerTime = function (p1: Player, p2: Player): number {
   if (p1.points < p2.points)
     return 1
   if (p1.points > p2.points)
     return -1
 
-  return p1.name.localeCompare(p2.name)
+  return p1.totalAnswerTime - p2.totalAnswerTime
 }
 
 export type ScoreboardProps = {
@@ -45,7 +45,7 @@ const ScoreboardPage = ({game, page, pageSize}: ScoreboardPageProps) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {[...game.players].sort(comparePlayersByPointsAndName)
+        {[...game.players].sort(comparePlayersByPointsAndAnswerTime)
           .slice(first, last)
           .map((player, index) => {
             let icon
@@ -90,10 +90,11 @@ const ScoreboardPage = ({game, page, pageSize}: ScoreboardPageProps) => {
           <TableCell></TableCell>
           <TableCell>Username</TableCell>
           <TableCell align="right">Points</TableCell>
+          <TableCell align="right">ø</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {[...game.players].sort(comparePlayersByPointsAndName)
+        {[...game.players].sort(comparePlayersByPointsAndAnswerTime)
           .slice(first, last)
           .map((player, index) => {
             const fontWeight = player.name === username ? 'bold' : 'normal'
@@ -106,6 +107,7 @@ const ScoreboardPage = ({game, page, pageSize}: ScoreboardPageProps) => {
                   </Typography>
                 </TableCell>
                 <TableCell width={10} align="right" sx={{fontWeight: fontWeight}}>{player.points}</TableCell>
+                <TableCell width={10} align="right" sx={{fontWeight: fontWeight}}>{Math.round(game.findAverageAnswerTime(player.id)/10)/100}s</TableCell>
               </TableRow>
             )
           })}

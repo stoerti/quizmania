@@ -90,7 +90,7 @@ const GameSelectionPage = () => {
       console.log('no username set, redirect to login');
       navigate('/login');
     }
-  }, [username]);
+  }, [username, navigate]);
 
   useEffect(() => {
     gameOverviewService.searchOpenGames(setGames)

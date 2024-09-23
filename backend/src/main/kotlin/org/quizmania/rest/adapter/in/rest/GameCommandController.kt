@@ -107,7 +107,8 @@ class GameCommandController(
         gameId = gameId,
         gameQuestionId = answer.gameQuestionId,
         username = username,
-        answer = answer.answer
+        answer = answer.answer,
+        answer.answerTimestamp
       )
     )
     return ResponseEntity.ok().build()
@@ -196,7 +197,8 @@ data class NewGameDto(
 
 data class AnswerDto(
   val gameQuestionId: UUID,
-  val answer: String
+  val answer: String,
+  val answerTimestamp: Instant
 )
 
 data class BuzzDto(

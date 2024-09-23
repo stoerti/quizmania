@@ -66,7 +66,8 @@ data class QuestionAnsweredEvent(
   override val gameQuestionId: GameQuestionId,
   val gamePlayerId: GamePlayerId,
   val playerAnswerId: UUID,
-  val answer: String
+  val answer: String,
+  val timeToAnswer: Long,
 ) : GameQuestionEvent
 
 data class QuestionAnswerOverriddenEvent(
