@@ -60,7 +60,7 @@ internal class GameAggregate() {
         command.config.copy(
           numQuestions = realNumQuestions // adjust question number to questionSet
         ),
-        questionSet.questions.take(realNumQuestions).shuffled(),
+        questionSet.questions.take(realNumQuestions),
         command.creatorUsername,
         command.moderatorUsername
       )

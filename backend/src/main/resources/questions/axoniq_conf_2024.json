@@ -2,12 +2,33 @@
   {
     "id": "axonconf_01",
     "type": "CHOICE",
+    "phrase": "Which EventProcessor can process events in the same UnitOfWork as they are published?",
+    "correctAnswer": "SubscribingEventProcessor",
+    "answerOptions": ["PooledStreamingEventProcessor", "TrackingEventProcessor", "SubscribingEventProcessor"]
+  },
+  {
+    "id": "axonconf_02",
+    "type": "CHOICE",
     "phrase": "When was the first commit for the Axon Framework on Github?",
     "correctAnswer": "2010",
     "answerOptions": ["2001", "2007", "2010", "2013"]
   },
   {
-    "id": "axonconf_02",
+    "id": "axonconf_03",
+    "type": "CHOICE",
+    "phrase": "Who is the inventor of Event-Sourcing?",
+    "correctAnswer": "Greg Young",
+    "answerOptions": ["Greg Young", "Allard Buijze", "Martin Fowler", "Leslie Lamport"]
+  },
+  {
+    "id": "axonconf_04",
+    "type": "CHOICE",
+    "phrase": "What is not a valid annotated parameter in event handling methods?",
+    "correctAnswer": "@AggregateId String",
+    "answerOptions": ["@SequenceNumber Long", "@AggregateId String", "@Timestamp Instant", "@MetaDataValue"]
+  },
+  {
+    "id": "axonconf_05",
     "type": "CHOICE",
     "phrase": "Who did the most commits to the Axon Framework on Github?",
     "correctAnswer": "Steven van Beelen",

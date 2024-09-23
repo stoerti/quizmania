@@ -4,6 +4,9 @@
   "minPlayers": 1,
   "questions": [
     "axonconf_01",
-    "axonconf_02"
+    "axonconf_02",
+    "axonconf_03",
+    "axonconf_04",
+    "axonconf_05"
   ]
 }

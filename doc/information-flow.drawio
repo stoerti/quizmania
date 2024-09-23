@@ -1,86 +1,93 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.8 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.8">
   <diagram name="Page-1" id="MUyO3QTsy5pZO9S8oZzR">
-    <mxGraphModel dx="604" dy="387" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1738" dy="714" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#C8FFA5" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="qnNIa77OfZuT1cDfkHup-1" value="Game&lt;div&gt;Aggregate&lt;/div&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#102924;strokeColor=#1E4132;fontFamily=ES Klarheit Kurrent RD;fontColor=#C8FFA5;" vertex="1" parent="1">
-          <mxGeometry x="30" y="30" width="100" height="300" as="geometry" />
+          <mxGeometry x="30" y="30" width="100" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="qnNIa77OfZuT1cDfkHup-22" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#EB4B2D;strokeColor=#141419;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-1">
+          <mxGeometry x="45" y="111" width="10" height="20" as="geometry" />
         </mxCell>
         <mxCell id="qnNIa77OfZuT1cDfkHup-2" value="GameEvent&lt;div&gt;Handler&lt;/div&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#102924;strokeColor=#1E4132;fontFamily=ES Klarheit Kurrent RD;fontColor=#C8FFA5;" vertex="1" parent="1">
-          <mxGeometry x="190" y="30" width="100" height="300" as="geometry" />
+          <mxGeometry x="190" y="30" width="100" height="250" as="geometry" />
         </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-6" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#C8FFA5;strokeColor=#102924;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-2">
+        <mxCell id="qnNIa77OfZuT1cDfkHup-6" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#EB4B2D;strokeColor=#141419;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-2">
           <mxGeometry x="45" y="120" width="10" height="20" as="geometry" />
         </mxCell>
         <mxCell id="qnNIa77OfZuT1cDfkHup-3" value="WebsocketGame&lt;div&gt;EventForwarder&lt;/div&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#102924;strokeColor=#1E4132;fontFamily=ES Klarheit Kurrent RD;fontColor=#C8FFA5;" vertex="1" parent="1">
-          <mxGeometry x="360" y="30" width="120" height="300" as="geometry" />
+          <mxGeometry x="360" y="30" width="120" height="250" as="geometry" />
         </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-8" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#C8FFA5;strokeColor=#102924;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-3">
+        <mxCell id="qnNIa77OfZuT1cDfkHup-8" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#EB4B2D;strokeColor=#141419;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-3">
           <mxGeometry x="55" y="125" width="10" height="20" as="geometry" />
         </mxCell>
         <mxCell id="qnNIa77OfZuT1cDfkHup-4" value="SimpMessaging&lt;div&gt;Template&lt;/div&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#102924;strokeColor=#1E4132;fontFamily=ES Klarheit Kurrent RD;fontColor=#C8FFA5;" vertex="1" parent="1">
-          <mxGeometry x="540" y="30" width="100" height="300" as="geometry" />
+          <mxGeometry x="540" y="30" width="100" height="250" as="geometry" />
         </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-10" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#C8FFA5;strokeColor=#102924;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-4">
+        <mxCell id="qnNIa77OfZuT1cDfkHup-10" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#EB4B2D;strokeColor=#141419;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-4">
           <mxGeometry x="44" y="131" width="10" height="20" as="geometry" />
         </mxCell>
         <mxCell id="qnNIa77OfZuT1cDfkHup-5" value="Game&lt;div&gt;Repository&lt;/div&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#C7CFEB;strokeColor=#141419;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="1">
-          <mxGeometry x="710" y="30" width="100" height="300" as="geometry" />
+          <mxGeometry x="960" y="30" width="100" height="250" as="geometry" />
         </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-15" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#C8FFA5;strokeColor=#102924;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-5">
-          <mxGeometry x="45" y="136" width="10" height="20" as="geometry" />
+        <mxCell id="qnNIa77OfZuT1cDfkHup-15" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#EB4B2D;strokeColor=#141419;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-5">
+          <mxGeometry x="45" y="136" width="10" height="64" as="geometry" />
         </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-16" value="forward event" style="html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;curved=0;rounded=0;fontFamily=ES Klarheit Kurrent RD;fontColor=#1E4132;fillColor=#C8FFA5;strokeColor=#102924;labelBackgroundColor=none;" edge="1" parent="qnNIa77OfZuT1cDfkHup-5" target="qnNIa77OfZuT1cDfkHup-15">
-          <mxGeometry x="-0.0077" relative="1" as="geometry">
-            <mxPoint x="-116" y="141" as="sourcePoint" />
-            <mxPoint x="43" y="141" as="targetPoint" />
-            <mxPoint as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-7" value="produce event" style="html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;curved=0;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=5;fontFamily=ES Klarheit Kurrent RD;fontColor=#1E4132;fillColor=#C8FFA5;strokeColor=#102924;labelBackgroundColor=none;" edge="1" target="qnNIa77OfZuT1cDfkHup-6" parent="1" source="qnNIa77OfZuT1cDfkHup-1">
-          <mxGeometry x="-0.0054" relative="1" as="geometry">
+        <mxCell id="qnNIa77OfZuT1cDfkHup-7" value="create and &lt;br&gt;publish event&lt;br&gt;(via Axon Server)" style="html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;curved=0;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=5;fontFamily=ES Klarheit Kurrent RD;fontColor=#000000;fillColor=#C8FFA5;strokeColor=#102924;labelBackgroundColor=none;" edge="1" target="qnNIa77OfZuT1cDfkHup-6" parent="1" source="qnNIa77OfZuT1cDfkHup-22">
+          <mxGeometry x="-0.0039" relative="1" as="geometry">
             <mxPoint x="90" y="285" as="sourcePoint" />
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-9" value="forward event" style="html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;curved=0;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=5;fontFamily=ES Klarheit Kurrent RD;fontColor=#1E4132;fillColor=#C8FFA5;strokeColor=#102924;labelBackgroundColor=none;" edge="1" target="qnNIa77OfZuT1cDfkHup-8" parent="1" source="qnNIa77OfZuT1cDfkHup-6">
-          <mxGeometry x="-0.0072" relative="1" as="geometry">
+        <mxCell id="qnNIa77OfZuT1cDfkHup-9" value="forward event to outPort" style="html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;curved=0;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=5;fontFamily=ES Klarheit Kurrent RD;fontColor=#000000;fillColor=#C8FFA5;strokeColor=#102924;labelBackgroundColor=none;" edge="1" target="qnNIa77OfZuT1cDfkHup-8" parent="1" source="qnNIa77OfZuT1cDfkHup-6">
+          <mxGeometry x="-0.0104" relative="1" as="geometry">
             <mxPoint x="260" y="165" as="sourcePoint" />
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-11" value="forward event" style="html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;curved=0;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=5;fontFamily=ES Klarheit Kurrent RD;fontColor=#1E4132;fillColor=#C8FFA5;strokeColor=#102924;labelBackgroundColor=none;" edge="1" parent="1">
+        <mxCell id="qnNIa77OfZuT1cDfkHup-11" value="publish event&amp;nbsp;&lt;div&gt;on game-channel&lt;div&gt;on message broker&lt;/div&gt;&lt;/div&gt;" style="html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;curved=0;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=5;fontFamily=ES Klarheit Kurrent RD;fontColor=#000000;fillColor=#C8FFA5;strokeColor=#102924;labelBackgroundColor=none;" edge="1" parent="1">
           <mxGeometry x="-0.0072" relative="1" as="geometry">
             <mxPoint x="425" y="166" as="sourcePoint" />
             <mxPoint x="584" y="166" as="targetPoint" />
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-13" value="&lt;div&gt;&amp;lt;&amp;lt;model&amp;gt;&amp;gt;&lt;/div&gt;Game" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#C7CFEB;strokeColor=#141419;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="1">
-          <mxGeometry x="890" y="30" width="100" height="300" as="geometry" />
+        <mxCell id="qnNIa77OfZuT1cDfkHup-13" value="&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;GameModel&lt;/span&gt;&lt;br&gt;&lt;/div&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#C7CFEB;strokeColor=#141419;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="30" width="100" height="250" as="geometry" />
         </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-17" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#C8FFA5;strokeColor=#102924;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-13">
-          <mxGeometry x="45" y="142" width="10" height="20" as="geometry" />
+        <mxCell id="qnNIa77OfZuT1cDfkHup-26" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#EB4B2D;strokeColor=#141419;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-13">
+          <mxGeometry x="45" y="140" width="10" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-18" value="forward event" style="html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;curved=0;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=5;fontFamily=ES Klarheit Kurrent RD;fontColor=#1E4132;fillColor=#C8FFA5;strokeColor=#102924;labelBackgroundColor=none;" edge="1" parent="qnNIa77OfZuT1cDfkHup-13" source="qnNIa77OfZuT1cDfkHup-15">
-          <mxGeometry x="-0.0072" relative="1" as="geometry">
-            <mxPoint x="-114" y="147" as="sourcePoint" />
-            <mxPoint x="45" y="147" as="targetPoint" />
+        <mxCell id="qnNIa77OfZuT1cDfkHup-14" value="&lt;div&gt;&amp;lt;&amp;lt;React&amp;gt;&amp;gt;&lt;/div&gt;&lt;div&gt;GamePage&lt;/div&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#C7CFEB;strokeColor=#141419;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="30" width="100" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="qnNIa77OfZuT1cDfkHup-20" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#EB4B2D;strokeColor=#141419;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-14">
+          <mxGeometry x="45" y="188" width="10" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="qnNIa77OfZuT1cDfkHup-16" value="send event via&amp;nbsp;&lt;div&gt;websocket&amp;nbsp;&lt;span style=&quot;background-color: initial;&quot;&gt;to client&lt;/span&gt;&lt;/div&gt;" style="html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;curved=0;rounded=0;fontFamily=ES Klarheit Kurrent RD;fontColor=#000000;fillColor=#C8FFA5;strokeColor=#102924;labelBackgroundColor=none;" edge="1" parent="1" source="qnNIa77OfZuT1cDfkHup-10" target="qnNIa77OfZuT1cDfkHup-15">
+          <mxGeometry x="0.0323" y="-29" relative="1" as="geometry">
+            <mxPoint x="724" y="171" as="sourcePoint" />
+            <mxPoint x="883" y="171" as="targetPoint" />
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-14" value="&lt;div&gt;&amp;lt;&amp;lt;React&amp;gt;&amp;gt;&lt;/div&gt;&lt;div&gt;GamePage&lt;/div&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#C7CFEB;strokeColor=#141419;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="1">
-          <mxGeometry x="1090" y="30" width="100" height="300" as="geometry" />
-        </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-20" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#C8FFA5;strokeColor=#102924;fontFamily=ES Klarheit Kurrent RD;" vertex="1" parent="qnNIa77OfZuT1cDfkHup-14">
-          <mxGeometry x="45" y="149" width="10" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="qnNIa77OfZuT1cDfkHup-21" value="forward event" style="html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;curved=0;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=5;fontFamily=ES Klarheit Kurrent RD;fontColor=#1E4132;fillColor=#C8FFA5;strokeColor=#102924;labelBackgroundColor=none;" edge="1" parent="qnNIa77OfZuT1cDfkHup-14" source="qnNIa77OfZuT1cDfkHup-17">
-          <mxGeometry x="-0.0072" relative="1" as="geometry">
-            <mxPoint x="-127" y="154" as="sourcePoint" />
-            <mxPoint x="45" y="154" as="targetPoint" />
+        <mxCell id="qnNIa77OfZuT1cDfkHup-23" value="&lt;span style=&quot;font-family: &amp;quot;ES Klarheit Kurrent RD&amp;quot;; font-size: 11px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: nowrap; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;forward event&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-family: &amp;quot;ES Klarheit Kurrent RD&amp;quot;; font-size: 11px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: nowrap; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;and new state&amp;nbsp;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-family: &amp;quot;ES Klarheit Kurrent RD&amp;quot;; font-size: 11px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: nowrap; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;to UI logic&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="html=1;verticalAlign=bottom;startArrow=oval;endArrow=block;startSize=8;curved=0;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=5;fontFamily=ES Klarheit Kurrent RD;fontColor=#000000;fillColor=#C8FFA5;strokeColor=#102924;labelBackgroundColor=none;" edge="1" parent="1">
+          <mxGeometry x="0.4865" relative="1" as="geometry">
+            <mxPoint x="1014.9999999999995" y="223" as="sourcePoint" />
+            <mxPoint x="1384.9999999999995" y="223" as="targetPoint" />
             <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qnNIa77OfZuT1cDfkHup-27" value="&lt;span style=&quot;font-family: &amp;quot;ES Klarheit Kurrent RD&amp;quot;;&quot;&gt;evolve current&lt;/span&gt;&lt;div style=&quot;font-family: &amp;quot;ES Klarheit Kurrent RD&amp;quot;;&quot;&gt;model with event&lt;/div&gt;" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=5;labelBackgroundColor=none;fontColor=#000000;" edge="1" target="qnNIa77OfZuT1cDfkHup-26" parent="1" source="qnNIa77OfZuT1cDfkHup-15">
+          <mxGeometry x="0.0084" relative="1" as="geometry">
+            <mxPoint x="1115" y="175" as="sourcePoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qnNIa77OfZuT1cDfkHup-28" value="&lt;font face=&quot;ES Klarheit Kurrent RD&quot;&gt;new read model state&lt;/font&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;exitX=0;exitY=1;exitDx=0;exitDy=-5;labelBackgroundColor=none;fontColor=#000000;" edge="1" source="qnNIa77OfZuT1cDfkHup-26" parent="1" target="qnNIa77OfZuT1cDfkHup-15">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1115" y="195" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
