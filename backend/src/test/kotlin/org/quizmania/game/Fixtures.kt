@@ -20,7 +20,9 @@ val PLAYER_ANSWER_3: GameQuestionId = UUID.randomUUID()
 
 val QUESTION_SET_ID: QuestionSetId = UUID.randomUUID().toString()
 val QUESTION_ID_1: QuestionSetId = UUID.randomUUID().toString()
+
 val QUESTION_ID_2: QuestionSetId = UUID.randomUUID().toString()
+val NOW: Instant = Instant.now()
 
 class GameCommandFixtures {
   companion object {
@@ -62,7 +64,8 @@ class GameCommandFixtures {
         gameId = GAME_UUID,
         gameQuestionId = gameQuestionId,
         username = username,
-        answer = answer
+        answer = answer,
+        answerTimestamp = NOW
       )
     }
 
@@ -132,7 +135,7 @@ class GameEventFixtures {
         gameId = GAME_UUID,
         gameQuestionId = gameQuestionId,
         gameQuestionNumber = gameQuestionNumber,
-        questionTimestamp = Instant.now(),
+        questionTimestamp = NOW,
         timeToAnswer = 10000,
         question = question,
         questionMode = mode,
@@ -150,7 +153,8 @@ class GameEventFixtures {
         gameQuestionId = gameQuestionId,
         gamePlayerId = gamePlayerId,
         playerAnswerId = playerAnswerId,
-        answer = answer
+        answer = answer,
+        timeToAnswer = 0,
       )
     }
     fun questionAnswerOverridden(

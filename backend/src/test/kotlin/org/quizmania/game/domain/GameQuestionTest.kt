@@ -10,6 +10,7 @@ import org.quizmania.game.command.application.domain.GameQuestion
 import org.quizmania.game.command.application.domain.PlayerAnswer
 import org.quizmania.question.api.EstimateQuestion
 import org.quizmania.question.api.FreeInputQuestion
+import java.time.Instant
 import java.util.*
 
 class GameQuestionTest {
@@ -26,6 +27,7 @@ class GameQuestionTest {
         correctAnswer = "100"
       ),
       GameQuestionMode.COLLECTIVE,
+      Instant.now(),
       mutableListOf(
         PlayerAnswer(PLAYER_ANSWER_1, GAME_PLAYER_1, "90"),
         PlayerAnswer(PLAYER_ANSWER_2, GAME_PLAYER_2, "98"),
@@ -66,6 +68,7 @@ class GameQuestionTest {
         correctAnswer = correctAnswer
       ),
       GameQuestionMode.COLLECTIVE,
+      Instant.now(),
       mutableListOf(PlayerAnswer(PLAYER_ANSWER_1, GAME_PLAYER_1, playerAnswer)),
     )
 
