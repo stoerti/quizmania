@@ -60,7 +60,7 @@ const App = () => {
         styleOverrides: {
           root: {
             borderRadius: '20px'
-          }
+          },
         },
       },
       MuiTable: {
@@ -75,6 +75,13 @@ const App = () => {
         styleOverrides: {
           root: {
             borderColor: '#102924',
+          }
+        }
+      },
+      MuiDialog: {
+        styleOverrides: {
+          paper: {
+            backgroundColor: '#c8ffa5'
           }
         }
       }

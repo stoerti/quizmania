@@ -20,6 +20,7 @@ import React from "react";
 import {Game} from "../../domain/GameModel";
 import {useSnackbar} from "material-ui-snackbar-provider";
 import {useUsername} from "../../hooks/useUsername.ts";
+import LeaveGameDialog from "../LeaveGameDialog.tsx";
 
 export type GameLobbyPageProps = {
   game: Game,
@@ -28,8 +29,9 @@ export type GameLobbyPageProps = {
 export const GameLobbyPage = (props: GameLobbyPageProps) => {
   const snackbar = useSnackbar()
   const {username} = useUsername()
+  const [leaveGameDialogOpen, setLeaveGameDialogOpen] = React.useState(false)
 
-  const onClickLeaveGame = async () => {
+  const onConfirmLeaveGame = async () => {
     try {
       await gameCommandService.leaveGame(props.game.id)
     } catch (error) {
@@ -64,6 +66,11 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
 
   return (
     <div>
+      <LeaveGameDialog
+        open={leaveGameDialogOpen}
+        onClose={() => setLeaveGameDialogOpen(false)}
+        onLeaveGame={onConfirmLeaveGame}
+      />
       <AppBar position="static">
         <Toolbar>
           <Typography
@@ -74,7 +81,7 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
             {props.game.name}
           </Typography>
           <Tooltip title="Leave game">
-            <IconButton color="inherit" onClick={onClickLeaveGame}>
+            <IconButton color="inherit" onClick={() => setLeaveGameDialogOpen(true)}>
               <Logout/>
             </IconButton>
           </Tooltip>

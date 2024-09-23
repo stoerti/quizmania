@@ -8,6 +8,7 @@ import Logout from "@mui/icons-material/Logout";
 import {gameCommandService, GameException} from "../../services/GameCommandService.tsx";
 import {useSnackbar} from "material-ui-snackbar-provider";
 import {useUsername} from "../../hooks/useUsername.ts";
+import LeaveGameDialog from "../LeaveGameDialog.tsx";
 
 
 export type GameRoomPageProps = {
@@ -16,16 +17,18 @@ export type GameRoomPageProps = {
 }
 
 export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
+  const [leaveGameDialogOpen, setLeaveGameDialogOpen] = React.useState(false)
+
   const snackbar = useSnackbar()
   const {username} = useUsername()
 
   const currentPlayer = game.players.find(player => player.name === username)
 
   let container
-  let onClickLeaveGame
+  let onConfirmLeaveGame
   if (game.moderator == username) {
     container = <ModeratorGameRoomPanel game={game}/>
-    onClickLeaveGame = async () => {
+    onConfirmLeaveGame = async () => {
       try {
         await gameCommandService.leaveGame(game.id)
       } catch (error) {
@@ -36,10 +39,10 @@ export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
     }
   } else if (!currentPlayer) {
     container = <SpectatorGameRoomPanel game={game}/>
-    onClickLeaveGame = onLeaveGame
+    onConfirmLeaveGame = onLeaveGame
   } else {
     container = <PlayerGameRoomPanel game={game} player={currentPlayer}/>
-    onClickLeaveGame = async () => {
+    onConfirmLeaveGame = async () => {
       try {
         await gameCommandService.leaveGame(game.id)
       } catch (error) {
@@ -52,13 +55,21 @@ export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
 
   return (
     <div>
+      <LeaveGameDialog
+        open={leaveGameDialogOpen}
+        onClose={() => setLeaveGameDialogOpen(false)}
+        onLeaveGame={onConfirmLeaveGame}
+      />
       <AppBar position="static">
         <Toolbar>
           <Typography sx={{flex: '1 1 100%'}} variant="h6" component="div">
             {game.name}{game.currentQuestion !== undefined ? "  -  Question " + game.currentQuestion.gameQuestionNumber + "/" + game.config.numQuestions : null}
           </Typography>
           <Tooltip title="Leave game">
-            <IconButton color="inherit" onClick={onClickLeaveGame}>
+            <IconButton color="inherit" onClick={() => {
+              console.log("Click on leave game")
+              setLeaveGameDialogOpen(true)
+            }}>
               <Logout/>
             </IconButton>
           </Tooltip>
