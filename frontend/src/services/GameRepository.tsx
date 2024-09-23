@@ -31,36 +31,23 @@ interface GameEventHandler {
 }
 
 export class GameRepository {
-  SOCKET_URL = (process.env.NODE_ENV == 'production') ?
-    ( window.location.protocol == 'https:' ? 'wss://' : 'ws://' )
-    + window.location.host + '/ws-message' : 'ws://localhost:8080/ws-message';
-
   client?: Client;
   currentGameState: Game | undefined
   lastReceivedSeqNo: number = -1
 
   public subscribeToGame(gameId: string, gameEventHandler: GameEventHandler) {
     if (this.client == null) {
-      this.findGame(gameId, () => {
-        this.client = new Client({
-          brokerURL: this.SOCKET_URL,
-          onConnect: () => {
-            this.client!.subscribe('/game/' + gameId, message => {
-              const wrapper: GameEventWrapper = JSON.parse(message.body);
-              console.log(wrapper)
-              this.handleEvent(wrapper, gameEventHandler)
-            })
-          },
-          onWebSocketError: (e: Event) => {
-            console.log(e)
-          }
-        });
-        this.client.activate();
-      })
+      // find
+      this.findGame(gameId, () => this.client = this.createStompClient(gameId, gameEventHandler))
     } else {
       console.log("Client already active - should not happen")
     }
   }
+
+  // STOMP connect URL
+  SOCKET_URL = (process.env.NODE_ENV == 'production') ?
+    (window.location.protocol == 'https:' ? 'wss://' : 'ws://')
+    + window.location.host + '/ws-message' : 'ws://localhost:8080/ws-message';
 
   public unsubscribeFromGame() {
     if (this.client != null) {
@@ -71,16 +58,6 @@ export class GameRepository {
     } else {
       console.log("Client not active")
     }
-  }
-
-  private handleEvent(wrappedEvent: GameEventWrapper, gameEventHandler: GameEventHandler) {
-    if (wrappedEvent.sequenceNumber <= this.lastReceivedSeqNo) {
-      console.log("Ignoring event with SeqNo ", wrappedEvent.sequenceNumber)
-      return
-    }
-    this.lastReceivedSeqNo = wrappedEvent.sequenceNumber
-    this.currentGameState = this.currentGameState!.onGameEvent(wrappedEvent.payload, wrappedEvent.eventType)
-    gameEventHandler.onGameEvent(wrappedEvent.payload, wrappedEvent.eventType, this.currentGameState)
   }
 
   public findGame(gameId: string, successHandler: (game: Game) => void, errorHandler: () => void = () => {
@@ -97,10 +74,7 @@ export class GameRepository {
           console.log("game does no exist");
           errorHandler()
         } else {
-          let game = new Game(events[0].payload as GameCreatedEvent)
-          for (let i = 1; i < events.length; i++) {
-            game = game.onGameEvent(events[i].payload, events[i].eventType)
-          }
+          const game = this.initializeGameModel(events);
           this.currentGameState = game
 
           successHandler(game)
@@ -110,6 +84,58 @@ export class GameRepository {
         console.log(err.message);
         errorHandler()
       });
+  }
+
+  /**
+   * Creates a STOMP-JS client and subscribes to messages on specified game channel
+
+   * @param gameId the game to subscribe
+   * @param gameEventHandler the event handler to forward the event and current state to
+   * @return the activated client
+   */
+  private createStompClient(gameId: string, gameEventHandler: GameEventHandler): Client {
+    const client = new Client({
+      brokerURL: this.SOCKET_URL,
+      onConnect: () => {
+        this.client!.subscribe('/game/' + gameId, message => {
+          const wrapper: GameEventWrapper = JSON.parse(message.body);
+          this.handleEvent(wrapper, gameEventHandler)
+        })
+      },
+      onWebSocketError: (e: Event) => {
+        console.log(e)
+      }
+    });
+    client.activate();
+
+    return client;
+  }
+
+  /**
+   * Uses the given wrapped event to evolve the current read model state to the next one.
+   * @param wrappedEvent the wrapped GameEvent
+   * @param gameEventHandler the eventHandler to forward the result to
+   */
+  private handleEvent(wrappedEvent: GameEventWrapper, gameEventHandler: GameEventHandler) {
+    if (wrappedEvent.sequenceNumber <= this.lastReceivedSeqNo) {
+      console.log("Ignoring duplicate event with SeqNo ", wrappedEvent.sequenceNumber)
+    } else {
+      this.lastReceivedSeqNo = wrappedEvent.sequenceNumber
+      // evolve read model to next state
+      this.currentGameState = this.currentGameState!.onGameEvent(wrappedEvent.payload, wrappedEvent.eventType)
+      // forward event and new read model state to the eventHandler
+      gameEventHandler.onGameEvent(wrappedEvent.payload, wrappedEvent.eventType, this.currentGameState)
+    }
+  }
+
+  private initializeGameModel(events: GameEventWrapper[]) {
+    // use first event to initialize read model
+    let game = new Game(events[0].payload as GameCreatedEvent)
+    // iterate over all following events to evolve the current read model state
+    for (let i = 1; i < events.length; i++) {
+      game = game.onGameEvent(events[i].payload, events[i].eventType)
+    }
+    return game;
   }
 }
 
