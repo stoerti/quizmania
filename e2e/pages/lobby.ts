@@ -5,8 +5,8 @@ export function createGame(gameName: string, questionSet: string, moderated: boo
 
   I.fillField({id: "gameName"}, gameName)
   I.fillField({id: "maxPlayers"}, 50)
-  I.fillField({id: "numQuestions"}, 3)
-  I.fillField({id: "numSecondsToAnswer"}, 5)
+  I.fillField({id: "numQuestions"}, 5)
+  I.fillField({id: "numSecondsToAnswer"}, 300)
 
   I.click({id: 'questionSet'})
   I.click({xpath: '//ul//li[@data-value="'+questionSet+'"]'})

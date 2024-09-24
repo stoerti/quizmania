@@ -3,8 +3,8 @@
     "id": "axonconf_01",
     "type": "CHOICE",
     "phrase": "Which EventProcessor can process events in the same UnitOfWork as they are published?",
-    "correctAnswer": "SubscribingEventProcessor",
-    "answerOptions": ["PooledStreamingEventProcessor", "TrackingEventProcessor", "SubscribingEventProcessor"]
+    "correctAnswer": "Subscribing EventProcessor",
+    "answerOptions": ["PooledStreaming EventProcessor", "Tracking EventProcessor", "Subscribing EventProcessor"]
   },
   {
     "id": "axonconf_02",

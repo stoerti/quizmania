@@ -30,15 +30,19 @@ Scenario('multiplayer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
 
 Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   let gameName = "Game " + Math.floor(Math.random() * 100000)
-  let moderator = "Moderator " + Math.floor(Math.random() * 100000)
-  let username1 = "User " + Math.floor(Math.random() * 100000)
-  let username2 = "User " + Math.floor(Math.random() * 100000)
-  let username3 = "User " + Math.floor(Math.random() * 100000)
+//  let moderator = "Moderator " + Math.floor(Math.random() * 100000)
+//  let username1 = "User " + Math.floor(Math.random() * 100000)
+//  let username2 = "User " + Math.floor(Math.random() * 100000)
+//  let username3 = "User " + Math.floor(Math.random() * 100000)
+  let moderator = "Moderator"
+  let username1 = "Alice"
+  let username2 = "Bob"
+  let username3 = "John Doe"
 
   loginPage.logInWithUsername(moderator)
   I.wait(1)
 
-  lobbyPage.createGame(gameName, "werkstatt", true)
+  lobbyPage.createGame(gameName, "axoniq_conf", true)
   I.wait(1)
 
   session('player1', () => {
@@ -131,7 +135,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
 
 Scenario('many_multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   const gameName = "Game " + Math.floor(Math.random() * 100000)
-  const numPlayers = 50
+  const numPlayers = 30
 
   const moderator = "Moderator " + Math.floor(Math.random() * 100000)
   const players = [...Array(numPlayers)].map((_, index) => { return "User "+index + Math.floor(Math.random() * 100000)})
@@ -162,7 +166,7 @@ Scenario('many_multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage})
 
   players.forEach((player, index) => {
     session('player'+index, () => {
-      gameRoomPage.answerChoiceQuestion(Math.random() < 0.5 ? "Banone" : "Gürkin")
+      gameRoomPage.answerChoiceQuestion(Math.random() < 0.5 ? "9" : "7")
     })
   })
 

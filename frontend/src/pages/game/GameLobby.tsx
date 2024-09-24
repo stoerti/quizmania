@@ -110,9 +110,9 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
         </List>
         {startButton}
         <Typography variant="h6" component="div" sx={{pl: 2}}>
-          Participants
+          Participants ({props.game.players.length})
         </Typography>
-        <List dense={false}>
+        <List dense={true}>
           {props.game.players.map((row) => (
             <ListItem key={row.id}>
               <ListItemIcon>

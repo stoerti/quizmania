@@ -11,7 +11,7 @@ export const PlayerAnswerLog = ({game}: PlayerAnswerLogProps) => {
 
   const lastQuestion = game.currentQuestion!
 
-  return <Table aria-label="simple table">
+  return <Table aria-label="simple table" size={"small"}>
     <TableHead>
       <TableRow>
         <TableCell></TableCell>
@@ -24,7 +24,7 @@ export const PlayerAnswerLog = ({game}: PlayerAnswerLogProps) => {
         if (lastQuestion.hasPlayerAlreadyAnswered(player.id)) {
           icon = <MarkEmailRead color='success'/>
         } else {
-          icon = <QuestionMark color='info'/>
+          icon = <QuestionMark color='error'/>
         }
         return (
           <TableRow key={player.id} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
