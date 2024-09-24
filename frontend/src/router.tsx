@@ -3,7 +3,7 @@ import LoginPage from "./pages/Login.tsx";
 import GameSelectionPage from "./pages/GameSelectionPage.tsx";
 import GamePage from "./pages/game/GamePage.tsx";
 import LogoutPage from "./pages/LogoutPage.tsx";
-import { createBrowserRouter } from "react-router-dom";
+import {createBrowserRouter, createHashRouter} from "react-router-dom";
 
 const routes: RouteObject[] = [
   {
@@ -24,4 +24,4 @@ const routes: RouteObject[] = [
   }
 ]
 
-export const router = createBrowserRouter(routes);
+export const router = createHashRouter(routes);
