@@ -17,12 +17,14 @@ class QuestionSetController(
   @GetMapping("/")
   fun findAll(): ResponseEntity<List<QuestionSetDto>> {
     return ResponseEntity.ok(
-      questionPort.findAllQuestionSets().map { QuestionSetDto(
-        id = it.id,
-        name = it.name,
-        minPlayers = it.minPlayers,
-        numQuestions = it.questions.size
-      ) }
+      questionPort.findAllQuestionSets().map {
+        QuestionSetDto(
+          id = it.id,
+          name = it.name,
+          minPlayers = if (it.rounds.any { it.roundConfig.useBuzzer }) 2 else 1,
+          numQuestions = it.rounds.sumOf { it.questions.size }
+        )
+      }
     )
   }
 }

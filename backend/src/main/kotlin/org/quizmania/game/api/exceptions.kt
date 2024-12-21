@@ -22,11 +22,20 @@ class UsernameTakenProblem(gameId: UUID) :
 class GameAlreadyFullProblem(gameId: UUID) :
         GameProblem(gameId, "urn:quizmania:game:alreadyFull", "Game already full")
 
+class GameNotStartedProblem(gameId: UUID) :
+  GameProblem(gameId, "urn:quizmania:game:notStarted", "Game has not started")
+
 class GameAlreadyStartedProblem(gameId: UUID) :
   GameProblem(gameId, "urn:quizmania:game:alreadyStarted", "Game has already started")
 
 class GameAlreadyEndedProblem(gameId: UUID) :
   GameProblem(gameId, "urn:quizmania:game:alreadyEnded", "Game has already ended")
+
+class RoundAlreadyStartedProblem(gameId: UUID) :
+  GameProblem(gameId, "urn:quizmania:game:roundAlreadyStarted", "Round has already started")
+
+class RoundAlreadyClosedProblem(gameId: UUID) :
+  GameProblem(gameId, "urn:quizmania:game:alreadyEnded", "Round has already ended")
 
 class OtherQuestionStillOpenProblem(gameId: UUID) :
   GameProblem(gameId, "urn:quizmania:game:questionStillOpen", "Another question is still open")

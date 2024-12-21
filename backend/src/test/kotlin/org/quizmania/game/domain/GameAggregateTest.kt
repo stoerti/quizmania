@@ -19,6 +19,7 @@ import org.quizmania.game.GameEventFixtures.Companion.playerRemoved
 import org.quizmania.game.GameEventFixtures.Companion.questionAnswerOverridden
 import org.quizmania.game.GameEventFixtures.Companion.questionAnswered
 import org.quizmania.game.GameEventFixtures.Companion.questionAsked
+import org.quizmania.game.GameEventFixtures.Companion.roundStarted
 import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
 import org.quizmania.game.QuestionFixtures.Companion.estimateQuestion
 import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
@@ -47,7 +48,7 @@ class GameAggregateTest {
 
     fixture.givenNoPriorActivity()
       .`when`(GameCommandFixtures.createGame())
-      .expectEvents(gameCreated(config = GameConfig(questionSetId = QUESTION_SET_ID, numQuestions = 2)))
+      .expectEvents(gameCreated(config = GameConfig(questionSetId = QUESTION_SET_ID)))
   }
 
   @Test
@@ -93,11 +94,12 @@ class GameAggregateTest {
     val question = choiceQuestion()
     whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
 
+    fixture.registerIgnoredField(RoundStartedEvent::class.java, "gameRoundId")
     fixture.registerIgnoredField(QuestionAskedEvent::class.java, "gameQuestionId")
     fixture.registerIgnoredField(QuestionAskedEvent::class.java, "questionTimestamp")
     fixture.given(gameCreated(), playerAdded(USERNAME_1, GAME_PLAYER_1), playerAdded(USERNAME_2, GAME_PLAYER_2))
       .`when`(startGame())
-      .expectEvents(gameStarted(), questionAsked(UUID.randomUUID(), 1, question))
+      .expectEvents(gameStarted(), roundStarted(), questionAsked(UUID.randomUUID(), 1, 1, question))
   }
 
   @Test
@@ -110,7 +112,8 @@ class GameAggregateTest {
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
       gameStarted(),
-      questionAsked(GAME_QUESTION_1, 1, question)
+      roundStarted(),
+      questionAsked(GAME_QUESTION_1, 1, 1, question)
     )
       .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_1, "Answer 1"))
       .expectEvents(questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "Answer 1"))
@@ -126,7 +129,8 @@ class GameAggregateTest {
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
       gameStarted(),
-      questionAsked(GAME_QUESTION_1, 1, question),
+      roundStarted(),
+      questionAsked(GAME_QUESTION_1, 1, 1, question),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "Answer 1")
     )
       .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2"))
@@ -147,7 +151,8 @@ class GameAggregateTest {
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
       gameStarted(),
-      questionAsked(GAME_QUESTION_1, 1, question),
+      roundStarted(),
+      questionAsked(GAME_QUESTION_1, 1, 1, question),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "Answer 1")
     )
       .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2"))
@@ -167,13 +172,35 @@ class GameAggregateTest {
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
       gameStarted(),
-      questionAsked(GAME_QUESTION_1, 1, question),
+      roundStarted(),
+      questionAsked(GAME_QUESTION_1, 1, 1, question),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "Answer 1"),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "Answer 2"),
     )
       .`when`(scoreQuestion(GAME_QUESTION_1))
       .expectEvents(
         QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_PLAYER_1 to 10))
+      )
+  }
+
+  @Test
+  fun rateFreeInputBuzzerQuestion_complete_ok() {
+    val question = freeInputQuestion()
+
+    fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "playerAnswerId")
+    fixture.given(
+      gameCreated(moderator = "Some moderator"),
+      playerAdded(USERNAME_1, GAME_PLAYER_1),
+      playerAdded(USERNAME_2, GAME_PLAYER_2),
+      gameStarted(),
+      roundStarted(),
+      questionAsked(GAME_QUESTION_1, 1, 1, question, GameQuestionMode.BUZZER),
+      questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "Answer 1"),
+      questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "Answer 2"),
+    )
+      .`when`(scoreQuestion(GAME_QUESTION_1))
+      .expectEvents(
+        QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_PLAYER_1 to 20, GAME_PLAYER_2 to -10))
       )
   }
 
@@ -188,7 +215,8 @@ class GameAggregateTest {
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
       gameStarted(),
-      questionAsked(GAME_QUESTION_1, 1, question),
+      roundStarted(),
+      questionAsked(GAME_QUESTION_1, 1, 1, question),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "Answer 1"),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, questionAnswerId, "Answer 2"),
       questionAnswerOverridden(GAME_QUESTION_1, GAME_PLAYER_2, questionAnswerId, "Answer 1"),
@@ -209,7 +237,8 @@ class GameAggregateTest {
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
       gameStarted(),
-      questionAsked(GAME_QUESTION_1, 1, question),
+      roundStarted(),
+      questionAsked(GAME_QUESTION_1, 1, 1, question),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "80")
     )
       .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_2, "150"))

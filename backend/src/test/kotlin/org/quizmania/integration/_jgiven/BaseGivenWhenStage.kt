@@ -37,7 +37,6 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
   ) = `a game is created`(
     username = username, gameConfig = GameConfig(
       maxPlayers = 2,
-      numQuestions = 2,
       questionSetId = TestFixtures.QUESTION_SET_DEFAULT
     )
   )
@@ -48,7 +47,6 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
   ) = `a game is created`(
     username = username, gameConfig = GameConfig(
       maxPlayers = 2,
-      numQuestions = 2,
       questionSetId = questionSetId
     ),
     moderated = true

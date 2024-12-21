@@ -63,7 +63,7 @@ export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
       <AppBar position="static">
         <Toolbar>
           <Typography sx={{flex: '1 1 100%'}} variant="h6" component="div">
-            {game.name}{game.currentQuestion !== undefined ? "  -  Question " + game.currentQuestion.gameQuestionNumber + "/" + game.config.numQuestions : null}
+            {game.name}{game.currentQuestion !== undefined ? "  -  Question " + game.currentQuestion.roundQuestionNumber + "/" + game.currentRound?.numQuestions : null}
           </Typography>
           <Tooltip title="Leave game">
             <IconButton color="inherit" onClick={() => {

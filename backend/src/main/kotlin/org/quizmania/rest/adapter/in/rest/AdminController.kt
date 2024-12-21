@@ -77,7 +77,6 @@ class AdminController(
                     name = gameName,
                     config = GameConfig(
                         maxPlayers = maxPlayers,
-                        numQuestions = 10,
                         questionSetId = "test01"
                     ),
                     creatorUsername = shuffledPlayers[1],

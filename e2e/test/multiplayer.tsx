@@ -42,7 +42,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   loginPage.logInWithUsername(moderator)
   I.wait(1)
 
-  lobbyPage.createGame(gameName, "axoniq_conf", true)
+  lobbyPage.createGame(gameName, "test01", true)
   I.wait(1)
 
   session('player1', () => {
@@ -64,27 +64,27 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.waitForText(username2)
   I.waitForText(username3)
 
-  I.wait(5000)
+  I.wait(4)
 
   gameRoomPage.startGame()
 
-  I.wait(1000)
+  I.wait(4)
   session('player1', () => {
-    gameRoomPage.answerChoiceQuestion("Banone")
+    gameRoomPage.answerChoiceQuestion("3")
   })
 
   I.wait(1)
   session('player2', () => {
-    gameRoomPage.answerChoiceQuestion("Banone")
+    gameRoomPage.answerChoiceQuestion("9")
   })
   I.wait(1)
   session('player3', () => {
-    gameRoomPage.answerChoiceQuestion("Gürkin")
+    gameRoomPage.answerChoiceQuestion("7")
   })
 
-  I.waitForText("Banone", 5, "tr:has-text('"+username1+"')")
-  I.waitForText("Banone", 5, "tr:has-text('"+username2+"')")
-  I.waitForText("Gürkin", 5, "tr:has-text('"+username3+"')")
+  I.waitForText("3", 5, "tr:has-text('"+username1+"')")
+  I.waitForText("9", 5, "tr:has-text('"+username2+"')")
+  I.waitForText("7", 5, "tr:has-text('"+username3+"')")
 
   I.wait(3)
 
@@ -107,7 +107,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.waitForText("900", 5, "tr:has-text('"+username2+"')")
   I.waitForText("1000", 5, "tr:has-text('"+username3+"')")
 
-  I.wait(10000)
+  I.wait(4)
   gameRoomPage.nextQuestion()
 
   session('player1', () => {
@@ -116,7 +116,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   session('player2', () => {
     gameRoomPage.answerFreeQuestion("NielArmstrong")
   })
-  I.wait(6)
+  I.wait(10)
 
   I.waitForText("Neil armstrong", 5, "tr:has-text('"+username1+"')")
   I.waitForText("NielArmstrong", 5, "tr:has-text('"+username2+"')")

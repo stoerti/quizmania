@@ -109,13 +109,20 @@ function gameCreatedEvent(): GameCreatedEvent {
     name: "Game 1",
     config: {
       maxPlayers: 10,
-      numQuestions: 10,
       secondsToAnswer: 10,
       questionSetId: "questionSet1",
-      useBuzzer: true
     },
     creatorUsername: "player1",
     moderatorUsername: undefined,
+    rounds: [
+      {
+        name: "Round 1",
+        roundConfig: {
+          useBuzzer: true,
+        },
+        questions: []
+      }
+    ]
   }
 }
 
@@ -145,7 +152,8 @@ function questionAsked(id: string, number: number, phrase: string, answer: strin
   return {
     gameId: "game1",
     gameQuestionId: id,
-    gameQuestionNumber: number,
+    roundNumber: number,
+    roundQuestionNumber: number,
     questionTimestamp: new Date().toISOString(),
     timeToAnswer: 10000,
     questionMode: GameQuestionMode.BUZZER,

@@ -1,6 +1,5 @@
 package org.quizmania.game.command.application.domain
 
-import org.axonframework.eventhandling.Timestamp
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.modelling.command.AggregateLifecycle
 import org.axonframework.modelling.command.EntityId
@@ -17,7 +16,7 @@ data class GameQuestion(
 
   @EntityId(routingKey = "gameQuestionId")
   val id: GameQuestionId,
-  val number: GameQuestionNumber,
+  val number: RoundQuestionNumber,
   val question: Question,
   val questionMode: GameQuestionMode,
   val questionAskedTimestamp: Instant,
@@ -237,6 +236,10 @@ data class GameQuestion(
   }
 
   fun rateQuestion() {
+    if (isRated()) {
+      throw QuestionAlreadyClosedProblem(gameId, id)
+    }
+
     val points = resolvePoints()
     AggregateLifecycle.apply(
       QuestionScoredEvent(
@@ -256,11 +259,19 @@ data class GameQuestion(
   }
 
   internal fun resolvePointsChoiceQuestion(): Map<GamePlayerId, Int> {
+    if (questionMode == GameQuestionMode.BUZZER) {
+      return playerAnswers.associate { it.gamePlayerId to if (it.answer == question.correctAnswer) 20 else -10 }
+    }
+
     return playerAnswers.filter { it.answer == question.correctAnswer }
       .associate { it.gamePlayerId to 10 }
   }
 
   internal fun resolvePointsFreeInputQuestion(): Map<GamePlayerId, Int> {
+    if (questionMode == GameQuestionMode.BUZZER) {
+      return playerAnswers.associate { it.gamePlayerId to if (it.answer == question.correctAnswer) 20 else -10 }
+    }
+
     return playerAnswers.filter {
       cleanupAnswerString(it.answer) == cleanupAnswerString(question.correctAnswer)
     }

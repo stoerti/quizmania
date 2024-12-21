@@ -2,6 +2,8 @@ package org.quizmania.game.api
 
 import org.quizmania.question.api.Question
 import org.quizmania.question.api.QuestionId
+import org.quizmania.question.api.Round
+import org.quizmania.question.api.RoundConfig
 import java.time.Instant
 import java.util.*
 
@@ -22,7 +24,7 @@ data class GameCreatedEvent(
   override val gameId: GameId,
   val name: String,
   val config: GameConfig,
-  val questionList: List<QuestionId>,
+  val rounds: List<Round>,
   val creatorUsername: String,
   val moderatorUsername: String?,
 ) : GameEvent
@@ -51,10 +53,30 @@ data class GameCanceledEvent(
   override val gameId: GameId,
 ) : GameEvent
 
+data class RoundStartedEvent(
+  override val gameId: GameId,
+  val gameRoundId: GameRoundId,
+  val roundNumber: Int,
+  val roundName: String,
+  val roundConfig: RoundConfig,
+  val questions: List<QuestionId>,
+) : GameEvent
+
+data class RoundScoredEvent(
+  override val gameId: GameId,
+  val gameRoundId: GameRoundId,
+) : GameEvent
+
+data class RoundClosedEvent(
+  override val gameId: GameId,
+  val gameRoundId: GameRoundId,
+) : GameEvent
+
 data class QuestionAskedEvent(
   override val gameId: GameId,
   override val gameQuestionId: GameQuestionId,
-  val gameQuestionNumber: GameQuestionNumber,
+  val roundNumber: GameRoundNumber,
+  val roundQuestionNumber: RoundQuestionNumber,
   val questionMode: GameQuestionMode,
   val questionTimestamp: Instant,
   val timeToAnswer: Long,

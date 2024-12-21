@@ -35,6 +35,23 @@ data class StartGameCommand(
     override val gameId: UUID,
 ): GameCommand
 
+data class StartNextRoundCommand(
+    @TargetAggregateIdentifier
+    override val gameId: UUID,
+): GameCommand
+
+data class ScoreRoundCommand(
+    @TargetAggregateIdentifier
+    override val gameId: UUID,
+): GameCommand
+
+data class CloseRoundCommand(
+    @TargetAggregateIdentifier
+    override val gameId: UUID,
+): GameCommand
+
+
+
 data class AnswerQuestionCommand(
     @TargetAggregateIdentifier
     override val gameId: UUID,

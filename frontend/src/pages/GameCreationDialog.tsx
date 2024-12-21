@@ -29,21 +29,15 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
     const data = new FormData(event.currentTarget);
 
     const gameName: string = data.get('gameName')!.toString()
-    const maxPlayers: number = parseInt(data.get('maxPlayers')!.toString())
-    const numQuestions: number = parseInt(data.get('numQuestions')!.toString())
     const numSecondsToAnswer: number = parseInt(data.get('numSecondsToAnswer')!.toString())
     const questionSetId: string = data.get('questionSet')!.toString()
     const withModerator: boolean = data.get('moderator') === 'on'
-    const useBuzzer: boolean = data.get('useBuzzer') === 'on'
 
     onCreateGame({
       name: gameName,
       config: {
-        maxPlayers: maxPlayers,
-        numQuestions: numQuestions,
         questionSetId: questionSetId,
         secondsToAnswer: numSecondsToAnswer,
-        useBuzzer: useBuzzer
       },
       withModerator: withModerator
     })
@@ -71,24 +65,6 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
           <TextField margin="dense"
                      required
                      fullWidth
-                     id="maxPlayers"
-                     label="Number of players"
-                     name="maxPlayers"
-                     type="number"
-                     defaultValue="5"
-          />
-          <TextField margin="dense"
-                     required
-                     fullWidth
-                     id="numQuestions"
-                     label="Number of questions"
-                     name="numQuestions"
-                     type="number"
-                     defaultValue="10"
-          />
-          <TextField margin="dense"
-                     required
-                     fullWidth
                      id="numSecondsToAnswer"
                      label="Question timer"
                      name="numSecondsToAnswer"
@@ -109,8 +85,6 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
           </Select>
           <FormControlLabel control={<Switch id="moderator" name="moderator" defaultValue="false"/>}
                             label="Moderator"/>
-          <FormControlLabel control={<Switch id="useBuzzer" name="useBuzzer" defaultValue="false"/>}
-                            label="Use buzzer"/>
           <Button
             id="createGameSubmit"
             type="submit"

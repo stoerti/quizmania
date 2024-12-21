@@ -10,7 +10,7 @@ import {
   QuestionClosedEvent,
   QuestionScoredEvent,
   PlayerJoinedGameEvent,
-  PlayerLeftGameEvent
+  PlayerLeftGameEvent, RoundStartedEvent, RoundConfig, RoundScoredEvent, RoundClosedEvent
 } from "../services/GameEventTypes";
 import {GameEventType} from "../services/GameRepository";
 
@@ -19,6 +19,12 @@ export enum GameStatus {
   STARTED = 'STARTED',
   ENDED = 'ENDED',
   CANCELED = 'CANCELED'
+}
+
+export enum RoundStatus {
+  OPEN = 'OPEN',
+  CLOSED = 'CLOSED',
+  SCORED = 'SCORED',
 }
 
 export enum QuestionStatus {
@@ -36,8 +42,9 @@ export class Game {
   readonly moderator: string | undefined;
   readonly status: GameStatus;
   readonly players: Player[];
-  readonly numQuestions: number = 0;
+  readonly totalQuestions: number;
   readonly currentQuestion: GameQuestion | undefined;
+  readonly currentRound: GameRound | undefined;
 
   constructor(event: GameCreatedEvent) {
     this.id = event.gameId
@@ -46,6 +53,7 @@ export class Game {
     this.creator = event.creatorUsername
     this.moderator = event.moderatorUsername
     this.status = GameStatus.CREATED
+    this.totalQuestions = event.rounds.reduce((acc, round) => acc + round.questions.length, 0)
     this.players = []
   }
 
@@ -61,6 +69,12 @@ export class Game {
         return this.onGameEnded(event as GameEndedEvent)
       case "GameCanceledEvent":
         return this.onGameCanceled(event as GameCanceledEvent)
+      case "RoundStartedEvent":
+        return this.onRoundStarted(event as RoundStartedEvent)
+      case "RoundScoredEvent":
+        return this.onRoundScored(event as RoundScoredEvent)
+      case "RoundClosedEvent":
+        return this.onRoundClosed(event as RoundClosedEvent)
       case "PlayerJoinedGameEvent":
         return this.onPlayerJoined(event as PlayerJoinedGameEvent)
       case "PlayerLeftGameEvent":
@@ -119,9 +133,31 @@ export class Game {
     })
   }
 
+  public onRoundStarted(event: RoundStartedEvent): Game {
+    return this.copyWith({
+      currentRound:
+        new GameRound(event, this.players)
+    })
+  }
+
+  public onRoundScored(event: RoundScoredEvent): Game {
+    return this.copyWith({
+      currentRound: this.currentRound?.copyWith({
+        status: RoundStatus.SCORED
+      })
+    })
+  }
+
+  public onRoundClosed(event: RoundClosedEvent): Game {
+    return this.copyWith({
+      currentQuestion: undefined,
+      currentRound: undefined
+    })
+  }
+
   public onQuestionAsked(event: QuestionAskedEvent): Game {
     return this.copyWith({
-      numQuestions: this.numQuestions + 1,
+      totalQuestions: this.totalQuestions + 1,
       currentQuestion:
         new GameQuestion(event)
     })
@@ -188,7 +224,8 @@ export class Game {
     })
 
     return game.copyWith({
-      players: newPlayers
+      players: newPlayers,
+      currentRound: game.currentRound?.onQuestionScored(event)
     })
   }
 
@@ -202,13 +239,62 @@ export class Game {
 
   public findAverageAnswerTime(gamePlayerId: string): number {
     const totalAnswerTime = this.players.find(player => player.id === gamePlayerId)?.totalAnswerTime ?? 0
-    return totalAnswerTime / this.numQuestions
+    return totalAnswerTime / this.totalQuestions
+  }
+}
+
+
+export class GameRound {
+  readonly gameRoundId: string;
+  readonly roundNumber: number;
+  readonly roundName: string;
+  readonly status: RoundStatus;
+  readonly roundConfig: RoundConfig;
+  readonly players: Player[];
+  readonly numQuestions: number;
+
+  constructor(event: RoundStartedEvent, players: Player[]) {
+    this.gameRoundId = event.gameRoundId
+    this.roundNumber = event.roundNumber
+    this.roundName = event.roundName
+    this.status = RoundStatus.OPEN
+    this.roundConfig = event.roundConfig
+    this.numQuestions = event.questions.length
+    // copy players with 0 points
+    this.players = players.map(player => new Player(player.id, player.name))
+  }
+
+  public copyWith(modifyObject: { [P in keyof GameRound]?: GameRound[P] }): GameRound {
+    return Object.assign(Object.create(GameRound.prototype), {...this, ...modifyObject});
+  }
+
+  public onQuestionScored(event: QuestionScoredEvent): GameRound {
+    const newPlayers = this.players.map(player => {
+      if (event.points[player.id] != undefined) {
+        return {
+          ...player,
+          points: player.points + event.points[player.id]
+        }
+      } else {
+        return player
+      }
+    })
+
+    return this.copyWith({
+      players: newPlayers
+    })
+  }
+
+  public onRoundScored(event: RoundScoredEvent): GameRound {
+    return this.copyWith({
+      status: RoundStatus.SCORED
+    })
   }
 }
 
 export class GameQuestion {
   readonly gameQuestionId: string;
-  readonly gameQuestionNumber: number;
+  readonly roundQuestionNumber: number;
   readonly question: Question;
   readonly questionMode: GameQuestionMode;
   readonly answers: Answer[] = [];
@@ -220,7 +306,7 @@ export class GameQuestion {
 
   constructor(event: QuestionAskedEvent) {
     this.gameQuestionId = event.gameQuestionId
-    this.gameQuestionNumber = event.gameQuestionNumber
+    this.roundQuestionNumber = event.roundQuestionNumber
     this.question = event.question
     this.questionMode = event.questionMode
     this.status = QuestionStatus.OPEN

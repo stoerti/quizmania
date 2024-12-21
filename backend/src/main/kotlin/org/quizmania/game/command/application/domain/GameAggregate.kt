@@ -12,9 +12,8 @@ import org.axonframework.modelling.command.*
 import org.axonframework.spring.stereotype.Aggregate
 import org.quizmania.game.api.*
 import org.quizmania.game.command.port.out.QuestionPort
-import org.quizmania.question.api.QuestionId
+import org.quizmania.question.api.Round
 import java.time.Duration
-import java.time.Instant
 import java.util.*
 
 @Aggregate
@@ -31,15 +30,13 @@ internal class GameAggregate() {
   @AggregateIdentifier
   private lateinit var gameId: UUID
   private lateinit var config: GameConfig
-  private lateinit var questionList: List<QuestionId>
-  private var questionsAsked: Int = 0
+  private lateinit var roundList: List<Round>
   private var moderatorUsername: String? = null
   private var gameStatus: GameStatus = GameStatus.CREATED
-
   private var players: MutableList<Player> = mutableListOf()
 
-  @AggregateMember(eventForwardingMode = ForwardMatchingInstances::class)
-  private var askedQuestions: MutableList<GameQuestion> = mutableListOf()
+  private var finishedRounds: Int = 0
+  private var currentRound: GameRound? = null
 
   @CommandHandler
   @CreationPolicy(AggregateCreationPolicy.ALWAYS)
@@ -47,9 +44,7 @@ internal class GameAggregate() {
     logger.info { "Executing CreateGameCommand for game ${command.gameId}" }
 
     val questionSet = questionPort.getQuestionSet(command.config.questionSetId)
-    val realNumQuestions = command.config.numQuestions.coerceAtMost(questionSet.questions.size)
-
-    if (command.config.useBuzzer && command.moderatorUsername == null) {
+    if (questionSet.rounds.any { it.roundConfig.useBuzzer } && command.moderatorUsername == null) {
       throw InvalidConfigProblem(command.gameId, "Buzzer game needs a moderator")
     }
 
@@ -57,10 +52,8 @@ internal class GameAggregate() {
       GameCreatedEvent(
         command.gameId,
         command.name,
-        command.config.copy(
-          numQuestions = realNumQuestions // adjust question number to questionSet
-        ),
-        questionSet.questions.take(realNumQuestions),
+        command.config,
+        questionSet.rounds,
         command.creatorUsername,
         command.moderatorUsername
       )
@@ -113,8 +106,7 @@ internal class GameAggregate() {
             GameCanceledEvent(gameId)
           )
         } else if (gameStatus == GameStatus.STARTED) {
-          val openQuestion = getCurrentQuestion()
-          openQuestion?.removePlayer(player.gamePlayerId)
+          currentRound?.removePlayer(player.gamePlayerId)
         }
       }
     }
@@ -123,7 +115,7 @@ internal class GameAggregate() {
   @CommandHandler
   fun handle(command: StartGameCommand, questionPort: QuestionPort, deadlineManager: DeadlineManager) {
     logger.info { "Executing StartGameCommand for game ${command.gameId}" }
-    if (config.useBuzzer && this.players.size < 2) {
+    if (roundList.any { it.roundConfig.useBuzzer } && this.players.size < 2) {
       throw InvalidConfigProblem(this.gameId, "Buzzer game needs at least two players")
     }
     if (this.gameStatus != GameStatus.CREATED) {
@@ -131,7 +123,50 @@ internal class GameAggregate() {
     }
 
     AggregateLifecycle.apply(GameStartedEvent(command.gameId))
-    askNextQuestion(questionPort, deadlineManager)
+    startNextRound()
+
+    if (this.roundList.size == 1) {
+      askNextQuestion(questionPort, deadlineManager)
+    }
+  }
+
+  @CommandHandler
+  fun handle(command: StartNextRoundCommand) {
+    logger.info { "Executing StartNextRoundCommand for game ${command.gameId}" }
+    if (this.gameStatus != GameStatus.STARTED) {
+      throw GameNotStartedProblem(this.gameId)
+    }
+
+    if (this.currentRound == null) {
+      throw RoundAlreadyStartedProblem(this.gameId)
+    } else {
+      startNextRound()
+    }
+  }
+
+  @CommandHandler
+  fun handle(command: CloseRoundCommand, deadlineManager: DeadlineManager) {
+    logger.info { "Executing CloseRoundCommand for game ${command.gameId}" }
+    if (this.gameStatus != GameStatus.STARTED) {
+      throw GameNotStartedProblem(this.gameId)
+    }
+
+    if (this.currentRound == null) {
+      throw RoundAlreadyClosedProblem(this.gameId)
+    } else {
+      AggregateLifecycle.apply(
+        RoundClosedEvent(
+          gameId = this.gameId,
+          gameRoundId = this.currentRound!!.id
+        )
+      )
+
+      if (this.roundList.size == this.finishedRounds) {
+        endGame(deadlineManager)
+      } else {
+        startNextRound()
+      }
+    }
   }
 
   @CommandHandler
@@ -140,13 +175,13 @@ internal class GameAggregate() {
     assertStarted()
 
     val player = players.getByUsername(command.username)
-    val gameQuestion = askedQuestions.getById(command.gameQuestionId)
-    gameQuestion.answer(player.gamePlayerId, command.answer, command.answerTimestamp)
-
-    // after QuestionAnsweredEvent is applied, the player-answer is actually in the list
-    if (players.size == gameQuestion.numAnswers()) {
-      gameQuestion.closeQuestion()
-      deadlineManager.cancelAllWithinScope(Deadline.QUESTION_CLOSE)
+    withCurrentRound { round ->
+      round.answer(player.gamePlayerId, command.answer, command.answerTimestamp)
+      // after QuestionAnsweredEvent is applied, the player-answer is actually in the list
+      if (players.size == round.numCurrentAnswers()) {
+        round.closeQuestion()
+        deadlineManager.cancelAllWithinScope(Deadline.QUESTION_CLOSE)
+      }
     }
   }
 
@@ -155,8 +190,9 @@ internal class GameAggregate() {
     logger.info { "Executing OverrideAnswerCommand for game ${command.gameId}: $command" }
     assertStarted()
 
-    val gameQuestion = askedQuestions.getById(command.gameQuestionId)
-    gameQuestion.overrideAnswer(command.gamePlayerId, command.answer)
+    withCurrentRound { round ->
+      round.overrideAnswer(command.gamePlayerId, command.answer)
+    }
   }
 
   @CommandHandler
@@ -165,12 +201,12 @@ internal class GameAggregate() {
     assertStarted()
 
     val player = players.getByUsername(command.username)
-    val currentQuestion = getCurrentQuestion()!!
 
-    currentQuestion.buzz(player.gamePlayerId, command.buzzerTimestamp)
-
-    if (currentQuestion.numBuzzers() == 1) {
-      deadlineManager.schedule(Duration.ofMillis(500), Deadline.QUESTION_BUZZER, this.gameId)
+    withCurrentRound { round ->
+      round.buzz(player.gamePlayerId, command.buzzerTimestamp)
+      if (round.numCurrentBuzzers() == 1) {
+        deadlineManager.schedule(Duration.ofMillis(500), Deadline.QUESTION_BUZZER, this.gameId)
+      }
     }
   }
 
@@ -179,9 +215,9 @@ internal class GameAggregate() {
     logger.info { "Executing AnswerBuzzerQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
-    val gameQuestion = askedQuestions.getById(command.gameQuestionId)
-
-    gameQuestion.answerBuzzWinner(command.answerCorrect)
+    withCurrentRound { round ->
+      round.answerBuzzWinner(command.answerCorrect)
+    }
   }
 
   @CommandHandler
@@ -189,8 +225,9 @@ internal class GameAggregate() {
     logger.info { "Executing CloseQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
-    askedQuestions.getById(command.gameQuestionId)
-      .closeQuestion()
+    withCurrentRound { round ->
+      round.closeQuestion()
+    }
 
     deadlineManager.cancelAllWithinScope(Deadline.QUESTION_CLOSE)
   }
@@ -200,13 +237,9 @@ internal class GameAggregate() {
     logger.info { "Executing RateQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
-    val gameQuestion =
-      askedQuestions.getById(command.gameQuestionId)
-    if (gameQuestion.isRated()) {
-      throw QuestionAlreadyClosedProblem(gameId, command.gameQuestionId)
+    withCurrentRound { round ->
+      round.rateQuestion()
     }
-
-    gameQuestion.rateQuestion()
   }
 
 
@@ -215,13 +248,15 @@ internal class GameAggregate() {
     logger.info { "Executing AskNextQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
-    if (askedQuestions.any { !it.isRated() }) {
-      throw OtherQuestionStillOpenProblem(gameId)
-    }
-    if (this.askedQuestions.size >= this.config.numQuestions) {
-      endGame(deadlineManager)
-    } else {
-      askNextQuestion(questionPort, deadlineManager)
+    withCurrentRound { round ->
+      if (round.hasMoreQuestions()) {
+        askNextQuestion(questionPort, deadlineManager)
+      } else {
+        round.scoreRound()
+        if (this.roundList.size == 1) {
+          endGame(deadlineManager)
+        }
+      }
     }
   }
 
@@ -247,7 +282,7 @@ internal class GameAggregate() {
     this.config = event.config
     this.moderatorUsername = event.moderatorUsername
     this.gameStatus = GameStatus.CREATED
-    this.questionList = event.questionList
+    this.roundList = event.rounds
   }
 
   @EventSourcingHandler
@@ -267,32 +302,73 @@ internal class GameAggregate() {
 
   @EventSourcingHandler
   fun on(event: QuestionAskedEvent) {
-    this.questionsAsked++
-    this.askedQuestions.add(
-      GameQuestion(
-        gameId = gameId,
-        id = event.gameQuestionId,
-        number = event.gameQuestionNumber,
-        questionMode = event.questionMode,
-        question = event.question,
-        playerAnswers = mutableListOf(),
-        playerBuzzes = mutableListOf(),
-        isModerated = moderatorUsername != null,
-        questionAskedTimestamp = event.questionTimestamp
-      )
+    withCurrentRound { it.on(event) }
+  }
+
+  @EventSourcingHandler
+  fun on(event: QuestionAnsweredEvent) {
+    withCurrentRound { it.on(event) }
+  }
+
+  @EventSourcingHandler
+  fun on(event: QuestionAnswerOverriddenEvent) {
+    withCurrentRound { it.on(event) }
+  }
+
+  @EventSourcingHandler
+  fun on(event: QuestionBuzzedEvent) {
+    withCurrentRound { it.on(event) }
+  }
+
+  @EventSourcingHandler
+  fun on(event: QuestionBuzzerWonEvent) {
+    withCurrentRound { it.on(event) }
+  }
+
+  @EventSourcingHandler
+  fun on(event: QuestionClosedEvent) {
+    withCurrentRound { it.on(event) }
+  }
+
+  @EventSourcingHandler
+  fun on(event: QuestionScoredEvent) {
+    withCurrentRound { it.on(event) }
+  }
+
+  @EventSourcingHandler
+  fun on(event: RoundStartedEvent) {
+    this.currentRound = GameRound(
+      gameId = this.gameId,
+      id = event.gameRoundId,
+      number = event.roundNumber,
+      gameConfig = this.config,
+      roundConfig = event.roundConfig,
+      questionList = event.questions,
+      isModerated = this.moderatorUsername != null
     )
+  }
+
+  @EventSourcingHandler
+  fun on(event: RoundScoredEvent) {
+    withCurrentRound { it.on(event) }
+  }
+
+  @EventSourcingHandler
+  fun on(event: RoundClosedEvent) {
+    this.finishedRounds++
+    this.currentRound = null
   }
 
   @DeadlineHandler(deadlineName = Deadline.QUESTION_CLOSE)
   fun onQuestionClosedDeadline() {
     logger.info { "Reached question deadline for game $gameId" }
-    getCurrentQuestion()?.closeQuestion()
+    currentRound?.closeQuestion()
   }
 
   @DeadlineHandler(deadlineName = Deadline.QUESTION_BUZZER)
   fun onQuestionBuzzDeadline() {
     logger.info { "Reached question buzzer deadline for game $gameId" }
-    getCurrentQuestion()?.evaluateBuzzes()
+    currentRound?.evaluateBuzzes()
   }
 
   @DeadlineHandler(deadlineName = Deadline.GAME_ABANDONED)
@@ -321,25 +397,31 @@ internal class GameAggregate() {
     )
   }
 
-  private fun askNextQuestion(questionPort: QuestionPort, deadlineManager: DeadlineManager) {
-    val question = questionPort.getQuestion(questionList[askedQuestions.size])
+  private fun withCurrentRound(block: (GameRound) -> Unit) {
+    if (currentRound == null) {
+      throw RoundAlreadyClosedProblem(gameId)
+    }
+    block(currentRound!!)
+  }
 
-    val questionMode = if (this.config.useBuzzer) GameQuestionMode.BUZZER else GameQuestionMode.COLLECTIVE
-
+  private fun startNextRound() {
+    val currentRoundNumber = this.finishedRounds + 1
+    val round = this.roundList[currentRoundNumber - 1]
     AggregateLifecycle.apply(
-      QuestionAskedEvent(
+      RoundStartedEvent(
         gameId = gameId,
-        gameQuestionId = UUID.randomUUID(),
-        gameQuestionNumber = askedQuestions.size + 1,
-        questionTimestamp = Instant.now(),
-        questionMode = questionMode,
-        timeToAnswer = config.secondsToAnswer * 1000,
-        question = question
+        gameRoundId = UUID.randomUUID(),
+        roundNumber = currentRoundNumber,
+        roundName = round.name,
+        roundConfig = round.roundConfig,
+        questions = round.questions
       )
     )
+  }
 
-    if (questionMode != GameQuestionMode.BUZZER && config.secondsToAnswer > 0) {
-      deadlineManager.schedule(Duration.ofSeconds(config.secondsToAnswer), Deadline.QUESTION_CLOSE)
+  private fun askNextQuestion(questionPort: QuestionPort, deadlineManager: DeadlineManager) {
+    withCurrentRound { round ->
+      round.askNextQuestion(questionPort, deadlineManager)
     }
 
     deadlineManager.cancelAllWithinScope(Deadline.GAME_ABANDONED)
@@ -347,18 +429,13 @@ internal class GameAggregate() {
   }
 
   private fun endGame(deadlineManager: DeadlineManager) {
+    currentRound?.closeRound()
     AggregateLifecycle.apply(
       GameEndedEvent(
         gameId = gameId
       )
     )
     deadlineManager.cancelAllWithinScope(Deadline.GAME_ABANDONED)
-  }
-
-  private fun getCurrentQuestion() = askedQuestions.firstOrNull { !it.isClosed() }
-
-  fun MutableList<GameQuestion>.getById(gameQuestionId: UUID): GameQuestion {
-    return this.find { it.id == gameQuestionId } ?: throw QuestionNotFoundProblem(gameId, gameQuestionId)
   }
 
   fun MutableList<Player>.findByUsername(username: String): Player? {

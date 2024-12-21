@@ -20,7 +20,7 @@ class Game(
     gameId = event.gameId,
     name = event.name,
     maxPlayers = event.config.maxPlayers,
-    numQuestions = event.config.numQuestions,
+    numQuestions = event.rounds.sumOf { it.questions.size },
     creator = event.creatorUsername,
     moderator = event.moderatorUsername,
     questionTimeout = event.config.secondsToAnswer,

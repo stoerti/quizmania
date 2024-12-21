@@ -15,9 +15,9 @@ export const QuestionPhrasePanel = ({gameQuestion}: QuestionPhrasePanelProps) =>
     questionImage = <img src={gameQuestion.question.imagePath} style={{maxWidth: '100%', maxHeight: '250px', margin: 'auto'}}/>
   }
 
-  return (<Paper sx={{padding: 2, backgroundColor: theme.palette.primary.contrastText, maxWidth: 650, width: '100%'}} elevation={5}>
+  return <Paper sx={{padding: 2, backgroundColor: theme.palette.primary.contrastText, maxWidth: 650, width: '100%'}} elevation={5}>
     <Typography sx={{flex: '1 1 100%'}} variant="overline" component="div">
-      Question {gameQuestion.gameQuestionNumber}
+      Question {gameQuestion.roundQuestionNumber}
     </Typography>
     <Stack sx={{
       display: 'flex',
@@ -29,5 +29,5 @@ export const QuestionPhrasePanel = ({gameQuestion}: QuestionPhrasePanelProps) =>
       </Typography>
       {questionImage}
     </Stack>
-  </Paper>)
+  </Paper>
 }

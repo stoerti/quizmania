@@ -1,9 +1,17 @@
 export type GameConfig = {
   maxPlayers: number,
-  numQuestions: number,
   secondsToAnswer: number,
   questionSetId: string,
+}
+
+export type RoundConfig = {
   useBuzzer: boolean,
+}
+
+export type Round = {
+  name: string,
+  roundConfig: RoundConfig,
+  questions: Question[]
 }
 
 export enum GameQuestionMode {
@@ -31,6 +39,7 @@ export type GameCreatedEvent = {
   config: GameConfig,
   creatorUsername: string,
   moderatorUsername: string | undefined,
+  rounds: Round[]
 }
 
 export type GameStartedEvent = {
@@ -51,6 +60,23 @@ export type PlayerJoinedGameEvent = {
   username: string,
 }
 
+export type RoundStartedEvent = {
+  gameId: string,
+  gameRoundId: string,
+  roundNumber: number,
+  roundName: string,
+  roundConfig: RoundConfig,
+  questions: string[]
+}
+
+export type RoundScoredEvent = {
+  gameId: string,
+}
+
+export type RoundClosedEvent = {
+  gameId: string,
+}
+
 export type PlayerLeftGameEvent = {
   gameId: string,
   gamePlayerId: string,
@@ -59,8 +85,9 @@ export type PlayerLeftGameEvent = {
 
 export type QuestionAskedEvent = {
   gameId: string,
+  roundNumber: number,
+  roundQuestionNumber: number,
   gameQuestionId: string,
-  gameQuestionNumber: number,
   questionMode: GameQuestionMode,
   questionTimestamp: string,
   timeToAnswer: number,

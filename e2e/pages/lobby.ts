@@ -4,19 +4,13 @@ export function createGame(gameName: string, questionSet: string, moderated: boo
   I.click({id: 'createGame'});
 
   I.fillField({id: "gameName"}, gameName)
-  I.fillField({id: "maxPlayers"}, 50)
-  I.fillField({id: "numQuestions"}, 5)
-  I.fillField({id: "numSecondsToAnswer"}, 300)
+  I.fillField({id: "numSecondsToAnswer"}, 10)
 
   I.click({id: 'questionSet'})
   I.click({xpath: '//ul//li[@data-value="'+questionSet+'"]'})
 
   if (moderated) {
     I.click({id: "moderator"})
-  }
-
-  if (useBuzzer) {
-    I.click({id: "useBuzzer"})
   }
 
   I.wait(1)
@@ -31,6 +25,16 @@ export function createGame(gameName: string, questionSet: string, moderated: boo
 export function joinGame(gameName: string) {
   I.waitForText(gameName)
   let joinGameButton = locate('Button').inside(locate('tr').withDescendant('div').withText(gameName))
+
+  I.click(joinGameButton);
+  I.waitForText("Participants")
+}
+
+export function joinGameAsSpectator(gameName: string) {
+  I.waitForText(gameName)
+  let joinGameButton = locate('Button')
+    .withAttr({"name": "spectator"})
+    .inside(locate('tr').withDescendant('div').withText(gameName))
 
   I.click(joinGameButton);
   I.waitForText("Participants")

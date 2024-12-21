@@ -1,36 +1,36 @@
 {
   "id": "werkstatt",
   "name": "Werkstatt",
-  "minPlayers": 1,
-  "questions": [
-    "werkstaettchen_choice_01",
-    "werkstaettchen_choice_02",
-    "werkstaettchen_choice_03",
-    "werkstaettchen_choice_04",
-    "werkstaettchen_choice_05",
-    "werkstaettchen_choice_06",
-    "werkstaettchen_choice_07",
-    "werkstaettchen_choice_08",
-    "werkstaettchen_choice_09",
-    "werkstaettchen_choice_10",
-    "werkstaettchen_choice_11",
-    "werkstaettchen_choice_12",
-    "werkstaettchen_choice_13",
-    "werkstaettchen_choice_14",
-    "werkstaettchen_choice_15",
-    "werkstaettchen_choice_16",
-    "werkstaettchen_choice_17",
-    "werkstaettchen_choice_18",
-    "werkstaettchen_choice_19",
-    "werkstaettchen_choice_20",
-    "werkstaettchen_choice_21",
-    "werkstaettchen_choice_22",
-    "werkstaettchen_choice_23",
-    "werkstaettchen_choice_24",
-    "werkstaettchen_choice_25",
-    "werkstaettchen_choice_26",
-    "werkstaettchen_choice_27",
-    "werkstaettchen_choice_28",
-    "werkstaettchen_choice_29"
+  "rounds": [
+    {
+      "name": "Die leichten zwei",
+      "roundConfig": {
+        "useBuzzer": false
+      },
+      "questions": [
+        "werkstaettchen_choice_01",
+        "werkstaettchen_choice_02"
+      ]
+    },
+    {
+      "name": "Die sehr leichten zwei",
+      "roundConfig": {
+        "useBuzzer": false
+      },
+      "questions": [
+        "werkstaettchen_choice_03",
+        "werkstaettchen_choice_04"
+      ]
+    },
+    {
+      "name": "Jetzt wird's schwer",
+      "roundConfig": {
+        "useBuzzer": false
+      },
+      "questions": [
+        "werkstaettchen_choice_05",
+        "werkstaettchen_choice_06"
+      ]
+    }
   ]
 }

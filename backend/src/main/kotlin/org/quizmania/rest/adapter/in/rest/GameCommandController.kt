@@ -162,6 +162,14 @@ class GameCommandController(
     return ResponseEntity.ok().build()
   }
 
+  @PostMapping("/{gameId}/close-round")
+  fun closeRound(
+    @PathVariable("gameId") gameId: UUID
+  ): ResponseEntity<Void> {
+    commandGateway.sendAndWait<Void>(CloseRoundCommand(gameId = gameId))
+    return ResponseEntity.ok().build()
+  }
+
   @PostMapping("/{gameId}/ask-next-question")
   fun askNextQuestion(
     @PathVariable("gameId") gameId: UUID

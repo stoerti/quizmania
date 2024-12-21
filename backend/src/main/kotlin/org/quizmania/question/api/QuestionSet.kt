@@ -3,6 +3,5 @@ package org.quizmania.question.api
 data class QuestionSet(
   val id: QuestionSetId,
   val name: String,
-  val minPlayers: Int,
-  val questions: List<QuestionId>,
+  val rounds: List<Round>,
 )

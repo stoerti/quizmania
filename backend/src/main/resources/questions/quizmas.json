@@ -1,0 +1,265 @@
+[
+  {
+    "id": "quizmas_christmas_01",
+    "type": "CHOICE",
+    "phrase": "Welches Spielzeug will Arnold Schwarzenegger in \"Versprochen ist versprochen\" unbedingt für seinen Sohn besorgen?",
+    "correctAnswer": "Turbo Man",
+    "answerOptions": ["GI Joe", "Turbo Man", "He-Man", "Hulk"]
+  },
+  {
+    "id": "quizmas_christmas_02",
+    "type": "CHOICE",
+    "phrase": "In welchem Land wird das Weihnachtsessen traditionell bei KFC bestellt?",
+    "correctAnswer": "Japan",
+    "answerOptions": ["Indien", "Großbritannien", "Japan", "Indonesien"]
+  },
+  {
+    "id": "quizmas_christmas_03",
+    "type": "CHOICE",
+    "phrase": "Wer verteilt in Island die Geschenke?",
+    "correctAnswer": "Die 13 Weihnachtstrolle, genannt Jólasveinar",
+    "answerOptions": [
+      "Die 21 Vulkanelfen, genannt Eldfjallálfar",
+      "Der Weihnachtsmann, namens Jólasveinn",
+      "Die 13 Weihnachtstrolle, genannt Jólasveinar"
+    ]
+  },
+  {
+    "id": "quizmas_christmas_04",
+    "type": "CHOICE",
+    "phrase": "Welches Christmas Special eines Film-Franchises gilt bis heute als peinlichster Bestandteil desselben?",
+    "correctAnswer": "Star Wars",
+    "answerOptions": ["Star Wars", "Harry Potter", "Star Trek", "Herr der Ringe"]
+  },
+  {
+    "id": "quizmas_christmas_05",
+    "type": "CHOICE",
+    "phrase": "Seit wann ist der Weihnachtsmann Werbefigur von Coca-Cola?",
+    "correctAnswer": "1931",
+    "answerOptions": ["1921", "1931", "1941", "1951"]
+  },
+
+
+  {
+    "id": "quizmas_filmbilder_01",
+    "type": "FREE_INPUT",
+    "phrase": "Welchen Film suche ich?",
+    "correctAnswer": "Wolf of Wallstreet",
+    "imagePath": "https://www.watson.ch/imgdb/05de/Qx,B,0,0,1500,758,625,315,250,126/205309010211784"
+  },
+  {
+    "id": "quizmas_filmbilder_02",
+    "type": "FREE_INPUT",
+    "phrase": "Welchen Film suche ich?",
+    "correctAnswer": "Zurück in die Zukunft",
+    "imagePath": "https://www.watson.ch/imgdb/492c/Qx,B,0,0,1138,793,474,330,189,132/7362341957686324"
+  },
+  {
+    "id": "quizmas_filmbilder_03",
+    "type": "FREE_INPUT",
+    "phrase": "Welchen Film suche ich?",
+    "correctAnswer": "Deadpool",
+    "imagePath": "https://www.watson.ch/imgdb/20ec/Qx,B,0,0,1246,739,519,307,207,123/2036313855496371"
+  },
+  {
+    "id": "quizmas_filmbilder_04",
+    "type": "FREE_INPUT",
+    "phrase": "Welchen Film suche ich?",
+    "correctAnswer": "Fluch der Karibik",
+    "imagePath": "https://www.watson.ch/imgdb/4bf2/Qx,A,0,0,1666,700,694,291,277,116/8006001898266527"
+  },
+  {
+    "id": "quizmas_filmbilder_05",
+    "type": "FREE_INPUT",
+    "phrase": "Welchen Film suche ich?",
+    "correctAnswer": "Der weiße Hai",
+    "imagePath": "https://www.watson.ch/imgdb/4144/Qx,B,0,0,397,412,165,171,66,68/1482212473681161"
+  },
+  {
+    "id": "quizmas_filmbilder_06",
+    "type": "FREE_INPUT",
+    "phrase": "Welchen Film suche ich?",
+    "correctAnswer": "Die Ritter der Kokosnuss",
+    "imagePath": "https://www.watson.ch/imgdb/1348/Qx,B,0,0,1280,960,533,400,213,160/5820228394989928"
+  },
+  {
+    "id": "quizmas_filmbilder_07",
+    "type": "FREE_INPUT",
+    "phrase": "Welchen Film suche ich?",
+    "correctAnswer": "The Green Mile",
+    "imagePath": "https://www.watson.ch/imgdb/c929/Qx,B,0,329,1755,371,731,330,292,132/4547991941423181"
+  },
+  {
+    "id": "quizmas_filmbilder_08",
+    "type": "FREE_INPUT",
+    "phrase": "Welchen Film suche ich?",
+    "correctAnswer": "The Day After Tomorrow",
+    "imagePath": "https://www.watson.ch/imgdb/4ecc/Qx,B,0,0,891,722,371,300,148,120/6963111440741328"
+  },
+  {
+    "id": "quizmas_filmbilder_09",
+    "type": "FREE_INPUT",
+    "phrase": "Welchen Film suche ich?",
+    "correctAnswer": "Matrix",
+    "imagePath": "https://www.watson.ch/imgdb/1ffa/Qx,B,0,0,906,800,377,333,151,133/2028194593683926"
+  },
+  {
+    "id": "quizmas_filmbilder_10",
+    "type": "FREE_INPUT",
+    "phrase": "Welchen Film suche ich?",
+    "correctAnswer": "Brügge sehen... und sterben",
+    "imagePath": "https://www.watson.ch/imgdb/2353/Qx,B,0,0,780,743,325,309,130,123/7786797358557158"
+  },
+
+
+  {
+    "id": "quizmas_geographie_01",
+    "type": "CHOICE",
+    "phrase": "Welcher Fluss bildet die Grenze zwischen den USA und Mexiko?",
+    "correctAnswer": "Rio Grande",
+    "answerOptions": ["Mississippi", "Rio Grande", "Red River", "Sonora River"]
+  },
+  {
+    "id": "quizmas_geographie_02",
+    "type": "CHOICE",
+    "phrase": "Ulaanbaatar ist die Hauptstadt von...?",
+    "correctAnswer": "Mongolei",
+    "answerOptions": ["Mongolei", "Usbekistan", "Kasachstan", "Armenien"]
+  },
+  {
+    "id": "quizmas_geographie_03",
+    "type": "CHOICE",
+    "phrase": "Welches Land hat die meisten Inseln?",
+    "correctAnswer": "Schweden",
+    "answerOptions": ["Finnland", "Philippinen", "Micronesien", "Schweden"]
+  },
+  {
+    "id": "quizmas_geographie_04",
+    "type": "CHOICE",
+    "phrase": "Welches Land hat als einziges keine rechteckige Nationalflagge?",
+    "correctAnswer": "Nepal",
+    "answerOptions": ["Dschibuti", "Vatikan", "", "Nepal"]
+  },
+  {
+    "id": "quizmas_geographie_05",
+    "type": "CHOICE",
+    "phrase": "Schekel ist die Währung von ...?",
+    "correctAnswer": "Israel",
+    "answerOptions": ["Russland", "Ägypten", "Israel", "Pakistan"]
+  },
+
+
+  {
+    "id": "quizmas_geschichte_01",
+    "type": "CHOICE",
+    "phrase": "Welcher Römer wurde nicht ermordet?",
+    "correctAnswer": "Augustus",
+    "answerOptions": ["Cicero", "Augustus", "Caesar", "Caligula"]
+  },
+  {
+    "id": "quizmas_geschichte_02",
+    "type": "CHOICE",
+    "phrase": "Welches Land ist keine Monarchie?",
+    "correctAnswer": "Chile",
+    "answerOptions": ["Luxemburg", "Jordanien", "Kambodscha", "Chile"]
+  },
+  {
+    "id": "quizmas_geschichte_03",
+    "type": "FREE_INPUT",
+    "phrase": "Wie lange dauerte die Kuba-Krise?",
+    "correctAnswer": "13"
+  },
+  {
+    "id": "quizmas_geschichte_04",
+    "type": "CHOICE",
+    "phrase": "Wer überquerte auf dem Weg in den Krieg gegen die Römer mit Elefanten die Alpen?",
+    "correctAnswer": "Hannibal",
+    "answerOptions": ["Attila", "Kleopatra", "Vercingetorix", "Hannibal"]
+  },
+  {
+    "id": "quizmas_geschichte_05",
+    "type": "CHOICE",
+    "phrase": "Welcher dieser Physiker erhielt keinen Nobelpreis?",
+    "correctAnswer": "Stephen Hawking",
+    "answerOptions": ["Niels Bohr", "Wilhelm Conrad Röntgen", "Stephen Hawking", "Henri Becquerel"]
+  },
+
+
+  {
+    "id": "quizmas_bonusrunde_01",
+    "type": "CHOICE",
+    "phrase": "Welche Farbe hat einen RGB-Wert von (255, 0, 255)?",
+    "correctAnswer": "Magenta",
+    "answerOptions": ["Gelb", "Cyan", "Magenta", "Grün"]
+  },
+  {
+    "id": "quizmas_bonusrunde_02",
+    "type": "CHOICE",
+    "phrase": "Welches dieser Wörter ist richtig geschrieben?",
+    "correctAnswer": "unbezähmbar",
+    "answerOptions": ["mißerabel", "unbezähmbar", "stichaltig", "hardgesotten"]
+  },
+  {
+    "id": "quizmas_bonusrunde_03",
+    "type": "FREE_INPUT",
+    "phrase": "Wer war der erste deutsche Bundeskanzler?",
+    "correctAnswer": "Konrad Adenauer"
+  },
+  {
+    "id": "quizmas_bonusrunde_04",
+    "type": "CHOICE",
+    "phrase": "Mit welchem dieser Sprünge können Leichtathleten keine Medaille gewinnen?",
+    "correctAnswer": "Hammelsprung",
+    "answerOptions": ["Hammelsprung", "Weitsprung", "Hochstrung", "Dreisprung"]
+  },
+  {
+    "id": "quizmas_bonusrunde_05",
+    "type": "FREE_INPUT",
+    "phrase": "Wie viele Punkte gibt es auf einem sechsseitigen Würfel?",
+    "correctAnswer": "21"
+  },
+  {
+    "id": "quizmas_bonusrunde_06",
+    "type": "FREE_INPUT",
+    "phrase": "Was bekommt der Sohn bei Loriot's \"Weihnachten bei Hoppenstedts\" geschenkt?",
+    "correctAnswer": "Atomkraftwerk"
+  },
+  {
+    "id": "quizmas_bonusrunde_07",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle?",
+    "imagePath": "https://e00-marca.uecdn.es/assets/multimedia/imagenes/2020/12/30/16093267916320.jpg",
+    "correctAnswer": "Mitch Buchannon"
+  },
+  {
+    "id": "quizmas_bonusrunde_08",
+    "type": "FREE_INPUT",
+    "phrase": "Wie lautet der vierte Buchstabe des griechischen Alphabets?",
+    "correctAnswer": "Delta"
+  },
+  {
+    "id": "quizmas_bonusrunde_09",
+    "type": "FREE_INPUT",
+    "phrase": "Wofür steht das L in LASER?",
+    "correctAnswer": "Light"
+  },
+  {
+    "id": "quizmas_bonusrunde_10",
+    "type": "FREE_INPUT",
+    "phrase": "Was ist die nächste Primzahl nach 73?",
+    "correctAnswer": "79"
+  },
+  {
+    "id": "quizmas_bonusrunde_11",
+    "type": "CHOICE",
+    "phrase": "Aus welchem Film stammt das berühmte Filmzitat: \"Ich liebe den Geruch von Napalm am Morgen\"?",
+    "correctAnswer": "Apocalypse Now",
+    "answerOptions": ["Apocalypse Now", "Welcome to the Jungle", "Der Soldat James Ryan", "Hot Shots"]
+  },
+  {
+    "id": "quizmas_bonusrunde_12",
+    "type": "FREE_INPUT",
+    "phrase": "Wie viele Jahre war Harry Potter Schüler in Hogwarts?",
+    "correctAnswer": "6"
+  }
+]

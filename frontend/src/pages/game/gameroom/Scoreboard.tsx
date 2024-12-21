@@ -1,5 +1,5 @@
 import {Game, Player} from "../../../domain/GameModel";
-import {Box, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
+import {Box, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, useTheme} from "@mui/material";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import Cancel from "@mui/icons-material/Cancel";
 import React, {useState} from "react";
@@ -17,24 +17,34 @@ const comparePlayersByPointsAndAnswerTime = function (p1: Player, p2: Player): n
   return p1.totalAnswerTime - p2.totalAnswerTime
 }
 
+export enum ScoreboardMode {
+  QUESTION = 'QUESTION',
+  ROUND = 'ROUND'
+}
+
 export type ScoreboardProps = {
   game: Game,
+  mode: ScoreboardMode
 }
 
 export type ScoreboardPageProps = {
   game: Game,
+  mode: ScoreboardMode,
   page: number,
   pageSize: number,
 }
 
-const ScoreboardPage = ({game, page, pageSize}: ScoreboardPageProps) => {
+const ScoreboardPage = ({game, mode, page, pageSize}: ScoreboardPageProps) => {
   const lastQuestion = game.currentQuestion
+  const lastRound = game.currentRound
   const {username} = useUsername()
+
+  const theme = useTheme()
 
   const first = page * pageSize
   const last = (page + 1) * pageSize
 
-  if (lastQuestion !== undefined) {
+  if (mode === ScoreboardMode.QUESTION && lastQuestion !== undefined) {
     return <Table style={{width: '100%', minWidth: 400, maxWidth: 1000, margin: 'auto'}} size={"small"} aria-label="simple table">
       <TableHead>
         <TableRow>
@@ -53,11 +63,16 @@ const ScoreboardPage = ({game, page, pageSize}: ScoreboardPageProps) => {
             const playerAnswer = lastQuestion?.answers.find(p => p.gamePlayerId === player.id)
 
             if (playerAnswer !== undefined) {
-              icon = playerAnswer.points > 0 ? <CheckCircle sx={{verticalAlign: 'bottom'}} color='success'/> :
-                <Cancel sx={{verticalAlign: 'bottom'}} color='error'/>
-              questionPoints = "+" + playerAnswer.points
+              if (playerAnswer.points > 0) {
+                icon = <CheckCircle sx={{verticalAlign: 'bottom'}} color='success'/>
+                questionPoints = <Typography color={theme.palette.text.primary}>+{playerAnswer.points}</Typography>
+              } else if (playerAnswer.points < 0) {
+                icon = <Cancel sx={{verticalAlign: 'bottom'}} color='error'/>
+                questionPoints = <Typography color={theme.palette.error.main}>{playerAnswer.points}</Typography>
+              } else {
+                questionPoints = <Typography color={theme.palette.error.main}>+{playerAnswer.points}</Typography>
+              }
             } else {
-              icon = <Cancel sx={{verticalAlign: 'bottom'}} color='error'/>
               questionPoints = "+0"
             }
 
@@ -74,6 +89,51 @@ const ScoreboardPage = ({game, page, pageSize}: ScoreboardPageProps) => {
                 <TableCell>
                   <Typography variant="body1" sx={{fontWeight: fontWeight}}>
                     {icon} {playerAnswer?.answer}
+                  </Typography>
+                </TableCell>
+                <TableCell width={10} align="right" sx={{fontWeight: fontWeight}}>{questionPoints}</TableCell>
+                <TableCell width={10} align="right" sx={{fontWeight: fontWeight}}>{player.points}</TableCell>
+              </TableRow>
+            )
+          })}
+      </TableBody>
+    </Table>
+  } else if (mode === ScoreboardMode.ROUND && lastRound !== undefined && lastRound.status === 'SCORED') {
+    return <Table style={{width: '100%', minWidth: 400, maxWidth: 1000, margin: 'auto'}} size={"small"} aria-label="simple table">
+      <TableHead>
+        <TableRow>
+          <TableCell></TableCell>
+          <TableCell>Username</TableCell>
+          <TableCell align="right" colSpan={2}>Points</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {[...game.players].sort(comparePlayersByPointsAndAnswerTime)
+          .slice(first, last)
+          .map((player, index) => {
+            let questionPoints
+            const roundPlayer = lastRound?.players.find(p => p.id === player.id)
+
+            if (roundPlayer !== undefined) {
+              if (roundPlayer.points > 0) {
+                questionPoints = <Typography color={theme.palette.text.primary}>+{roundPlayer.points}</Typography>
+              } else if (roundPlayer.points < 0) {
+                questionPoints = <Typography color={theme.palette.error.main}>{roundPlayer.points}</Typography>
+              } else {
+                questionPoints = <Typography color={theme.palette.error.main}>+{roundPlayer.points}</Typography>
+              }
+            } else {
+              questionPoints = "+0"
+            }
+
+            const fontWeight = player.name === username ? 'bold' : 'normal'
+
+            return (
+              <TableRow key={player.id} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
+                <TableCell width={20} align="left" sx={{fontWeight: fontWeight}}>#{index + 1 + page * pageSize}</TableCell>
+                <TableCell>
+                  <Typography variant="body1" component="div" sx={{fontWeight: fontWeight}}>
+                    {player.name}
                   </Typography>
                 </TableCell>
                 <TableCell width={10} align="right" sx={{fontWeight: fontWeight}}>{questionPoints}</TableCell>
@@ -118,7 +178,7 @@ const ScoreboardPage = ({game, page, pageSize}: ScoreboardPageProps) => {
 }
 
 
-export const Scoreboard = ({game}: ScoreboardProps) => {
+export const Scoreboard = ({game, mode}: ScoreboardProps) => {
   const [firstPage, setFirstPage] = useState(0)
   const {width, height} = useWindowDimensions();
 
@@ -139,7 +199,7 @@ export const Scoreboard = ({game}: ScoreboardProps) => {
     return <Stack spacing={2} sx={{width: '100%'}} alignItems={"center"}>
       <Stack sx={{width: '100%'}} direction="row" justifyContent={"center"} spacing={2}>{
         [...Array(numColumns)].map((_, index) => {
-          return <Box sx={{width: '100%'}}><ScoreboardPage game={game} page={firstPage + index} pageSize={pageSize}/></Box>
+          return <Box sx={{width: '100%'}}><ScoreboardPage game={game} mode={mode} page={firstPage + index} pageSize={pageSize}/></Box>
         })}
       </Stack>
       {pageControls}
@@ -148,7 +208,7 @@ export const Scoreboard = ({game}: ScoreboardProps) => {
   } else {
     return (
       <Stack direction="row" justifyContent={"center"} alignItems={"center"} spacing={2} sx={{width: '100%', maxWidth: 650}}>
-        <ScoreboardPage game={game} page={0} pageSize={game.players.length}/>
+        <ScoreboardPage game={game} mode={mode} page={0} pageSize={game.players.length}/>
       </Stack>)
   }
 }

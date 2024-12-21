@@ -8,11 +8,8 @@ export type NewGameCommand = {
 }
 
 export type GameConfig = {
-  maxPlayers: number,
-  numQuestions: number,
   secondsToAnswer: number,
   questionSetId: string
-  useBuzzer: boolean,
 }
 
 export type AnswerQuestionCommand = {
@@ -78,16 +75,20 @@ export class GameCommandService {
     await this.genericPost('/api/game/' + gameId + '/start')
   }
 
+  public async closeRound(gameId: string) {
+    await this.genericPost('/api/game/' + gameId + '/close-round')
+  }
+
   public async askNextQuestion(gameId: string) {
     await this.genericPost('/api/game/' + gameId + '/ask-next-question')
   }
 
   public async closeQuestion(gameId: string, gameQuestionId: string) {
-    await this.genericPost('api/game/' + gameId + '/question/' + gameQuestionId + '/close')
+    await this.genericPost('/api/game/' + gameId + '/question/' + gameQuestionId + '/close')
   }
 
   public async scoreQuestion(gameId: string, gameQuestionId: string) {
-    await this.genericPost('api/game/' + gameId + '/question/' + gameQuestionId + '/score')
+    await this.genericPost('/api/game/' + gameId + '/question/' + gameQuestionId + '/score')
   }
 
   public async overrideAnswer(answer: OverrideAnswerCommand) {

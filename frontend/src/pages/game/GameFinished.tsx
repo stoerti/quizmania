@@ -2,7 +2,7 @@ import {Game} from "../../domain/GameModel";
 import React from "react";
 import {AppBar, Box, Button, Stack, Toolbar, Typography} from "@mui/material";
 import Logout from "@mui/icons-material/Logout";
-import {Scoreboard} from "./gameroom/Scoreboard.tsx";
+import {Scoreboard, ScoreboardMode} from "./gameroom/Scoreboard.tsx";
 
 export type GameFinishedPageProps = {
   game: Game,
@@ -35,7 +35,7 @@ export const GameFinishedPage = (props: GameFinishedPageProps) => {
               <Button sx={{margin: 'auto'}} startIcon={<Logout/>} variant="contained"
                       onClick={props.onClickLeaveGame}>Leave game</Button>
             </div>
-            <Scoreboard game={props.game} />
+            <Scoreboard game={props.game} mode={ScoreboardMode.QUESTION} />
           </Stack>
         </Box>
       </Box>

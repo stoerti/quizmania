@@ -6,6 +6,14 @@ export function startGame() {
   I.click({id: 'startGame'});
 }
 
+export function startRound() {
+  I.click({id: 'startRound'});
+}
+
+export function closeRound() {
+  I.click({id: 'closeRound'});
+}
+
 export function nextQuestion() {
   I.click({id: 'nextQuestion'});
 }

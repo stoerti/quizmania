@@ -12,6 +12,8 @@ val GAME_PLAYER_2: GamePlayerId = UUID.randomUUID()
 val GAME_PLAYER_3: GamePlayerId = UUID.randomUUID()
 val USERNAME_1: String = "User 1"
 val USERNAME_2: String = "User 2"
+val GAME_ROUND_1: GameRoundId = UUID.randomUUID()
+val GAME_ROUND_2: GameRoundId = UUID.randomUUID()
 val GAME_QUESTION_1: GameQuestionId = UUID.randomUUID()
 val GAME_QUESTION_2: GameQuestionId = UUID.randomUUID()
 val PLAYER_ANSWER_1: GameQuestionId = UUID.randomUUID()
@@ -19,9 +21,10 @@ val PLAYER_ANSWER_2: GameQuestionId = UUID.randomUUID()
 val PLAYER_ANSWER_3: GameQuestionId = UUID.randomUUID()
 
 val QUESTION_SET_ID: QuestionSetId = UUID.randomUUID().toString()
+val ROUND_ID: QuestionSetId = UUID.randomUUID().toString()
 val QUESTION_ID_1: QuestionSetId = UUID.randomUUID().toString()
-
 val QUESTION_ID_2: QuestionSetId = UUID.randomUUID().toString()
+
 val NOW: Instant = Instant.now()
 
 class GameCommandFixtures {
@@ -98,7 +101,13 @@ class GameEventFixtures {
         config = config,
         creatorUsername = creator,
         moderatorUsername = moderator,
-        questionList = listOf(QUESTION_ID_1, QUESTION_ID_2)
+        rounds = listOf(
+          Round(
+            "Round 1",
+            RoundConfig(false),
+            listOf(QUESTION_ID_1, QUESTION_ID_2)
+          )
+        )
       )
     }
 
@@ -130,11 +139,29 @@ class GameEventFixtures {
       )
     }
 
-    fun questionAsked(gameQuestionId: UUID, gameQuestionNumber: Int, question: Question, mode: GameQuestionMode = GameQuestionMode.COLLECTIVE): QuestionAskedEvent {
+    fun roundStarted(roundNumber: Int = 1): RoundStartedEvent {
+      return RoundStartedEvent(
+        gameId = GAME_UUID,
+        gameRoundId = GAME_ROUND_1,
+        roundNumber = roundNumber,
+        roundName = "Round $roundNumber",
+        roundConfig = RoundConfig(false),
+        questions = listOf(QUESTION_ID_1, QUESTION_ID_2)
+      )
+    }
+
+    fun questionAsked(
+      gameQuestionId: UUID,
+      gameQuestionNumber: Int,
+      gameRoundNumber: Int = 1,
+      question: Question,
+      mode: GameQuestionMode = GameQuestionMode.COLLECTIVE
+    ): QuestionAskedEvent {
       return QuestionAskedEvent(
         gameId = GAME_UUID,
         gameQuestionId = gameQuestionId,
-        gameQuestionNumber = gameQuestionNumber,
+        roundNumber = gameRoundNumber,
+        roundQuestionNumber = gameQuestionNumber,
         questionTimestamp = NOW,
         timeToAnswer = 10000,
         question = question,
@@ -157,6 +184,7 @@ class GameEventFixtures {
         timeToAnswer = 0,
       )
     }
+
     fun questionAnswerOverridden(
       gameQuestionId: UUID,
       gamePlayerId: UUID,
@@ -180,8 +208,13 @@ class QuestionFixtures {
     fun questionSet(questionSetId: QuestionSetId = QUESTION_SET_ID): QuestionSet = QuestionSet(
       id = questionSetId,
       name = "Test QuestionSet",
-      minPlayers = 1,
-      questions = listOf(QUESTION_ID_1, QUESTION_ID_2)
+      rounds = listOf(
+        Round(
+          "Round 1",
+          RoundConfig(false),
+          listOf(QUESTION_ID_1, QUESTION_ID_2)
+        )
+      )
     )
 
     fun choiceQuestion(questionId: QuestionId = UUID.randomUUID().toString()): ChoiceQuestion {

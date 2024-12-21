@@ -60,10 +60,10 @@ const GameSelectionContainer = (props: GameSelectionContainerProps) => {
                 </TableCell>
                 <TableCell align="right" onClick={joinGameAction}>{row.players.length}/{row.maxPlayers}</TableCell>
                 <TableCell align="right">
-                  {row.status == GameStatus.CREATED ? <IconButton onClick={() => props.onButtonClickJoinGame(row.id)}>
+                  {row.status == GameStatus.CREATED ? <IconButton name="join" onClick={() => props.onButtonClickJoinGame(row.id)}>
                     <Login/>
                   </IconButton> : null}
-                  <IconButton onClick={() => props.onButtonClickJoinGameAsSpectator(row.id)}>
+                  <IconButton name="spectator" onClick={() => props.onButtonClickJoinGameAsSpectator(row.id)}>
                     <Visibility/>
                   </IconButton>
                 </TableCell>
@@ -139,7 +139,7 @@ const GameSelectionPage = () => {
       const gameId = await gameCommandService.createNewGame(newGame)
       onGameSelected(gameId)
       snackbar.showMessage(
-        `Created game ${newGame.name} for ${newGame.config.maxPlayers} players, ${newGame.config.numQuestions} questions and ${newGame.withModerator ? 'with' : 'without'} moderator`
+        `Created game ${newGame.name} ${newGame.withModerator ? 'with' : 'without'} moderator`
       )
       setNewGameDialogOpen(false)
     } catch (error) {

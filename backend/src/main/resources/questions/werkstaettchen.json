@@ -11,7 +11,7 @@
     "type": "CHOICE",
     "phrase": "Mit welchem dieser Sprünge können Leichtathleten keine Medaille gewinnen?",
     "correctAnswer": "Hammelsprung",
-    "answerOptions": ["Hammelsprung", "Weitsprung", "Hochstrung", "Dreisprung"]
+    "answerOptions": ["Hammelsprung", "Weitsprung", "Hochsprung", "Dreisprung"]
   },
   {
     "id": "werkstaettchen_choice_03",
@@ -165,7 +165,7 @@
     "type": "CHOICE",
     "phrase": "Welches dieser Wörter ist richtig geschrieben?",
     "correctAnswer": "unbezähmbar",
-    "answerOptions": ["mißerabel", "unbezähmbar", "stichaltig", "hartgesotten"]
+    "answerOptions": ["mißerabel", "unbezähmbar", "stichaltig", "hardgesotten"]
   },
   {
     "id": "werkstaettchen_choice_25",
