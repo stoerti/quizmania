@@ -21,15 +21,15 @@
     "answerOptions": [
       "Die 21 Vulkanelfen, genannt Eldfjallálfar",
       "Der Weihnachtsmann, namens Jólasveinn",
-      "Die 13 Weihnachtstrolle, genannt Jólasveinar"
+      "Die 13 Weihnachtstrolle, genannt Jólasveinar",
+      "Die 7 Weihnachtsgnome, genannt Jóladverjar"
     ]
   },
   {
     "id": "quizmas_christmas_04",
-    "type": "CHOICE",
+    "type": "FREE_INPUT",
     "phrase": "Welches Christmas Special eines Film-Franchises gilt bis heute als peinlichster Bestandteil desselben?",
-    "correctAnswer": "Star Wars",
-    "answerOptions": ["Star Wars", "Harry Potter", "Star Trek", "Herr der Ringe"]
+    "correctAnswer": "Star Wars"
   },
   {
     "id": "quizmas_christmas_05",
@@ -129,23 +129,23 @@
   {
     "id": "quizmas_geographie_03",
     "type": "CHOICE",
-    "phrase": "Welches Land hat die meisten Inseln?",
-    "correctAnswer": "Schweden",
-    "answerOptions": ["Finnland", "Philippinen", "Micronesien", "Schweden"]
+    "phrase": "In welchem Land wird Neujahr zuerst gefeiert?",
+    "correctAnswer": "Kiribati",
+    "answerOptions": ["Bora Bora", "Kiribati", "Tonga", "Ost-Russland"]
   },
   {
     "id": "quizmas_geographie_04",
     "type": "CHOICE",
-    "phrase": "Welches Land hat als einziges keine rechteckige Nationalflagge?",
-    "correctAnswer": "Nepal",
-    "answerOptions": ["Dschibuti", "Vatikan", "", "Nepal"]
+    "phrase": "In welchem Land wird Neujahr am häufigsten gefeiert?",
+    "correctAnswer": "Frankreich",
+    "answerOptions": ["Russland", "Frankreich", "USA", "Großbritannien"]
   },
   {
     "id": "quizmas_geographie_05",
     "type": "CHOICE",
     "phrase": "Schekel ist die Währung von ...?",
     "correctAnswer": "Israel",
-    "answerOptions": ["Russland", "Ägypten", "Israel", "Pakistan"]
+    "answerOptions": ["Albanien", "Ägypten", "Israel", "Pakistan"]
   },
 
 
@@ -167,14 +167,13 @@
     "id": "quizmas_geschichte_03",
     "type": "FREE_INPUT",
     "phrase": "Wie lange dauerte die Kuba-Krise?",
-    "correctAnswer": "13"
+    "correctAnswer": "13 Tage"
   },
   {
     "id": "quizmas_geschichte_04",
-    "type": "CHOICE",
+    "type": "FREE_INPUT",
     "phrase": "Wer überquerte auf dem Weg in den Krieg gegen die Römer mit Elefanten die Alpen?",
-    "correctAnswer": "Hannibal",
-    "answerOptions": ["Attila", "Kleopatra", "Vercingetorix", "Hannibal"]
+    "correctAnswer": "Hannibal"
   },
   {
     "id": "quizmas_geschichte_05",
@@ -251,10 +250,9 @@
   },
   {
     "id": "quizmas_bonusrunde_11",
-    "type": "CHOICE",
+    "type": "FREE_INPUT",
     "phrase": "Aus welchem Film stammt das berühmte Filmzitat: \"Ich liebe den Geruch von Napalm am Morgen\"?",
-    "correctAnswer": "Apocalypse Now",
-    "answerOptions": ["Apocalypse Now", "Welcome to the Jungle", "Der Soldat James Ryan", "Hot Shots"]
+    "correctAnswer": "Apocalypse Now"
   },
   {
     "id": "quizmas_bonusrunde_12",
