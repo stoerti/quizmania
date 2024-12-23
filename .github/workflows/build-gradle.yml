@@ -16,6 +16,7 @@ jobs:
       packages: write
       attestations: write
       id-token: write
+      checks: write
 
     steps:
       - name: Checkout project sources
