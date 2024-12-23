@@ -59,7 +59,7 @@ internal class GameAggregate() {
       )
     )
 
-//    deadlineManager.schedule(Duration.ofDays(1), Deadline.GAME_ABANDONED)
+    deadlineManager.schedule(Duration.ofDays(1), Deadline.GAME_ABANDONED)
   }
 
   @CommandHandler

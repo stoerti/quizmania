@@ -26,7 +26,9 @@ import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
 import org.quizmania.game.QuestionFixtures.Companion.questionSet
 import org.quizmania.game.api.*
 import org.quizmania.game.command.application.domain.GameAggregate
+import org.quizmania.game.command.application.domain.GameAggregate.Companion.Deadline
 import org.quizmania.game.command.port.out.QuestionPort
+import java.time.Duration
 import java.util.*
 
 class GameAggregateTest {
@@ -49,6 +51,7 @@ class GameAggregateTest {
     fixture.givenNoPriorActivity()
       .`when`(GameCommandFixtures.createGame())
       .expectEvents(gameCreated(config = GameConfig(questionSetId = QUESTION_SET_ID)))
+      .expectScheduledDeadlineWithName(Duration.ofDays(1), Deadline.GAME_ABANDONED)
   }
 
   @Test
@@ -100,6 +103,7 @@ class GameAggregateTest {
     fixture.given(gameCreated(), playerAdded(USERNAME_1, GAME_PLAYER_1), playerAdded(USERNAME_2, GAME_PLAYER_2))
       .`when`(startGame())
       .expectEvents(gameStarted(), roundStarted(), questionAsked(UUID.randomUUID(), 1, 1, question))
+      .expectScheduledDeadlineWithName(Duration.ofMinutes(15), Deadline.GAME_ABANDONED)
   }
 
   @Test
