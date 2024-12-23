@@ -373,15 +373,15 @@ internal class GameAggregate() {
 
   @DeadlineHandler(deadlineName = Deadline.GAME_ABANDONED)
   fun onGameAbandonedDeadline() {
-//    logger.info { "Reached game abandon deadline for game $gameId" }
-//
-//    if (this.gameStatus == GameStatus.CANCELED || this.gameStatus == GameStatus.ENDED) {
-//      logger.warn { "${Deadline.GAME_ABANDONED} triggered for ${this.gameId} but game is already in status ${this.gameStatus}" }
-//    } else {
-//      AggregateLifecycle.apply(
-//        GameCanceledEvent(gameId)
-//      )
- //   }
+    logger.info { "Reached game abandon deadline for game $gameId" }
+
+    if (this.gameStatus == GameStatus.CANCELED || this.gameStatus == GameStatus.ENDED) {
+      logger.warn { "${Deadline.GAME_ABANDONED} triggered for ${this.gameId} but game is already in status ${this.gameStatus}" }
+    } else {
+      AggregateLifecycle.apply(
+        GameCanceledEvent(gameId)
+      )
+    }
   }
 
   @ExceptionHandler(resultType = GameProblem::class, messageType = Message::class, payloadType = Any::class)
@@ -424,8 +424,8 @@ internal class GameAggregate() {
       round.askNextQuestion(questionPort, deadlineManager)
     }
 
-//    deadlineManager.cancelAllWithinScope(Deadline.GAME_ABANDONED)
-//    deadlineManager.schedule(Duration.ofMinutes(15), Deadline.GAME_ABANDONED)
+    deadlineManager.cancelAllWithinScope(Deadline.GAME_ABANDONED)
+    deadlineManager.schedule(Duration.ofMinutes(15), Deadline.GAME_ABANDONED)
   }
 
   private fun endGame(deadlineManager: DeadlineManager) {
