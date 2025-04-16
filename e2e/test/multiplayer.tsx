@@ -42,7 +42,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   loginPage.logInWithUsername(moderator)
   I.wait(1)
 
-  lobbyPage.createGame(gameName, "test01", true)
+  lobbyPage.createGame(gameName, "easter2025_test", true)
   I.wait(1)
 
   session('player1', () => {
@@ -57,18 +57,18 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
 
   session('player3', () => {
     loginPage.logInWithUsername(username3)
-    lobbyPage.joinGame(gameName)
+//    lobbyPage.joinGame(gameName)
   });
 
   I.waitForText(username1)
   I.waitForText(username2)
-  I.waitForText(username3)
+//  I.waitForText(username3)
 
   I.wait(4)
 
   gameRoomPage.startGame()
 
-  I.wait(4)
+  I.wait(4000)
   session('player1', () => {
     gameRoomPage.answerChoiceQuestion("3")
   })

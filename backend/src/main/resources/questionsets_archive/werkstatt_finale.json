@@ -1,0 +1,29 @@
+{
+  "id": "werkstatt_finale",
+  "name": "Werkstatt Finale",
+  "rounds": [
+    {
+      "name": "Round 1",
+      "roundConfig": {
+        "useBuzzer": false
+      },
+      "questions": [
+        "werkstaettchen_finale_freeinput_01",
+        "werkstaettchen_finale_freeinput_02",
+        "werkstaettchen_finale_freeinput_03",
+        "werkstaettchen_finale_freeinput_04",
+        "werkstaettchen_finale_freeinput_05",
+        "werkstaettchen_finale_freeinput_06",
+        "werkstaettchen_finale_freeinput_07",
+        "werkstaettchen_finale_freeinput_08",
+        "werkstaettchen_finale_freeinput_09",
+        "werkstaettchen_finale_freeinput_10",
+        "werkstaettchen_finale_freeinput_11",
+        "werkstaettchen_finale_freeinput_12",
+        "werkstaettchen_finale_freeinput_13",
+        "werkstaettchen_finale_freeinput_14",
+        "werkstaettchen_finale_freeinput_15"
+      ]
+    }
+  ]
+}

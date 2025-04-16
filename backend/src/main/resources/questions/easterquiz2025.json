@@ -1,0 +1,315 @@
+[
+  {
+    "id": "easter_geografie_01",
+    "type": "FREE_INPUT",
+    "phrase": "Welches Land ist das?",
+    "correctAnswer": "Chile",
+    "imagePath": "../assets/img/chile.png"
+  },
+  {
+    "id": "easter_geografie_02",
+    "type": "FREE_INPUT",
+    "phrase": "Welches Land ist das?",
+    "correctAnswer": "Vietnam",
+    "imagePath": "../assets/img/vietnam.jpg"
+  },
+  {
+    "id": "easter_geografie_03",
+    "type": "FREE_INPUT",
+    "phrase": "Welches Land ist das?",
+    "correctAnswer": "Südafrika",
+    "imagePath": "../assets/img/southafrica.jpg"
+  },
+  {
+    "id": "easter_geografie_04",
+    "type": "FREE_INPUT",
+    "phrase": "Welches Land ist das?",
+    "correctAnswer": "Schweiz",
+    "imagePath": "../assets/img/switzerland.png"
+  },
+
+  {
+    "id": "easter_geografie_11",
+    "type": "FREE_INPUT",
+    "phrase": "Welches Gewässer ist das?",
+    "correctAnswer": "Nil",
+    "imagePath": "../assets/img/nile.png"
+  },
+  {
+    "id": "easter_geografie_12",
+    "type": "FREE_INPUT",
+    "phrase": "Welches Gewässer ist das?",
+    "correctAnswer": "Bodensee",
+    "imagePath": "../assets/img/bodensee.png"
+  },
+  {
+    "id": "easter_geografie_13",
+    "type": "FREE_INPUT",
+    "phrase": "Welches Gewässer ist das?",
+    "correctAnswer": "Ostsee",
+    "imagePath": "../assets/img/ostsee.png"
+  },
+  {
+    "id": "easter_geografie_14",
+    "type": "FREE_INPUT",
+    "phrase": "Welches Gewässer ist das?",
+    "correctAnswer": "Lake Superior",
+    "imagePath": "../assets/img/lake-superior.png"
+  },
+  {
+    "id": "easter_geografie_21",
+    "type": "MULTIPLE_CHOICE",
+    "phrase": "Welche Länder sind Monarchien?",
+    "correctAnswer": "Luxemburg, Kanada, Marokko, Kambodscha",
+    "answerOptions": ["Luxemburg", "Chile", "Tunesien", "Kanada", "Nepal", "Marokko", "Vietnam", "Kambodscha"]
+  },
+
+
+  {
+    "id": "quizmas_filmrollen_01",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "John McClane",
+    "imagePath": "../assets/img/film-roles/john-mcclane.jpg"
+  },
+  {
+    "id": "quizmas_filmrollen_02",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "Jack O'Neill",
+    "imagePath": "../assets/img/film-roles/jack-oneill.png"
+  },
+  {
+    "id": "quizmas_filmrollen_03",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "Katniss Everdeen",
+    "imagePath": "../assets/img/film-roles/katniss-everdeen.jpg"
+  },
+  {
+    "id": "quizmas_filmrollen_04",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "Pete Mitchell",
+    "imagePath": "../assets/img/film-roles/pete-mitchell.webp"
+  },
+  {
+    "id": "quizmas_filmrollen_05",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "William Turner",
+    "imagePath": "../assets/img/film-roles/will-turner.webp"
+  },
+  {
+    "id": "quizmas_filmrollen_06",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "Fry Farnsworth",
+    "imagePath": "../assets/img/film-roles/fry-farnsworth.webp"
+  },
+  {
+    "id": "quizmas_filmrollen_07",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "Natasha Romanoff",
+    "imagePath": "../assets/img/film-roles/natasha-romanoff.jpg"
+  },
+  {
+    "id": "quizmas_filmrollen_08",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "Dominic Toretto",
+    "imagePath": "../assets/img/film-roles/dominic-toretto.webp"
+  },
+  {
+    "id": "quizmas_filmrollen_09",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "Brienne of Tarth",
+    "imagePath": "../assets/img/film-roles/brienne-of-tarth.webp"
+  },
+  {
+    "id": "quizmas_filmrollen_10",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "Don Vito Corleone",
+    "imagePath": "../assets/img/film-roles/vito-corleone.jpg"
+  },
+  {
+    "id": "quizmas_filmrollen_11",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "Paul Atreides",
+    "imagePath": "../assets/img/film-roles/paul-atreides.webp"
+  },
+  {
+    "id": "quizmas_filmrollen_12",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "Kathryn Janeway",
+    "imagePath": "../assets/img/film-roles/kathryn-janeway.jpg"
+  },
+  {
+    "id": "quizmas_filmrollen_13",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "Michael Scott",
+    "imagePath": "../assets/img/film-roles/michael-scott.png"
+  },
+  {
+    "id": "quizmas_filmrollen_14",
+    "type": "FREE_INPUT",
+    "phrase": "Wie heißt diese Filmrolle mit vollem Namen?",
+    "correctAnswer": "Monica Geller",
+    "imagePath": "../assets/img/film-roles/monica-geller.webp"
+  },
+
+  {
+    "id": "easter_random_01",
+    "type": "CHOICE",
+    "phrase": "Welcher Kontinent wurde nach einem Eroberer benannt?",
+    "correctAnswer": "Afrika",
+    "answerOptions": ["Asien", "Australien", "Amerika", "Afrika"]
+  },
+  {
+    "id": "easter_random_02",
+    "type": "FREE_INPUT",
+    "phrase": "Wie viele Fenster hat die Burg im Hamburger Stadtwappen?",
+    "correctAnswer": "0"
+  },
+  {
+    "id": "easter_random_03",
+    "type": "CHOICE",
+    "phrase": "Welcher Herrscher erhob eine Steuer für das Tragen eines Bartes?",
+    "correctAnswer": "Peter der Große",
+    "answerOptions": ["Napoleon", "Otto von Bismarck", "Adolf Hitler", "Peter der Große"]
+  },
+  {
+    "id": "easter_random_04",
+    "type": "MULTIPLE_CHOICE",
+    "phrase": "Berg oder Käse? Markiere die Käsesorten",
+    "correctAnswer": "Beaufort, Taleggio, Serra da Estrela, Montasio",
+    "answerOptions": ["Eiger", "Beaufort", "Taleggio", "Serra da Estrela", "Grivola", "Aneto", "Montasio", "Rocciamelone"]
+  },
+  {
+    "id": "easter_random_05",
+    "type": "CHOICE",
+    "phrase": "Welches Video ist mit über 15 Milliarden Aufrufen das meistgesehene Youtube Video?",
+    "correctAnswer": "Babyshark Dance",
+    "answerOptions": ["Babyshark Dance", "Gangnam Style", "Shape of You", "Despacito"]
+  },
+  {
+    "id": "easter_random_06",
+    "type": "CHOICE",
+    "phrase": "Welches Tier gibt es nicht?",
+    "correctAnswer": "Chuck-Norris-Schabe",
+    "answerOptions": ["Hitler-Käfer", "Barack-Obama-Fisch", "Beyoncé-Fliege", "Chuck-Norris-Schabe"]
+  },
+  {
+    "id": "easter_random_07",
+    "type": "CHOICE",
+    "phrase": "Wofür steht das schweizer Landeskennzeichen CH?",
+    "correctAnswer": "Confoederatio Helvetica",
+    "answerOptions": ["Campagne Helvétique", "Chwitz", "Confoederatio Helvetica", "Consiglio Helvetico"]
+  },
+  {
+    "id": "easter_random_08",
+    "type": "CHOICE",
+    "phrase": "Was ist das?",
+    "correctAnswer": "Ethanol",
+    "imagePath": "../assets/img/ethanol.png",
+    "answerOptions": ["Buthan", "Ethanol", "Benzol", "Essigsäure"]
+  },
+  {
+    "id": "easter_random_09",
+    "type": "CHOICE",
+    "phrase": "Welche Kristallstruktur hat gefrorenes Wasser auf der Erde?",
+    "correctAnswer": "Hexagonal",
+    "answerOptions": ["Monoklin", "Tetragonal", "Triklin", "Hexagonal"]
+  },
+  {
+    "id": "easter_random_10",
+    "type": "MULTIPLE_CHOICE",
+    "phrase": "In welchen Ländern fährt man auf der linken Straßenseite?",
+    "correctAnswer": "Japan, Pakistan, Suriname",
+    "answerOptions": ["Oman", "Japan", "Madagaskar", "China", "Pakistan", "Suriname"]
+  },
+
+
+  {
+    "id": "easter_bonusrunde_01",
+    "type": "FREE_INPUT",
+    "phrase": "Wofür steht CMYK?",
+    "correctAnswer": "Cyan magenta yellow black"
+  },
+  {
+    "id": "easter_bonusrunde_02",
+    "type": "CHOICE",
+    "phrase": "Welches ist eine Hülsenfrucht?",
+    "correctAnswer": "Erdnuss",
+    "answerOptions": ["Haselnuss", "Kastanie", "Erdnuss", "Walnuss"]
+  },
+  {
+    "id": "easter_bonusrunde_03",
+    "type": "FREE_INPUT",
+    "phrase": "Welcher Nachbar eines Vokals fehlt in dieser Reihe?\n\nBF?PV",
+    "correctAnswer": "J"
+  },
+  {
+    "id": "easter_bonusrunde_04",
+    "type": "FREE_INPUT",
+    "phrase": "Nenne ein Element, das nach einem Planeten benannt wurde.",
+    "correctAnswer": "Uran oder Neptunium"
+  },
+  {
+    "id": "easter_bonusrunde_05",
+    "type": "FREE_INPUT",
+    "phrase": "Wer oder was liegt am Point Nemo begraben.",
+    "correctAnswer": "Weltraumschrott"
+  },
+  {
+    "id": "easter_bonusrunde_06",
+    "type": "CHOICE",
+    "phrase": "In welchem dieser Wörter versteckt sich KEIN häufiger deutscher Vorname?",
+    "correctAnswer": "Beschichtung",
+    "answerOptions": ["Polarstation", "Atemmaske", "Verabschiedung", "Beschichtung"]
+  },
+  {
+    "id": "easter_bonusrunde_07",
+    "type": "FREE_INPUT",
+    "phrase": "Was ist die Quersumme von 237562378?",
+    "correctAnswer": "43"
+  },
+  {
+    "id": "easter_bonusrunde_08",
+    "type": "FREE_INPUT",
+    "phrase": "Von wem stammt der Satz \"Niemand hat die Absicht eine Mauer zu errichten\"?",
+    "correctAnswer": "Walter Ulbricht"
+  },
+  {
+    "id": "easter_bonusrunde_09",
+    "type": "FREE_INPUT",
+    "phrase": "Wer hat Vorfahrt?",
+    "imagePath": "../assets/img/vorfahrt.png",
+    "correctAnswer": "Ich"
+  },
+  {
+    "id": "easter_bonusrunde_10",
+    "type": "FREE_INPUT",
+    "phrase": "Was ist ein Küfer?",
+    "correctAnswer": "Fassbinder"
+  },
+  {
+    "id": "easter_bonusrunde_11",
+    "type": "CHOICE",
+    "phrase": "Mit der Formel 4πr^2 berechnet man die Oberfläche welchen Körpers?",
+    "correctAnswer": "Kugel",
+    "answerOptions": ["Zylinder", "Kugel", "Kegel", "Pyramide"]
+  },
+  {
+    "id": "easter_bonusrunde_12",
+    "type": "FREE_INPUT",
+    "phrase": "Wofür steht das I in FBI?",
+    "correctAnswer": "Investigation"
+  }
+]

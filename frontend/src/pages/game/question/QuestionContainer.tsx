@@ -1,10 +1,48 @@
 import {GameQuestion} from "../../../domain/GameModel";
-import {Box, Button, Stack, TextField} from "@mui/material";
-import React from "react";
+import {Box, Button, Stack, TextField, useTheme} from "@mui/material";
+import React, {useState} from "react";
 import {QuestionPhrasePanel} from "./QuestionPhrasePanel";
 import Countdown from "react-countdown";
 import {QuestionCountdownBar} from "./QuestionCountdownBar";
 import {QuestionType} from "../../../services/GameEventTypes";
+
+export type MultipleChoiceAnswerContainerProps = {
+  gameQuestion: GameQuestion
+  onAnswerQuestion: (answer: string) => void
+}
+
+export const MultipleChoiceAnswerContainer = ({gameQuestion, onAnswerQuestion}: MultipleChoiceAnswerContainerProps) => {
+  const [selected, setSelected] = useState([] as string[])
+  const theme = useTheme()
+
+  const selectAnswer = (answer: string) => {
+    setSelected([answer, ...selected])
+  }
+
+  const deselectAnswer = (answer: string) => {
+    setSelected(selected.filter((a) => a !== answer))
+  }
+
+  const submitAnswer = () => {
+    const answerString = selected.join(", ")
+    onAnswerQuestion(answerString)
+  }
+
+  return <Stack spacing={2} direction="column" justifyContent="center" alignItems="center" useFlexGap
+                flexWrap="wrap">
+    {gameQuestion.question.answerOptions.map((answer, index) => {
+        const isSelected = selected.includes(answer)
+        if (isSelected) {
+          return <Button key={index} variant="contained" sx={{width: '80%', maxWidth: '300px'}} onClick={() => deselectAnswer(answer)}>{answer}</Button>
+        } else {
+          return <Button key={index} variant="outlined" sx={{width: '80%', maxWidth: '300px', backgroundColor: theme.palette.error.main}} onClick={() => selectAnswer(answer)}>{answer}</Button>
+        }
+      }
+    )}
+
+    <Button key='send' variant="contained" sx={{width: '80%', maxWidth: '300px', top: '20px'}} onClick={() => submitAnswer()}>Confirm</Button>
+  </Stack>
+}
 
 export type QuestionContainerProps = {
   gameQuestion: GameQuestion
@@ -27,6 +65,8 @@ export const QuestionContainer = ({gameQuestion, onAnswerQuestion}: QuestionCont
       {gameQuestion.question.answerOptions.map((answer, index) =>
         <Button key={index} variant="contained" sx={{width: '80%', maxWidth: '300px'}} onClick={() => onAnswerQuestion(answer)}>{answer}</Button>)}
     </Stack>
+  } else if (gameQuestion.question.type === QuestionType.MULTIPLE_CHOICE) {
+    answerContainer = <MultipleChoiceAnswerContainer gameQuestion={gameQuestion} onAnswerQuestion={onAnswerQuestion}/>
   } else if (gameQuestion.question.type === QuestionType.FREE_INPUT) {
     answerContainer = <Box component="form" noValidate onSubmit={handleSubmit} sx={{
       my: 4, mx: 4, display: 'flex', flexDirection: 'column', alignItems: 'center',

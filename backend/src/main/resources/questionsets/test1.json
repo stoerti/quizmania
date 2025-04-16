@@ -8,9 +8,7 @@
         "useBuzzer": false
       },
       "questions": [
-        "choice_01",
-        "estimate_01",
-        "freeinput_03"
+        "multiple_choice_01"
       ]
     }
   ]

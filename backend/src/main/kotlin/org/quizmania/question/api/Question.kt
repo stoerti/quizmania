@@ -8,6 +8,7 @@ enum class QuestionType(
     val buzzable: Boolean
 ) {
     CHOICE(1, true),
+    MULTIPLE_CHOICE(1, false),
     FREE_INPUT(1, true),
     ESTIMATE(2, false)
 }
@@ -19,6 +20,7 @@ enum class QuestionType(
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = ChoiceQuestion::class, name = "CHOICE"),
+    JsonSubTypes.Type(value = MultipleChoiceQuestion::class, name = "MULTIPLE_CHOICE"),
     JsonSubTypes.Type(value = FreeInputQuestion::class, name = "FREE_INPUT"),
     JsonSubTypes.Type(value = EstimateQuestion::class, name = "ESTIMATE")
 )
@@ -41,6 +43,18 @@ data class ChoiceQuestion(
   override val correctAnswer: String,
   val answerOptions: List<String>
 ) : AbstractQuestion(QuestionType.CHOICE)
+
+data class MultipleChoiceQuestion(
+  override val id: QuestionId,
+  override val phrase: String,
+  override val imagePath: String? = null,
+  override val correctAnswer: String,
+  val answerOptions: List<String>
+) : AbstractQuestion(QuestionType.MULTIPLE_CHOICE) {
+  fun correctAnswers(): List<String> {
+    return correctAnswer.split(",").map { it.trim() }
+  }
+}
 
 data class FreeInputQuestion(
   override val id: QuestionId,

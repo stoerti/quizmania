@@ -1,0 +1,26 @@
+{
+  "id": "easter2025_test",
+  "name": "Osterquiz 2025",
+  "rounds": [
+    {
+      "name": "Super-Bonus-Runde",
+      "roundConfig": {
+        "useBuzzer": true
+      },
+      "questions": [
+        "easter_bonusrunde_01",
+        "easter_bonusrunde_02",
+        "easter_bonusrunde_03",
+        "easter_bonusrunde_04",
+        "easter_bonusrunde_05",
+        "easter_bonusrunde_06",
+        "easter_bonusrunde_07",
+        "easter_bonusrunde_08",
+        "easter_bonusrunde_09",
+        "easter_bonusrunde_10",
+        "easter_bonusrunde_11",
+        "easter_bonusrunde_12"
+      ]
+    }
+  ]
+}

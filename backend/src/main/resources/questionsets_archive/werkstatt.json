@@ -1,0 +1,36 @@
+{
+  "id": "werkstatt",
+  "name": "Werkstatt",
+  "rounds": [
+    {
+      "name": "Die leichten zwei",
+      "roundConfig": {
+        "useBuzzer": false
+      },
+      "questions": [
+        "werkstaettchen_choice_01",
+        "werkstaettchen_choice_02"
+      ]
+    },
+    {
+      "name": "Die sehr leichten zwei",
+      "roundConfig": {
+        "useBuzzer": false
+      },
+      "questions": [
+        "werkstaettchen_choice_03",
+        "werkstaettchen_choice_04"
+      ]
+    },
+    {
+      "name": "Jetzt wird's schwer",
+      "roundConfig": {
+        "useBuzzer": false
+      },
+      "questions": [
+        "werkstaettchen_choice_05",
+        "werkstaettchen_choice_06"
+      ]
+    }
+  ]
+}

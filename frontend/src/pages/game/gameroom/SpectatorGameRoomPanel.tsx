@@ -56,8 +56,16 @@ export const SpectatorGameRoomPanel = ({game}: SpectatorGameRoomPanelProps) => {
         </Box>
       } else if (question.questionMode === GameQuestionMode.BUZZER) {
         let answerContainer;
+        let buzzerContainer;
+        if (question.question.type === QuestionType.CHOICE) {
+          answerContainer = <Stack spacing={2} direction="column" justifyContent="center" alignItems="center" useFlexGap
+                                   flexWrap="wrap">
+            {question.question.answerOptions.map((answer, index) =>
+              <Button key={index} variant="contained" sx={{width: '80%', maxWidth: '300px'}}>{answer}</Button>)}
+          </Stack>
+        }
         if (question.currentBuzzWinnerId == null) {
-          answerContainer =
+          buzzerContainer =
             <Box sx={{maxWidth: '650px', width: '100%'}}>
               <Stack spacing={2}>
                 <Paper sx={{padding: 2}}>
@@ -74,7 +82,7 @@ export const SpectatorGameRoomPanel = ({game}: SpectatorGameRoomPanelProps) => {
             </Box>
 
         } else {
-          answerContainer =
+          buzzerContainer =
             <Box sx={{marginTop: 5, marginBottom: 10}}>
               <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="body1" component="div">
                 Player on the clock:
@@ -88,6 +96,7 @@ export const SpectatorGameRoomPanel = ({game}: SpectatorGameRoomPanelProps) => {
           <Stack spacing={2}>
             <QuestionPhrasePanel gameQuestion={question}/>
             {answerContainer}
+            {buzzerContainer}
           </Stack>
         )
       } else {

@@ -425,7 +425,7 @@ internal class GameAggregate() {
     }
 
     deadlineManager.cancelAllWithinScope(Deadline.GAME_ABANDONED)
-    deadlineManager.schedule(Duration.ofMinutes(15), Deadline.GAME_ABANDONED)
+    deadlineManager.schedule(Duration.ofDays(1), Deadline.GAME_ABANDONED)
   }
 
   private fun endGame(deadlineManager: DeadlineManager) {

@@ -21,6 +21,7 @@ export enum GameQuestionMode {
 
 export enum QuestionType {
   CHOICE = 'CHOICE',
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
   FREE_INPUT = 'FREE_INPUT',
   ESTIMATE = 'ESTIMATE',
 }

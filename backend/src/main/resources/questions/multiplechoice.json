@@ -1,0 +1,9 @@
+[
+  {
+    "id": "multiple_choice_01",
+    "type": "MULTIPLE_CHOICE",
+    "phrase": "What of these is a prime number?",
+    "correctAnswer": "3||7",
+    "answerOptions": ["3", "7", "9", "42"]
+  }
+]

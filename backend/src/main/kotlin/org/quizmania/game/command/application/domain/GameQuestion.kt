@@ -253,6 +253,7 @@ data class GameQuestion(
   internal fun resolvePoints(): Map<GamePlayerId, Int> {
     return when (question.type) {
       QuestionType.CHOICE -> resolvePointsChoiceQuestion()
+      QuestionType.MULTIPLE_CHOICE -> resolvePointsMultipleChoiceQuestion()
       QuestionType.FREE_INPUT -> resolvePointsFreeInputQuestion()
       QuestionType.ESTIMATE -> resolvePointsEstimateQuestion()
     }
@@ -265,6 +266,24 @@ data class GameQuestion(
 
     return playerAnswers.filter { it.answer == question.correctAnswer }
       .associate { it.gamePlayerId to 10 }
+  }
+
+  internal fun resolvePointsMultipleChoiceQuestion(): Map<GamePlayerId, Int> {
+    val correctAnswers = question.correctAnswer.split(",").map { it.trim() }
+
+    return playerAnswers.associate { it.gamePlayerId to calculateMultipleChoicePoints(it.answer, correctAnswers) }
+      .toMap()
+  }
+
+  internal fun calculateMultipleChoicePoints(
+    playerAnswer: String,
+    correctAnswers: List<String>
+  ): Int {
+    val playerAnswers = playerAnswer.split(",").map { it.trim() }
+    val correctAnswersCount = correctAnswers.count { it in playerAnswers }
+    val wrongAnswersCount = playerAnswers.count { it !in correctAnswers }
+
+    return correctAnswersCount * 5 - wrongAnswersCount * 5
   }
 
   internal fun resolvePointsFreeInputQuestion(): Map<GamePlayerId, Int> {

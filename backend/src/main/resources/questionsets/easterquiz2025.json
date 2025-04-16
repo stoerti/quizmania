@@ -1,0 +1,83 @@
+{
+  "id": "easter2025",
+  "name": "Osterquiz 2025",
+  "rounds": [
+    {
+      "name": "Geografie",
+      "roundConfig": {
+        "useBuzzer": false
+      },
+      "questions": [
+        "easter_geografie_01",
+        "easter_geografie_02",
+        "easter_geografie_03",
+        "easter_geografie_04",
+        "easter_geografie_11",
+        "easter_geografie_12",
+        "easter_geografie_13",
+        "easter_geografie_14",
+        "easter_geografie_21"
+      ]
+    },
+    {
+      "name": "Wer bin ich?",
+      "roundConfig": {
+        "useBuzzer": true
+      },
+      "questions": [
+        "quizmas_filmrollen_01",
+        "quizmas_filmrollen_02",
+        "quizmas_filmrollen_03",
+        "quizmas_filmrollen_04",
+        "quizmas_filmrollen_05",
+        "quizmas_filmrollen_06",
+        "quizmas_filmrollen_07",
+        "quizmas_filmrollen_08",
+        "quizmas_filmrollen_09",
+        "quizmas_filmrollen_10",
+        "quizmas_filmrollen_11",
+        "quizmas_filmrollen_12",
+        "quizmas_filmrollen_13",
+        "quizmas_filmrollen_14"
+      ]
+    },
+    {
+      "name": "Fragen die die Welt bedeuten",
+      "roundConfig": {
+        "useBuzzer": false
+      },
+      "questions": [
+        "easter_random_01",
+        "easter_random_02",
+        "easter_random_03",
+        "easter_random_04",
+        "easter_random_05",
+        "easter_random_06",
+        "easter_random_07",
+        "easter_random_08",
+        "easter_random_09",
+        "easter_random_10"
+      ]
+    },
+    {
+      "name": "Super-Bonus-Runde",
+      "roundConfig": {
+        "useBuzzer": true
+      },
+      "questions": [
+        "easter_bonusrunde_01",
+        "easter_bonusrunde_02",
+        "easter_bonusrunde_03",
+        "easter_bonusrunde_04",
+        "easter_bonusrunde_05",
+        "easter_bonusrunde_06",
+        "easter_bonusrunde_07",
+        "easter_bonusrunde_08",
+        "easter_bonusrunde_09",
+        "easter_bonusrunde_10",
+        "easter_bonusrunde_11",
+        "easter_bonusrunde_12"
+      ]
+    }
+  ]
+}

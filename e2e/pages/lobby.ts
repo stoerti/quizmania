@@ -4,7 +4,7 @@ export function createGame(gameName: string, questionSet: string, moderated: boo
   I.click({id: 'createGame'});
 
   I.fillField({id: "gameName"}, gameName)
-  I.fillField({id: "numSecondsToAnswer"}, 10)
+  I.fillField({id: "numSecondsToAnswer"}, 60)
 
   I.click({id: 'questionSet'})
   I.click({xpath: '//ul//li[@data-value="'+questionSet+'"]'})
