@@ -1,25 +1,24 @@
 {
   "id": "easter2025_test",
-  "name": "Osterquiz 2025",
+  "name": "Osterquiz 2025 Test",
   "rounds": [
     {
-      "name": "Super-Bonus-Runde",
+      "name": "Runde 1",
       "roundConfig": {
         "useBuzzer": true
       },
       "questions": [
-        "easter_bonusrunde_01",
         "easter_bonusrunde_02",
-        "easter_bonusrunde_03",
-        "easter_bonusrunde_04",
-        "easter_bonusrunde_05",
-        "easter_bonusrunde_06",
-        "easter_bonusrunde_07",
-        "easter_bonusrunde_08",
-        "easter_bonusrunde_09",
-        "easter_bonusrunde_10",
-        "easter_bonusrunde_11",
-        "easter_bonusrunde_12"
+        "quizmas_filmrollen_01"
+      ]
+    },
+    {
+      "name": "Runde 2",
+      "roundConfig": {
+        "useBuzzer": false
+      },
+      "questions": [
+        "easter_random_10"
       ]
     }
   ]

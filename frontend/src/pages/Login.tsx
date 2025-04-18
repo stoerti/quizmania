@@ -57,7 +57,7 @@ const LoginPage = () => {
             To play Quizmania, first choose a guest username. Then you can either create a new game or join an existing one.
           </Typography>
           <Typography variant={"body1"}>
-            AxonIQ Conference special: Join the Game "AxonIQ Quiz" by clicking on the quiz name.
+            Easter-Quiz special: Join the Game "Oster-Quiz" by clicking on the quiz name.
           </Typography>
           <TextField margin="normal"
                      required

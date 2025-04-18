@@ -9,7 +9,7 @@ import {Build, StopCircle} from "@mui/icons-material";
 import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
 import Countdown from "react-countdown";
 import {QuestionCountdownBar} from "../question/QuestionCountdownBar";
-import {GameQuestionMode} from "../../../services/GameEventTypes";
+import {GameQuestionMode, QuestionType} from "../../../services/GameEventTypes";
 import {useSnackbar} from "material-ui-snackbar-provider";
 import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
 import {Scoreboard, ScoreboardMode} from "./Scoreboard.tsx";
@@ -32,6 +32,15 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
     if (question === undefined) {
       return <StartRoundPanel game={game} isModerator={true}/>
     } else if (question.status === QuestionStatus.OPEN) {
+      let answerContainer;
+      if (question.question.type === QuestionType.CHOICE || question.question.type === QuestionType.MULTIPLE_CHOICE) {
+        answerContainer = <Stack spacing={2} direction="column" justifyContent="center" alignItems="center" useFlexGap
+                                 flexWrap="wrap">
+          {question.question.answerOptions.map((answer, index) =>
+            <Button key={index} variant="contained" sx={{width: '80%', maxWidth: '300px'}}>{answer}</Button>)}
+        </Stack>
+      }
+
       if (question.questionMode === GameQuestionMode.COLLECTIVE) {
         return <Box>
           <QuestionPhrasePanel gameQuestion={question}/>
@@ -43,6 +52,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
           />
           <br/>
           <Stack spacing={2} sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
+            {answerContainer}
             <Box sx={{display: 'flex', justifyContent: 'center'}}>
               <Button id="closeQuestion" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained"
                       onClick={() => gameCommandService.closeQuestion(game.id, question.gameQuestionId)}
@@ -52,9 +62,9 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
           </Stack>
         </Box>
       } else if (question.questionMode === GameQuestionMode.BUZZER) {
-        let answerContainer;
+        let container;
         if (question.currentBuzzWinnerId == null) {
-          answerContainer =
+          container =
             <Box sx={{maxWidth: '650px', width: '100%'}}>
               <Stack spacing={2}>
                 <Button id="closeQuestion" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained"
@@ -74,7 +84,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
             </Box>
 
         } else {
-          answerContainer =
+          container =
             <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
               <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
               <Box sx={{marginTop: 5, marginBottom: 10}}>
@@ -107,6 +117,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
           <Stack spacing={2}>
             <QuestionPhrasePanel gameQuestion={question}/>
             {answerContainer}
+            {container}
           </Stack>
         )
       } else {
