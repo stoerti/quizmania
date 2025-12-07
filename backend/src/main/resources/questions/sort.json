@@ -1,0 +1,37 @@
+[
+  {
+    "id": "sort_01",
+    "type": "SORT",
+    "phrase": "Sort these planets by their distance from the Sun (closest to farthest)",
+    "correctAnswer": "Mercury, Venus, Earth, Mars",
+    "answerOptions": ["Earth", "Mars", "Mercury", "Venus"]
+  },
+  {
+    "id": "sort_02",
+    "type": "SORT",
+    "phrase": "Sort these countries by population (smallest to largest)",
+    "correctAnswer": "Iceland, Switzerland, Belgium, Netherlands",
+    "answerOptions": ["Belgium", "Iceland", "Netherlands", "Switzerland"]
+  },
+  {
+    "id": "sort_03",
+    "type": "SORT",
+    "phrase": "Sort these programming languages by their year of first appearance (oldest to newest)",
+    "correctAnswer": "C, C++, Java, Python",
+    "answerOptions": ["C", "C++", "Java", "Python"]
+  },
+  {
+    "id": "sort_04",
+    "type": "SORT",
+    "phrase": "Sort these events chronologically (earliest to latest)",
+    "correctAnswer": "World War I, World War II, Moon Landing, Fall of Berlin Wall",
+    "answerOptions": ["Moon Landing", "World War II", "Fall of Berlin Wall", "World War I"]
+  },
+  {
+    "id": "sort_05",
+    "type": "SORT",
+    "phrase": "Sort these movies by their release year (oldest to newest)",
+    "correctAnswer": "The Godfather, Star Wars, E.T., Jurassic Park",
+    "answerOptions": ["Jurassic Park", "Star Wars", "The Godfather", "E.T."]
+  }
+]

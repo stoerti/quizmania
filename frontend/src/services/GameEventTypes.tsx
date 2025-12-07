@@ -24,6 +24,7 @@ export enum QuestionType {
   MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
   FREE_INPUT = 'FREE_INPUT',
   ESTIMATE = 'ESTIMATE',
+  SORT = 'SORT',
 }
 
 export type Question = {
