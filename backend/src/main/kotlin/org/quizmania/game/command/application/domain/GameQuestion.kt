@@ -256,6 +256,7 @@ data class GameQuestion(
       QuestionType.MULTIPLE_CHOICE -> resolvePointsMultipleChoiceQuestion()
       QuestionType.FREE_INPUT -> resolvePointsFreeInputQuestion()
       QuestionType.ESTIMATE -> resolvePointsEstimateQuestion()
+      QuestionType.SORT -> resolvePointsSortQuestion()
     }
   }
 
@@ -311,6 +312,45 @@ data class GameQuestion(
         }
       }
       .toMap()
+  }
+
+  internal fun resolvePointsSortQuestion(): Map<GamePlayerId, Int> {
+    val correctOrder = question.correctAnswer.split(",").map { it.trim() }
+    
+    return playerAnswers.map { playerAnswer ->
+      val playerOrder = playerAnswer.answer.split(",").map { it.trim() }
+      val distance = calculateSortDistance(playerOrder, correctOrder)
+      playerAnswer.gamePlayerId to distance
+    }
+      .sortedBy { it.second }
+      .mapIndexed { i, pair ->
+        pair.first to when (i) {
+          0 -> 20
+          1 -> 10
+          2 -> 5
+          else -> 0
+        }
+      }
+      .toMap()
+  }
+
+  internal fun calculateSortDistance(playerOrder: List<String>, correctOrder: List<String>): Int {
+    // Calculate Kendall tau distance - number of pairwise disagreements
+    var distance = 0
+    for (i in correctOrder.indices) {
+      for (j in i + 1 until correctOrder.size) {
+        val correctI = correctOrder[i]
+        val correctJ = correctOrder[j]
+        val playerI = playerOrder.indexOf(correctI)
+        val playerJ = playerOrder.indexOf(correctJ)
+        
+        // If both items exist in player's order and they are in wrong relative order
+        if (playerI != -1 && playerJ != -1 && playerI > playerJ) {
+          distance++
+        }
+      }
+    }
+    return distance
   }
 
   @EventSourcingHandler

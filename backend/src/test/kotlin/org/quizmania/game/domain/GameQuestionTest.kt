@@ -10,6 +10,7 @@ import org.quizmania.game.command.application.domain.GameQuestion
 import org.quizmania.game.command.application.domain.PlayerAnswer
 import org.quizmania.question.api.EstimateQuestion
 import org.quizmania.question.api.FreeInputQuestion
+import org.quizmania.question.api.SortQuestion
 import java.time.Instant
 import java.util.*
 
@@ -42,6 +43,73 @@ class GameQuestionTest {
         GAME_PLAYER_2 to 20,
         GAME_PLAYER_3 to 10,
       ))
+  }
+
+  @Test
+  fun sortQuestion() {
+    val gameQuestion = GameQuestion(
+      gameId = GAME_UUID,
+      isModerated = false,
+      GAME_QUESTION_1,
+      1,
+      SortQuestion(
+        id = UUID.randomUUID().toString(),
+        phrase = "Sort these items?",
+        correctAnswer = "A, B, C, D",
+        answerOptions = listOf("A", "B", "C", "D")
+      ),
+      GameQuestionMode.COLLECTIVE,
+      Instant.now(),
+      mutableListOf(
+        PlayerAnswer(PLAYER_ANSWER_1, GAME_PLAYER_1, "A, B, C, D"), // Perfect - distance 0
+        PlayerAnswer(PLAYER_ANSWER_2, GAME_PLAYER_2, "A, B, D, C"), // 1 swap - distance 1
+        PlayerAnswer(PLAYER_ANSWER_3, GAME_PLAYER_3, "D, C, B, A"), // Completely reversed - distance 6
+      ),
+    )
+
+    val result = gameQuestion.resolvePoints()
+
+    Assertions.assertThat(result).containsExactlyInAnyOrderEntriesOf(mapOf(
+      GAME_PLAYER_1 to 20, // Best answer
+      GAME_PLAYER_2 to 10, // Second best
+      GAME_PLAYER_3 to 5,  // Third best
+    ))
+  }
+
+  @Test
+  fun sortQuestion_calculateDistance() {
+    val gameQuestion = GameQuestion(
+      gameId = GAME_UUID,
+      isModerated = false,
+      GAME_QUESTION_1,
+      1,
+      SortQuestion(
+        id = UUID.randomUUID().toString(),
+        phrase = "Sort these items?",
+        correctAnswer = "A, B, C, D",
+        answerOptions = listOf("A", "B", "C", "D")
+      ),
+      GameQuestionMode.COLLECTIVE,
+      Instant.now(),
+    )
+
+    // Test perfect order
+    Assertions.assertThat(gameQuestion.calculateSortDistance(
+      listOf("A", "B", "C", "D"),
+      listOf("A", "B", "C", "D")
+    )).isEqualTo(0)
+
+    // Test one swap (C and D swapped)
+    Assertions.assertThat(gameQuestion.calculateSortDistance(
+      listOf("A", "B", "D", "C"),
+      listOf("A", "B", "C", "D")
+    )).isEqualTo(1)
+
+    // Test completely reversed
+    Assertions.assertThat(gameQuestion.calculateSortDistance(
+      listOf("D", "C", "B", "A"),
+      listOf("A", "B", "C", "D")
+    )).isEqualTo(6)
   }
 
   @ParameterizedTest
