@@ -59,6 +59,7 @@ dependencies {
   testImplementation("com.tngtech.jgiven:jgiven-spring-junit5:1.3.1")
   testImplementation("io.toolisticon.testing:jgiven-kotlin:1.3.1.0")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.springframework.boot:spring-boot-testcontainers")
   testImplementation("org.testcontainers:testcontainers")
   testImplementation("org.testcontainers:junit-jupiter")
   testImplementation("org.testcontainers:postgresql")
