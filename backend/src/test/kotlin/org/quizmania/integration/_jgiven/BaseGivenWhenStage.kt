@@ -101,7 +101,7 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
     }
   }
 
-  private fun <T> exchangeSuccessfully(function: () -> ResponseEntity<T>): T {
+  private fun <T : Any> exchangeSuccessfully(function: () -> ResponseEntity<T>): T {
     val response = function()
     assertThat(response.statusCode.is2xxSuccessful).isTrue()
     assertThat(response.body).isNotNull
