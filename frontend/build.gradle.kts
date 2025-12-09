@@ -2,7 +2,7 @@ import com.moowork.gradle.node.npm.NpmTask
 
 
 plugins {
-  id("com.github.node-gradle.node") version "2.2.2"
+  id("com.github.node-gradle.node") version "7.1.0"
   //id("com.github.node-gradle.node") version "7.0.2"
 }
 
