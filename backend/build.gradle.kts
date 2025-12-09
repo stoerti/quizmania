@@ -38,7 +38,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-quartz")
 
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.liquibase:liquibase-core")
