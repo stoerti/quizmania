@@ -333,6 +333,7 @@ data class GameQuestion(
 
   internal fun calculateLinearPoints(distance: Int, maxDistance: Int): Int {
     // Linear scoring: 20 points for perfect, 0 for worst, linear in between
+    // Note: maxDistance should never be 0 in practice (requires at least 2 items to sort)
     if (maxDistance == 0) return 20
     val ratio = 1.0 - (distance.toDouble() / maxDistance.toDouble())
     return (ratio * 20).toInt()

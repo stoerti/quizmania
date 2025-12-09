@@ -51,6 +51,15 @@ export type SortAnswerContainerProps = {
   onAnswerQuestion: (answer: string) => void
 }
 
+// Color constants for sort button styling
+const SORT_BUTTON_COLORS = {
+  background: '#90EE90',      // Light green
+  backgroundHover: '#7FDD7F', // Slightly darker green on hover
+  text: '#006400',            // Dark green
+  disabledBackground: '#E0E0E0', // Gray
+  disabledText: '#A0A0A0'     // Light gray
+};
+
 export const SortAnswerContainer = ({gameQuestion, onAnswerQuestion}: SortAnswerContainerProps) => {
   const [sortedItems, setSortedItems] = useState([...gameQuestion.question.answerOptions])
 
@@ -93,17 +102,17 @@ export const SortAnswerContainer = ({gameQuestion, onAnswerQuestion}: SortAnswer
           onClick={() => moveDown(index)}
           disabled={index === sortedItems.length - 1}
           sx={{ 
-            backgroundColor: '#90EE90',
-            color: '#006400',
+            backgroundColor: SORT_BUTTON_COLORS.background,
+            color: SORT_BUTTON_COLORS.text,
             borderRadius: '4px 0 0 4px',
             padding: '8px',
             minWidth: '48px',
             '&:hover': {
-              backgroundColor: '#7FDD7F'
+              backgroundColor: SORT_BUTTON_COLORS.backgroundHover
             },
             '&.Mui-disabled': {
-              backgroundColor: '#E0E0E0',
-              color: '#A0A0A0'
+              backgroundColor: SORT_BUTTON_COLORS.disabledBackground,
+              color: SORT_BUTTON_COLORS.disabledText
             }
           }}
         >
@@ -119,17 +128,17 @@ export const SortAnswerContainer = ({gameQuestion, onAnswerQuestion}: SortAnswer
           onClick={() => moveUp(index)}
           disabled={index === 0}
           sx={{ 
-            backgroundColor: '#90EE90',
-            color: '#006400',
+            backgroundColor: SORT_BUTTON_COLORS.background,
+            color: SORT_BUTTON_COLORS.text,
             borderRadius: '0 4px 4px 0',
             padding: '8px',
             minWidth: '48px',
             '&:hover': {
-              backgroundColor: '#7FDD7F'
+              backgroundColor: SORT_BUTTON_COLORS.backgroundHover
             },
             '&.Mui-disabled': {
-              backgroundColor: '#E0E0E0',
-              color: '#A0A0A0'
+              backgroundColor: SORT_BUTTON_COLORS.disabledBackground,
+              color: SORT_BUTTON_COLORS.disabledText
             }
           }}
         >
