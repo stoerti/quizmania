@@ -40,7 +40,7 @@ export const MultipleChoiceAnswerContainer = ({gameQuestion, onAnswerQuestion}: 
       }
     )}
 
-    <Button key='send' variant="contained" sx={{width: '80%', maxWidth: '300px', top: '20px'}} onClick={() => submitAnswer()}>Confirm</Button>
+    <Button key='send' variant="contained" sx={{width: '80%', maxWidth: '300px', marginTop: '20px', marginBottom: '20px'}} onClick={() => submitAnswer()}>Confirm</Button>
   </Stack>
 }
 

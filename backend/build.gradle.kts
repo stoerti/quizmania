@@ -14,9 +14,10 @@ group = "org.quizmania"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-configurations {
-  compileOnly {
-    extendsFrom(configurations.annotationProcessor.get())
+kotlin {
+  compilerOptions {
+    freeCompilerArgs.add("-Xjsr305=strict")
+    jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
   }
 }
 
@@ -54,9 +55,9 @@ dependencies {
   testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
   testImplementation("org.assertj:assertj-core:3.26.0")
-  testImplementation("org.awaitility:awaitility:4.2.1")
+  testImplementation("org.awaitility:awaitility:4.3.0")
 
-  testImplementation("com.tngtech.jgiven:jgiven-spring-junit5:1.3.1")
+  testImplementation("com.tngtech.jgiven:jgiven-spring-junit5:2.0.3")
   testImplementation("io.toolisticon.testing:jgiven-kotlin:1.3.1.0")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.boot:spring-boot-testcontainers")
@@ -65,6 +66,7 @@ dependencies {
   testImplementation("org.testcontainers:postgresql")
   testImplementation("org.axonframework:axon-test:4.12.2")
   testRuntimeOnly("org.postgresql:postgresql")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.withType<KotlinCompile> {
@@ -93,7 +95,7 @@ jacoco {
 
 jib {
   from {
-    image = "openjdk:17-jdk-slim"
+    image = "eclipse-temurin:21-jdk-ubi9-minimal"
     platforms {
       platform {
         architecture = "arm64"

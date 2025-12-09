@@ -1,9 +1,8 @@
-import com.moowork.gradle.node.npm.NpmTask
+import com.github.gradle.node.npm.task.NpmTask
 
 
 plugins {
-  id("com.github.node-gradle.node") version "2.2.2"
-  //id("com.github.node-gradle.node") version "7.0.2"
+  id("com.github.node-gradle.node") version "7.1.0"
 }
 
 group = "org.quizmania"
@@ -28,7 +27,7 @@ node {
   version = "20.16.0"
   npmVersion = "10.8.2"
   // Set the work directory for unpacking node
-  workDir = file("${project.buildDir}/nodejs")
+  workDir = file("${layout.buildDirectory.get()}/nodejs")
   // Set the work directory for NPM
-  npmWorkDir = file("${project.buildDir}/npm")
+  npmWorkDir = file("${layout.buildDirectory.get()}/npm")
 }
