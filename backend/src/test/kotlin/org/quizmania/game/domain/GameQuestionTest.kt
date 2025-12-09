@@ -69,10 +69,49 @@ class GameQuestionTest {
 
     val result = gameQuestion.resolvePoints()
 
+    // Linear scoring: max distance for 4 items is 6
+    // Player 1: distance 0 -> 20 points (perfect)
+    // Player 2: distance 1 -> (1 - 1/6) * 20 = 16.67 -> 16 points
+    // Player 3: distance 6 -> (1 - 6/6) * 20 = 0 points
     Assertions.assertThat(result).containsExactlyInAnyOrderEntriesOf(mapOf(
-      GAME_PLAYER_1 to 20, // Best answer
-      GAME_PLAYER_2 to 10, // Second best
-      GAME_PLAYER_3 to 5,  // Third best
+      GAME_PLAYER_1 to 20,
+      GAME_PLAYER_2 to 16,
+      GAME_PLAYER_3 to 0,
+    ))
+  }
+
+  @Test
+  fun sortQuestion_withSixItems() {
+    val gameQuestion = GameQuestion(
+      gameId = GAME_UUID,
+      isModerated = false,
+      GAME_QUESTION_1,
+      1,
+      SortQuestion(
+        id = UUID.randomUUID().toString(),
+        phrase = "Sort these items?",
+        correctAnswer = "A, B, C, D, E, F",
+        answerOptions = listOf("A", "B", "C", "D", "E", "F")
+      ),
+      GameQuestionMode.COLLECTIVE,
+      Instant.now(),
+      mutableListOf(
+        PlayerAnswer(PLAYER_ANSWER_1, GAME_PLAYER_1, "A, B, C, D, E, F"), // Perfect - distance 0
+        PlayerAnswer(PLAYER_ANSWER_2, GAME_PLAYER_2, "A, B, C, D, F, E"), // 1 swap - distance 1
+        PlayerAnswer(PLAYER_ANSWER_3, GAME_PLAYER_3, "F, E, D, C, B, A"), // Completely reversed - distance 15
+      ),
+    )
+
+    val result = gameQuestion.resolvePoints()
+
+    // Linear scoring: max distance for 6 items is 15 (6*5/2)
+    // Player 1: distance 0 -> 20 points
+    // Player 2: distance 1 -> (1 - 1/15) * 20 = 18.67 -> 18 points
+    // Player 3: distance 15 -> (1 - 15/15) * 20 = 0 points
+    Assertions.assertThat(result).containsExactlyInAnyOrderEntriesOf(mapOf(
+      GAME_PLAYER_1 to 20,
+      GAME_PLAYER_2 to 18,
+      GAME_PLAYER_3 to 0,
     ))
   }
 
