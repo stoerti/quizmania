@@ -4,6 +4,16 @@ spring:
     generate-unique-name: true
     hikari:
       minimum-idle: 1
+  sql:
+    init:
+      mode: always
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+  liquibase:
+    enabled: true
+    change-log: classpath:/liquibase/db.changelog-master.xml
 axon:
   axonserver:
     enabled: false
