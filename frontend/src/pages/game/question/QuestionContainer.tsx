@@ -84,35 +84,57 @@ export const SortAnswerContainer = ({gameQuestion, onAnswerQuestion}: SortAnswer
     {sortedItems.map((answer, index) => (
       <Box key={index} sx={{
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'stretch',
         width: '80%',
         maxWidth: '400px',
-        gap: 1
+        gap: 0
       }}>
-        <Stack direction="column" spacing={0}>
-          <IconButton
-            size="small"
-            onClick={() => moveUp(index)}
-            disabled={index === 0}
-            sx={{ padding: '2px' }}
-          >
-            <ArrowUpwardIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            size="small"
-            onClick={() => moveDown(index)}
-            disabled={index === sortedItems.length - 1}
-            sx={{ padding: '2px' }}
-          >
-            <ArrowDownwardIcon fontSize="small" />
-          </IconButton>
-        </Stack>
+        <IconButton
+          onClick={() => moveDown(index)}
+          disabled={index === sortedItems.length - 1}
+          sx={{ 
+            backgroundColor: '#90EE90',
+            color: '#006400',
+            borderRadius: '4px 0 0 4px',
+            padding: '8px',
+            minWidth: '48px',
+            '&:hover': {
+              backgroundColor: '#7FDD7F'
+            },
+            '&.Mui-disabled': {
+              backgroundColor: '#E0E0E0',
+              color: '#A0A0A0'
+            }
+          }}
+        >
+          <ArrowDownwardIcon />
+        </IconButton>
         <Button
           variant="contained"
-          sx={{ flex: 1, minHeight: '48px' }}
+          sx={{ flex: 1, minHeight: '48px', borderRadius: 0 }}
         >
           {answer}
         </Button>
+        <IconButton
+          onClick={() => moveUp(index)}
+          disabled={index === 0}
+          sx={{ 
+            backgroundColor: '#90EE90',
+            color: '#006400',
+            borderRadius: '0 4px 4px 0',
+            padding: '8px',
+            minWidth: '48px',
+            '&:hover': {
+              backgroundColor: '#7FDD7F'
+            },
+            '&.Mui-disabled': {
+              backgroundColor: '#E0E0E0',
+              color: '#A0A0A0'
+            }
+          }}
+        >
+          <ArrowUpwardIcon />
+        </IconButton>
       </Box>
     ))}
 
