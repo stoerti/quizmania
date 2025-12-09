@@ -5,7 +5,15 @@
 
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
+  - package-ecosystem: "npm" # See documentation for possible values
+    directory: "/frontend" # Location of package manifests
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "gradle" # See documentation for possible values
     directory: "/" # Location of package manifests
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker-compose" # See documentation for possible values
+    directory: "/dev-support" # Location of package manifests
     schedule:
       interval: "weekly"

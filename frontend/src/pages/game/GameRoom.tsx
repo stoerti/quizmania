@@ -78,7 +78,8 @@ export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
       <Box sx={{
         display: "flex",
         justifyContent: "center",
-        margin: 2
+        margin: 2,
+        paddingBottom: currentPlayer !== undefined ? '64px' : '0'
       }}>{container}</Box>
       {currentPlayer !== undefined ?
       <AppBar position="fixed" sx={{top: 'auto', bottom: 0}}>
