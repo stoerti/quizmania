@@ -55,7 +55,7 @@ dependencies {
   testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
   testImplementation("org.assertj:assertj-core:3.26.0")
-  testImplementation("org.awaitility:awaitility:4.2.1")
+  testImplementation("org.awaitility:awaitility:4.3.0")
 
   testImplementation("com.tngtech.jgiven:jgiven-spring-junit5:2.0.3")
   testImplementation("io.toolisticon.testing:jgiven-kotlin:1.3.1.0")
