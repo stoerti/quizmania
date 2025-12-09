@@ -57,7 +57,7 @@ dependencies {
   testImplementation("org.assertj:assertj-core:3.26.0")
   testImplementation("org.awaitility:awaitility:4.2.1")
 
-  testImplementation("com.tngtech.jgiven:jgiven-spring-junit5:1.3.1")
+  testImplementation("com.tngtech.jgiven:jgiven-spring-junit5:2.0.3")
   testImplementation("io.toolisticon.testing:jgiven-kotlin:1.3.1.0")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.testcontainers:testcontainers")
