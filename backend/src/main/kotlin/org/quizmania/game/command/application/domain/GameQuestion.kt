@@ -316,22 +316,26 @@ data class GameQuestion(
 
   internal fun resolvePointsSortQuestion(): Map<GamePlayerId, Int> {
     val correctOrder = question.correctAnswer.split(",").map { it.trim() }
+    val maxDistance = calculateMaxDistance(correctOrder.size)
     
-    return playerAnswers.map { playerAnswer ->
+    return playerAnswers.associate { playerAnswer ->
       val playerOrder = playerAnswer.answer.split(",").map { it.trim() }
       val distance = calculateSortDistance(playerOrder, correctOrder)
-      playerAnswer.gamePlayerId to distance
+      val points = calculateLinearPoints(distance, maxDistance)
+      playerAnswer.gamePlayerId to points
     }
-      .sortedBy { it.second }
-      .mapIndexed { i, pair ->
-        pair.first to when (i) {
-          0 -> 20
-          1 -> 10
-          2 -> 5
-          else -> 0
-        }
-      }
-      .toMap()
+  }
+
+  internal fun calculateMaxDistance(n: Int): Int {
+    // Maximum Kendall tau distance is n*(n-1)/2 (completely reversed order)
+    return n * (n - 1) / 2
+  }
+
+  internal fun calculateLinearPoints(distance: Int, maxDistance: Int): Int {
+    // Linear scoring: 20 points for perfect, 0 for worst, linear in between
+    if (maxDistance == 0) return 20
+    val ratio = 1.0 - (distance.toDouble() / maxDistance.toDouble())
+    return (ratio * 20).toInt()
   }
 
   internal fun calculateSortDistance(playerOrder: List<String>, correctOrder: List<String>): Int {
