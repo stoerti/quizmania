@@ -51,17 +51,18 @@ export type SortAnswerContainerProps = {
   onAnswerQuestion: (answer: string) => void
 }
 
-// Color constants for sort button styling
-const SORT_BUTTON_COLORS = {
-  background: '#90EE90',      // Light green
-  backgroundHover: '#7FDD7F', // Slightly darker green on hover
-  text: '#006400',            // Dark green
-  disabledBackground: '#E0E0E0', // Gray
-  disabledText: '#A0A0A0'     // Light gray
-};
-
 export const SortAnswerContainer = ({gameQuestion, onAnswerQuestion}: SortAnswerContainerProps) => {
   const [sortedItems, setSortedItems] = useState([...gameQuestion.question.answerOptions])
+  const theme = useTheme()
+
+  // Color constants for sort button styling
+  const SORT_BUTTON_COLORS = {
+    background: theme.palette.primary.contrastText,      // Light green
+    backgroundHover: '#7FDD7F', // Slightly darker green on hover
+    text: theme.palette.primary.main,            // Dark green
+    disabledBackground: '#E0E0E0', // Gray
+    disabledText: '#A0A0A0'     // Light gray
+  };
 
   const moveUp = (index: number) => {
     if (index > 0) {
@@ -101,7 +102,7 @@ export const SortAnswerContainer = ({gameQuestion, onAnswerQuestion}: SortAnswer
         <IconButton
           onClick={() => moveDown(index)}
           disabled={index === sortedItems.length - 1}
-          sx={{ 
+          sx={{
             backgroundColor: SORT_BUTTON_COLORS.background,
             color: SORT_BUTTON_COLORS.text,
             borderRadius: '4px 0 0 4px',
@@ -127,7 +128,7 @@ export const SortAnswerContainer = ({gameQuestion, onAnswerQuestion}: SortAnswer
         <IconButton
           onClick={() => moveUp(index)}
           disabled={index === 0}
-          sx={{ 
+          sx={{
             backgroundColor: SORT_BUTTON_COLORS.background,
             color: SORT_BUTTON_COLORS.text,
             borderRadius: '0 4px 4px 0',
