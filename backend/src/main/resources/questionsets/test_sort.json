@@ -1,0 +1,19 @@
+{
+  "id": "test_sort",
+  "name": "Test Sort Questions",
+  "rounds": [
+    {
+      "name": "Round 1",
+      "roundConfig": {
+        "useBuzzer": false
+      },
+      "questions": [
+        "sort_01",
+        "sort_02",
+        "sort_03",
+        "sort_04",
+        "sort_05"
+      ]
+    }
+  ]
+}
