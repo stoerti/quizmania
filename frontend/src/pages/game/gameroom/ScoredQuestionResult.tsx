@@ -3,6 +3,7 @@ import {Box, Grid, List, ListItem, ListItemText, Paper, Stack, Typography} from 
 import React from "react";
 import {Scoreboard, ScoreboardMode} from "./Scoreboard";
 import {QuestionType} from "../../../services/GameEventTypes";
+import {splitAnswerItems} from "../../../utils/answerFormatter";
 
 export type ScoredQuestionResultProps = {
   game: Game,
@@ -22,7 +23,7 @@ export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
 
   // For SORT questions, use two-column layout
   if (question.question.type === QuestionType.SORT) {
-    const correctAnswers = question.question.correctAnswer.split(',').map(item => item.trim());
+    const correctAnswers = splitAnswerItems(question.question.correctAnswer);
     
     return (
       <Grid container spacing={2} sx={{width: '100%', maxWidth: 1200}}>
