@@ -11,6 +11,8 @@ import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
 import {Scoreboard, ScoreboardMode} from "./Scoreboard.tsx";
 import {PlayerAnswerLog} from "./PlayerAnswerLog.tsx";
 import {StartRoundPanel} from "./StartRoundPanel.tsx";
+import {ScoredQuestionResult} from "./ScoredQuestionResult.tsx";
+import {formatAnswerForDisplay} from "../../../utils/answerFormatter.ts";
 
 export type SpectatorGameRoomPanelProps = {
   game: Game,
@@ -129,7 +131,7 @@ export const SpectatorGameRoomPanel = ({game}: SpectatorGameRoomPanelProps) => {
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <Typography variant="body1" component="div">
-                        {answer.answer}
+                        {formatAnswerForDisplay(answer.answer, question.question.type)}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -143,8 +145,7 @@ export const SpectatorGameRoomPanel = ({game}: SpectatorGameRoomPanelProps) => {
       return (
         <Stack spacing={2} sx={{width: '100%'}} alignItems={"center"}>
           <QuestionPhrasePanel gameQuestion={question}/>
-          <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
-          <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
+          <ScoredQuestionResult game={game}/>
         </Stack>
       )
     } else {
