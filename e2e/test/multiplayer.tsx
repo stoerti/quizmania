@@ -224,10 +224,17 @@ Scenario('multiplayer_sort_questions', ({I, loginPage, lobbyPage, gameRoomPage})
   // Correct answer: Iceland, Switzerland, Belgium, Netherlands
   // Initial order in UI: Belgium, Iceland, Netherlands, Switzerland (indices 0,1,2,3)
 
-  // Player 1 (Alice): Wrong answer - Belgium, Iceland, Switzerland, Netherlands
-  // Correct: Iceland, Switzerland, Belgium, Netherlands
-  // Distance: Belgium before Iceland (1), Belgium before Switzerland (1), Iceland before Belgium (reversed from correct, but Belgium should be after Switzerland) = 3
-  // Just swap last two
+  // Player 1 (Alice): Answer - Belgium, Iceland, Switzerland, Netherlands
+  // Correct order: Iceland, Switzerland, Belgium, Netherlands
+  // Using Kendall tau distance to calculate pairwise inversions:
+  // - Belgium before Iceland: wrong (should be after) = 1 inversion
+  // - Belgium before Switzerland: wrong (should be after) = 1 inversion  
+  // - Belgium before Netherlands: wrong (should be after) = 1 inversion
+  // - Iceland before Switzerland: correct = 0
+  // - Iceland before Belgium: wrong (should be after) = already counted
+  // - Switzerland before Netherlands: correct = 0
+  // Total distance: 3 inversions
+  // Score: (1 - 3/6) * 20 = (0.5) * 20 = 10 points
   session('player1', () => {
     gameRoomPage.answerSortQuestion([
       {index: 3, direction: 'up'}, // Switzerland: 3->2 (Belgium, Iceland, Switzerland, Netherlands)
@@ -257,10 +264,10 @@ Scenario('multiplayer_sort_questions', ({I, loginPage, lobbyPage, gameRoomPage})
   I.wait(2)
 
   // Verify final scores
-  // Alice: 25 (Q1 perfect) + 10 (Q2, distance 3 out of max 6: (1-3/6)*20 = 10) = 35
-  // Bob: 16 (Q1, one swap) + 25 (Q2 perfect) = 41
-  I.see("35", "tr:has-text('"+username1+"')") // Alice's total should be 35
-  I.see("41", "tr:has-text('"+username2+"')") // Bob's total should be 41
+  // Alice: 25 (Q1 perfect) + 10 (Q2, distance 3 with max 6) = 35 total
+  // Bob: 16 (Q1, distance 1 with max 6) + 25 (Q2 perfect) = 41 total
+  I.see("35", "tr:has-text('"+username1+"')") // Alice's total
+  I.see("41", "tr:has-text('"+username2+"')") // Bob's total
 
   I.wait(2)
 });
