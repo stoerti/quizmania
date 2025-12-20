@@ -100,6 +100,7 @@ export const SortAnswerContainer = ({gameQuestion, onAnswerQuestion}: SortAnswer
         gap: 0
       }}>
         <IconButton
+          id={`sort-down-${index}`}
           onClick={() => moveDown(index)}
           disabled={index === sortedItems.length - 1}
           sx={{
@@ -126,6 +127,7 @@ export const SortAnswerContainer = ({gameQuestion, onAnswerQuestion}: SortAnswer
           {answer}
         </Button>
         <IconButton
+          id={`sort-up-${index}`}
           onClick={() => moveUp(index)}
           disabled={index === 0}
           sx={{
@@ -148,7 +150,7 @@ export const SortAnswerContainer = ({gameQuestion, onAnswerQuestion}: SortAnswer
       </Box>
     ))}
 
-    <Button key='send' variant="contained" sx={{width: '80%', maxWidth: '400px', top: '20px'}} onClick={() => submitAnswer()}>Confirm</Button>
+    <Button id="submitSortAnswer" key='send' variant="contained" sx={{width: '80%', maxWidth: '400px', top: '20px'}} onClick={() => submitAnswer()}>Confirm</Button>
   </Stack>
 }
 

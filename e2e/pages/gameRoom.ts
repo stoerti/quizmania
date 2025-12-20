@@ -52,6 +52,18 @@ export function answerEstimateQuestion(answer: number) {
   I.click({id: 'submitAnswer'});
 }
 
+export function answerSortQuestion(moves: {index: number, direction: 'up' | 'down'}[]) {
+  // Perform the sort moves
+  moves.forEach(move => {
+    const buttonId = move.direction === 'up' ? `sort-up-${move.index}` : `sort-down-${move.index}`;
+    I.click({id: buttonId});
+    I.wait(0.1); // Small wait between moves for stability
+  });
+  
+  // Submit the answer
+  I.click({id: 'submitSortAnswer'});
+}
+
 // then
 
 export function wonBuzz() {

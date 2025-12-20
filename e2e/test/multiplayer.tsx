@@ -131,6 +131,140 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.wait(10)
 });
 
+Scenario('multiplayer_sort_questions', ({I, loginPage, lobbyPage, gameRoomPage}) => {
+  let gameName = "Sort Game " + Math.floor(Math.random() * 100000)
+  let moderator = "Moderator " + Math.floor(Math.random() * 100000)
+  let username1 = "Alice " + Math.floor(Math.random() * 100000)
+  let username2 = "Bob " + Math.floor(Math.random() * 100000)
+  let username3 = "Charlie " + Math.floor(Math.random() * 100000)
+
+  // Moderator logs in and creates the game
+  loginPage.logInWithUsername(moderator)
+  I.wait(1)
+
+  lobbyPage.createGame(gameName, "test_sort_e2e", true)
+  I.wait(1)
+
+  // Three players join the game
+  session('player1', () => {
+    loginPage.logInWithUsername(username1)
+    lobbyPage.joinGame(gameName)
+  });
+
+  session('player2', () => {
+    loginPage.logInWithUsername(username2)
+    lobbyPage.joinGame(gameName)
+  });
+
+  session('player3', () => {
+    loginPage.logInWithUsername(username3)
+    lobbyPage.joinGameAsSpectator(gameName)
+  });
+
+  I.waitForText(username1)
+  I.waitForText(username2)
+  I.waitForText(username3)
+
+  I.wait(2)
+
+  // Moderator starts the game
+  gameRoomPage.startGame()
+
+  I.wait(2)
+
+  // Question 1: Sort planets by distance from Sun
+  // Correct answer: Mercury, Venus, Earth, Mars
+  // Initial order in UI: Earth, Mars, Mercury, Venus (indices 0,1,2,3)
+  
+  // Player 1 (Alice): Perfect answer - Mercury, Venus, Earth, Mars
+  // Moves: Earth down twice, Mars down once
+  session('player1', () => {
+    gameRoomPage.answerSortQuestion([
+      {index: 0, direction: 'down'}, // Earth: 0->1 (Mars, Earth, Mercury, Venus)
+      {index: 1, direction: 'down'}, // Earth: 1->2 (Mars, Mercury, Earth, Venus)
+      {index: 0, direction: 'down'}, // Mars: 0->1 (Mercury, Mars, Earth, Venus)
+    ])
+  })
+
+  I.wait(1)
+
+  // Player 2 (Bob): One swap wrong - Mercury, Earth, Venus, Mars
+  // Moves: Earth down once, Venus up once
+  session('player2', () => {
+    gameRoomPage.answerSortQuestion([
+      {index: 0, direction: 'down'}, // Earth: 0->1 (Mars, Earth, Mercury, Venus)
+      {index: 3, direction: 'up'},   // Venus: 3->2 (Mars, Earth, Venus, Mercury)
+      {index: 3, direction: 'up'},   // Mercury: 3->2 (Mars, Earth, Mercury, Venus)
+      {index: 2, direction: 'up'},   // Mercury: 2->1 (Mars, Mercury, Earth, Venus)
+      {index: 1, direction: 'up'},   // Mercury: 1->0 (Mercury, Mars, Earth, Venus)
+    ])
+  })
+
+  I.wait(8)
+
+  // Wait for answers to be submitted
+  I.waitForText("Mercu...", 10)
+
+  I.wait(2)
+
+  // Moderator rates and moves to next question
+  gameRoomPage.rateQuestion()
+  I.wait(2)
+
+  // Verify scores after first question
+  // Alice should have 25 points (perfect), Bob should have 16 points (1 swap with 4 items)
+  I.see("25", "tr:has-text('"+username1+"')")
+  I.see("16", "tr:has-text('"+username2+"')")
+
+  I.wait(2)
+  gameRoomPage.nextQuestion()
+  I.wait(2)
+
+  // Question 2: Sort countries by population (smallest to largest)
+  // Correct answer: Iceland, Switzerland, Belgium, Netherlands
+  // Initial order in UI: Belgium, Iceland, Netherlands, Switzerland (indices 0,1,2,3)
+
+  // Player 1 (Alice): Wrong answer - Belgium, Iceland, Switzerland, Netherlands
+  // Correct: Iceland, Switzerland, Belgium, Netherlands
+  // Distance: Belgium before Iceland (1), Belgium before Switzerland (1), Iceland before Belgium (reversed from correct, but Belgium should be after Switzerland) = 3
+  // Just swap last two
+  session('player1', () => {
+    gameRoomPage.answerSortQuestion([
+      {index: 3, direction: 'up'}, // Switzerland: 3->2 (Belgium, Iceland, Switzerland, Netherlands)
+    ])
+  })
+
+  I.wait(1)
+
+  // Player 2 (Bob): Perfect answer - Iceland, Switzerland, Belgium, Netherlands
+  session('player2', () => {
+    gameRoomPage.answerSortQuestion([
+      {index: 1, direction: 'up'},   // Iceland: 1->0 (Iceland, Belgium, Netherlands, Switzerland)
+      {index: 3, direction: 'up'},   // Switzerland: 3->2 (Iceland, Belgium, Switzerland, Netherlands)
+      {index: 2, direction: 'up'},   // Switzerland: 2->1 (Iceland, Switzerland, Belgium, Netherlands)
+    ])
+  })
+
+  I.wait(8)
+
+  // Wait for answers to be submitted
+  I.waitForText("Icela...", 10)
+
+  I.wait(2)
+
+  // Moderator rates and finishes
+  gameRoomPage.rateQuestion()
+  I.wait(2)
+
+  // Verify final scores
+  // Alice: 25 (Q1 perfect) + 10 (Q2, distance 3 out of max 6: (1-3/6)*20 = 10) = 35
+  // Bob: 16 (Q1, one swap) + 25 (Q2 perfect) = 41
+  I.see("35", "tr:has-text('"+username1+"')") // Alice's total should be 35
+  I.see("41", "tr:has-text('"+username2+"')") // Bob's total should be 41
+
+  I.wait(2)
+});
+
 
 
 Scenario('many_multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
