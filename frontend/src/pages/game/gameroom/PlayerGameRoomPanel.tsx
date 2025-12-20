@@ -12,6 +12,8 @@ import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
 import {Scoreboard, ScoreboardMode} from "./Scoreboard.tsx";
 import {useUsername} from "../../../hooks/useUsername.ts";
 import {StartRoundPanel} from "./StartRoundPanel.tsx";
+import {ScoredQuestionResult} from "./ScoredQuestionResult.tsx";
+import {formatAnswerForDisplay} from "../../../utils/answerFormatter.ts";
 
 export type PlayerGameRoomPanelProps = {
   game: Game,
@@ -103,7 +105,7 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
                   </TableCell>
                   <TableCell component="th" scope="row">
                     <Typography variant="body1" component="div">
-                      {answer.answer}
+                      {formatAnswerForDisplay(answer.answer, question.question.type)}
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -133,9 +135,8 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
       }
       return <Stack spacing={2} alignItems={"center"}>
         <QuestionPhrasePanel gameQuestion={question}/>
-        <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
+        <ScoredQuestionResult game={game}/>
         {nextButton}
-        <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
       </Stack>
 
     }

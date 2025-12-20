@@ -15,6 +15,8 @@ import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
 import {Scoreboard, ScoreboardMode} from "./Scoreboard.tsx";
 import {PlayerAnswerLog} from "./PlayerAnswerLog.tsx";
 import {StartRoundPanel} from "./StartRoundPanel.tsx";
+import {ScoredQuestionResult} from "./ScoredQuestionResult.tsx";
+import {formatAnswerForDisplay} from "../../../utils/answerFormatter.ts";
 
 export type ModeratorGameRoomPanelProps = {
   game: Game,
@@ -174,7 +176,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <Typography variant="body1" component="div">
-                        {answer.answer}
+                        {formatAnswerForDisplay(answer.answer, question.question.type)}
                       </Typography>
                     </TableCell>
                     <TableCell align="right">{action}</TableCell>
@@ -189,7 +191,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
       return (
         <Stack spacing={2} alignItems={"center"}>
           <QuestionPhrasePanel gameQuestion={question}/>
-          <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
+          <ScoredQuestionResult game={game}/>
           <div style={{display: "flex", alignItems: "center"}}>
             <Button id="nextQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
                     onClick={
@@ -205,7 +207,6 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
                     }
             >Next question</Button>
           </div>
-          <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
         </Stack>
       )
     }

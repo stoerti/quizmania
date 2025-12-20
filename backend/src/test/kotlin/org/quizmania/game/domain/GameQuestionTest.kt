@@ -70,11 +70,11 @@ class GameQuestionTest {
     val result = gameQuestion.resolvePoints()
 
     // Linear scoring: max distance for 4 items is 6
-    // Player 1: distance 0 -> 20 points (perfect)
+    // Player 1: distance 0 -> 20 points + 5 bonus = 25 points (perfect)
     // Player 2: distance 1 -> (1 - 1/6) * 20 = 16.67 -> 16 points
     // Player 3: distance 6 -> (1 - 6/6) * 20 = 0 points
     Assertions.assertThat(result).containsExactlyInAnyOrderEntriesOf(mapOf(
-      GAME_PLAYER_1 to 20,
+      GAME_PLAYER_1 to 25,
       GAME_PLAYER_2 to 16,
       GAME_PLAYER_3 to 0,
     ))
@@ -105,11 +105,11 @@ class GameQuestionTest {
     val result = gameQuestion.resolvePoints()
 
     // Linear scoring: max distance for 6 items is 15 (6*5/2)
-    // Player 1: distance 0 -> 20 points
+    // Player 1: distance 0 -> 20 points + 5 bonus = 25 points (perfect)
     // Player 2: distance 1 -> (1 - 1/15) * 20 = 18.67 -> 18 points
     // Player 3: distance 15 -> (1 - 15/15) * 20 = 0 points
     Assertions.assertThat(result).containsExactlyInAnyOrderEntriesOf(mapOf(
-      GAME_PLAYER_1 to 20,
+      GAME_PLAYER_1 to 25,
       GAME_PLAYER_2 to 18,
       GAME_PLAYER_3 to 0,
     ))

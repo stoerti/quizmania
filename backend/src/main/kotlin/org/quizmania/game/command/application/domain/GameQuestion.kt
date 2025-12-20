@@ -322,7 +322,9 @@ data class GameQuestion(
       val playerOrder = playerAnswer.answer.split(",").map { it.trim() }
       val distance = calculateSortDistance(playerOrder, correctOrder)
       val points = calculateLinearPoints(distance, maxDistance)
-      playerAnswer.gamePlayerId to points
+      // Add 5 bonus points for perfect answer
+      val bonusPoints = if (distance == 0) 5 else 0
+      playerAnswer.gamePlayerId to (points + bonusPoints)
     }
   }
 

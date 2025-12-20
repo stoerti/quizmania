@@ -1,0 +1,67 @@
+import {Game} from "../../../domain/GameModel";
+import {Box, Grid, List, ListItem, ListItemText, Paper, Stack, Typography} from "@mui/material";
+import React from "react";
+import {Scoreboard, ScoreboardMode} from "./Scoreboard";
+import {QuestionType} from "../../../services/GameEventTypes";
+
+export type ScoredQuestionResultProps = {
+  game: Game,
+}
+
+/**
+ * Component that displays scored question results based on question type
+ * For SORT questions: two-column layout with correct answer list on left, scoreboard on right
+ * For other questions: standard layout with correct answer above scoreboard
+ */
+export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
+  const question = game.currentQuestion;
+  
+  if (!question) {
+    return null;
+  }
+
+  // For SORT questions, use two-column layout
+  if (question.question.type === QuestionType.SORT) {
+    const correctAnswers = question.question.correctAnswer.split(',').map(item => item.trim());
+    
+    return (
+      <Grid container spacing={2} sx={{width: '100%', maxWidth: 1200}}>
+        <Grid item xs={12} md={4}>
+          <Paper sx={{padding: 2, height: '100%'}}>
+            <Typography variant="h6" component="div" gutterBottom>
+              Correct Order
+            </Typography>
+            <List dense>
+              {correctAnswers.map((answer, index) => (
+                <ListItem key={index}>
+                  <ListItemText 
+                    primary={`${index + 1}. ${answer}`}
+                    primaryTypographyProps={{ variant: 'body1' }}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={8}>
+          <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
+        </Grid>
+      </Grid>
+    );
+  }
+
+  // For other question types, use standard layout
+  return (
+    <Stack spacing={2} sx={{width: '100%'}} alignItems={"center"}>
+      <Paper sx={{padding: 2, maxWidth: 650, width: '100%'}}>
+        <Typography variant="body2" component="div">
+          Answer
+        </Typography>
+        <Typography variant="h4" component="div">
+          {question.question.correctAnswer}
+        </Typography>
+      </Paper>
+      <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
+    </Stack>
+  );
+};
