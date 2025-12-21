@@ -12,7 +12,7 @@ export const QuestionPhrasePanel = ({gameQuestion}: QuestionPhrasePanelProps) =>
 
   let questionImage
   if (gameQuestion.question.imagePath !== 'undefined') {
-    questionImage = <img src={gameQuestion.question.imagePath} style={{maxWidth: '100%', maxHeight: '350px', margin: 'auto'}}/>
+    questionImage = <img src={gameQuestion.question.imagePath} style={{maxWidth: '100%', maxHeight: '250px', margin: 'auto'}}/>
   }
 
   return <Paper sx={{padding: 2, backgroundColor: theme.palette.primary.contrastText, maxWidth: 650, width: '100%'}} elevation={5}>
