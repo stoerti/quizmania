@@ -71,7 +71,7 @@ export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
             </Typography>
             <img 
               src={question.question.answerImagePath} 
-              alt="Answer" 
+              alt="Answer illustration" 
               style={{maxWidth: '100%', maxHeight: '350px', margin: 'auto', display: 'block'}}
             />
           </Paper>
