@@ -29,7 +29,6 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
     const data = new FormData(event.currentTarget);
 
     const gameName: string = data.get('gameName')!.toString()
-    const numSecondsToAnswer: number = parseInt(data.get('numSecondsToAnswer')!.toString())
     const questionSetId: string = data.get('questionSet')!.toString()
     const withModerator: boolean = data.get('moderator') === 'on'
 
@@ -37,7 +36,6 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
       name: gameName,
       config: {
         questionSetId: questionSetId,
-        secondsToAnswer: numSecondsToAnswer,
       },
       withModerator: withModerator
     })
@@ -61,15 +59,6 @@ export const GameCreationDialog = (props: GameCreationDialogProps) => {
                      label="Game name"
                      name="gameName"
                      autoFocus
-          />
-          <TextField margin="dense"
-                     required
-                     fullWidth
-                     id="numSecondsToAnswer"
-                     label="Question timer"
-                     name="numSecondsToAnswer"
-                     type="number"
-                     defaultValue="15"
           />
           <Select margin="dense"
                   required

@@ -5,7 +5,8 @@
     {
       "name": "Geografie",
       "roundConfig": {
-        "useBuzzer": false
+        "useBuzzer": false,
+        "secondsToAnswer": 10
       },
       "questions": [
         "easter_geografie_01",
@@ -22,7 +23,8 @@
     {
       "name": "Wer bin ich?",
       "roundConfig": {
-        "useBuzzer": true
+        "useBuzzer": true,
+        "secondsToAnswer": 10
       },
       "questions": [
         "quizmas_filmrollen_01",
@@ -44,7 +46,8 @@
     {
       "name": "Fragen die die Welt bedeuten",
       "roundConfig": {
-        "useBuzzer": false
+        "useBuzzer": false,
+        "secondsToAnswer": 10
       },
       "questions": [
         "easter_random_01",
@@ -62,7 +65,8 @@
     {
       "name": "Super-Bonus-Runde",
       "roundConfig": {
-        "useBuzzer": true
+        "useBuzzer": true,
+        "secondsToAnswer": 10
       },
       "questions": [
         "easter_bonusrunde_01",

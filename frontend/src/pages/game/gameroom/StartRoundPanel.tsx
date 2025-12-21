@@ -72,7 +72,7 @@ export const StartRoundPanel = ({game, isModerator}: StartRoundPanelProps) => {
         </Grid>
         <Grid item xs={1}>
           <Typography sx={{flex: '1 1 100%', textAlign: 'left'}} variant="h5" component="div">
-            {game.config.secondsToAnswer} seconds
+            {currentRound.roundConfig.secondsToAnswer} seconds
           </Typography>
         </Grid>
         <Grid item xs={1}>

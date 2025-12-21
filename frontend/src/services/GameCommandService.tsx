@@ -8,7 +8,6 @@ export type NewGameCommand = {
 }
 
 export type GameConfig = {
-  secondsToAnswer: number,
   questionSetId: string
 }
 

@@ -8,4 +8,5 @@ data class Round(
 
 data class RoundConfig(
   val useBuzzer: Boolean = false,
+  val secondsToAnswer: Long = 10,
 )

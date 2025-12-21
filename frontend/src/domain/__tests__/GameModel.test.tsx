@@ -109,7 +109,6 @@ function gameCreatedEvent(): GameCreatedEvent {
     name: "Game 1",
     config: {
       maxPlayers: 10,
-      secondsToAnswer: 10,
       questionSetId: "questionSet1",
     },
     creatorUsername: "player1",
@@ -119,6 +118,7 @@ function gameCreatedEvent(): GameCreatedEvent {
         name: "Round 1",
         roundConfig: {
           useBuzzer: true,
+          secondsToAnswer: 10,
         },
         questions: []
       }
