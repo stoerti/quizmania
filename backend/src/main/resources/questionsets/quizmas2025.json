@@ -5,7 +5,8 @@
     {
       "name": "Weihnachtsrunde",
       "roundConfig": {
-        "useBuzzer": false
+        "useBuzzer": false,
+        "secondsToAnswer": 10
       },
       "questions": [
         "quizmas2025_01",
@@ -18,7 +19,8 @@
     {
       "name": "Film & Fashion",
       "roundConfig": {
-        "useBuzzer": true
+        "useBuzzer": true,
+        "secondsToAnswer": 10
       },
       "questions": [
         "quizmas_bart_daenerys_targaryen",
@@ -44,7 +46,8 @@
     {
       "name": "Sortier dich weg",
       "roundConfig": {
-        "useBuzzer": false
+        "useBuzzer": false,
+        "secondsToAnswer": 10
       },
       "questions": [
         "quizmas-sort-movies",

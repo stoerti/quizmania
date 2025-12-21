@@ -1,11 +1,11 @@
 export type GameConfig = {
   maxPlayers: number,
-  secondsToAnswer: number,
   questionSetId: string,
 }
 
 export type RoundConfig = {
   useBuzzer: boolean,
+  secondsToAnswer: number,
 }
 
 export type Round = {

@@ -5,7 +5,8 @@
     {
       "name": "Die leichten zwei",
       "roundConfig": {
-        "useBuzzer": false
+        "useBuzzer": false,
+        "secondsToAnswer": 10
       },
       "questions": [
         "werkstaettchen_choice_01",
@@ -15,7 +16,8 @@
     {
       "name": "Die sehr leichten zwei",
       "roundConfig": {
-        "useBuzzer": true
+        "useBuzzer": true,
+        "secondsToAnswer": 10
       },
       "questions": [
         "werkstaettchen_choice_03",

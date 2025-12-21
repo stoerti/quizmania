@@ -156,13 +156,13 @@ data class GameRound(
         roundQuestionNumber = finishedQuestions + 1,
         questionTimestamp = Instant.now(),
         questionMode = questionMode,
-        timeToAnswer = gameConfig.secondsToAnswer * 1000,
+        timeToAnswer = roundConfig.secondsToAnswer * 1000,
         question = question
       )
     )
 
-    if (questionMode != GameQuestionMode.BUZZER && gameConfig.secondsToAnswer > 0) {
-      deadlineManager.schedule(Duration.ofSeconds(gameConfig.secondsToAnswer), Deadline.QUESTION_CLOSE)
+    if (questionMode != GameQuestionMode.BUZZER && roundConfig.secondsToAnswer > 0) {
+      deadlineManager.schedule(Duration.ofSeconds(roundConfig.secondsToAnswer), Deadline.QUESTION_CLOSE)
     }
   }
 
