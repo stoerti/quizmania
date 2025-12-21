@@ -35,5 +35,12 @@
     "type": "FREE_INPUT",
     "phrase": "Mit welchem Film startete das moderne MCU?",
     "correctAnswer": "Iron Man"
+  },
+  {
+    "id": "freeinput_06",
+    "type": "FREE_INPUT",
+    "phrase": "In welcher Stadt steht dieses berühmte Wahrzeichen?",
+    "correctAnswer": "Paris",
+    "answerImagePath": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg/320px-Tour_Eiffel_Wikimedia_Commons.jpg"
   }
 ]
