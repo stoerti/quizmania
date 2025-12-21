@@ -135,8 +135,9 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
       }
       return <Stack spacing={2} alignItems={"center"}>
         <QuestionPhrasePanel gameQuestion={question}/>
-        <ScoredQuestionResult game={game}/>
+        <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
         {nextButton}
+        <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
       </Stack>
 
     }

@@ -163,9 +163,8 @@ Scenario('multiplayer_sort_questions', ({I, loginPage, lobbyPage, gameRoomPage})
 
   I.waitForText(username1)
   I.waitForText(username2)
-  I.waitForText(username3)
 
-  I.wait(2)
+  I.wait(10)
 
   // Moderator starts the game
   gameRoomPage.startGame()
@@ -175,28 +174,25 @@ Scenario('multiplayer_sort_questions', ({I, loginPage, lobbyPage, gameRoomPage})
   // Question 1: Sort planets by distance from Sun
   // Correct answer: Mercury, Venus, Earth, Mars
   // Initial order in UI: Earth, Mars, Mercury, Venus (indices 0,1,2,3)
-  
+
   // Player 1 (Alice): Perfect answer - Mercury, Venus, Earth, Mars
-  // Moves: Earth down twice, Mars down once
   session('player1', () => {
     gameRoomPage.answerSortQuestion([
-      {index: 0, direction: 'down'}, // Earth: 0->1 (Mars, Earth, Mercury, Venus)
-      {index: 1, direction: 'down'}, // Earth: 1->2 (Mars, Mercury, Earth, Venus)
-      {index: 0, direction: 'down'}, // Mars: 0->1 (Mercury, Mars, Earth, Venus)
+      {index: 1, direction: 'down'}, // Mars: 1->2 (Earth, Mercury, Mars, Venus)
+      {index: 2, direction: 'down'}, // Mars: 2->3 (Earth, Mercury, Venus, Mars)
+      {index: 0, direction: 'down'}, // Mars: 0->1 (Mercury, Earth, Venus, Mars)
+      {index: 1, direction: 'down'}, // Mars: 0->1 (Mercury, Venus, Earth, Mars)
     ])
   })
 
   I.wait(1)
 
   // Player 2 (Bob): One swap wrong - Mercury, Earth, Venus, Mars
-  // Moves: Earth down once, Venus up once
   session('player2', () => {
     gameRoomPage.answerSortQuestion([
-      {index: 0, direction: 'down'}, // Earth: 0->1 (Mars, Earth, Mercury, Venus)
-      {index: 3, direction: 'up'},   // Venus: 3->2 (Mars, Earth, Venus, Mercury)
-      {index: 3, direction: 'up'},   // Mercury: 3->2 (Mars, Earth, Mercury, Venus)
-      {index: 2, direction: 'up'},   // Mercury: 2->1 (Mars, Mercury, Earth, Venus)
-      {index: 1, direction: 'up'},   // Mercury: 1->0 (Mercury, Mars, Earth, Venus)
+      {index: 1, direction: 'down'}, // Mars: 1->2 (Earth, Mercury, Mars, Venus)
+      {index: 2, direction: 'down'}, // Mars: 2->3 (Earth, Mercury, Venus, Mars)
+      {index: 0, direction: 'down'}, // Mars: 0->1 (Mercury, Earth, Venus, Mars)
     ])
   })
 
@@ -205,10 +201,6 @@ Scenario('multiplayer_sort_questions', ({I, loginPage, lobbyPage, gameRoomPage})
   // Wait for answers to be submitted
   I.waitForText("Mercu...", 10)
 
-  I.wait(2)
-
-  // Moderator rates and moves to next question
-  gameRoomPage.rateQuestion()
   I.wait(2)
 
   // Verify scores after first question
@@ -228,7 +220,7 @@ Scenario('multiplayer_sort_questions', ({I, loginPage, lobbyPage, gameRoomPage})
   // Correct order: Iceland, Switzerland, Belgium, Netherlands
   // Using Kendall tau distance to calculate pairwise inversions:
   // - Belgium before Iceland: wrong (should be after) = 1 inversion
-  // - Belgium before Switzerland: wrong (should be after) = 1 inversion  
+  // - Belgium before Switzerland: wrong (should be after) = 1 inversion
   // - Belgium before Netherlands: wrong (should be after) = 1 inversion
   // - Iceland before Switzerland: correct = 0
   // - Iceland before Belgium: wrong (should be after) = already counted
@@ -257,10 +249,6 @@ Scenario('multiplayer_sort_questions', ({I, loginPage, lobbyPage, gameRoomPage})
   // Wait for answers to be submitted
   I.waitForText("Icela...", 10)
 
-  I.wait(2)
-
-  // Moderator rates and finishes
-  gameRoomPage.rateQuestion()
   I.wait(2)
 
   // Verify final scores

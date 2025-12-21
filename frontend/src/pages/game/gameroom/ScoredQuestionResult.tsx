@@ -1,5 +1,5 @@
 import {Game} from "../../../domain/GameModel";
-import {Box, Grid, List, ListItem, ListItemText, Paper, Stack, Typography} from "@mui/material";
+import {Grid, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography, useTheme} from "@mui/material";
 import React from "react";
 import {Scoreboard, ScoreboardMode} from "./Scoreboard";
 import {QuestionType} from "../../../services/GameEventTypes";
@@ -16,7 +16,8 @@ export type ScoredQuestionResultProps = {
  */
 export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
   const question = game.currentQuestion;
-  
+  const theme = useTheme();
+
   if (!question) {
     return null;
   }
@@ -24,25 +25,30 @@ export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
   // For SORT questions, use two-column layout
   if (question.question.type === QuestionType.SORT) {
     const correctAnswers = splitAnswerItems(question.question.correctAnswer);
-    
+
     return (
-      <Grid container spacing={2} sx={{width: '100%', maxWidth: 1200}}>
+      <Grid container={true} spacing={2} sx={{width: '100%', maxWidth: 1200}}>
         <Grid item xs={12} md={4}>
-          <Paper sx={{padding: 2, height: '100%'}}>
-            <Typography variant="h6" component="div" gutterBottom>
-              Correct Order
-            </Typography>
-            <List dense>
+          <Table size={"small"} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell>Correct order</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {correctAnswers.map((answer, index) => (
-                <ListItem key={index}>
-                  <ListItemText 
-                    primary={`${index + 1}. ${answer}`}
-                    primaryTypographyProps={{ variant: 'body1' }}
-                  />
-                </ListItem>
+                <TableRow key={index} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
+                  <TableCell width={20} align="left">#{index + 1}</TableCell>
+                  <TableCell component="td" scope="row">
+                    <Typography variant="body1" component="div">
+                      {answer}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
               ))}
-            </List>
-          </Paper>
+            </TableBody>
+          </Table>
         </Grid>
         <Grid item xs={12} md={8}>
           <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
