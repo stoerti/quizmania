@@ -31,6 +31,7 @@ export type Question = {
   type: QuestionType,
   phrase: string,
   imagePath: string | undefined,
+  answerImagePath: string | undefined,
   correctAnswer: string,
   answerOptions: string[]
 }

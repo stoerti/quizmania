@@ -161,6 +161,7 @@ function questionAsked(id: string, number: number, phrase: string, answer: strin
       type: QuestionType.FREE_INPUT,
       phrase: phrase,
       imagePath: undefined,
+      answerImagePath: undefined,
       correctAnswer: answer,
       answerOptions: []
     },

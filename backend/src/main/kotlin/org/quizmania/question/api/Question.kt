@@ -31,6 +31,7 @@ interface Question {
     val id: QuestionId
     val phrase: String
     val imagePath: String?
+    val answerImagePath: String?
     val correctAnswer: String
 }
 
@@ -42,6 +43,7 @@ data class ChoiceQuestion(
   override val id: QuestionId,
   override val phrase: String,
   override val imagePath: String? = null,
+  override val answerImagePath: String? = null,
   override val correctAnswer: String,
   val answerOptions: List<String>
 ) : AbstractQuestion(QuestionType.CHOICE)
@@ -50,6 +52,7 @@ data class MultipleChoiceQuestion(
   override val id: QuestionId,
   override val phrase: String,
   override val imagePath: String? = null,
+  override val answerImagePath: String? = null,
   override val correctAnswer: String,
   val answerOptions: List<String>
 ) : AbstractQuestion(QuestionType.MULTIPLE_CHOICE) {
@@ -62,6 +65,7 @@ data class FreeInputQuestion(
   override val id: QuestionId,
   override val phrase: String,
   override val imagePath: String? = null,
+  override val answerImagePath: String? = null,
   override val correctAnswer: String,
 ) : AbstractQuestion(QuestionType.FREE_INPUT)
 
@@ -69,6 +73,7 @@ data class EstimateQuestion(
   override val id: QuestionId,
   override val phrase: String,
   override val imagePath: String? = null,
+  override val answerImagePath: String? = null,
   override val correctAnswer: String,
 ) : AbstractQuestion(QuestionType.ESTIMATE)
 
@@ -76,6 +81,7 @@ data class SortQuestion(
   override val id: QuestionId,
   override val phrase: String,
   override val imagePath: String? = null,
+  override val answerImagePath: String? = null,
   override val correctAnswer: String,
   val answerOptions: List<String>
 ) : AbstractQuestion(QuestionType.SORT)

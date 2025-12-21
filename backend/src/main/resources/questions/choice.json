@@ -33,5 +33,13 @@
     "phrase": "An welchem Fluss liegt Hamburg?",
     "correctAnswer": "Elbe",
     "answerOptions": ["Donau", "Weser", "Spree", "Elbe"]
+  },
+  {
+    "id": "choice_06",
+    "type": "CHOICE",
+    "phrase": "Welche Farbe hat diese Frucht?",
+    "correctAnswer": "Rot",
+    "answerImagePath": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/320px-Red_Apple.jpg",
+    "answerOptions": ["Gelb", "Grün", "Rot", "Blau"]
   }
 ]

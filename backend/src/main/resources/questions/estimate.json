@@ -28,5 +28,12 @@
     "type": "ESTIMATE",
     "phrase": "Wie viele Städte mit dem Namen Berlin gibt es in den USA?",
     "correctAnswer": "31"
+  },
+  {
+    "id": "estimate_06",
+    "type": "ESTIMATE",
+    "phrase": "Wie viele Stockwerke hat dieses Gebäude?",
+    "correctAnswer": "163",
+    "answerImagePath": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Burj_Khalifa.jpg/320px-Burj_Khalifa.jpg"
   }
 ]

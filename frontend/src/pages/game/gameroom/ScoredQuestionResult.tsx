@@ -11,7 +11,7 @@ export type ScoredQuestionResultProps = {
 
 /**
  * Component that displays scored question results based on question type
- * For SORT questions: two-column layout with correct answer list on left, scoreboard on right
+ * For SORT questions or questions with answerImagePath: two-column layout with answer on left, scoreboard on right
  * For other questions: standard layout with correct answer above scoreboard
  */
 export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
@@ -49,6 +49,32 @@ export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
               ))}
             </TableBody>
           </Table>
+        </Grid>
+        <Grid item xs={12} md={8}>
+          <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
+        </Grid>
+      </Grid>
+    );
+  }
+
+  // For questions with answerImagePath, use two-column layout with answer text and image
+  if (question.question.answerImagePath && question.question.answerImagePath !== 'undefined') {
+    return (
+      <Grid container={true} spacing={2} sx={{width: '100%', maxWidth: 1200}}>
+        <Grid item xs={12} md={4}>
+          <Paper sx={{padding: 2}}>
+            <Typography variant="body2" component="div">
+              Answer
+            </Typography>
+            <Typography variant="h4" component="div" sx={{marginBottom: 2}}>
+              {question.question.correctAnswer}
+            </Typography>
+            <img 
+              src={question.question.answerImagePath} 
+              alt="Answer" 
+              style={{maxWidth: '100%', maxHeight: '350px', margin: 'auto', display: 'block'}}
+            />
+          </Paper>
         </Grid>
         <Grid item xs={12} md={8}>
           <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
