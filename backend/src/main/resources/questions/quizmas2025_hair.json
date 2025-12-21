@@ -3,7 +3,7 @@
     "id": "quizmas_bart_300",
     "type": "FREE_INPUT",
     "phrase": "Welcher Film?",
-    "imagePath": "../assets/img/beards/300-leonidas_crop.png",
+    "imagePath": "../assets/img/beards/300-leonidas_crop.jpg",
     "answerImagePath": "../assets/img/beards/300-leonidas.webp",
     "correctAnswer": "300 (Leonidas)"
   },
@@ -11,15 +11,15 @@
     "id": "quizmas_bart_cast_away",
     "type": "FREE_INPUT",
     "phrase": "Welcher Film?",
-    "imagePath": "../assets/img/beards/cast-away_crop.png",
-    "answerImagePath": "../assets/img/beards/cast-away.png",
+    "imagePath": "../assets/img/beards/cast-away_crop.jpg",
+    "answerImagePath": "../assets/img/beards/cast-away.jpg",
     "correctAnswer": "Cast Away"
   },
   {
     "id": "quizmas_bart_daenerys_targaryen",
     "type": "FREE_INPUT",
     "phrase": "Wer ist das?",
-    "imagePath": "../assets/img/beards/daenerys-targaryen_crop.png",
+    "imagePath": "../assets/img/beards/daenerys-targaryen_crop.jpg",
     "answerImagePath": "../assets/img/beards/daenerys-targaryen.jpg",
     "correctAnswer": "Daenerys Targaryen"
   },
@@ -27,7 +27,7 @@
     "id": "quizmas_bart_davy_jones",
     "type": "FREE_INPUT",
     "phrase": "Wer ist das?",
-    "imagePath": "../assets/img/beards/davy-jones_crop.png",
+    "imagePath": "../assets/img/beards/davy-jones_crop.jpg",
     "answerImagePath": "../assets/img/beards/davy-jones.webp",
     "correctAnswer": "Davy Jones"
   },
@@ -35,7 +35,7 @@
     "id": "quizmas_bart_dumbledore",
     "type": "FREE_INPUT",
     "phrase": "Wer ist das?",
-    "imagePath": "../assets/img/beards/dumbledore_crop.png",
+    "imagePath": "../assets/img/beards/dumbledore_crop.jpg",
     "answerImagePath": "../assets/img/beards/dumbledore.webp",
     "correctAnswer": "Dumbledore"
   },
@@ -43,15 +43,15 @@
     "id": "quizmas_bart_fifth_element",
     "type": "FREE_INPUT",
     "phrase": "Welcher Film?",
-    "imagePath": "../assets/img/beards/fifth-element_crop.png",
-    "answerImagePath": "../assets/img/beards/fifth-element.png",
+    "imagePath": "../assets/img/beards/fifth-element_crop.jpg",
+    "answerImagePath": "../assets/img/beards/fifth-element.jpg",
     "correctAnswer": "The Fifth Element"
   },
   {
     "id": "quizmas_bart_forrest-gump",
     "type": "FREE_INPUT",
     "phrase": "Welcher Film?",
-    "imagePath": "../assets/img/beards/forrest-gump_crop.png",
+    "imagePath": "../assets/img/beards/forrest-gump_crop.jpg",
     "answerImagePath": "../assets/img/beards/forrest-gump.jpg",
     "correctAnswer": "Forrest Gump"
   },
@@ -59,7 +59,7 @@
     "id": "quizmas_bart_gandalf",
     "type": "FREE_INPUT",
     "phrase": "Wer ist das?",
-    "imagePath": "../assets/img/beards/gandalf_crop.png",
+    "imagePath": "../assets/img/beards/gandalf_crop.jpg",
     "answerImagePath": "../assets/img/beards/gandalf.webp",
     "correctAnswer": "Gandalf"
   },
@@ -67,7 +67,7 @@
     "id": "quizmas_bart_godfather",
     "type": "FREE_INPUT",
     "phrase": "Welcher Film?",
-    "imagePath": "../assets/img/beards/godfather_crop.png",
+    "imagePath": "../assets/img/beards/godfather_crop.jpg",
     "answerImagePath": "../assets/img/beards/godfather.jpg",
     "correctAnswer": "The Godfather"
   },
@@ -75,7 +75,7 @@
     "id": "quizmas_bart_grinch",
     "type": "FREE_INPUT",
     "phrase": "Welcher Film?",
-    "imagePath": "../assets/img/beards/grinch_crop.png",
+    "imagePath": "../assets/img/beards/grinch_crop.jpg",
     "answerImagePath": "../assets/img/beards/grinch.webp",
     "correctAnswer": "Der Grinch"
   },
@@ -83,7 +83,7 @@
     "id": "quizmas_bart_mary",
     "type": "FREE_INPUT",
     "phrase": "Welcher Film?",
-    "imagePath": "../assets/img/beards/mary_crop.png",
+    "imagePath": "../assets/img/beards/mary_crop.jpg",
     "answerImagePath": "../assets/img/beards/mary.webp",
     "correctAnswer": "Verrückt nach Mary"
   },
@@ -91,7 +91,7 @@
     "id": "quizmas_bart_pai_mei",
     "type": "FREE_INPUT",
     "phrase": "Welcher Film?",
-    "imagePath": "../assets/img/beards/pai-mei_crop.png",
+    "imagePath": "../assets/img/beards/pai-mei_crop.jpg",
     "answerImagePath": "../assets/img/beards/pai-mei.webp",
     "correctAnswer": "Kill Bill (Pai Mei)"
   },
@@ -99,7 +99,7 @@
     "id": "quizmas_bart_pippi_langstrumpf",
     "type": "FREE_INPUT",
     "phrase": "Wer ist das?",
-    "imagePath": "../assets/img/beards/pippi-langstrumpf_crop.png",
+    "imagePath": "../assets/img/beards/pippi-langstrumpf_crop.jpg",
     "answerImagePath": "../assets/img/beards/pippi-langstrumpf.jpeg",
     "correctAnswer": "Pippi Langstrumpf"
   },
@@ -107,7 +107,7 @@
     "id": "quizmas_bart_prince_of_bel_air",
     "type": "FREE_INPUT",
     "phrase": "Wer ist das?",
-    "imagePath": "../assets/img/beards/prince-of-bel-air_crop.png",
+    "imagePath": "../assets/img/beards/prince-of-bel-air_crop.jpg",
     "answerImagePath": "../assets/img/beards/prince-of-bel-air.jpeg",
     "correctAnswer": "Prince of Bel-Air (Will)"
   },
@@ -115,7 +115,7 @@
     "id": "quizmas_bart_sailormoon",
     "type": "FREE_INPUT",
     "phrase": "Wer ist das?",
-    "imagePath": "../assets/img/beards/sailormoon_crop.png",
+    "imagePath": "../assets/img/beards/sailormoon_crop.jpg",
     "answerImagePath": "../assets/img/beards/sailormoon.webp",
     "correctAnswer": "Sailor Moon"
   },
@@ -123,7 +123,7 @@
     "id": "quizmas_bart_the_dicktator",
     "type": "FREE_INPUT",
     "phrase": "Welcher Film?",
-    "imagePath": "../assets/img/beards/the-dicktator_crop.png",
+    "imagePath": "../assets/img/beards/the-dicktator_crop.jpg",
     "answerImagePath": "../assets/img/beards/the-dicktator.webp",
     "correctAnswer": "The Dictator"
   },
@@ -131,7 +131,7 @@
     "id": "quizmas_bart_the_dude",
     "type": "FREE_INPUT",
     "phrase": "Welcher Film?",
-    "imagePath": "../assets/img/beards/the-dude_crop.png",
+    "imagePath": "../assets/img/beards/the-dude_crop.jpg",
     "answerImagePath": "../assets/img/beards/the-dude.jpg",
     "correctAnswer": "The Big Lebowski (The Dude)"
   },
@@ -139,7 +139,7 @@
     "id": "quizmas_bart_wolverine",
     "type": "FREE_INPUT",
     "phrase": "Wer ist das?",
-    "imagePath": "../assets/img/beards/wolverine_crop.png",
+    "imagePath": "../assets/img/beards/wolverine_crop.jpg",
     "answerImagePath": "../assets/img/beards/wolverine.jpg",
     "correctAnswer": "Wolverine"
   },
@@ -147,8 +147,8 @@
     "id": "quizmas_bart_yugioh",
     "type": "FREE_INPUT",
     "phrase": "Welche Serie ist das?",
-    "imagePath": "../assets/img/beards/yugioh_crop.png",
-    "answerImagePath": "../assets/img/beards/yugioh.png",
+    "imagePath": "../assets/img/beards/yugioh_crop.jpg",
+    "answerImagePath": "../assets/img/beards/yugioh.jpg",
     "correctAnswer": "Yu-Gi-Oh!"
   }
 ]
