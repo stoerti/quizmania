@@ -4,6 +4,7 @@ import React from "react";
 import {Scoreboard, ScoreboardMode} from "./Scoreboard";
 import {QuestionType} from "../../../services/GameEventTypes";
 import {splitAnswerItems} from "../../../utils/answerFormatter";
+import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer.tsx";
 
 export type ScoredQuestionResultProps = {
   game: Game,
@@ -62,17 +63,17 @@ export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
     return (
       <Grid container={true} spacing={2} sx={{width: '100%', maxWidth: 1200}}>
         <Grid item xs={12} md={4}>
-          <Paper sx={{padding: 2}}>
+          <Paper sx={{padding: 2, borderRadius: '20px', backgroundColor: theme.palette.secondary.main}}>
             <Typography variant="body2" component="div">
               Answer
             </Typography>
             <Typography variant="h4" component="div" sx={{marginBottom: 2}}>
               {question.question.correctAnswer}
             </Typography>
-            <img 
-              src={question.question.answerImagePath} 
-              alt="Answer illustration" 
-              style={{maxWidth: '100%', maxHeight: '350px', margin: 'auto', display: 'block'}}
+            <img
+              src={question.question.answerImagePath}
+              alt="Answer illustration"
+              style={{maxWidth: '100%', maxHeight: '300px', margin: 'auto', display: 'block'}}
             />
           </Paper>
         </Grid>
@@ -86,14 +87,7 @@ export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
   // For other question types, use standard layout
   return (
     <Stack spacing={2} sx={{width: '100%'}} alignItems={"center"}>
-      <Paper sx={{padding: 2, maxWidth: 650, width: '100%'}}>
-        <Typography variant="body2" component="div">
-          Answer
-        </Typography>
-        <Typography variant="h4" component="div">
-          {question.question.correctAnswer}
-        </Typography>
-      </Paper>
+      <CorrectAnswerContainer correctAnswer={question.question.correctAnswer} />
       <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
     </Stack>
   );
