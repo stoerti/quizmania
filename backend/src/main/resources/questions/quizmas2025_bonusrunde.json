@@ -1,0 +1,37 @@
+[
+  {
+    "id": "quizmas2025_01",
+    "type": "SORT",
+    "phrase": "Sortiere die Gäste nach ihrer Trinkreihenfolge bei Dinner for One?",
+    "correctAnswer": "Sir Toby, Admiral von Schneider, Mr. Pomeroy, Mr. Winterbottom",
+    "answerOptions": ["Admiral von Schneider", "Mr. Winterbottom", "Sir Toby", "Mr. Pomeroy"]
+  },
+  {
+    "id": "quizmas2025_02",
+    "type": "CHOICE",
+    "phrase": "Welchen Wein kann man nicht bei Pahlhuber und Söhne kaufen?",
+    "correctAnswer": "Rheingauer Riesling Spatzenfurz",
+    "answerOptions": ["Oberföhringer Vogelspinne", "Rheingauer Riesling Spatzenfurz", "Hupfheimer Jungferngärtchen", "Klöbener Krötenpfuhl"],
+    "imagePath": "../assets/img/loriot-weine.webp"
+  },
+  {
+    "id": "quizmas2025_04",
+    "type": "CHOICE",
+    "phrase": "Was verstecken Norweger zu Weihnachten?",
+    "correctAnswer": "Besen",
+    "answerOptions": ["Töpfe", "Besen", "Socken", "Schuhe"]
+  },
+  {
+    "id": "quizmas2025_05",
+    "type": "CHOICE",
+    "phrase": "Welcher ist der meistverkaufte Weihnachtssong weltweit?",
+    "correctAnswer": "All I Want for Christmas Is You",
+    "answerOptions": ["Last Christmas", "Rockin’ Around the Christmas Tree", "Wonderful Dream", "All I Want for Christmas Is You"]
+  },
+  {
+    "id": "quizmas2025_03",
+    "type": "ESTIMATE",
+    "phrase": "In welchem Jahr wurde das erste Mal Weihnachten gefeiert?",
+    "correctAnswer": "336"
+  }
+]

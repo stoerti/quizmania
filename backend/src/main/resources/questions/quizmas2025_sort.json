@@ -1,0 +1,52 @@
+[
+  {
+    "id": "quizmas-sort-parliaments",
+    "type": "SORT",
+    "phrase": "Sortiere diese Länder nach der Größe ihrer Nationalparlamente (kleinste zu größte)",
+    "correctAnswer": "Tuvalu, Nauru, Japan, Frankreich, Türkei, Deutschland, China",
+    "answerOptions": ["Frankreich", "Nauru", "Deutschland", "China", "Japan", "Tuvalu", "Türkei"]
+  },
+  {
+    "id": "quizmas-sort-drinks",
+    "type": "SORT",
+    "phrase": "Sortieren diese alkoholischen Getränke nach ihrem Kaloriengehalt (niedrigster zu höchster)",
+    "correctAnswer": "Strongbow Cider, Aperol, Campari, Jägermeister, Jack Daniels, Kahlua, Baileys",
+    "answerOptions": ["Campari", "Aperol", "Baileys", "Jägermeister", "Strongbow Cider", "Jack Daniels", "Kahlua"]
+  },
+  {
+    "id": "quizmas-sort-attractions",
+    "type": "SORT",
+    "phrase": "Sortiere diese Sehenswürdigkeiten nach ihrem Eintrittspreis (niedrigste zu höchste)",
+    "correctAnswer": "Guggenheim Museum, Miniaturwunderland, Neuschwanstein, Kolloseum Rom, Eiffelturm (Spitze), Heidepark, Disneyland Paris",
+    "answerOptions": ["Neuschwanstein", "Guggenheim Museum", "Eiffelturm (Spitze)", "Kolloseum Rom", "Disneyland Paris", "Heidepark", "Miniaturwunderland"]
+  },
+  {
+    "id": "quizmas-sort-sports_fields",
+    "type": "SORT",
+    "phrase": "Sortiere diese Sportarten nach ihrer Feldgröße (kleinste zu größte)",
+    "correctAnswer": "Basketball, Handball, Americal Football, Feldhockey, Lacrosse, Rugby, Cricket",
+    "answerOptions": ["Rugby", "Basketball", "Feldhockey", "Americal Football", "Handball", "Cricket", "Lacrosse"]
+  },
+  {
+    "id": "quizmas-sort-movies",
+    "type": "SORT",
+    "phrase": "Sortiere diese Filme nach ihrem Erscheinungsjahr (ältester zu neuester)",
+    "correctAnswer": "E.T., Dirty Dancing, Pretty Woman, Jurassic Park, Toy Story, Titanic, The Big Lebowski",
+    "answerOptions": ["The Big Lebowski", "E.T.", "Jurassic Park", "Dirty Dancing", "Titanic", "Pretty Woman", "Toy Story"]
+  },
+  {
+    "id": "quizmas-sort-books",
+    "type": "SORT",
+    "phrase": "Sortiere diese Bücher nach der Anzahl Worte (niedrigste zu höchste)",
+    "correctAnswer": "Der Fänger im Roggen, 1984, Stolz und Vorurteil, Moby Dick, Herr der Ringe, Bibel, Harry Potter",
+    "answerOptions": [
+      "Stolz und Vorurteil",
+      "Der Fänger im Roggen",
+      "Herr der Ringe",
+      "1894",
+      "Harry Potter",
+      "Bibel",
+      "Moby Dick"
+    ]
+  }
+]

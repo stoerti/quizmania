@@ -5,12 +5,11 @@ Scenario('multiplayer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   let username1 = "User 1" + Math.floor(Math.random() * 100000)
   let username2 = "User 2" + Math.floor(Math.random() * 100000)
   let username3 = "User 3" + Math.floor(Math.random() * 100000)
-  let username4 = "User 4" + Math.floor(Math.random() * 100000)
 
   loginPage.logInWithUsername(username1)
   I.wait(1)
 
-  lobbyPage.createGame(gameName, "werkstatt")
+  lobbyPage.createGame(gameName, "quizmas2025")
   I.wait(1)
 
   session('player2', () => {
@@ -25,6 +24,8 @@ Scenario('multiplayer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
 
   I.waitForText(username2)
   I.waitForText(username3)
+
+  I.wait(10000)
 
 });
 
@@ -42,7 +43,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   loginPage.logInWithUsername(moderator)
   I.wait(1)
 
-  lobbyPage.createGame(gameName, "easter2025_test", true)
+  lobbyPage.createGame(gameName, "quizmas2025", true)
   I.wait(1)
 
   session('player1', () => {

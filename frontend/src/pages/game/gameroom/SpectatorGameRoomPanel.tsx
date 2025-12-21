@@ -32,7 +32,7 @@ export const SpectatorGameRoomPanel = ({game}: SpectatorGameRoomPanelProps) => {
     } else if (question.status === QuestionStatus.OPEN) {
       if (question.questionMode === GameQuestionMode.COLLECTIVE) {
         let answerContainer
-        if (question.question.type === QuestionType.CHOICE || question.question.type === QuestionType.MULTIPLE_CHOICE) {
+        if (question.question.type === QuestionType.CHOICE || question.question.type === QuestionType.MULTIPLE_CHOICE || question.question.type === QuestionType.SORT) {
           answerContainer = <Stack spacing={2} direction="column" justifyContent="center" alignItems="center" useFlexGap
                                    flexWrap="wrap">
             {question.question.answerOptions.map((answer, index) =>
