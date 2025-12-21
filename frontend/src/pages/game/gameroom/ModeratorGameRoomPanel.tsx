@@ -191,7 +191,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
       return (
         <Stack spacing={2} alignItems={"center"}>
           <QuestionPhrasePanel gameQuestion={question}/>
-          <ScoredQuestionResult game={game}/>
+          <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
           <div style={{display: "flex", alignItems: "center"}}>
             <Button id="nextQuestion" sx={{margin: 'auto'}} startIcon={<PlayArrow/>} variant="contained"
                     onClick={
@@ -207,6 +207,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
                     }
             >Next question</Button>
           </div>
+          <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
         </Stack>
       )
     }

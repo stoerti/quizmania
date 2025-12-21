@@ -57,9 +57,9 @@ export function answerSortQuestion(moves: {index: number, direction: 'up' | 'dow
   moves.forEach(move => {
     const buttonId = move.direction === 'up' ? `sort-up-${move.index}` : `sort-down-${move.index}`;
     I.click({id: buttonId});
-    I.wait(0.05); // Small wait between moves for UI stability
+    I.wait(0.5); // Small wait between moves for UI stability
   });
-  
+
   // Submit the answer
   I.click({id: 'submitSortAnswer'});
 }
