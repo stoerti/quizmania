@@ -317,14 +317,11 @@ data class GameQuestion(
   internal fun resolvePointsSortQuestion(): Map<GamePlayerId, Int> {
     val correctOrder = question.correctAnswer.split(",").map { it.trim() }
     val maxDistance = calculateMaxDistance(correctOrder.size)
-    
+
     return playerAnswers.associate { playerAnswer ->
       val playerOrder = playerAnswer.answer.split(",").map { it.trim() }
       val distance = calculateSortDistance(playerOrder, correctOrder)
-      val points = calculateLinearPoints(distance, maxDistance)
-      // Add 5 bonus points for perfect answer
-      val bonusPoints = if (distance == 0) 5 else 0
-      playerAnswer.gamePlayerId to (points + bonusPoints)
+      playerAnswer.gamePlayerId to calculatePoints(distance, maxDistance)
     }
   }
 
@@ -333,12 +330,13 @@ data class GameQuestion(
     return n * (n - 1) / 2
   }
 
-  internal fun calculateLinearPoints(distance: Int, maxDistance: Int): Int {
-    // Linear scoring: 20 points for perfect, 0 for worst, linear in between
+  internal fun calculatePoints(distance: Int, maxDistance: Int): Int {
+    // Linear scoring: 15 points for perfect, 0 if only half the distance or less, linear in between
     // Note: maxDistance should never be 0 in practice (requires at least 2 items to sort)
-    if (maxDistance == 0) return 20
-    val ratio = 1.0 - (distance.toDouble() / maxDistance.toDouble())
-    return (ratio * 20).toInt()
+    if (maxDistance == 0) return 10
+    val ratio = 0.5 - (distance.toDouble() / maxDistance.toDouble())
+    val bonusPoints = if (distance == 0) 5 else 0
+    return 0.coerceAtLeast((ratio * 20).toInt()) + bonusPoints
   }
 
   internal fun calculateSortDistance(playerOrder: List<String>, correctOrder: List<String>): Int {
@@ -350,7 +348,7 @@ data class GameQuestion(
         val correctJ = correctOrder[j]
         val playerI = playerOrder.indexOf(correctI)
         val playerJ = playerOrder.indexOf(correctJ)
-        
+
         // If both items exist in player's order and they are in wrong relative order
         if (playerI != -1 && playerJ != -1 && playerI > playerJ) {
           distance++

@@ -74,8 +74,8 @@ class GameQuestionTest {
     // Player 2: distance 1 -> (1 - 1/6) * 20 = 16.67 -> 16 points
     // Player 3: distance 6 -> (1 - 6/6) * 20 = 0 points
     Assertions.assertThat(result).containsExactlyInAnyOrderEntriesOf(mapOf(
-      GAME_PLAYER_1 to 25,
-      GAME_PLAYER_2 to 16,
+      GAME_PLAYER_1 to 15,
+      GAME_PLAYER_2 to 6,
       GAME_PLAYER_3 to 0,
     ))
   }
@@ -98,20 +98,22 @@ class GameQuestionTest {
       mutableListOf(
         PlayerAnswer(PLAYER_ANSWER_1, GAME_PLAYER_1, "A, B, C, D, E, F"), // Perfect - distance 0
         PlayerAnswer(PLAYER_ANSWER_2, GAME_PLAYER_2, "A, B, C, D, F, E"), // 1 swap - distance 1
-        PlayerAnswer(PLAYER_ANSWER_3, GAME_PLAYER_3, "F, E, D, C, B, A"), // Completely reversed - distance 15
+        PlayerAnswer(PLAYER_ANSWER_3, GAME_PLAYER_3, "F, E, C, D, A, B"), // Halfway reversed
+        PlayerAnswer(PLAYER_ANSWER_4, GAME_PLAYER_4, "F, E, D, C, B, A"), // Completely reversed - distance 15
       ),
     )
 
     val result = gameQuestion.resolvePoints()
 
     // Linear scoring: max distance for 6 items is 15 (6*5/2)
-    // Player 1: distance 0 -> 20 points + 5 bonus = 25 points (perfect)
-    // Player 2: distance 1 -> (1 - 1/15) * 20 = 18.67 -> 18 points
-    // Player 3: distance 15 -> (1 - 15/15) * 20 = 0 points
+    // Player 1: distance 0 -> 10 points + 5 bonus = 15 points (perfect)
+    // Player 2: distance 1 -> (0.5 - 1/15) * 20 = 8.67 -> 8 points
+    // Player 3: distance 15 -> (0.5 - 15/15) * 20 = 0 points
     Assertions.assertThat(result).containsExactlyInAnyOrderEntriesOf(mapOf(
-      GAME_PLAYER_1 to 25,
-      GAME_PLAYER_2 to 18,
+      GAME_PLAYER_1 to 15,
+      GAME_PLAYER_2 to 8,
       GAME_PLAYER_3 to 0,
+      GAME_PLAYER_4 to 0,
     ))
   }
 
