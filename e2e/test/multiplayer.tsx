@@ -43,7 +43,7 @@ Scenario('multiplayer_moderated', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   loginPage.logInWithUsername(moderator)
   I.wait(1)
 
-  lobbyPage.createGame(gameName, "quizmas2025", true)
+  lobbyPage.createGame(gameName, "ali2025_test", true)
   I.wait(1)
 
   session('player1', () => {

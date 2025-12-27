@@ -5,7 +5,8 @@
     {
       "name": "Weihnachtsrunde",
       "roundConfig": {
-        "useBuzzer": false
+        "useBuzzer": false,
+        "secondsToAnswer": 30
       },
       "questions": [
         "quizmas2025_03",
@@ -20,7 +21,8 @@
     {
       "name": "Aus aller Welt",
       "roundConfig": {
-        "useBuzzer": false
+        "useBuzzer": false,
+        "secondsToAnswer": 30
       },
       "questions": [
         "werkstaettchen_choice_29",
@@ -35,7 +37,8 @@
     {
       "name": "Sortier dich weg",
       "roundConfig": {
-        "useBuzzer": false
+        "useBuzzer": false,
+        "secondsToAnswer": 90
       },
       "questions": [
         "quizmas-sort-movies",
