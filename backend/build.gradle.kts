@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("org.springframework.boot") version "3.4.1"
-  id("io.spring.dependency-management") version "1.1.6"
+  id("org.springframework.boot") version "3.5.9"
+  id("io.spring.dependency-management") version "1.1.7"
   id("jacoco")
-  id("com.google.cloud.tools.jib") version "3.5.1"
-  kotlin("jvm") version "2.0.0"
-  kotlin("plugin.spring") version "2.0.0"
-  kotlin("plugin.jpa") version "2.0.0"
+  id("com.google.cloud.tools.jib") version "3.5.2"
+  kotlin("jvm") version "2.3.0"
+  kotlin("plugin.spring") version "2.3.0"
+  kotlin("plugin.jpa") version "2.3.0"
 }
 
 group = "org.quizmania"
@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-  implementation(platform("org.testcontainers:testcontainers-bom:1.20.0")) //import bom
+  implementation(platform("org.testcontainers:testcontainers-bom:2.0.2")) //import bom
 
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
