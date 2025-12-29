@@ -27,6 +27,17 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.16.0'
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: |
+          npm npm install --no-audit --no-fund --legacy-peer-deps
+          npm install --no-save --no-audit @rollup/rollup-linux-x64-gnu || echo "Warning: Rollup native module installation had issues"
+
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
