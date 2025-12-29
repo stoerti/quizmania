@@ -10,6 +10,7 @@ val GAME_NAME: String = "Game 1"
 val GAME_PLAYER_1: GamePlayerId = UUID.randomUUID()
 val GAME_PLAYER_2: GamePlayerId = UUID.randomUUID()
 val GAME_PLAYER_3: GamePlayerId = UUID.randomUUID()
+val GAME_PLAYER_4: GamePlayerId = UUID.randomUUID()
 val USERNAME_1: String = "User 1"
 val USERNAME_2: String = "User 2"
 val GAME_ROUND_1: GameRoundId = UUID.randomUUID()
@@ -19,6 +20,7 @@ val GAME_QUESTION_2: GameQuestionId = UUID.randomUUID()
 val PLAYER_ANSWER_1: GameQuestionId = UUID.randomUUID()
 val PLAYER_ANSWER_2: GameQuestionId = UUID.randomUUID()
 val PLAYER_ANSWER_3: GameQuestionId = UUID.randomUUID()
+val PLAYER_ANSWER_4: GameQuestionId = UUID.randomUUID()
 
 val QUESTION_SET_ID: QuestionSetId = UUID.randomUUID().toString()
 val ROUND_ID: QuestionSetId = UUID.randomUUID().toString()
@@ -163,7 +165,7 @@ class GameEventFixtures {
         roundNumber = gameRoundNumber,
         roundQuestionNumber = gameQuestionNumber,
         questionTimestamp = NOW,
-        timeToAnswer = 10000,
+        timeToAnswer = 30000,
         question = question,
         questionMode = mode,
       )

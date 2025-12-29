@@ -15,6 +15,7 @@ import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
 import {Scoreboard, ScoreboardMode} from "./Scoreboard.tsx";
 import {PlayerAnswerLog} from "./PlayerAnswerLog.tsx";
 import {StartRoundPanel} from "./StartRoundPanel.tsx";
+import {formatAnswerForDisplay} from "../../../utils/answerFormatter.ts";
 
 export type ModeratorGameRoomPanelProps = {
   game: Game,
@@ -33,7 +34,9 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
       return <StartRoundPanel game={game} isModerator={true}/>
     } else if (question.status === QuestionStatus.OPEN) {
       let answerContainer;
-      if (question.question.type === QuestionType.CHOICE || question.question.type === QuestionType.MULTIPLE_CHOICE) {
+      if (question.question.type === QuestionType.CHOICE
+        || question.question.type === QuestionType.MULTIPLE_CHOICE
+        || question.question.type === QuestionType.SORT) {
         answerContainer = <Stack spacing={2} direction="column" justifyContent="center" alignItems="center" useFlexGap
                                  flexWrap="wrap">
           {question.question.answerOptions.map((answer, index) =>
@@ -67,6 +70,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
           container =
             <Box sx={{maxWidth: '650px', width: '100%'}}>
               <Stack spacing={2}>
+                <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
                 <Button id="closeQuestion" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained"
                         onClick={() => gameCommandService.closeQuestion(game.id, question.gameQuestionId)}
                 >Close question</Button>
@@ -174,7 +178,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <Typography variant="body1" component="div">
-                        {answer.answer}
+                        {formatAnswerForDisplay(answer.answer, question.question.type)}
                       </Typography>
                     </TableCell>
                     <TableCell align="right">{action}</TableCell>

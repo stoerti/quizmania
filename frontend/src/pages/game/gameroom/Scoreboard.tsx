@@ -6,6 +6,7 @@ import React, {useState} from "react";
 import {ArrowBack, ArrowForward} from "@mui/icons-material";
 import useWindowDimensions from "../../../hooks/useWindowDimensions.tsx";
 import {useUsername} from "../../../hooks/useUsername.ts";
+import {formatAnswerForDisplay} from "../../../utils/answerFormatter.ts";
 
 
 const comparePlayersByPointsAndAnswerTime = function (p1: Player, p2: Player): number {
@@ -88,7 +89,7 @@ const ScoreboardPage = ({game, mode, page, pageSize}: ScoreboardPageProps) => {
                 </TableCell>
                 <TableCell>
                   <Typography variant="body1" sx={{fontWeight: fontWeight}}>
-                    {icon} {playerAnswer?.answer}
+                    {icon} {playerAnswer ? formatAnswerForDisplay(playerAnswer.answer, lastQuestion.question.type) : ''}
                   </Typography>
                 </TableCell>
                 <TableCell width={10} align="right" sx={{fontWeight: fontWeight}}>{questionPoints}</TableCell>

@@ -1,11 +1,11 @@
 export type GameConfig = {
   maxPlayers: number,
-  secondsToAnswer: number,
   questionSetId: string,
 }
 
 export type RoundConfig = {
   useBuzzer: boolean,
+  secondsToAnswer: number,
 }
 
 export type Round = {
@@ -24,12 +24,14 @@ export enum QuestionType {
   MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
   FREE_INPUT = 'FREE_INPUT',
   ESTIMATE = 'ESTIMATE',
+  SORT = 'SORT',
 }
 
 export type Question = {
   type: QuestionType,
   phrase: string,
   imagePath: string | undefined,
+  answerImagePath: string | undefined,
   correctAnswer: string,
   answerOptions: string[]
 }

@@ -1,0 +1,74 @@
+{
+  "id": "ali2025",
+  "name": "Geburtstagsquiz #33",
+  "rounds": [
+    {
+      "name": "Weihnachtsrunde",
+      "roundConfig": {
+        "useBuzzer": false,
+        "secondsToAnswer": 30
+      },
+      "questions": [
+        "quizmas2025_03",
+        "quizmas_christmas_02",
+        "quizmas2025_01",
+        "quizmas2025_02",
+        "quizmas2025_04",
+        "quizmas2025_05",
+        "quizmas_christmas_03"
+      ]
+    },
+    {
+      "name": "Aus aller Welt",
+      "roundConfig": {
+        "useBuzzer": false,
+        "secondsToAnswer": 30
+      },
+      "questions": [
+        "werkstaettchen_choice_29",
+        "easter_random_06",
+        "easter_random_10",
+        "easter_random_09",
+        "easter_geografie_11",
+        "werkstaettchen_choice_04",
+        "quizmas_geschichte_05"
+      ]
+    },
+    {
+      "name": "Sortier dich weg",
+      "roundConfig": {
+        "useBuzzer": false,
+        "secondsToAnswer": 90
+      },
+      "questions": [
+        "quizmas-sort-movies",
+        "quizmas-sort-parliaments",
+        "quizmas-sort-drinks",
+        "quizmas-sort-books",
+        "quizmas-sort-sports_fields",
+        "quizmas-sort-attractions"
+      ]
+    },
+    {
+      "name": "Bonusrunde",
+      "roundConfig": {
+        "useBuzzer": true
+      },
+      "questions": [
+        "werkstaettchen_finale_freeinput_05",
+        "werkstaettchen_finale_freeinput_08",
+        "quizmas_filmrollen_03",
+        "easter_bonusrunde_14",
+        "quizmas_filmrollen_03",
+        "quizmas_bonusrunde_12",
+        "werkstaettchen_finale_freeinput_14",
+        "werkstaettchen_finale_freeinput_11",
+        "dumbledore_crop",
+        "werkstaettchen_finale_freeinput_13",
+        "easter_bonusrunde_07",
+        "quizmas_bonusrunde_02",
+        "easter_bonusrunde_09"
+      ]
+    }
+  ]
+}

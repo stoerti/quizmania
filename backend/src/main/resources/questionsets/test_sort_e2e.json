@@ -1,0 +1,17 @@
+{
+  "id": "test_sort_e2e",
+  "name": "E2E Test Sort Questions",
+  "rounds": [
+    {
+      "name": "Round 1",
+      "roundConfig": {
+        "useBuzzer": false,
+        "secondsToAnswer": 10
+      },
+      "questions": [
+        "sort_01",
+        "sort_02"
+      ]
+    }
+  ]
+}

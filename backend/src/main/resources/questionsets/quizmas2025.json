@@ -1,0 +1,62 @@
+{
+  "id": "quizmas2025",
+  "name": "Weihnachtsquiz 2025",
+  "rounds": [
+    {
+      "name": "Weihnachtsrunde",
+      "roundConfig": {
+        "useBuzzer": false,
+        "secondsToAnswer": 10
+      },
+      "questions": [
+        "quizmas2025_01",
+        "quizmas2025_02",
+        "quizmas2025_03",
+        "quizmas2025_04",
+        "quizmas2025_05"
+      ]
+    },
+    {
+      "name": "Film & Fashion",
+      "roundConfig": {
+        "useBuzzer": true,
+        "secondsToAnswer": 10
+      },
+      "questions": [
+        "quizmas_bart_daenerys_targaryen",
+        "quizmas_bart_wolverine",
+        "quizmas_bart_cast_away",
+        "quizmas_bart_yugioh",
+        "quizmas_bart_davy_jones",
+        "quizmas_bart_pippi_langstrumpf",
+        "quizmas_bart_gandalf",
+        "quizmas_bart_sailormoon",
+        "quizmas_bart_fifth_element",
+        "quizmas_bart_godfather",
+        "quizmas_bart_grinch",
+        "quizmas_bart_300",
+        "quizmas_bart_prince_of_bel_air",
+        "quizmas_bart_dumbledore",
+        "quizmas_bart_mary",
+        "quizmas_bart_pai_mei",
+        "quizmas_bart_the_dicktator",
+        "quizmas_bart_the_dude"
+      ]
+    },
+    {
+      "name": "Sortier dich weg",
+      "roundConfig": {
+        "useBuzzer": false,
+        "secondsToAnswer": 10
+      },
+      "questions": [
+        "quizmas-sort-movies",
+        "quizmas-sort-parliaments",
+        "quizmas-sort-drinks",
+        "quizmas-sort-books",
+        "quizmas-sort-sports_fields",
+        "quizmas-sort-attractions"
+      ]
+    }
+  ]
+}

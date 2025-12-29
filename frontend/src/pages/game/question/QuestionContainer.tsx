@@ -1,10 +1,12 @@
 import {GameQuestion} from "../../../domain/GameModel";
-import {Box, Button, Stack, TextField, useTheme} from "@mui/material";
+import {Box, Button, Stack, TextField, useTheme, IconButton} from "@mui/material";
 import React, {useState} from "react";
 import {QuestionPhrasePanel} from "./QuestionPhrasePanel";
 import Countdown from "react-countdown";
 import {QuestionCountdownBar} from "./QuestionCountdownBar";
 import {QuestionType} from "../../../services/GameEventTypes";
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 export type MultipleChoiceAnswerContainerProps = {
   gameQuestion: GameQuestion
@@ -44,6 +46,114 @@ export const MultipleChoiceAnswerContainer = ({gameQuestion, onAnswerQuestion}: 
   </Stack>
 }
 
+export type SortAnswerContainerProps = {
+  gameQuestion: GameQuestion
+  onAnswerQuestion: (answer: string) => void
+}
+
+export const SortAnswerContainer = ({gameQuestion, onAnswerQuestion}: SortAnswerContainerProps) => {
+  const [sortedItems, setSortedItems] = useState([...gameQuestion.question.answerOptions])
+  const theme = useTheme()
+
+  // Color constants for sort button styling
+  const SORT_BUTTON_COLORS = {
+    background: theme.palette.primary.contrastText,      // Light green
+    backgroundHover: '#7FDD7F', // Slightly darker green on hover
+    text: theme.palette.primary.main,            // Dark green
+    disabledBackground: '#E0E0E0', // Gray
+    disabledText: '#A0A0A0'     // Light gray
+  };
+
+  const moveUp = (index: number) => {
+    if (index > 0) {
+      const newItems = [...sortedItems]
+      const temp = newItems[index]
+      newItems[index] = newItems[index - 1]
+      newItems[index - 1] = temp
+      setSortedItems(newItems)
+    }
+  }
+
+  const moveDown = (index: number) => {
+    if (index < sortedItems.length - 1) {
+      const newItems = [...sortedItems]
+      const temp = newItems[index]
+      newItems[index] = newItems[index + 1]
+      newItems[index + 1] = temp
+      setSortedItems(newItems)
+    }
+  }
+
+  const submitAnswer = () => {
+    const answerString = sortedItems.join(", ")
+    onAnswerQuestion(answerString)
+  }
+
+  return <Stack spacing={2} direction="column" justifyContent="center" alignItems="center" useFlexGap
+                flexWrap="wrap">
+    {sortedItems.map((answer, index) => (
+      <Box key={index} sx={{
+        display: 'flex',
+        alignItems: 'stretch',
+        width: '80%',
+        maxWidth: '400px',
+        gap: 0
+      }}>
+        <IconButton
+          id={`sort-down-${index}`}
+          onClick={() => moveDown(index)}
+          disabled={index === sortedItems.length - 1}
+          sx={{
+            backgroundColor: SORT_BUTTON_COLORS.background,
+            color: SORT_BUTTON_COLORS.text,
+            borderRadius: '4px 0 0 4px',
+            padding: '8px',
+            minWidth: '48px',
+            '&:hover': {
+              backgroundColor: SORT_BUTTON_COLORS.backgroundHover
+            },
+            '&.Mui-disabled': {
+              backgroundColor: SORT_BUTTON_COLORS.disabledBackground,
+              color: SORT_BUTTON_COLORS.disabledText
+            }
+          }}
+        >
+          <ArrowDownwardIcon />
+        </IconButton>
+        <Button
+          variant="contained"
+          sx={{ flex: 1, minHeight: '48px', borderRadius: 0 }}
+        >
+          {answer}
+        </Button>
+        <IconButton
+          id={`sort-up-${index}`}
+          onClick={() => moveUp(index)}
+          disabled={index === 0}
+          sx={{
+            backgroundColor: SORT_BUTTON_COLORS.background,
+            color: SORT_BUTTON_COLORS.text,
+            borderRadius: '0 4px 4px 0',
+            padding: '8px',
+            minWidth: '48px',
+            '&:hover': {
+              backgroundColor: SORT_BUTTON_COLORS.backgroundHover
+            },
+            '&.Mui-disabled': {
+              backgroundColor: SORT_BUTTON_COLORS.disabledBackground,
+              color: SORT_BUTTON_COLORS.disabledText
+            }
+          }}
+        >
+          <ArrowUpwardIcon />
+        </IconButton>
+      </Box>
+    ))}
+
+    <Button id="submitSortAnswer" key='send' variant="contained" sx={{width: '80%', maxWidth: '400px', top: '20px'}} onClick={() => submitAnswer()}>Confirm</Button>
+  </Stack>
+}
+
 export type QuestionContainerProps = {
   gameQuestion: GameQuestion
   onAnswerQuestion: (answer: string) => void
@@ -67,6 +177,8 @@ export const QuestionContainer = ({gameQuestion, onAnswerQuestion}: QuestionCont
     </Stack>
   } else if (gameQuestion.question.type === QuestionType.MULTIPLE_CHOICE) {
     answerContainer = <MultipleChoiceAnswerContainer gameQuestion={gameQuestion} onAnswerQuestion={onAnswerQuestion}/>
+  } else if (gameQuestion.question.type === QuestionType.SORT) {
+    answerContainer = <SortAnswerContainer gameQuestion={gameQuestion} onAnswerQuestion={onAnswerQuestion}/>
   } else if (gameQuestion.question.type === QuestionType.FREE_INPUT) {
     answerContainer = <Box component="form" noValidate onSubmit={handleSubmit} sx={{
       my: 4, mx: 4, display: 'flex', flexDirection: 'column', alignItems: 'center',

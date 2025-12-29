@@ -5,7 +5,8 @@
     {
       "name": "Runde 1",
       "roundConfig": {
-        "useBuzzer": true
+        "useBuzzer": true,
+        "secondsToAnswer": 10
       },
       "questions": [
         "easter_bonusrunde_02",
@@ -15,7 +16,8 @@
     {
       "name": "Runde 2",
       "roundConfig": {
-        "useBuzzer": false
+        "useBuzzer": false,
+        "secondsToAnswer": 10
       },
       "questions": [
         "easter_random_10"

@@ -23,7 +23,7 @@ class Game(
     numQuestions = event.rounds.sumOf { it.questions.size },
     creator = event.creatorUsername,
     moderator = event.moderatorUsername,
-    questionTimeout = event.config.secondsToAnswer,
+    questionTimeout = event.rounds.firstOrNull()?.roundConfig?.secondsToAnswer ?: 10,
     status = GameStatus.CREATED
   )
 

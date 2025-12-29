@@ -5,10 +5,11 @@
     {
       "name": "Round 1",
       "roundConfig": {
-        "useBuzzer": false
+        "useBuzzer": false,
+        "secondsToAnswer": 10
       },
       "questions": [
-        "multiple_choice_01"
+        "quizmas_bart_300_test"
       ]
     }
   ]

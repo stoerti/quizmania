@@ -13,6 +13,9 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "docker-compose" # See documentation for possible values
     directory: "/dev-support" # Location of package manifests
     schedule:

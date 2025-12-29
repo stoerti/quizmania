@@ -256,6 +256,7 @@ data class GameQuestion(
       QuestionType.MULTIPLE_CHOICE -> resolvePointsMultipleChoiceQuestion()
       QuestionType.FREE_INPUT -> resolvePointsFreeInputQuestion()
       QuestionType.ESTIMATE -> resolvePointsEstimateQuestion()
+      QuestionType.SORT -> resolvePointsSortQuestion()
     }
   }
 
@@ -311,6 +312,50 @@ data class GameQuestion(
         }
       }
       .toMap()
+  }
+
+  internal fun resolvePointsSortQuestion(): Map<GamePlayerId, Int> {
+    val correctOrder = question.correctAnswer.split(",").map { it.trim() }
+    val maxDistance = calculateMaxDistance(correctOrder.size)
+
+    return playerAnswers.associate { playerAnswer ->
+      val playerOrder = playerAnswer.answer.split(",").map { it.trim() }
+      val distance = calculateSortDistance(playerOrder, correctOrder)
+      playerAnswer.gamePlayerId to calculatePoints(distance, maxDistance)
+    }
+  }
+
+  internal fun calculateMaxDistance(n: Int): Int {
+    // Maximum Kendall tau distance is n*(n-1)/2 (completely reversed order)
+    return n * (n - 1) / 2
+  }
+
+  internal fun calculatePoints(distance: Int, maxDistance: Int): Int {
+    // Linear scoring: 15 points for perfect, 0 if only half the distance or less, linear in between
+    // Note: maxDistance should never be 0 in practice (requires at least 2 items to sort)
+    if (maxDistance == 0) return 10
+    val ratio = 0.5 - (distance.toDouble() / maxDistance.toDouble())
+    val bonusPoints = if (distance == 0) 5 else 0
+    return 0.coerceAtLeast((ratio * 20).toInt()) + bonusPoints
+  }
+
+  internal fun calculateSortDistance(playerOrder: List<String>, correctOrder: List<String>): Int {
+    // Calculate Kendall tau distance - number of pairwise disagreements
+    var distance = 0
+    for (i in correctOrder.indices) {
+      for (j in i + 1 until correctOrder.size) {
+        val correctI = correctOrder[i]
+        val correctJ = correctOrder[j]
+        val playerI = playerOrder.indexOf(correctI)
+        val playerJ = playerOrder.indexOf(correctJ)
+
+        // If both items exist in player's order and they are in wrong relative order
+        if (playerI != -1 && playerJ != -1 && playerI > playerJ) {
+          distance++
+        }
+      }
+    }
+    return distance
   }
 
   @EventSourcingHandler
