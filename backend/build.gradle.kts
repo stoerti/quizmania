@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-  implementation(platform("org.testcontainers:testcontainers-bom:2.0.2")) //import bom
+  implementation(platform("org.testcontainers:testcontainers-bom:2.0.3")) //import bom
 
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
