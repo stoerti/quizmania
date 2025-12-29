@@ -165,7 +165,7 @@ class GameEventFixtures {
         roundNumber = gameRoundNumber,
         roundQuestionNumber = gameQuestionNumber,
         questionTimestamp = NOW,
-        timeToAnswer = 10000,
+        timeToAnswer = 30000,
         question = question,
         questionMode = mode,
       )
