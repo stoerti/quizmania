@@ -2,7 +2,7 @@ version: '2'
 
 services:
   db:
-    image: postgres:16.2
+    image: postgres:18.1
     container_name: db
     environment:
       - POSTGRES_USER=quizmania
@@ -10,7 +10,7 @@ services:
     ports:
       - '5432:5432'
   axonserver:
-    image: axoniq/axonserver:2024.1.0-jdk-17
+    image: axoniq/axonserver:2025.2.1
     hostname: axonserver
     environment:
       AXONIQ_AXONSERVER_STANDALONE: "true"
