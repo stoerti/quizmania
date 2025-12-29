@@ -18,7 +18,7 @@ import RecordVoiceOver from "@mui/icons-material/RecordVoiceOver";
 import Person from "@mui/icons-material/Person";
 import React from "react";
 import {Game} from "../../domain/GameModel";
-import {useSnackbar} from "material-ui-snackbar-provider";
+import {useSnackbar} from "notistack";
 import {useUsername} from "../../hooks/useUsername.ts";
 import LeaveGameDialog from "../LeaveGameDialog.tsx";
 
@@ -27,7 +27,7 @@ export type GameLobbyPageProps = {
 }
 
 export const GameLobbyPage = (props: GameLobbyPageProps) => {
-  const snackbar = useSnackbar()
+  const {enqueueSnackbar} = useSnackbar()
   const {username} = useUsername()
   const [leaveGameDialogOpen, setLeaveGameDialogOpen] = React.useState(false)
 
@@ -36,7 +36,7 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
       await gameCommandService.leaveGame(props.game.id)
     } catch (error) {
       if (error instanceof GameException) {
-        snackbar.showMessage(error.message)
+        enqueueSnackbar(error.message)
       }
     }
   }
@@ -46,7 +46,7 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
       await gameCommandService.startGame(props.game.id)
     } catch (error) {
       if (error instanceof GameException) {
-        snackbar.showMessage(error.message)
+        enqueueSnackbar(error.message)
       }
     }
   }

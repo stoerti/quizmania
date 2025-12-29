@@ -28,8 +28,8 @@ export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
     const correctAnswers = splitAnswerItems(question.question.correctAnswer);
 
     return (
-      <Grid container={true} spacing={2} sx={{width: '100%', maxWidth: 1200}}>
-        <Grid item xs={12} md={4}>
+      <Grid container spacing={2} sx={{width: '100%', maxWidth: 1200}}>
+        <Grid size={{xs: 12, md: 4}}>
           <Table size={"small"} aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -51,7 +51,7 @@ export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
             </TableBody>
           </Table>
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid size={{xs: 12, md: 8}}>
           <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
         </Grid>
       </Grid>
@@ -61,8 +61,8 @@ export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
   // For questions with answerImagePath, use two-column layout with answer text and image
   if (question.question.answerImagePath && question.question.answerImagePath !== 'undefined') {
     return (
-      <Grid container={true} spacing={2} sx={{width: '100%', maxWidth: 1200}}>
-        <Grid item xs={12} md={4}>
+      <Grid container spacing={2} sx={{width: '100%', maxWidth: 1200}}>
+        <Grid size={{xs: 12, md: 4}}>
           <Paper sx={{padding: 2, borderRadius: '20px', backgroundColor: theme.palette.secondary.main}}>
             <Typography variant="body2" component="div">
               Answer
@@ -77,7 +77,7 @@ export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
             />
           </Paper>
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid size={{xs: 12, md: 8}}>
           <Scoreboard game={game} mode={ScoreboardMode.QUESTION}/>
         </Grid>
       </Grid>

@@ -48,7 +48,7 @@ export class GameRepository {
   }
 
   // STOMP connect URL
-  SOCKET_URL = (process.env.NODE_ENV == 'production') ?
+  SOCKET_URL = (import.meta.env.MODE === 'production') ?
     (window.location.protocol == 'https:' ? 'wss://' : 'ws://')
     + window.location.host + '/ws-message' : 'ws://localhost:8080/ws-message';
 

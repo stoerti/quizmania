@@ -10,7 +10,7 @@ import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
 import Countdown from "react-countdown";
 import {QuestionCountdownBar} from "../question/QuestionCountdownBar";
 import {GameQuestionMode, QuestionType} from "../../../services/GameEventTypes";
-import {useSnackbar} from "material-ui-snackbar-provider";
+import {useSnackbar} from "notistack";
 import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
 import {Scoreboard, ScoreboardMode} from "./Scoreboard.tsx";
 import {PlayerAnswerLog} from "./PlayerAnswerLog.tsx";
@@ -23,7 +23,7 @@ export type ModeratorGameRoomPanelProps = {
 
 
 export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
-  const snackbar = useSnackbar()
+  const {enqueueSnackbar} = useSnackbar()
   const question = game.currentQuestion
   const round = game.currentRound
 
@@ -162,7 +162,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
                           })
                         } catch (error) {
                           if (error instanceof GameException) {
-                            snackbar.showMessage(error.message)
+                            enqueueSnackbar(error.message)
                           }
                         }
                       }
@@ -202,7 +202,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
                           await gameCommandService.askNextQuestion(game.id)
                         } catch (error) {
                           if (error instanceof GameException) {
-                            snackbar.showMessage(error.message)
+                            enqueueSnackbar(error.message)
                           }
                         }
                       }
@@ -219,7 +219,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
         await gameCommandService.closeRound(game.id)
       } catch (error) {
         if (error instanceof GameException) {
-          snackbar.showMessage(error.message)
+          enqueueSnackbar(error.message)
         }
       }
     }
