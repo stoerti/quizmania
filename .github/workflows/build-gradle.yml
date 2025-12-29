@@ -35,7 +35,7 @@ jobs:
       - name: Install frontend dependencies
         working-directory: ./frontend
         run: |
-          npm npm install --no-audit --no-fund --legacy-peer-deps
+          npm install --no-audit --no-fund --legacy-peer-deps
           npm install --no-save --no-audit @rollup/rollup-linux-x64-gnu || echo "Warning: Rollup native module installation had issues"
 
       - name: Log in to the Container registry
