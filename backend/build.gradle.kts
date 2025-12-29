@@ -53,7 +53,7 @@ dependencies {
 
   testImplementation("org.junit.jupiter:junit-jupiter-params")
   testImplementation("org.mockito:mockito-junit-jupiter:5.12.0")
-  testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
   testImplementation("org.assertj:assertj-core:3.27.6")
   testImplementation("org.awaitility:awaitility:4.3.0")
 
