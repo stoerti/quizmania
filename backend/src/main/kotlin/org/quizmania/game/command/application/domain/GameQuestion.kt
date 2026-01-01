@@ -143,8 +143,9 @@ data class GameQuestion(
   fun evaluateBuzzes() {
     assertNotClosed()
 
+    val answeredPlayerIds = playerAnswers.map { it.gamePlayerId }.toSet()
     val remainingBuzzes = playerBuzzes
-      .filterNot { playerAnswers.map { a -> a.gamePlayerId }.toList().contains(it.gamePlayerId) } // filter players already failed answering
+      .filterNot { answeredPlayerIds.contains(it.gamePlayerId) } // filter players already failed answering
 
     val buzzWinner = remainingBuzzes.minByOrNull { it.buzzTimestamp } // sort all others ascending by buzzer time
 
@@ -157,7 +158,9 @@ data class GameQuestion(
         )
       )
     } else {
-      // reopen buzzers if no one else has buzzed yet (only the current player who answered wrong has buzzed)
+      // Reopen buzzers if no one else has buzzed yet.
+      // This happens when playerBuzzes.size == playerAnswers.size, meaning only the current
+      // player who just answered wrong has buzzed (no other players have buzzed yet).
       if (playerBuzzes.size == playerAnswers.size) {
         AggregateLifecycle.apply(
           QuestionBuzzerReopenedEvent(
