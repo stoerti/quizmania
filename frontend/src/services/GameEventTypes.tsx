@@ -127,6 +127,11 @@ export type QuestionBuzzerWonEvent = {
   gamePlayerId: string,
 }
 
+export type QuestionBuzzerReopenedEvent = {
+  gameId: string,
+  gameQuestionId: string,
+}
+
 export type QuestionClosedEvent = {
   gameId: string,
   gameQuestionId: string,

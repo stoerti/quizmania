@@ -134,6 +134,10 @@ data class GameRound(
     withCurrentQuestion { it.on(event) }
   }
 
+  fun on(event: QuestionBuzzerReopenedEvent) {
+    withCurrentQuestion { it.on(event) }
+  }
+
   fun on(event: QuestionClosedEvent) {
     this.finishedQuestions++
     withCurrentQuestion { it.on(event) }

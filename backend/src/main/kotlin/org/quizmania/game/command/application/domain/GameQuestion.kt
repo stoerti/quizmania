@@ -156,9 +156,18 @@ data class GameQuestion(
         )
       )
     } else {
-      // todo reopen buzzers instead of close the question
-      // apparently no one else buzzed
-      closeQuestion()
+      // reopen buzzers if no one else has buzzed yet
+      if (playerBuzzes.isEmpty()) {
+        AggregateLifecycle.apply(
+          QuestionBuzzerReopenedEvent(
+            gameId = gameId,
+            gameQuestionId = id
+          )
+        )
+      } else {
+        // all players who buzzed have already answered incorrectly
+        closeQuestion()
+      }
     }
   }
 
@@ -377,6 +386,11 @@ data class GameQuestion(
   @EventSourcingHandler
   fun on(event: QuestionBuzzerWonEvent) {
     this.currentBuzzWinner = event.gamePlayerId
+  }
+
+  @EventSourcingHandler
+  fun on(event: QuestionBuzzerReopenedEvent) {
+    this.currentBuzzWinner = null
   }
 
   @EventSourcingHandler
