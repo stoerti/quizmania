@@ -4,7 +4,7 @@ import {
   GameQuestionMode,
   GameStartedEvent,
   QuestionAnsweredEvent, QuestionAnswerOverriddenEvent,
-  QuestionAskedEvent, QuestionClosedEvent, QuestionScoredEvent,
+  QuestionAskedEvent, QuestionBuzzerReopenedEvent, QuestionClosedEvent, QuestionScoredEvent,
   QuestionType,
   PlayerJoinedGameEvent,
   PlayerLeftGameEvent
@@ -100,6 +100,26 @@ describe('testing game read model', () => {
     expect(game.currentQuestion?.answers.length).toBe(2);
     expect(game.findPlayerPoints("player2")).toBe(10)
     expect(game.findPlayerPoints("player3")).toBe(0)
+  });
+
+  test('buzzer should be reopened when answer is wrong', () => {
+    let game = new Game(gameCreatedEvent())
+    game = game.onPlayerJoined(playerAddedEvent("player2", "Player 2"))
+    game = game.onPlayerJoined(playerAddedEvent("player3", "Player 3"))
+    game = game.onQuestionAsked(questionAsked("question1", 1, "Foo1", "Bar1"))
+
+    // Simulate first player buzzing and becoming the winner
+    game = game.onQuestionBuzzed(questionBuzzed("question1", "player2"))
+    game = game.onQuestionBuzzerWon(questionBuzzerWon("question1", "player2"))
+    
+    expect(game.currentQuestion?.currentBuzzWinnerId).toBe("player2")
+    expect(game.currentQuestion?.buzzedPlayerIds).toHaveLength(1)
+
+    // Simulate buzzer being reopened after wrong answer
+    game = game.onQuestionBuzzerReopened(questionBuzzerReopened("question1"))
+    
+    expect(game.currentQuestion?.currentBuzzWinnerId).toBeUndefined()
+    expect(game.currentQuestion?.buzzedPlayerIds).toHaveLength(0)
   });
 });
 
@@ -201,5 +221,29 @@ function questionScored(id: string, points: { [key: string]: number }): Question
     gameId: "game1",
     gameQuestionId: id,
     points: points,
+  }
+}
+
+function questionBuzzed(id: string, playerId: string) {
+  return {
+    gameId: "game1",
+    gameQuestionId: id,
+    gamePlayerId: playerId,
+    buzzerTimestamp: new Date().toISOString(),
+  }
+}
+
+function questionBuzzerWon(id: string, playerId: string) {
+  return {
+    gameId: "game1",
+    gameQuestionId: id,
+    gamePlayerId: playerId,
+  }
+}
+
+function questionBuzzerReopened(id: string): QuestionBuzzerReopenedEvent {
+  return {
+    gameId: "game1",
+    gameQuestionId: id,
   }
 }
