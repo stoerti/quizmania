@@ -10,15 +10,20 @@ version = "0.0.1-SNAPSHOT"
 
 tasks.register<NpmTask>("appNpmInstall") {
   description = "Installs all dependencies from package.json"
-  workingDir = file("${project.projectDir}/src/main/webapp")
+  workingDir = file("${project.projectDir}")
   args = listOf("install")
+  // Skip if already installed by CI pipeline
+  onlyIf {
+    !file("${project.projectDir}/node_modules").exists() ||
+    System.getenv("CI") != "true"
+  }
 }
 
 
 tasks.register<NpmTask>("appNpmBuild") {
   dependsOn("appNpmInstall")
   description = "Builds project"
-  workingDir = file("${project.projectDir}/src/main/webapp")
+  workingDir = file("${project.projectDir}")
   args = listOf("run", "build")
 }
 

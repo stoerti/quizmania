@@ -7,7 +7,7 @@ import React from "react";
 import {QuestionPhrasePanel} from "../question/QuestionPhrasePanel";
 import {GameQuestionMode} from "../../../services/GameEventTypes";
 import {BuzzerQuestionContainer} from "../question/BuzzerQuestionContainer";
-import {useSnackbar} from "material-ui-snackbar-provider";
+import {useSnackbar} from "notistack";
 import {CorrectAnswerContainer} from "../question/CorrectAnswerContainer";
 import {Scoreboard, ScoreboardMode} from "./Scoreboard.tsx";
 import {useUsername} from "../../../hooks/useUsername.ts";
@@ -22,7 +22,7 @@ export type PlayerGameRoomPanelProps = {
 
 
 export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) => {
-  const snackbar = useSnackbar()
+  const {enqueueSnackbar} = useSnackbar()
   const {username} = useUsername()
 
   const question = game.currentQuestion
@@ -59,7 +59,7 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
               })
             } catch (error) {
               if (error instanceof GameException) {
-                snackbar.showMessage(error.message)
+                enqueueSnackbar(error.message)
               }
             }
           }
@@ -74,7 +74,7 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
               })
             } catch (error) {
               if (error instanceof GameException) {
-                snackbar.showMessage(error.message)
+                enqueueSnackbar(error.message)
               }
             }
           }
@@ -122,7 +122,7 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
           await gameCommandService.askNextQuestion(game.id)
         } catch (error) {
           if (error instanceof GameException) {
-            snackbar.showMessage(error.message)
+            enqueueSnackbar(error.message)
           }
         }
       }
@@ -149,7 +149,7 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
           await gameCommandService.closeRound(game.id)
         } catch (error) {
           if (error instanceof GameException) {
-            snackbar.showMessage(error.message)
+            enqueueSnackbar(error.message)
           }
         }
       }

@@ -6,7 +6,7 @@ import {PlayerGameRoomPanel} from "./gameroom/PlayerGameRoomPanel";
 import {SpectatorGameRoomPanel} from "./gameroom/SpectatorGameRoomPanel.tsx";
 import Logout from "@mui/icons-material/Logout";
 import {gameCommandService, GameException} from "../../services/GameCommandService.tsx";
-import {useSnackbar} from "material-ui-snackbar-provider";
+import {useSnackbar} from "notistack";
 import {useUsername} from "../../hooks/useUsername.ts";
 import LeaveGameDialog from "../LeaveGameDialog.tsx";
 
@@ -19,7 +19,7 @@ export type GameRoomPageProps = {
 export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
   const [leaveGameDialogOpen, setLeaveGameDialogOpen] = React.useState(false)
 
-  const snackbar = useSnackbar()
+  const {enqueueSnackbar} = useSnackbar()
   const {username} = useUsername()
 
   const currentPlayer = game.players.find(player => player.name === username)
@@ -33,7 +33,7 @@ export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
         await gameCommandService.leaveGame(game.id)
       } catch (error) {
         if (error instanceof GameException) {
-          snackbar.showMessage(error.message)
+          enqueueSnackbar(error.message)
         }
       }
     }
@@ -47,7 +47,7 @@ export const GameRoomPage = ({game, onLeaveGame}: GameRoomPageProps) => {
         await gameCommandService.leaveGame(game.id)
       } catch (error) {
         if (error instanceof GameException) {
-          snackbar.showMessage(error.message)
+          enqueueSnackbar(error.message)
         }
       }
     }

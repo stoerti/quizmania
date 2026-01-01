@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo} from "react";
 import {GameEvent, PlayerLeftGameEvent} from "../../services/GameEventTypes";
-import {useSnackbar} from "material-ui-snackbar-provider";
+import {useSnackbar} from "notistack";
 import {GameLobbyPage} from "./GameLobby";
 import {GameRoomPage} from "./GameRoom";
 import {GameFinishedPage} from "./GameFinished";
@@ -26,7 +26,7 @@ const GamePage = () => {
   const gameRepository = useMemo(() =>
       new GameRepository()
     , []);
-  const snackbar = useSnackbar()
+  const {enqueueSnackbar} = useSnackbar()
 
   const onGameEnded = useCallback(() => {
     navigate('/')
@@ -42,7 +42,7 @@ const GamePage = () => {
         if (eventType === 'GameCanceledEvent') {
           gameRepository.unsubscribeFromGame()
           onGameEnded()
-          snackbar.showMessage("Game was canceled by creator or system")
+          enqueueSnackbar("Game was canceled by creator or system")
         } else if (eventType === 'PlayerLeftGameEvent') {
           if ((event as PlayerLeftGameEvent).username === username) {
             // I left the game - return to game selection page
@@ -53,7 +53,7 @@ const GamePage = () => {
         setGame(game)
       },
     })
-  }, [gameId, gameRepository, onGameEnded, snackbar]);
+  }, [gameId, gameRepository, onGameEnded, enqueueSnackbar]);
 
   if (game === undefined) {
     return <div>Loading...</div>

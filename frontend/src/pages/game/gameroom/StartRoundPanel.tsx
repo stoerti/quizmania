@@ -3,7 +3,7 @@ import {Box, Button, Grid, Paper, Stack, Typography, useTheme} from "@mui/materi
 import React from "react";
 import {gameCommandService, GameException} from "../../../services/GameCommandService.tsx";
 import PlayArrow from "@mui/icons-material/PlayArrow";
-import {useSnackbar} from "material-ui-snackbar-provider";
+import {useSnackbar} from "notistack";
 
 export type StartRoundPanelProps = {
   game: Game,
@@ -14,7 +14,7 @@ export const StartRoundPanel = ({game, isModerator}: StartRoundPanelProps) => {
 
   const currentRound = game.currentRound!
   const theme = useTheme()
-  const snackbar = useSnackbar()
+  const {enqueueSnackbar} = useSnackbar()
 
   let questionMode
   if ( currentRound.roundConfig.useBuzzer ) {
@@ -29,7 +29,7 @@ export const StartRoundPanel = ({game, isModerator}: StartRoundPanelProps) => {
         await gameCommandService.askNextQuestion(game.id)
       } catch (error) {
         if (error instanceof GameException) {
-          snackbar.showMessage(error.message)
+          enqueueSnackbar(error.message)
         }
       }
     }
@@ -55,32 +55,32 @@ export const StartRoundPanel = ({game, isModerator}: StartRoundPanelProps) => {
 
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2} columns={2}>
-        <Grid item xs={1}>
+        <Grid size={1}>
           <Typography sx={{flex: '1 1 100%', textAlign: 'right', fontWeight: 700}} variant="h5" component="div">
             Questions:
           </Typography>
         </Grid>
-        <Grid item xs={1}>
+        <Grid size={1}>
           <Typography sx={{flex: '1 1 100%', textAlign: 'left'}} variant="h5" component="div">
             {currentRound.numQuestions}
           </Typography>
         </Grid>
-        <Grid item xs={1}>
+        <Grid size={1}>
           <Typography sx={{flex: '1 1 100%', textAlign: 'right', fontWeight: 700}} variant="h5" component="div">
             Answer time:
           </Typography>
         </Grid>
-        <Grid item xs={1}>
+        <Grid size={1}>
           <Typography sx={{flex: '1 1 100%', textAlign: 'left'}} variant="h5" component="div">
             {currentRound.roundConfig.secondsToAnswer} seconds
           </Typography>
         </Grid>
-        <Grid item xs={1}>
+        <Grid size={1}>
           <Typography sx={{flex: '1 1 100%', textAlign: 'right', fontWeight: 700}} variant="h5" component="div">
             Question mode:
           </Typography>
         </Grid>
-        <Grid item xs={1}>
+        <Grid size={1}>
           <Typography sx={{flex: '1 1 100%', textAlign: 'left'}} variant="h5" component="div">
             {questionMode}
           </Typography>

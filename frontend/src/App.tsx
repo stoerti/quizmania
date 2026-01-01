@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {SnackbarProvider} from 'material-ui-snackbar-provider'
+import {SnackbarProvider} from 'notistack'
 import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 import {RouterProvider} from "react-router";
 import {router} from "./router.tsx";
@@ -92,7 +92,7 @@ const App = () => {
     <div style={{backgroundColor: theme.palette.background.default, height: '100%'}}>
       <ThemeProvider theme={theme}>
         <CssBaseline/>
-        <SnackbarProvider SnackbarProps={{autoHideDuration: 4000}}>
+        <SnackbarProvider autoHideDuration={4000}>
           <RouterProvider router={router}/>
         </SnackbarProvider>
       </ThemeProvider>

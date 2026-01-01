@@ -4,7 +4,7 @@ import Login from "@mui/icons-material/Login"
 import Refresh from "@mui/icons-material/Refresh"
 import React, {useCallback, useEffect} from "react";
 import {GameCreationDialog} from "./GameCreationDialog";
-import {useSnackbar} from "material-ui-snackbar-provider";
+import {useSnackbar} from "notistack";
 import {GameAlreadyFullException, gameCommandService, GameException, NewGameCommand, UsernameAlreadyTakenException} from "../services/GameCommandService";
 import {TransferWithinAStation, Visibility} from "@mui/icons-material";
 import {GameDto, gameOverviewService, GameStatus} from "../services/GameOverviewService";
@@ -83,7 +83,7 @@ const GameSelectionPage = () => {
   const [newGameDialogOpen, setNewGameDialogOpen] = React.useState(false)
   const [games, setGames] = React.useState<GameDto[]>([])
 
-  const snackbar = useSnackbar()
+  const {enqueueSnackbar} = useSnackbar()
 
   useEffect(() => {
     if (username === undefined) {
@@ -118,11 +118,11 @@ const GameSelectionPage = () => {
       onGameSelected(gameId)
     } catch (error) {
       if (error instanceof GameAlreadyFullException) {
-        snackbar.showMessage("The selected game is already full")
+        enqueueSnackbar("The selected game is already full")
       } else if (error instanceof UsernameAlreadyTakenException) {
-        snackbar.showMessage("The username is already taken in the selected game")
+        enqueueSnackbar("The username is already taken in the selected game")
       } else {
-        snackbar.showMessage("Something went wrong")
+        enqueueSnackbar("Something went wrong")
       }
     }
   }
@@ -138,15 +138,15 @@ const GameSelectionPage = () => {
     try {
       const gameId = await gameCommandService.createNewGame(newGame)
       onGameSelected(gameId)
-      snackbar.showMessage(
+      enqueueSnackbar(
         `Created game ${newGame.name} ${newGame.withModerator ? 'with' : 'without'} moderator`
       )
       setNewGameDialogOpen(false)
     } catch (error) {
       if (error instanceof GameException) {
-        snackbar.showMessage(error.message)
+        enqueueSnackbar(error.message)
       } else {
-        snackbar.showMessage("Something went wrong: " + error)
+        enqueueSnackbar("Something went wrong: " + error)
       }
     }
   }
