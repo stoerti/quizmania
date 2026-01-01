@@ -143,9 +143,10 @@ data class GameQuestion(
   fun evaluateBuzzes() {
     assertNotClosed()
 
-    val buzzWinner = playerBuzzes
+    val remainingBuzzes = playerBuzzes
       .filterNot { playerAnswers.map { a -> a.gamePlayerId }.toList().contains(it.gamePlayerId) } // filter players already failed answering
-      .minByOrNull { it.buzzTimestamp } // sort all others ascending by buzzer time
+
+    val buzzWinner = remainingBuzzes.minByOrNull { it.buzzTimestamp } // sort all others ascending by buzzer time
 
     if (buzzWinner != null) {
       AggregateLifecycle.apply(
@@ -156,8 +157,8 @@ data class GameQuestion(
         )
       )
     } else {
-      // reopen buzzers if no one else has buzzed yet
-      if (playerBuzzes.isEmpty()) {
+      // reopen buzzers if no one else has buzzed yet (only the current player who answered wrong has buzzed)
+      if (playerBuzzes.size == playerAnswers.size) {
         AggregateLifecycle.apply(
           QuestionBuzzerReopenedEvent(
             gameId = gameId,

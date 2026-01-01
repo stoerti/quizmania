@@ -87,6 +87,23 @@ class GameCommandFixtures {
         gameQuestionId = gameQuestionId,
       )
     }
+
+    fun buzzQuestion(gameQuestionId: UUID, username: String): BuzzQuestionCommand {
+      return BuzzQuestionCommand(
+        gameId = GAME_UUID,
+        gameQuestionId = gameQuestionId,
+        username = username,
+        buzzerTimestamp = NOW
+      )
+    }
+
+    fun answerBuzzerQuestion(gameQuestionId: UUID, answerCorrect: Boolean): AnswerBuzzerQuestionCommand {
+      return AnswerBuzzerQuestionCommand(
+        gameId = GAME_UUID,
+        gameQuestionId = gameQuestionId,
+        answerCorrect = answerCorrect
+      )
+    }
   }
 }
 
@@ -199,6 +216,38 @@ class GameEventFixtures {
         gamePlayerId = gamePlayerId,
         playerAnswerId = playerAnswerId,
         answer = answer
+      )
+    }
+
+    fun questionBuzzed(
+      gameQuestionId: UUID,
+      gamePlayerId: UUID
+    ): QuestionBuzzedEvent {
+      return QuestionBuzzedEvent(
+        gameId = GAME_UUID,
+        gameQuestionId = gameQuestionId,
+        gamePlayerId = gamePlayerId,
+        buzzerTimestamp = NOW
+      )
+    }
+
+    fun questionBuzzerWon(
+      gameQuestionId: UUID,
+      gamePlayerId: UUID
+    ): QuestionBuzzerWonEvent {
+      return QuestionBuzzerWonEvent(
+        gameId = GAME_UUID,
+        gameQuestionId = gameQuestionId,
+        gamePlayerId = gamePlayerId
+      )
+    }
+
+    fun questionBuzzerReopened(
+      gameQuestionId: UUID
+    ): QuestionBuzzerReopenedEvent {
+      return QuestionBuzzerReopenedEvent(
+        gameId = GAME_UUID,
+        gameQuestionId = gameQuestionId
       )
     }
   }

@@ -360,7 +360,7 @@ export class GameQuestion {
 
   public onQuestionBuzzerReopened(event: QuestionBuzzerReopenedEvent): GameQuestion {
     return this.copyWith({
-      currentBuzzWinnerId: null,
+      currentBuzzWinnerId: undefined,
       buzzedPlayerIds: []
     })
   }
