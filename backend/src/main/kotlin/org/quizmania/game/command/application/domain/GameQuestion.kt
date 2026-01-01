@@ -392,6 +392,7 @@ data class GameQuestion(
   @EventSourcingHandler
   fun on(event: QuestionBuzzerReopenedEvent) {
     this.currentBuzzWinner = null
+    this.playerBuzzes.clear()
   }
 
   @EventSourcingHandler
