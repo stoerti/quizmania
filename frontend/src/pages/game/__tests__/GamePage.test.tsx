@@ -2,9 +2,8 @@ import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import GamePage from '../GamePage';
 import { Game, GameStatus } from '../../../domain/GameModel';
-import { GameCreatedEvent } from '../../../services/GameEventTypes';
 import React from 'react';
-import { GameRepository } from '../../../services/GameRepository';
+import { createMockGame } from '../../../test-utils/fixtures';
 
 // Mock dependencies
 vi.mock('react-router', () => ({
@@ -80,29 +79,3 @@ describe('GamePage', () => {
     expect(screen.getByTestId('game-finished')).toBeInTheDocument();
   });
 });
-
-function createMockGame(status: GameStatus): Game {
-  const event: GameCreatedEvent = {
-    gameId: 'test-game-id',
-    name: 'Test Game',
-    config: {
-      maxPlayers: 10,
-      questionSetId: 'test-questionset',
-    },
-    creatorUsername: 'creator',
-    moderatorUsername: undefined,
-    rounds: [
-      {
-        name: 'Round 1',
-        roundConfig: {
-          useBuzzer: true,
-          secondsToAnswer: 10,
-        },
-        questions: []
-      }
-    ]
-  };
-  
-  const game = new Game(event);
-  return game.copyWith({ status });
-}

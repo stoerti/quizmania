@@ -1,10 +1,9 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { GameLobbyPage } from '../GameLobby';
-import { Game, GameStatus, Player } from '../../../domain/GameModel';
-import { GameCreatedEvent, PlayerJoinedGameEvent } from '../../../services/GameEventTypes';
 import React from 'react';
 import { useUsername } from '../../../hooks/useUsername';
+import { createGameWithModerator, createGameWithCreator } from '../../../test-utils/fixtures';
 
 // Mock dependencies
 vi.mock('notistack', () => ({
@@ -105,77 +104,3 @@ describe('GameLobby', () => {
     expect(startButton).not.toBeInTheDocument();
   });
 });
-
-function createGameWithModerator(moderatorUsername: string, players: { id: string; name: string }[]): Game {
-  const event: GameCreatedEvent = {
-    gameId: 'test-game-id',
-    name: 'Test Game',
-    config: {
-      maxPlayers: 10,
-      questionSetId: 'test-questionset',
-    },
-    creatorUsername: 'creator',
-    moderatorUsername: moderatorUsername,
-    rounds: [
-      {
-        name: 'Round 1',
-        roundConfig: {
-          useBuzzer: true,
-          secondsToAnswer: 10,
-        },
-        questions: []
-      }
-    ]
-  };
-  
-  let game = new Game(event);
-  
-  // Add players
-  players.forEach(player => {
-    const playerEvent: PlayerJoinedGameEvent = {
-      gameId: 'test-game-id',
-      gamePlayerId: player.id,
-      username: player.name,
-    };
-    game = game.onPlayerJoined(playerEvent);
-  });
-  
-  return game;
-}
-
-function createGameWithCreator(creatorUsername: string, players: { id: string; name: string }[]): Game {
-  const event: GameCreatedEvent = {
-    gameId: 'test-game-id',
-    name: 'Test Game',
-    config: {
-      maxPlayers: 10,
-      questionSetId: 'test-questionset',
-    },
-    creatorUsername: creatorUsername,
-    moderatorUsername: undefined,
-    rounds: [
-      {
-        name: 'Round 1',
-        roundConfig: {
-          useBuzzer: true,
-          secondsToAnswer: 10,
-        },
-        questions: []
-      }
-    ]
-  };
-  
-  let game = new Game(event);
-  
-  // Add players
-  players.forEach(player => {
-    const playerEvent: PlayerJoinedGameEvent = {
-      gameId: 'test-game-id',
-      gamePlayerId: player.id,
-      username: player.name,
-    };
-    game = game.onPlayerJoined(playerEvent);
-  });
-  
-  return game;
-}
