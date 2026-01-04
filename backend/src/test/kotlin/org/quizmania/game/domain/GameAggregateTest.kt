@@ -337,7 +337,7 @@ class GameAggregateTest {
   }
 
   @Test
-  fun buzzerQuestion_playerAnswersWrong_buzzerReopenedTwice() {
+  fun buzzerQuestion_playerAnswersWrong_buzzerReopenedTwice_thirdPlayerWins() {
     val question = choiceQuestion()
     whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
 
@@ -346,13 +346,12 @@ class GameAggregateTest {
     fixture.registerIgnoredField(QuestionAskedEvent::class.java, "questionTimestamp")
     fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "playerAnswerId")
     
-    val GAME_PLAYER_3: GamePlayerId = UUID.randomUUID()
-    
     fixture.given(
       gameCreated(moderator = "Moderator"),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
-      playerAdded("User 3", GAME_PLAYER_3),
+      playerAdded(USERNAME_3, GAME_PLAYER_3),
+      playerAdded(USERNAME_4, GAME_PLAYER_4),
       gameStarted(),
       roundStarted(roundNumber = 1)
         .copy(roundConfig = RoundConfig(useBuzzer = true)),
@@ -364,12 +363,22 @@ class GameAggregateTest {
       GameEventFixtures.questionBuzzerReopened(GAME_QUESTION_1),
       // Second player buzzes and answers wrong  
       GameEventFixtures.questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_2),
-      GameEventFixtures.questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_2)
+      GameEventFixtures.questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_2),
+      questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), ""),
+      GameEventFixtures.questionBuzzerReopened(GAME_QUESTION_1),
+      // Third player buzzes and wins
+      GameEventFixtures.questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_3),
+      GameEventFixtures.questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_3)
     )
-      .`when`(GameCommandFixtures.answerBuzzerQuestion(GAME_QUESTION_1, false))
+      .`when`(GameCommandFixtures.answerBuzzerQuestion(GAME_QUESTION_1, true))
       .expectEvents(
-        questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), ""),
-        GameEventFixtures.questionBuzzerReopened(GAME_QUESTION_1)
+        questionAnswered(GAME_QUESTION_1, GAME_PLAYER_3, UUID.randomUUID(), question.correctAnswer),
+        QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
+        QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(
+          GAME_PLAYER_1 to -10,
+          GAME_PLAYER_2 to -10,
+          GAME_PLAYER_3 to 20
+        ))
       )
   }
 
