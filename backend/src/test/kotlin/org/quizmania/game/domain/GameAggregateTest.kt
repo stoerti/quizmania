@@ -336,4 +336,41 @@ class GameAggregateTest {
       )
   }
 
+  @Test
+  fun buzzerQuestion_playerAnswersWrong_buzzerReopenedTwice() {
+    val question = choiceQuestion()
+    whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
+
+    fixture.registerIgnoredField(RoundStartedEvent::class.java, "gameRoundId")
+    fixture.registerIgnoredField(QuestionAskedEvent::class.java, "gameQuestionId")
+    fixture.registerIgnoredField(QuestionAskedEvent::class.java, "questionTimestamp")
+    fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "playerAnswerId")
+    
+    val GAME_PLAYER_3: GamePlayerId = UUID.randomUUID()
+    
+    fixture.given(
+      gameCreated(moderator = "Moderator"),
+      playerAdded(USERNAME_1, GAME_PLAYER_1),
+      playerAdded(USERNAME_2, GAME_PLAYER_2),
+      playerAdded("User 3", GAME_PLAYER_3),
+      gameStarted(),
+      roundStarted(roundNumber = 1)
+        .copy(roundConfig = RoundConfig(useBuzzer = true)),
+      questionAsked(GAME_QUESTION_1, 1, 1, question, GameQuestionMode.BUZZER),
+      // First player buzzes and answers wrong
+      GameEventFixtures.questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1),
+      GameEventFixtures.questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1),
+      questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), ""),
+      GameEventFixtures.questionBuzzerReopened(GAME_QUESTION_1),
+      // Second player buzzes and answers wrong  
+      GameEventFixtures.questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_2),
+      GameEventFixtures.questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_2)
+    )
+      .`when`(GameCommandFixtures.answerBuzzerQuestion(GAME_QUESTION_1, false))
+      .expectEvents(
+        questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), ""),
+        GameEventFixtures.questionBuzzerReopened(GAME_QUESTION_1)
+      )
+  }
+
 }
