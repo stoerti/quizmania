@@ -340,7 +340,7 @@ class GameAggregateTest {
   }
 
   @Test
-  fun buzzerQuestion_playerAnswersWrong_buzzerReopenedTwice_thirdPlayerWins() {
+  fun buzzerQuestion_playerAnswersWrong_buzzerReopenedTwice_thirdPlayerBuzzes() {
     val question = choiceQuestion()
     whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
 
@@ -348,7 +348,9 @@ class GameAggregateTest {
     fixture.registerIgnoredField(QuestionAskedEvent::class.java, "gameQuestionId")
     fixture.registerIgnoredField(QuestionAskedEvent::class.java, "questionTimestamp")
     fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "playerAnswerId")
+    fixture.registerIgnoredField(QuestionBuzzedEvent::class.java, "buzzerTimestamp")
     
+    // Test that after two reopens, a third player can buzz
     fixture.given(
       gameCreated(moderator = "Moderator"),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
@@ -372,8 +374,56 @@ class GameAggregateTest {
     )
       .`when`(GameCommandFixtures.buzzQuestion(GAME_QUESTION_1, USERNAME_3))
       .expectEvents(
-        questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_3),
-        questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_3)
+        questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_3)
+      )
+  }
+
+  @Test
+  fun buzzerQuestion_playerAnswersWrong_buzzerReopenedTwice_evaluateBuzzesSelectsThirdPlayer() {
+    val question = choiceQuestion()
+    whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
+
+    fixture.registerIgnoredField(RoundStartedEvent::class.java, "gameRoundId")
+    fixture.registerIgnoredField(QuestionAskedEvent::class.java, "gameQuestionId")
+    fixture.registerIgnoredField(QuestionAskedEvent::class.java, "questionTimestamp")
+    fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "playerAnswerId")
+    
+    // Test that when evaluateBuzzes() is called after two reopens and a third buzz,
+    // it correctly selects the third player as winner (who hasn't answered yet)
+    fixture.given(
+      gameCreated(moderator = "Moderator"),
+      playerAdded(USERNAME_1, GAME_PLAYER_1),
+      playerAdded(USERNAME_2, GAME_PLAYER_2),
+      playerAdded(USERNAME_3, GAME_PLAYER_3),
+      playerAdded(USERNAME_4, GAME_PLAYER_4),
+      gameStarted(),
+      roundStarted(roundNumber = 1)
+        .copy(roundConfig = RoundConfig(useBuzzer = true)),
+      questionAsked(GAME_QUESTION_1, 1, 1, question, GameQuestionMode.BUZZER),
+      // First player buzzes and answers wrong
+      questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1),
+      questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1),
+      questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), ""),
+      questionBuzzerReopened(GAME_QUESTION_1),
+      // Second player buzzes and answers wrong
+      questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_2),
+      questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_2),
+      questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), ""),
+      questionBuzzerReopened(GAME_QUESTION_1),
+      // Third player buzzes
+      questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_3),
+      // Buzzes are evaluated (simulating deadline fired) and third player wins
+      questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_3)
+    )
+      .`when`(GameCommandFixtures.answerBuzzerQuestion(GAME_QUESTION_1, true))
+      .expectEvents(
+        questionAnswered(GAME_QUESTION_1, GAME_PLAYER_3, UUID.randomUUID(), question.correctAnswer),
+        QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
+        QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(
+          GAME_PLAYER_1 to -10,
+          GAME_PLAYER_2 to -10,
+          GAME_PLAYER_3 to 20
+        ))
       )
   }
 
