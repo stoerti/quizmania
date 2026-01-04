@@ -112,9 +112,9 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
         <Typography variant="h6" component="div" sx={{pl: 2}}>
           Participants ({props.game.players.length})
         </Typography>
-        <List dense={true}>
+        <List dense={true} data-testid="player-list">
           {props.game.players.map((row) => (
-            <ListItem key={row.id}>
+            <ListItem key={row.id} data-testid={`player-${row.id}`}>
               <ListItemIcon>
                 <Person/>
               </ListItemIcon>
