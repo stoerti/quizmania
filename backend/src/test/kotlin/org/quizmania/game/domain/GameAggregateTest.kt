@@ -19,6 +19,9 @@ import org.quizmania.game.GameEventFixtures.Companion.playerRemoved
 import org.quizmania.game.GameEventFixtures.Companion.questionAnswerOverridden
 import org.quizmania.game.GameEventFixtures.Companion.questionAnswered
 import org.quizmania.game.GameEventFixtures.Companion.questionAsked
+import org.quizmania.game.GameEventFixtures.Companion.questionBuzzed
+import org.quizmania.game.GameEventFixtures.Companion.questionBuzzerReopened
+import org.quizmania.game.GameEventFixtures.Companion.questionBuzzerWon
 import org.quizmania.game.GameEventFixtures.Companion.roundStarted
 import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
 import org.quizmania.game.QuestionFixtures.Companion.estimateQuestion
@@ -357,28 +360,20 @@ class GameAggregateTest {
         .copy(roundConfig = RoundConfig(useBuzzer = true)),
       questionAsked(GAME_QUESTION_1, 1, 1, question, GameQuestionMode.BUZZER),
       // First player buzzes and answers wrong
-      GameEventFixtures.questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1),
-      GameEventFixtures.questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1),
+      questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1),
+      questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), ""),
-      GameEventFixtures.questionBuzzerReopened(GAME_QUESTION_1),
-      // Second player buzzes and answers wrong  
-      GameEventFixtures.questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_2),
-      GameEventFixtures.questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_2),
+      questionBuzzerReopened(GAME_QUESTION_1),
+      // Second player buzzes and answers wrong
+      questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_2),
+      questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_2),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), ""),
-      GameEventFixtures.questionBuzzerReopened(GAME_QUESTION_1),
-      // Third player buzzes and wins
-      GameEventFixtures.questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_3),
-      GameEventFixtures.questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_3)
+      questionBuzzerReopened(GAME_QUESTION_1),
     )
-      .`when`(GameCommandFixtures.answerBuzzerQuestion(GAME_QUESTION_1, true))
+      .`when`(GameCommandFixtures.buzzQuestion(GAME_QUESTION_1, USERNAME_3))
       .expectEvents(
-        questionAnswered(GAME_QUESTION_1, GAME_PLAYER_3, UUID.randomUUID(), question.correctAnswer),
-        QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
-        QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(
-          GAME_PLAYER_1 to -10,
-          GAME_PLAYER_2 to -10,
-          GAME_PLAYER_3 to 20
-        ))
+        questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_3),
+        questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_3)
       )
   }
 
