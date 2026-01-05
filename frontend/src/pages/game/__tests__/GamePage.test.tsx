@@ -78,4 +78,26 @@ describe('GamePage', () => {
 
     expect(screen.getByTestId('game-finished')).toBeInTheDocument();
   });
+
+  test('When a game is in state STARTED, then the GameRoom page should be displayed', () => {
+    const mockGame = createMockGame(GameStatus.STARTED);
+    mockFindGame.mockImplementation((gameId, callback) => {
+      callback(mockGame);
+    });
+
+    render(<GamePage />);
+
+    expect(screen.getByTestId('game-room')).toBeInTheDocument();
+  });
+
+  test('When a game is in state CANCELED, then the game cancelled message should be displayed', () => {
+    const mockGame = createMockGame(GameStatus.CANCELED);
+    mockFindGame.mockImplementation((gameId, callback) => {
+      callback(mockGame);
+    });
+
+    render(<GamePage />);
+
+    expect(screen.getByText('Game was cancelled')).toBeInTheDocument();
+  });
 });
