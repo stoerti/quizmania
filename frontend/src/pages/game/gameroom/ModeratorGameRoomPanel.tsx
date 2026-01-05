@@ -16,6 +16,7 @@ import {Scoreboard, ScoreboardMode} from "./Scoreboard.tsx";
 import {PlayerAnswerLog} from "./PlayerAnswerLog.tsx";
 import {StartRoundPanel} from "./StartRoundPanel.tsx";
 import {formatAnswerForDisplay} from "../../../utils/answerFormatter.ts";
+import {BuzzerList} from "./BuzzerList.tsx";
 
 export type ModeratorGameRoomPanelProps = {
   game: Game,
@@ -75,21 +76,30 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
                         onClick={() => gameCommandService.closeQuestion(game.id, question.gameQuestionId)}
                 >Close question</Button>
                 <Paper sx={{padding: 2}}>
-                  <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
-                    <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h4" component="div">
-                      Waiting on players to hit the buzzer
-                    </Typography>
-                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                      <CircularProgress/>
+                  {question.buzzedPlayerIds.length > 0 ? (
+                    <>
+                      <Typography sx={{flex: '1 1 100%', textAlign: 'center', mb: 2}} variant="h6" component="div">
+                        Buzzer Queue
+                      </Typography>
+                      <BuzzerList game={game} question={question}/>
+                    </>
+                  ) : (
+                    <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
+                      <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h4" component="div">
+                        Waiting on players to hit the buzzer
+                      </Typography>
+                      <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                        <CircularProgress/>
+                      </Box>
                     </Box>
-                  </Box>
+                  )}
                 </Paper>
               </Stack>
             </Box>
 
         } else {
           container =
-            <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
+            <Box sx={{display: 'block', m: 'auto', alignContent: 'center', maxWidth: '650px', width: '100%'}}>
               <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
               <Box sx={{marginTop: 5, marginBottom: 10}}>
                 <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="body1" component="div">
@@ -115,6 +125,12 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
                         })}
                 >Reject answer</Button>
               </Box>
+              <Paper sx={{padding: 2, mt: 3}}>
+                <Typography sx={{flex: '1 1 100%', textAlign: 'center', mb: 2}} variant="h6" component="div">
+                  Buzzer Queue
+                </Typography>
+                <BuzzerList game={game} question={question}/>
+              </Paper>
             </Box>
         }
         return (
