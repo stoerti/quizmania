@@ -1,5 +1,5 @@
 import {Game, GameQuestion} from "../../../domain/GameModel";
-import {Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
+import {Table, TableBody, TableCell, TableHead, TableRow} from "@mui/material";
 import Cancel from "@mui/icons-material/Cancel";
 import HelpOutline from "@mui/icons-material/HelpOutline";
 import React from "react";
