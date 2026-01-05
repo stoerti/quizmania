@@ -143,9 +143,11 @@ data class GameQuestion(
   fun evaluateBuzzes() {
     assertNotClosed()
 
-    val buzzWinner = playerBuzzes
-      .filterNot { playerAnswers.map { a -> a.gamePlayerId }.toList().contains(it.gamePlayerId) } // filter players already failed answering
-      .minByOrNull { it.buzzTimestamp } // sort all others ascending by buzzer time
+    val answeredPlayerIds = playerAnswers.map { it.gamePlayerId }.toSet()
+    val remainingBuzzes = playerBuzzes
+      .filterNot { answeredPlayerIds.contains(it.gamePlayerId) } // filter players already failed answering
+
+    val buzzWinner = remainingBuzzes.minByOrNull { it.buzzTimestamp } // sort all others ascending by buzzer time
 
     if (buzzWinner != null) {
       AggregateLifecycle.apply(
@@ -156,9 +158,20 @@ data class GameQuestion(
         )
       )
     } else {
-      // todo reopen buzzers instead of close the question
-      // apparently no one else buzzed
-      closeQuestion()
+      // Reopen buzzers if no one else has buzzed yet.
+      // This happens when playerBuzzes.size == playerAnswers.size, meaning only the current
+      // player who just answered wrong has buzzed (no other players have buzzed yet).
+      if (playerBuzzes.size == playerAnswers.size) {
+        AggregateLifecycle.apply(
+          QuestionBuzzerReopenedEvent(
+            gameId = gameId,
+            gameQuestionId = id
+          )
+        )
+      } else {
+        // all players who buzzed have already answered incorrectly
+        closeQuestion()
+      }
     }
   }
 
@@ -377,6 +390,12 @@ data class GameQuestion(
   @EventSourcingHandler
   fun on(event: QuestionBuzzerWonEvent) {
     this.currentBuzzWinner = event.gamePlayerId
+  }
+
+  @EventSourcingHandler
+  fun on(event: QuestionBuzzerReopenedEvent) {
+    this.currentBuzzWinner = null
+    // Keep playerBuzzes to maintain historical data for subsequent reopen evaluations
   }
 
   @EventSourcingHandler

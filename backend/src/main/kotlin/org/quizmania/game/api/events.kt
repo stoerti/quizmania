@@ -113,6 +113,11 @@ data class QuestionBuzzerWonEvent(
   val gamePlayerId: GamePlayerId,
 ) : GameQuestionEvent
 
+data class QuestionBuzzerReopenedEvent(
+  override val gameId: GameId,
+  override val gameQuestionId: GameQuestionId,
+) : GameQuestionEvent
+
 data class QuestionClosedEvent(
   override val gameId: GameId,
   override val gameQuestionId: GameQuestionId,

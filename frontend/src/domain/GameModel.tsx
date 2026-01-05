@@ -6,7 +6,7 @@ import {
   Question,
   QuestionAnsweredEvent,
   QuestionAnswerOverriddenEvent,
-  QuestionAskedEvent, QuestionBuzzedEvent, QuestionBuzzerWonEvent,
+  QuestionAskedEvent, QuestionBuzzedEvent, QuestionBuzzerReopenedEvent, QuestionBuzzerWonEvent,
   QuestionClosedEvent,
   QuestionScoredEvent,
   PlayerJoinedGameEvent,
@@ -89,6 +89,8 @@ export class Game {
         return this.onQuestionBuzzed(event as QuestionBuzzedEvent)
       case "QuestionBuzzerWonEvent":
         return this.onQuestionBuzzerWon(event as QuestionBuzzerWonEvent)
+      case "QuestionBuzzerReopenedEvent":
+        return this.onQuestionBuzzerReopened(event as QuestionBuzzerReopenedEvent)
       case "QuestionClosedEvent":
         return this.onQuestionClosed(event as QuestionClosedEvent)
       case "QuestionScoredEvent":
@@ -202,6 +204,10 @@ export class Game {
 
   public onQuestionBuzzerWon(event: QuestionBuzzerWonEvent): Game {
     return this.updateQuestion(event.gameQuestionId, question => question.onQuestionBuzzerWon(event))
+  }
+
+  public onQuestionBuzzerReopened(event: QuestionBuzzerReopenedEvent): Game {
+    return this.updateQuestion(event.gameQuestionId, question => question.onQuestionBuzzerReopened(event))
   }
 
   public onQuestionClosed(event: QuestionClosedEvent): Game {
@@ -349,6 +355,13 @@ export class GameQuestion {
   public onQuestionBuzzerWon(event: QuestionBuzzerWonEvent): GameQuestion {
     return this.copyWith({
       currentBuzzWinnerId: event.gamePlayerId
+    })
+  }
+
+  public onQuestionBuzzerReopened(event: QuestionBuzzerReopenedEvent): GameQuestion {
+    return this.copyWith({
+      currentBuzzWinnerId: undefined,
+      buzzedPlayerIds: []
     })
   }
 

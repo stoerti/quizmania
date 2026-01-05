@@ -13,6 +13,8 @@ val GAME_PLAYER_3: GamePlayerId = UUID.randomUUID()
 val GAME_PLAYER_4: GamePlayerId = UUID.randomUUID()
 val USERNAME_1: String = "User 1"
 val USERNAME_2: String = "User 2"
+val USERNAME_3: String = "User 3"
+val USERNAME_4: String = "User 4"
 val GAME_ROUND_1: GameRoundId = UUID.randomUUID()
 val GAME_ROUND_2: GameRoundId = UUID.randomUUID()
 val GAME_QUESTION_1: GameQuestionId = UUID.randomUUID()
@@ -85,6 +87,23 @@ class GameCommandFixtures {
       return ScoreQuestionCommand(
         gameId = GAME_UUID,
         gameQuestionId = gameQuestionId,
+      )
+    }
+
+    fun buzzQuestion(gameQuestionId: UUID, username: String): BuzzQuestionCommand {
+      return BuzzQuestionCommand(
+        gameId = GAME_UUID,
+        gameQuestionId = gameQuestionId,
+        username = username,
+        buzzerTimestamp = NOW
+      )
+    }
+
+    fun answerBuzzerQuestion(gameQuestionId: UUID, answerCorrect: Boolean): AnswerBuzzerQuestionCommand {
+      return AnswerBuzzerQuestionCommand(
+        gameId = GAME_UUID,
+        gameQuestionId = gameQuestionId,
+        answerCorrect = answerCorrect
       )
     }
   }
@@ -199,6 +218,38 @@ class GameEventFixtures {
         gamePlayerId = gamePlayerId,
         playerAnswerId = playerAnswerId,
         answer = answer
+      )
+    }
+
+    fun questionBuzzed(
+      gameQuestionId: UUID,
+      gamePlayerId: UUID
+    ): QuestionBuzzedEvent {
+      return QuestionBuzzedEvent(
+        gameId = GAME_UUID,
+        gameQuestionId = gameQuestionId,
+        gamePlayerId = gamePlayerId,
+        buzzerTimestamp = NOW
+      )
+    }
+
+    fun questionBuzzerWon(
+      gameQuestionId: UUID,
+      gamePlayerId: UUID
+    ): QuestionBuzzerWonEvent {
+      return QuestionBuzzerWonEvent(
+        gameId = GAME_UUID,
+        gameQuestionId = gameQuestionId,
+        gamePlayerId = gamePlayerId
+      )
+    }
+
+    fun questionBuzzerReopened(
+      gameQuestionId: UUID
+    ): QuestionBuzzerReopenedEvent {
+      return QuestionBuzzerReopenedEvent(
+        gameId = GAME_UUID,
+        gameQuestionId = gameQuestionId
       )
     }
   }

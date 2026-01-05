@@ -326,6 +326,11 @@ internal class GameAggregate() {
   }
 
   @EventSourcingHandler
+  fun on(event: QuestionBuzzerReopenedEvent) {
+    withCurrentRound { it.on(event) }
+  }
+
+  @EventSourcingHandler
   fun on(event: QuestionClosedEvent) {
     withCurrentRound { it.on(event) }
   }

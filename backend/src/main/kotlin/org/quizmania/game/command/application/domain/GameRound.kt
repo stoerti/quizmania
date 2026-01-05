@@ -42,7 +42,7 @@ data class GameRound(
   }
 
   fun numCurrentAnswers(): Int = currentQuestion?.numAnswers() ?: 0
-  fun numCurrentBuzzers(): Int = currentQuestion?.numBuzzers() ?: 0
+  fun numCurrentBuzzers(): Int = (currentQuestion?.numBuzzers() ?: 0) - numCurrentAnswers()
 
   fun hasMoreQuestions(): Boolean = finishedQuestions < questionList.size
 
@@ -131,6 +131,10 @@ data class GameRound(
   }
 
   fun on(event: QuestionBuzzerWonEvent) {
+    withCurrentQuestion { it.on(event) }
+  }
+
+  fun on(event: QuestionBuzzerReopenedEvent) {
     withCurrentQuestion { it.on(event) }
   }
 
