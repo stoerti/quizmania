@@ -1,6 +1,5 @@
 import {Game, GameQuestion} from "../../../domain/GameModel";
 import {Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
-import CheckCircle from "@mui/icons-material/CheckCircle";
 import Cancel from "@mui/icons-material/Cancel";
 import HelpOutline from "@mui/icons-material/HelpOutline";
 import React from "react";
@@ -11,6 +10,9 @@ export type BuzzerListProps = {
 }
 
 export const BuzzerList = ({game, question}: BuzzerListProps) => {
+  // Create lookup maps for better performance
+  const answeredPlayerIds = new Set(question.answers.map(a => a.gamePlayerId))
+  
   return (
     <Table aria-label="buzzer list">
       <TableHead>
@@ -23,7 +25,7 @@ export const BuzzerList = ({game, question}: BuzzerListProps) => {
       <TableBody>
         {question.buzzedPlayerIds.map((playerId, index) => {
           const playerName = game.findPlayerName(playerId)
-          const hasAnswered = question.answers.find(a => a.gamePlayerId === playerId)
+          const hasAnswered = answeredPlayerIds.has(playerId)
           const isCurrentlyAnswering = question.currentBuzzWinnerId === playerId
           
           let statusIcon = null

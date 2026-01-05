@@ -22,6 +22,7 @@ export type ModeratorGameRoomPanelProps = {
   game: Game,
 }
 
+const BUZZER_CONTAINER_MAX_WIDTH = '650px';
 
 export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
   const {enqueueSnackbar} = useSnackbar()
@@ -69,7 +70,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
         let container;
         if (question.currentBuzzWinnerId == null) {
           container =
-            <Box sx={{maxWidth: '650px', width: '100%'}}>
+            <Box sx={{maxWidth: BUZZER_CONTAINER_MAX_WIDTH, width: '100%'}}>
               <Stack spacing={2}>
                 <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
                 <Button id="closeQuestion" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained"
@@ -99,7 +100,7 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
 
         } else {
           container =
-            <Box sx={{display: 'block', m: 'auto', alignContent: 'center', maxWidth: '650px', width: '100%'}}>
+            <Box sx={{display: 'block', m: 'auto', alignContent: 'center', maxWidth: BUZZER_CONTAINER_MAX_WIDTH, width: '100%'}}>
               <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
               <Box sx={{marginTop: 5, marginBottom: 10}}>
                 <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="body1" component="div">
