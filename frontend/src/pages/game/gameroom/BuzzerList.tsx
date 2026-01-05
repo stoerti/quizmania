@@ -12,12 +12,12 @@ export type BuzzerListProps = {
 export const BuzzerList = ({game, question}: BuzzerListProps) => {
   // Create lookup maps for better performance
   const answeredPlayerIds = new Set(question.answers.map(a => a.gamePlayerId))
-  
+
   return (
-    <Table aria-label="buzzer list">
+    <Table aria-label="buzzer list" size={"small"}>
       <TableHead>
         <TableRow>
-          <TableCell>Position</TableCell>
+          <TableCell></TableCell>
           <TableCell>Username</TableCell>
           <TableCell align="right">Status</TableCell>
         </TableRow>
@@ -27,7 +27,7 @@ export const BuzzerList = ({game, question}: BuzzerListProps) => {
           const playerName = game.findPlayerName(playerId)
           const hasAnswered = answeredPlayerIds.has(playerId)
           const isCurrentlyAnswering = question.currentBuzzWinnerId === playerId
-          
+
           let statusIcon = null
           if (hasAnswered) {
             // Player already answered - show X for wrong answer
@@ -37,14 +37,12 @@ export const BuzzerList = ({game, question}: BuzzerListProps) => {
             statusIcon = <HelpOutline color='primary'/>
           }
           // else: waiting in line - no icon
-          
+
           return (
             <TableRow key={playerId} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
               <TableCell align="left">#{index + 1}</TableCell>
               <TableCell component="th" scope="row">
-                <Typography variant="body1" component="div">
                   {playerName}
-                </Typography>
               </TableCell>
               <TableCell align="right">{statusIcon}</TableCell>
             </TableRow>
