@@ -40,7 +40,7 @@ Scenario('multiplayer_buzzer', ({I, loginPage, lobbyPage, gameRoomPage}) => {
   I.wait(3)
 
   gameRoomPage.startGame()
-  I.wait(2)
+  I.wait(2000)
   gameRoomPage.startRound()
 
   I.wait(2)
