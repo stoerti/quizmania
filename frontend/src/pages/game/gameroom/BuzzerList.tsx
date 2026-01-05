@@ -30,7 +30,7 @@ export const BuzzerList = ({game, question}: BuzzerListProps) => {
 
           let statusIcon = null
           if (hasAnswered) {
-            // Player already answered - show X for wrong answer
+            // Player already attempted and answered incorrectly - show X for rejected answer
             statusIcon = <Cancel color='error'/>
           } else if (isCurrentlyAnswering) {
             // Player is currently answering - show ?
