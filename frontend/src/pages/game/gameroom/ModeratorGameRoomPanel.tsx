@@ -16,11 +16,13 @@ import {Scoreboard, ScoreboardMode} from "./Scoreboard.tsx";
 import {PlayerAnswerLog} from "./PlayerAnswerLog.tsx";
 import {StartRoundPanel} from "./StartRoundPanel.tsx";
 import {formatAnswerForDisplay} from "../../../utils/answerFormatter.ts";
+import {BuzzerList} from "./BuzzerList.tsx";
 
 export type ModeratorGameRoomPanelProps = {
   game: Game,
 }
 
+const BUZZER_CONTAINER_MAX_WIDTH = '650px';
 
 export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
   const {enqueueSnackbar} = useSnackbar()
@@ -68,53 +70,60 @@ export const ModeratorGameRoomPanel = ({game}: ModeratorGameRoomPanelProps) => {
         let container;
         if (question.currentBuzzWinnerId == null) {
           container =
-            <Box sx={{maxWidth: '650px', width: '100%'}}>
+            <Box sx={{maxWidth: BUZZER_CONTAINER_MAX_WIDTH, width: '100%'}}>
               <Stack spacing={2}>
                 <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
                 <Button id="closeQuestion" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained"
                         onClick={() => gameCommandService.closeQuestion(game.id, question.gameQuestionId)}
                 >Close question</Button>
-                <Paper sx={{padding: 2}}>
-                  <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
-                    <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h4" component="div">
-                      Waiting on players to hit the buzzer
-                    </Typography>
-                    <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                      <CircularProgress/>
+                {question.buzzedPlayerIds.length > 0 ? (
+                  <BuzzerList game={game} question={question}/>
+                ) : (
+                  <Paper sx={{padding: 2}}>
+                    <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
+                      <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h4" component="div">
+                        Waiting on players to hit the buzzer
+                      </Typography>
+                      <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                        <CircularProgress/>
+                      </Box>
                     </Box>
-                  </Box>
-                </Paper>
+                  </Paper>
+                )}
               </Stack>
             </Box>
 
         } else {
           container =
-            <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
-              <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
-              <Box sx={{marginTop: 5, marginBottom: 10}}>
-                <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="body1" component="div">
-                  Player on the clock:
-                </Typography>
-                <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h2" component="div" id="buzzWinner">
-                  {game.findPlayerName(question.currentBuzzWinnerId)}
-                </Typography>
-              </Box>
-              <Box sx={{mt: 3, display: 'flex', justifyContent: 'center'}}>
-                <Button id="acceptAnswer" sx={{margin: 'auto'}} startIcon={<CheckCircle/>} variant="contained" color="success"
-                        onClick={() => gameCommandService.answerBuzzerQuestion({
-                          gameId: game.id,
-                          gameQuestionId: question.gameQuestionId,
-                          answerCorrect: true
-                        })}
-                >Accept answer</Button>
-                <Button id="rejectAnswer" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained" color="error"
-                        onClick={() => gameCommandService.answerBuzzerQuestion({
-                          gameId: game.id,
-                          gameQuestionId: question.gameQuestionId,
-                          answerCorrect: false
-                        })}
-                >Reject answer</Button>
-              </Box>
+            <Box sx={{display: 'block', m: 'auto', alignContent: 'center', maxWidth: BUZZER_CONTAINER_MAX_WIDTH, width: '100%'}}>
+              <Stack spacing={2}>
+                <CorrectAnswerContainer correctAnswer={question.question.correctAnswer}/>
+                <Box sx={{marginTop: 5, marginBottom: 5}}>
+                  <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="body1" component="div">
+                    Player on the clock:
+                  </Typography>
+                  <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h2" component="div" id="buzzWinner">
+                    {game.findPlayerName(question.currentBuzzWinnerId)}
+                  </Typography>
+                </Box>
+                <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                  <Button id="acceptAnswer" sx={{margin: 'auto'}} startIcon={<CheckCircle/>} variant="contained" color="success"
+                          onClick={() => gameCommandService.answerBuzzerQuestion({
+                            gameId: game.id,
+                            gameQuestionId: question.gameQuestionId,
+                            answerCorrect: true
+                          })}
+                  >Accept answer</Button>
+                  <Button id="rejectAnswer" sx={{margin: 'auto'}} startIcon={<StopCircle/>} variant="contained" color="error"
+                          onClick={() => gameCommandService.answerBuzzerQuestion({
+                            gameId: game.id,
+                            gameQuestionId: question.gameQuestionId,
+                            answerCorrect: false
+                          })}
+                  >Reject answer</Button>
+                </Box>
+                <BuzzerList game={game} question={question}/>
+              </Stack>
             </Box>
         }
         return (
