@@ -35,7 +35,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.session:spring-session-core")
 
-  implementation("org.axonframework:axon-spring-boot-starter:4.12.2")
+  implementation("org.axonframework:axon-spring-boot-starter:4.12.3")
   implementation("org.springframework.boot:spring-boot-starter-quartz")
 
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
@@ -63,7 +63,7 @@ dependencies {
   testImplementation("org.testcontainers:testcontainers")
   testImplementation("org.testcontainers:junit-jupiter")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("org.axonframework:axon-test:4.12.2")
+  testImplementation("org.axonframework:axon-test:4.12.3")
   testRuntimeOnly("org.postgresql:postgresql")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
