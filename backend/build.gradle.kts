@@ -7,7 +7,7 @@ plugins {
   id("com.google.cloud.tools.jib") version "3.5.3"
   kotlin("jvm") version "2.3.0"
   kotlin("plugin.spring") version "2.3.0"
-  kotlin("plugin.jpa") version "2.3.0"
+  kotlin("plugin.jpa") version "2.3.10"
 }
 
 group = "org.quizmania"
