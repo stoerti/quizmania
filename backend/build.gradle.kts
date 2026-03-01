@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("org.springframework.boot") version "3.5.10"
+  id("org.springframework.boot") version "3.5.11"
   id("io.spring.dependency-management") version "1.1.7"
   id("jacoco")
   id("com.google.cloud.tools.jib") version "3.5.3"
