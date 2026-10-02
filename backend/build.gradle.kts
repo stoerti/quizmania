@@ -12,12 +12,18 @@ plugins {
 
 group = "org.quizmania"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(21))
+  }
+}
 
 kotlin {
+  jvmToolchain(21)
   compilerOptions {
     freeCompilerArgs.add("-Xjsr305=strict")
-    jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
   }
 }
 
@@ -85,7 +91,7 @@ tasks.withType<JacocoReport> {
 }
 
 jacoco {
-  toolVersion = "0.8.7"
+  toolVersion = "0.8.15"
 }
 
 jib {
