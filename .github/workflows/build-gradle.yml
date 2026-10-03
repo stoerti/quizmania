@@ -2,7 +2,13 @@ name: Build and test
 
 on:
   push:
+    branches:
+      - main
   pull_request:
+
+concurrency:
+  group: build-and-test-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
   REGISTRY: ghcr.io
@@ -60,7 +66,7 @@ jobs:
 
       - name: Publish Gradle test results
         uses: dorny/test-reporter@v1
-        if: always()
+        if: ${{ always() && hashFiles('backend/build/test-results/test/*.xml') != '' }}
         with:
           name: Gradle Tests
           path: backend/build/test-results/test/*.xml
