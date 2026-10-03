@@ -1,14 +1,11 @@
 package org.quizmania.game.command.application.domain
 
-import org.axonframework.deadline.DeadlineManager
 import org.axonframework.modelling.command.AggregateLifecycle
 import org.axonframework.modelling.command.EntityId
 import org.quizmania.game.api.*
-import org.quizmania.game.command.application.domain.GameAggregate.Companion.Deadline
 import org.quizmania.game.command.port.out.QuestionPort
 import org.quizmania.question.api.QuestionId
 import org.quizmania.question.api.RoundConfig
-import java.time.Duration
 import java.time.Instant
 import java.util.*
 
@@ -94,6 +91,12 @@ data class GameRound(
     withCurrentQuestion { it.closeQuestion() }
   }
 
+  fun expireQuestion(questionId: GameQuestionId) {
+    currentQuestion?.takeIf {
+      it.id == questionId && !it.isClosed() && it.questionMode == GameQuestionMode.COLLECTIVE
+    }?.closeQuestion()
+  }
+
   fun rateQuestion() {
     withCurrentQuestion { it.rateQuestion() }
   }
@@ -147,27 +150,26 @@ data class GameRound(
     currentQuestion = null
   }
 
-  fun askNextQuestion(questionPort: QuestionPort, deadlineManager: DeadlineManager) {
+  fun askNextQuestion(questionPort: QuestionPort) {
     val question = questionPort.getQuestion(questionList[finishedQuestions])
 
     val questionMode = if (this.roundConfig.useBuzzer) GameQuestionMode.BUZZER else GameQuestionMode.COLLECTIVE
+    val questionId = UUID.randomUUID()
+    val askedAt = Instant.now()
 
     AggregateLifecycle.apply(
       QuestionAskedEvent(
         gameId = gameId,
-        gameQuestionId = UUID.randomUUID(),
+        gameQuestionId = questionId,
         roundNumber = number,
         roundQuestionNumber = finishedQuestions + 1,
-        questionTimestamp = Instant.now(),
+        questionTimestamp = askedAt,
         questionMode = questionMode,
         timeToAnswer = roundConfig.secondsToAnswer * 1000,
         question = question
       )
     )
 
-    if (questionMode != GameQuestionMode.BUZZER && roundConfig.secondsToAnswer > 0) {
-      deadlineManager.schedule(Duration.ofSeconds(roundConfig.secondsToAnswer), Deadline.QUESTION_CLOSE)
-    }
   }
 
   private fun withCurrentQuestion(block: (GameQuestion) -> Unit) {

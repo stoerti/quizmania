@@ -100,6 +100,12 @@ data class CloseQuestionCommand(
     val gameQuestionId: UUID,
 ): GameCommand
 
+data class ExpireQuestionCommand(
+    @TargetAggregateIdentifier
+    override val gameId: UUID,
+    val gameQuestionId: UUID,
+): GameCommand
+
 data class ScoreQuestionCommand(
     @TargetAggregateIdentifier
     override val gameId: UUID,

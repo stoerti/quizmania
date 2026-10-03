@@ -74,6 +74,12 @@ Question sets are defined in JSON files in the resource folder ./backend/src/mai
 
 ## Developer Hints
 
+### Question timeout timers
+
+The game module's subscribing `QuestionTimerEventListener` reacts to live `QuestionAskedEvent` events for collective questions with a positive answer timeout. It schedules an in-memory command after the originating transaction commits; the aggregate and round do not depend on the timer. The due time is the event's question timestamp plus its answer duration. Replay is disabled for this listener. Expiry commands for closed questions, older questions, or games that have ended are ignored, so timers do not need cancellation when everyone answers early.
+
+Pending question timers are lost when the backend restarts. They are not recovered from the event store; a moderator can close a remaining open question manually. Buzzer selection still uses the existing Axon deadline mechanism.
+
 ### Running the end-to-end tests
 
 The E2E suite builds the frontend and backend, starts an isolated PostgreSQL and Axon Server stack, runs the browser tests, and cleans everything up afterwards:
