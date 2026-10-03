@@ -6,9 +6,12 @@ import org.quizmania.rest.application.domain.Game
 import org.quizmania.rest.application.domain.GameStatus
 import org.quizmania.rest.application.domain.GamePlayer
 import org.quizmania.rest.port.out.GameRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
+import java.time.Instant
 import java.util.*
 
 @Component
@@ -30,10 +33,20 @@ class GameJPARepositoryAdapter(
   override fun findByStatus(status: Set<GameStatus>): List<Game> {
     return repository.findByStatusIn(status).map { it.toModel() }
   }
+
+  override fun findGameIdsCreatedBefore(status: Set<GameStatus>, createdBefore: Instant): List<GameId> {
+    return repository.findGameIdsByStatusAndCreatedAtBefore(status, createdBefore)
+  }
 }
 
 interface GameJPARepository : CrudRepository<GameEntity, GameId> {
   fun findByStatusIn(status: Set<GameStatus>): List<GameEntity>
+
+  @Query("select game.gameId from GAME game where game.status in :status and game.createdAt < :createdBefore")
+  fun findGameIdsByStatusAndCreatedAtBefore(
+    @Param("status") status: Set<GameStatus>,
+    @Param("createdBefore") createdBefore: Instant,
+  ): List<GameId>
 }
 
 @Entity(name = "GAME")
@@ -49,6 +62,7 @@ class GameEntity(
   var questionTimeout: Long,
   @Enumerated(EnumType.STRING)
   var status: GameStatus,
+  val createdAt: Instant,
 
   @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
   @JoinColumn(name = "game_id")
@@ -66,6 +80,7 @@ class GameEntity(
         moderator = model.moderator,
         questionTimeout = model.questionTimeout,
         status = model.status,
+        createdAt = model.createdAt,
         players = model.players.map { GamePlayerEntity.fromModel(it) }.toMutableList() // mutability needed for JPA?
       )
     }
@@ -80,6 +95,7 @@ class GameEntity(
     moderator = this.moderator,
     questionTimeout = this.questionTimeout,
     status = this.status,
+    createdAt = this.createdAt,
     players = this.players.map { it.toModel() }.toMutableList()
   )
 }

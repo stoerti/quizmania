@@ -1,6 +1,7 @@
 package org.quizmania.rest.application.domain
 
 import org.quizmania.game.api.*
+import java.time.Instant
 
 class Game(
   val gameId: GameId,
@@ -12,11 +13,12 @@ class Game(
 
   var questionTimeout: Long,
   var status: GameStatus,
+  val createdAt: Instant,
 
   var players: MutableList<GamePlayer> = mutableListOf(),
 ) {
 
-  constructor(event: GameCreatedEvent) : this(
+  constructor(event: GameCreatedEvent, timestamp: Instant) : this(
     gameId = event.gameId,
     name = event.name,
     maxPlayers = event.config.maxPlayers,
@@ -24,7 +26,8 @@ class Game(
     creator = event.creatorUsername,
     moderator = event.moderatorUsername,
     questionTimeout = event.rounds.firstOrNull()?.roundConfig?.secondsToAnswer ?: 10,
-    status = GameStatus.CREATED
+    status = GameStatus.CREATED,
+    createdAt = timestamp,
   )
 
   fun on(event: PlayerJoinedGameEvent) {

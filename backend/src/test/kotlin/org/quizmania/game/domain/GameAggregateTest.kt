@@ -30,7 +30,6 @@ import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
 import org.quizmania.game.QuestionFixtures.Companion.questionSet
 import org.quizmania.game.api.*
 import org.quizmania.game.command.application.domain.GameAggregate
-import org.quizmania.game.command.application.domain.GameAggregate.Companion.Deadline
 import org.quizmania.game.command.port.out.QuestionPort
 import org.quizmania.question.api.RoundConfig
 import java.time.Duration
@@ -64,7 +63,7 @@ class GameAggregateTest {
     fixture.givenNoPriorActivity()
       .`when`(GameCommandFixtures.createGame())
       .expectEvents(gameCreated(config = GameConfig(questionSetId = QUESTION_SET_ID)))
-      .expectScheduledDeadlineWithName(Duration.ofDays(1), Deadline.GAME_ABANDONED)
+      .expectNoScheduledDeadlines()
   }
 
   @Test
@@ -105,6 +104,20 @@ class GameAggregateTest {
   }
 
   @Test
+  fun abandonGame_activeGameIsCanceled() {
+    fixture.given(gameCreated())
+      .`when`(AbandonGameCommand(GAME_UUID))
+      .expectEvents(gameCanceled())
+  }
+
+  @Test
+  fun abandonGame_canceledGameIsIgnored() {
+    fixture.given(gameCreated(), gameCanceled())
+      .`when`(AbandonGameCommand(GAME_UUID))
+      .expectNoEvents()
+  }
+
+  @Test
   fun startGame_ok() {
     val question = choiceQuestion()
     whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
@@ -112,7 +125,6 @@ class GameAggregateTest {
     fixture.given(gameCreated(), playerAdded(USERNAME_1, GAME_PLAYER_1), playerAdded(USERNAME_2, GAME_PLAYER_2))
       .`when`(startGame())
       .expectEvents(gameStarted(), roundStarted(), questionAsked(UUID.randomUUID(), 1, 1, question))
-      .expectScheduledDeadlineWithName(Duration.ofDays(1), Deadline.GAME_ABANDONED)
   }
 
   @Test

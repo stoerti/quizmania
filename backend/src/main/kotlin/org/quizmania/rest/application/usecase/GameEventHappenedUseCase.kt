@@ -20,7 +20,7 @@ class GameEventHappenedUseCase(
   }
 
   override fun gameCreated(evt: GameCreatedEvent, metadata: EventMetaData) {
-    val game = Game(evt)
+    val game = Game(evt, metadata.timestamp)
     gameRepository.save(game)
   }
 

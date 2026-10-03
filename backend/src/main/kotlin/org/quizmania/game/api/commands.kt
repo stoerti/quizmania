@@ -30,6 +30,11 @@ data class LeaveGameCommand(
     val username: String,
 ): GameCommand
 
+data class AbandonGameCommand(
+    @TargetAggregateIdentifier
+    override val gameId: UUID,
+): GameCommand
+
 data class StartGameCommand(
     @TargetAggregateIdentifier
     override val gameId: UUID,
