@@ -144,6 +144,47 @@ class GameAggregateTest {
   }
 
   @Test
+  fun expireQuestion_closesOpenQuestion() {
+    fixture.given(
+      gameCreated(moderator = "Moderator"), gameStarted(), roundStarted(),
+      questionAsked(GAME_QUESTION_1, 1, question = freeInputQuestion()),
+    ).`when`(ExpireQuestionCommand(GAME_UUID, GAME_QUESTION_1))
+      .expectSuccessfulHandlerExecution()
+      .expectEvents(QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1))
+  }
+
+  @Test
+  fun expireQuestion_ignoresClosedQuestion() {
+    fixture.given(
+      gameCreated(moderator = "Moderator"), gameStarted(), roundStarted(),
+      questionAsked(GAME_QUESTION_1, 1, question = freeInputQuestion()),
+      QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
+    ).`when`(ExpireQuestionCommand(GAME_UUID, GAME_QUESTION_1))
+      .expectSuccessfulHandlerExecution().expectNoEvents()
+  }
+
+  @Test
+  fun expireQuestion_oldTimerDoesNotCloseNextQuestion() {
+    fixture.given(
+      gameCreated(moderator = "Moderator"), gameStarted(), roundStarted(),
+      questionAsked(GAME_QUESTION_1, 1, question = freeInputQuestion()),
+      QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
+      QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, emptyMap()),
+      questionAsked(GAME_QUESTION_2, 2, question = freeInputQuestion()),
+    ).`when`(ExpireQuestionCommand(GAME_UUID, GAME_QUESTION_1))
+      .expectSuccessfulHandlerExecution().expectNoEvents()
+  }
+
+  @Test
+  fun expireQuestion_ignoresCanceledGame() {
+    fixture.given(
+      gameCreated(), gameStarted(), roundStarted(),
+      questionAsked(GAME_QUESTION_1, 1, question = freeInputQuestion()), gameCanceled(),
+    ).`when`(ExpireQuestionCommand(GAME_UUID, GAME_QUESTION_1))
+      .expectSuccessfulHandlerExecution().expectNoEvents()
+  }
+
+  @Test
   fun answerChoiceQuestion_complete_ok() {
     val question = choiceQuestion()
 

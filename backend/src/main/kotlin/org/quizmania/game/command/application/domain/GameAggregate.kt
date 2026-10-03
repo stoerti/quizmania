@@ -21,7 +21,6 @@ internal class GameAggregate() {
 
   companion object : KLogging() {
     object Deadline {
-      const val QUESTION_CLOSE = "questionCloseDeadline"
       const val QUESTION_BUZZER = "questionBuzzerDeadline"
     }
   }
@@ -119,7 +118,7 @@ internal class GameAggregate() {
   }
 
   @CommandHandler
-  fun handle(command: StartGameCommand, questionPort: QuestionPort, deadlineManager: DeadlineManager) {
+  fun handle(command: StartGameCommand, questionPort: QuestionPort) {
     logger.info { "Executing StartGameCommand for game ${command.gameId}" }
     if (roundList.any { it.roundConfig.useBuzzer } && this.players.size < 2) {
       throw InvalidConfigProblem(this.gameId, "Buzzer game needs at least two players")
@@ -132,7 +131,7 @@ internal class GameAggregate() {
     startNextRound()
 
     if (this.roundList.size == 1) {
-      askNextQuestion(questionPort, deadlineManager)
+      askNextQuestion(questionPort)
     }
   }
 
@@ -176,7 +175,7 @@ internal class GameAggregate() {
   }
 
   @CommandHandler
-  fun handle(command: AnswerQuestionCommand, deadlineManager: DeadlineManager) {
+  fun handle(command: AnswerQuestionCommand) {
     logger.info { "Executing AnswerQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
@@ -186,7 +185,6 @@ internal class GameAggregate() {
       // after QuestionAnsweredEvent is applied, the player-answer is actually in the list
       if (players.size == round.numCurrentAnswers()) {
         round.closeQuestion()
-        deadlineManager.cancelAllWithinScope(Deadline.QUESTION_CLOSE)
       }
     }
   }
@@ -227,15 +225,20 @@ internal class GameAggregate() {
   }
 
   @CommandHandler
-  fun handle(command: CloseQuestionCommand, deadlineManager: DeadlineManager) {
+  fun handle(command: CloseQuestionCommand) {
     logger.info { "Executing CloseQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
     withCurrentRound { round ->
       round.closeQuestion()
     }
+  }
 
-    deadlineManager.cancelAllWithinScope(Deadline.QUESTION_CLOSE)
+  @CommandHandler
+  fun handle(command: ExpireQuestionCommand) {
+    if (gameStatus == GameStatus.STARTED) {
+      currentRound?.expireQuestion(command.gameQuestionId)
+    }
   }
 
   @CommandHandler
@@ -250,13 +253,13 @@ internal class GameAggregate() {
 
 
   @CommandHandler
-  fun handle(command: AskNextQuestionCommand, questionPort: QuestionPort, deadlineManager: DeadlineManager) {
+  fun handle(command: AskNextQuestionCommand, questionPort: QuestionPort) {
     logger.info { "Executing AskNextQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
     withCurrentRound { round ->
       if (round.hasMoreQuestions()) {
-        askNextQuestion(questionPort, deadlineManager)
+        askNextQuestion(questionPort)
       } else {
         round.scoreRound()
         if (this.roundList.size == 1) {
@@ -370,12 +373,6 @@ internal class GameAggregate() {
     this.currentRound = null
   }
 
-  @DeadlineHandler(deadlineName = Deadline.QUESTION_CLOSE)
-  fun onQuestionClosedDeadline() {
-    logger.info { "Reached question deadline for game $gameId" }
-    currentRound?.closeQuestion()
-  }
-
   @DeadlineHandler(deadlineName = Deadline.QUESTION_BUZZER)
   fun onQuestionBuzzDeadline() {
     logger.info { "Reached question buzzer deadline for game $gameId" }
@@ -417,9 +414,9 @@ internal class GameAggregate() {
     )
   }
 
-  private fun askNextQuestion(questionPort: QuestionPort, deadlineManager: DeadlineManager) {
+  private fun askNextQuestion(questionPort: QuestionPort) {
     withCurrentRound { round ->
-      round.askNextQuestion(questionPort, deadlineManager)
+      round.askNextQuestion(questionPort)
     }
   }
 
