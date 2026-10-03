@@ -74,6 +74,16 @@ Question sets are defined in JSON files in the resource folder ./backend/src/mai
 
 ## Developer Hints
 
+### Running the end-to-end tests
+
+The E2E suite builds the frontend and backend, starts an isolated PostgreSQL and Axon Server stack, runs the browser tests, and cleans everything up afterwards:
+
+```shell
+./scripts/e2e-test
+```
+
+Docker, Java 21, Node.js 22 or newer, and `curl` must be available. Test reports, traces, screenshots, video, and the backend log are written below `e2e/output` and `e2e/playwright-report`.
+
 ### How to start on local machine
 
 To start the full stack with backend and frontend on the local machine, execute the following steps:
@@ -86,4 +96,3 @@ To start the full stack with backend and frontend on the local machine, execute 
 - in devsupport directory
   - `docker-compose -f ./docker-compose-app.yml up`
 - visit http://localhost:8080 in your browser
-

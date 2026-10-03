@@ -1,26 +1,19 @@
 {
-    "name": "codeceptjs-tests",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "codeceptjs": "codeceptjs run --steps",
-        "codeceptjs:headless": "HEADLESS=true codeceptjs run --steps",
-        "codeceptjs:ui": "codecept-ui --app",
-        "codeceptjs:demo": "codeceptjs run --steps -c node_modules/@codeceptjs/examples",
-        "codeceptjs:demo:headless": "HEADLESS=true codeceptjs run --steps -c node_modules/@codeceptjs/examples",
-        "codeceptjs:demo:ui": "codecept-ui --app  -c node_modules/@codeceptjs/examples"
-    },
-    "devDependencies": {
-        "@codeceptjs/configure": "^0.10.0",
-        "@codeceptjs/examples": "^1.2.1",
-        "@codeceptjs/ui": "^0.7.0",
-        "@types/node": "^20.8.6",
-        "codeceptjs": "^3.5.6",
-        "playwright": "^1.39.0",
-        "ts-node": "^10.9.1",
-        "typescript": "^5.2.2"
-    },
-    "dependencies": {
-        "codeceptjs-intellij-reporter": "^0.0.2"
-    }
+  "name": "quizmania-e2e",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "install:browsers": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3"
+  }
 }

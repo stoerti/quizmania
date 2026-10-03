@@ -29,8 +29,8 @@ tasks.register<NpmTask>("appNpmBuild") {
 
 node {
   download = true
-  version = "20.16.0"
-  npmVersion = "10.8.2"
+  version = "22.12.0"
+  npmVersion = "10.9.0"
   // Set the work directory for unpacking node
   workDir = file("${layout.buildDirectory.get()}/nodejs")
   // Set the work directory for NPM

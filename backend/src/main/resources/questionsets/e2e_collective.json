@@ -1,0 +1,17 @@
+{
+  "id": "e2e_collective",
+  "name": "E2E Collective Questions",
+  "rounds": [
+    {
+      "name": "Collective deadline scenarios",
+      "roundConfig": {
+        "useBuzzer": false,
+        "secondsToAnswer": 3
+      },
+      "questions": [
+        "choice_01",
+        "choice_02"
+      ]
+    }
+  ]
+}

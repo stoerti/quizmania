@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:18.1
+    environment:
+      POSTGRES_DB: quizmania
+      POSTGRES_USER: quizmania
+      POSTGRES_PASSWORD: quizmania
+    ports:
+      - "${QUIZMANIA_E2E_DB_PORT:-55432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quizmania -d quizmania"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  axonserver:
+    image: axoniq/axonserver:2026.1.4-jdk-21
+    environment:
+      AXONIQ_AXONSERVER_STANDALONE: "true"
+    ports:
+      - "${QUIZMANIA_E2E_AXON_HTTP_PORT:-58024}:8024"
+      - "${QUIZMANIA_E2E_AXON_GRPC_PORT:-58124}:8124"
+      - "${QUIZMANIA_E2E_AXON_INTERNAL_PORT:-58224}:8224"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent localhost:8024/actuator/health | grep UP"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
