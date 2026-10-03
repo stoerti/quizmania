@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+E2E_DIR="$ROOT_DIR/e2e"
+OUTPUT_DIR="$E2E_DIR/output"
+COMPOSE_FILE="$ROOT_DIR/devsupport/docker-compose-e2e.yml"
+COMPOSE_PROJECT="${QUIZMANIA_E2E_PROJECT:-quizmania-e2e}"
+DB_PORT="${QUIZMANIA_E2E_DB_PORT:-55432}"
+AXON_GRPC_PORT="${QUIZMANIA_E2E_AXON_GRPC_PORT:-58124}"
+APP_PORT="${QUIZMANIA_E2E_APP_PORT:-58080}"
+APP_PID=""
+
+COMPOSE=(docker compose --project-name "$COMPOSE_PROJECT" -f "$COMPOSE_FILE")
+
+cleanup() {
+  local status=$?
+  trap - EXIT
+
+  if [[ -n "$APP_PID" ]]; then
+    kill "$APP_PID" 2>/dev/null || true
+    wait "$APP_PID" 2>/dev/null || true
+  fi
+
+  if [[ $status -ne 0 ]]; then
+    echo "Backend log (last 200 lines):"
+    tail -n 200 "$OUTPUT_DIR/backend.log" 2>/dev/null || true
+    echo "Infrastructure logs:"
+    "${COMPOSE[@]}" logs --no-color 2>/dev/null || true
+  fi
+
+  "${COMPOSE[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || true
+  exit "$status"
+}
+trap cleanup EXIT INT TERM
+
+mkdir -p "$OUTPUT_DIR"
+
+echo "Installing E2E dependencies"
+npm --prefix "$E2E_DIR" ci --no-audit --no-fund
+if [[ "${QUIZMANIA_E2E_SKIP_BROWSER_INSTALL:-false}" != "true" ]]; then
+  npm --prefix "$E2E_DIR" run install:browsers
+fi
+
+echo "Building the frontend and executable backend"
+"$ROOT_DIR/gradlew" -p "$ROOT_DIR" :backend:bootJar
+
+echo "Starting PostgreSQL and Axon Server"
+"${COMPOSE[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || true
+"${COMPOSE[@]}" up --detach --wait
+
+APP_JAR="$ROOT_DIR/backend/build/libs/backend-0.0.1-SNAPSHOT.jar"
+if [[ ! -f "$APP_JAR" ]]; then
+  echo "Expected application JAR not found: $APP_JAR" >&2
+  exit 1
+fi
+
+echo "Starting Quizmania on port $APP_PORT"
+env \
+  SERVER_PORT="$APP_PORT" \
+  SPRING_DATASOURCE_URL="jdbc:postgresql://127.0.0.1:$DB_PORT/quizmania" \
+  AXON_AXONSERVER_SERVERS="127.0.0.1:$AXON_GRPC_PORT" \
+  java -jar "$APP_JAR" >"$OUTPUT_DIR/backend.log" 2>&1 &
+APP_PID=$!
+
+echo "Waiting for Quizmania readiness"
+for _ in {1..90}; do
+  if curl --fail --silent "http://127.0.0.1:$APP_PORT/actuator/health" >/dev/null; then
+    break
+  fi
+  if ! kill -0 "$APP_PID" 2>/dev/null; then
+    echo "Quizmania exited before becoming ready" >&2
+    exit 1
+  fi
+  sleep 1
+done
+
+if ! curl --fail --silent "http://127.0.0.1:$APP_PORT/actuator/health" >/dev/null; then
+  echo "Quizmania did not become ready within 90 seconds" >&2
+  exit 1
+fi
+
+echo "Running Playwright E2E tests"
+env BASE_URL="http://127.0.0.1:$APP_PORT" npm --prefix "$E2E_DIR" test

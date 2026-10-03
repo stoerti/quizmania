@@ -1,16 +1,12 @@
 {
-  "ts-node": {
-    "files": true
-  },
   "compilerOptions": {
-    "target": "es2018",
-    "lib": ["es2018", "DOM"],
-    "esModuleInterop": true,
-    "module": "commonjs",
-    "strictNullChecks": false,
-    "types": ["codeceptjs", "node"],
-    "declaration": true,
-    "skipLibCheck": true
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "types": ["node", "@playwright/test"]
   },
-  "exclude": ["node_modules"]
+  "include": ["playwright.config.ts", "test/**/*.ts"],
+  "exclude": ["node_modules", "**/*.ori"]
 }

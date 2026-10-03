@@ -1,0 +1,18 @@
+{
+  "id": "e2e_buzzer",
+  "name": "E2E Buzzer Questions",
+  "rounds": [
+    {
+      "name": "Buzzer timing scenarios",
+      "roundConfig": {
+        "useBuzzer": true,
+        "secondsToAnswer": 10
+      },
+      "questions": [
+        "choice_03",
+        "choice_04",
+        "choice_05"
+      ]
+    }
+  ]
+}
