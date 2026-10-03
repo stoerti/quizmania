@@ -3,6 +3,7 @@ package org.quizmania.rest.port.out
 import org.quizmania.game.api.GameId
 import org.quizmania.rest.application.domain.Game
 import org.quizmania.rest.application.domain.GameStatus
+import java.time.Instant
 
 interface GameRepository {
 
@@ -13,4 +14,6 @@ interface GameRepository {
   fun findAll(): List<Game>
 
   fun findByStatus(status: Set<GameStatus>): List<Game>
+
+  fun findGameIdsCreatedBefore(status: Set<GameStatus>, createdBefore: Instant): List<GameId>
 }

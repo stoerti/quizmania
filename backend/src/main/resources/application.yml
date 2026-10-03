@@ -33,6 +33,11 @@ axon:
     events: jackson
     messages: jackson
 
+quizmania:
+  abandoned-game-cleanup:
+    cron: "0 0 * * * *"
+    maximum-game-age: 24h
+
 management:
   endpoints:
     web:

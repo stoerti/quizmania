@@ -21,7 +21,6 @@ internal class GameAggregate() {
 
   companion object : KLogging() {
     object Deadline {
-      const val GAME_ABANDONED = "gameAbandonedDeadline"
       const val QUESTION_CLOSE = "questionCloseDeadline"
       const val QUESTION_BUZZER = "questionBuzzerDeadline"
     }
@@ -40,7 +39,7 @@ internal class GameAggregate() {
 
   @CommandHandler
   @CreationPolicy(AggregateCreationPolicy.ALWAYS)
-  fun create(command: CreateGameCommand, questionPort: QuestionPort, deadlineManager: DeadlineManager) {
+  fun create(command: CreateGameCommand, questionPort: QuestionPort) {
     logger.info { "Executing CreateGameCommand for game ${command.gameId}" }
 
     val questionSet = questionPort.getQuestionSet(command.config.questionSetId)
@@ -58,8 +57,6 @@ internal class GameAggregate() {
         command.moderatorUsername
       )
     )
-
-    deadlineManager.schedule(Duration.ofDays(1), Deadline.GAME_ABANDONED)
   }
 
   @CommandHandler
@@ -113,6 +110,15 @@ internal class GameAggregate() {
   }
 
   @CommandHandler
+  fun handle(command: AbandonGameCommand) {
+    logger.info { "Executing AbandonGameCommand for game ${command.gameId}" }
+
+    if (gameStatus != GameStatus.CANCELED && gameStatus != GameStatus.ENDED) {
+      AggregateLifecycle.apply(GameCanceledEvent(gameId))
+    }
+  }
+
+  @CommandHandler
   fun handle(command: StartGameCommand, questionPort: QuestionPort, deadlineManager: DeadlineManager) {
     logger.info { "Executing StartGameCommand for game ${command.gameId}" }
     if (roundList.any { it.roundConfig.useBuzzer } && this.players.size < 2) {
@@ -145,7 +151,7 @@ internal class GameAggregate() {
   }
 
   @CommandHandler
-  fun handle(command: CloseRoundCommand, deadlineManager: DeadlineManager) {
+  fun handle(command: CloseRoundCommand) {
     logger.info { "Executing CloseRoundCommand for game ${command.gameId}" }
     if (this.gameStatus != GameStatus.STARTED) {
       throw GameNotStartedProblem(this.gameId)
@@ -162,7 +168,7 @@ internal class GameAggregate() {
       )
 
       if (this.roundList.size == this.finishedRounds) {
-        endGame(deadlineManager)
+        endGame()
       } else {
         startNextRound()
       }
@@ -254,7 +260,7 @@ internal class GameAggregate() {
       } else {
         round.scoreRound()
         if (this.roundList.size == 1) {
-          endGame(deadlineManager)
+          endGame()
         }
       }
     }
@@ -376,19 +382,6 @@ internal class GameAggregate() {
     currentRound?.evaluateBuzzes()
   }
 
-  @DeadlineHandler(deadlineName = Deadline.GAME_ABANDONED)
-  fun onGameAbandonedDeadline() {
-    logger.info { "Reached game abandon deadline for game $gameId" }
-
-    if (this.gameStatus == GameStatus.CANCELED || this.gameStatus == GameStatus.ENDED) {
-      logger.warn { "${Deadline.GAME_ABANDONED} triggered for ${this.gameId} but game is already in status ${this.gameStatus}" }
-    } else {
-      AggregateLifecycle.apply(
-        GameCanceledEvent(gameId)
-      )
-    }
-  }
-
   @ExceptionHandler(resultType = GameProblem::class, messageType = Message::class, payloadType = Any::class)
   fun onException(ex: GameProblem) {
     throw CommandExecutionException(
@@ -428,19 +421,15 @@ internal class GameAggregate() {
     withCurrentRound { round ->
       round.askNextQuestion(questionPort, deadlineManager)
     }
-
-    deadlineManager.cancelAllWithinScope(Deadline.GAME_ABANDONED)
-    deadlineManager.schedule(Duration.ofDays(1), Deadline.GAME_ABANDONED)
   }
 
-  private fun endGame(deadlineManager: DeadlineManager) {
+  private fun endGame() {
     currentRound?.closeRound()
     AggregateLifecycle.apply(
       GameEndedEvent(
         gameId = gameId
       )
     )
-    deadlineManager.cancelAllWithinScope(Deadline.GAME_ABANDONED)
   }
 
   fun MutableList<Player>.findByUsername(username: String): Player? {
