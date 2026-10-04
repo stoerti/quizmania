@@ -9,6 +9,13 @@ sealed interface GameCommand {
     val gameId: UUID
 }
 
+data class EvaluateBuzzesCommand(
+  @TargetAggregateIdentifier
+  override val gameId: UUID,
+  val gameQuestionId: UUID,
+  val windowId: UUID,
+) : GameCommand
+
 data class CreateGameCommand(
   @AggregateIdentifier
     override val gameId: UUID,

@@ -87,6 +87,8 @@ export class Game {
         return this.onQuestionAnswerOverridden(event as QuestionAnswerOverriddenEvent)
       case "QuestionBuzzedEvent":
         return this.onQuestionBuzzed(event as QuestionBuzzedEvent)
+      case "BuzzerCollectionStartedEvent":
+        return this // Timer orchestration does not change the displayed game state.
       case "QuestionBuzzerWonEvent":
         return this.onQuestionBuzzerWon(event as QuestionBuzzerWonEvent)
       case "QuestionBuzzerReopenedEvent":

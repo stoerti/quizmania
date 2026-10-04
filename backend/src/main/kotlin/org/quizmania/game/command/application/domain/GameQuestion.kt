@@ -23,6 +23,7 @@ data class GameQuestion(
   private var playerAnswers: MutableList<PlayerAnswer> = mutableListOf(),
   private var playerBuzzes: MutableList<PlayerBuzz> = mutableListOf(),
   private var currentBuzzWinner: GamePlayerId? = null,
+  private var collectionWindowId: UUID? = null,
 ) {
   companion object {
     internal fun cleanupAnswerString(answerString: String): String {
@@ -42,7 +43,6 @@ data class GameQuestion(
   fun numAnswers(): Int = playerAnswers.size
   fun hasPlayerAlreadyAnswered(gamePlayerId: GamePlayerId): Boolean = playerAnswers.any { it.gamePlayerId == gamePlayerId }
 
-  fun numBuzzers(): Int = playerBuzzes.size
   fun hasPlayerAlreadyBuzzed(gamePlayerId: GamePlayerId): Boolean = playerBuzzes.any { it.gamePlayerId == gamePlayerId }
 
   fun isClosed(): Boolean = status == GameQuestionStatus.CLOSED || status == GameQuestionStatus.RATED
@@ -140,7 +140,7 @@ data class GameQuestion(
     )
   }
 
-  fun evaluateBuzzes() {
+  private fun evaluateBuzzes() {
     assertNotClosed()
 
     val answeredPlayerIds = playerAnswers.map { it.gamePlayerId }.toSet()
@@ -172,6 +172,18 @@ data class GameQuestion(
         // all players who buzzed have already answered incorrectly
         closeQuestion()
       }
+    }
+  }
+
+  fun startBuzzerCollectionIfNeeded(now: Instant) {
+    if (collectionWindowId == null && currentBuzzWinner == null && !isClosed()) {
+      AggregateLifecycle.apply(BuzzerCollectionStartedEvent(gameId, id, UUID.randomUUID(), now.plusMillis(500)))
+    }
+  }
+
+  fun evaluateBuzzerCollection(windowId: UUID) {
+    if (!isClosed() && currentBuzzWinner == null && collectionWindowId == windowId) {
+      evaluateBuzzes()
     }
   }
 
@@ -390,17 +402,25 @@ data class GameQuestion(
   @EventSourcingHandler
   fun on(event: QuestionBuzzerWonEvent) {
     this.currentBuzzWinner = event.gamePlayerId
+    this.collectionWindowId = null
+  }
+
+  @EventSourcingHandler
+  fun on(event: BuzzerCollectionStartedEvent) {
+    this.collectionWindowId = event.windowId
   }
 
   @EventSourcingHandler
   fun on(event: QuestionBuzzerReopenedEvent) {
     this.currentBuzzWinner = null
+    this.collectionWindowId = null
     // Keep playerBuzzes to maintain historical data for subsequent reopen evaluations
   }
 
   @EventSourcingHandler
   fun on(event: QuestionClosedEvent) {
     status = GameQuestionStatus.CLOSED
+    collectionWindowId = null
   }
 
   @EventSourcingHandler

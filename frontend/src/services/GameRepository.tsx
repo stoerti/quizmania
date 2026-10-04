@@ -4,6 +4,7 @@ import {Game} from "../domain/GameModel";
 
 
 export type GameEventType =
+  | 'BuzzerCollectionStartedEvent'
   | 'GameCreatedEvent'
   | 'GameStartedEvent'
   | 'GameCanceledEvent'

@@ -3,8 +3,6 @@ package org.quizmania.game.command.application.domain
 import mu.KLogging
 import org.axonframework.commandhandling.CommandExecutionException
 import org.axonframework.commandhandling.CommandHandler
-import org.axonframework.deadline.DeadlineManager
-import org.axonframework.deadline.annotation.DeadlineHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.messaging.Message
 import org.axonframework.messaging.interceptors.ExceptionHandler
@@ -13,17 +11,12 @@ import org.axonframework.spring.stereotype.Aggregate
 import org.quizmania.game.api.*
 import org.quizmania.game.command.port.out.QuestionPort
 import org.quizmania.question.api.Round
-import java.time.Duration
 import java.util.*
 
 @Aggregate
 internal class GameAggregate() {
 
-  companion object : KLogging() {
-    object Deadline {
-      const val QUESTION_BUZZER = "questionBuzzerDeadline"
-    }
-  }
+  companion object : KLogging()
 
   @AggregateIdentifier
   private lateinit var gameId: UUID
@@ -200,7 +193,7 @@ internal class GameAggregate() {
   }
 
   @CommandHandler
-  fun handle(command: BuzzQuestionCommand, deadlineManager: DeadlineManager) {
+  fun handle(command: BuzzQuestionCommand) {
     logger.info { "Executing BuzzQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
@@ -208,10 +201,19 @@ internal class GameAggregate() {
 
     withCurrentRound { round ->
       round.buzz(player.gamePlayerId, command.buzzerTimestamp)
-      if (round.numCurrentBuzzers() == 1) {
-        deadlineManager.schedule(Duration.ofMillis(500), Deadline.QUESTION_BUZZER, this.gameId)
-      }
     }
+  }
+
+  @CommandHandler
+  fun handle(command: EvaluateBuzzesCommand) {
+    if (gameStatus == GameStatus.STARTED) {
+      currentRound?.evaluateBuzzerCollection(command.gameQuestionId, command.windowId)
+    }
+  }
+
+  @EventSourcingHandler
+  fun on(event: BuzzerCollectionStartedEvent) {
+    withCurrentRound { it.on(event) }
   }
 
   @CommandHandler
@@ -371,12 +373,6 @@ internal class GameAggregate() {
   fun on(event: RoundClosedEvent) {
     this.finishedRounds++
     this.currentRound = null
-  }
-
-  @DeadlineHandler(deadlineName = Deadline.QUESTION_BUZZER)
-  fun onQuestionBuzzDeadline() {
-    logger.info { "Reached question buzzer deadline for game $gameId" }
-    currentRound?.evaluateBuzzes()
   }
 
   @ExceptionHandler(resultType = GameProblem::class, messageType = Message::class, payloadType = Any::class)

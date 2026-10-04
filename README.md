@@ -78,7 +78,9 @@ Question sets are defined in JSON files in the resource folder ./backend/src/mai
 
 The game module's subscribing `QuestionTimerEventListener` reacts to live `QuestionAskedEvent` events for collective questions with a positive answer timeout. It schedules an in-memory command after the originating transaction commits; the aggregate and round do not depend on the timer. The due time is the event's question timestamp plus its answer duration. Replay is disabled for this listener. Expiry commands for closed questions, older questions, or games that have ended are ignored, so timers do not need cancellation when everyone answers early.
 
-Pending question timers are lost when the backend restarts. They are not recovered from the event store; a moderator can close a remaining open question manually. Buzzer selection still uses the existing Axon deadline mechanism.
+Buzzer questions emit `BuzzerCollectionStartedEvent` on the first eligible buzz in a collection window. The same listener schedules evaluation at the server-defined deadline, 500 ms later. Further buzzes do not restart the window. Evaluation commands carry a window ID, so duplicate or obsolete callbacks are ignored. An incorrect answer immediately promotes a queued player; if nobody is queued, a later buzz starts a new window.
+
+Pending question and buzzer timers are lost when the backend restarts. They are not recovered from the event store; a moderator can close a remaining open question manually. Axon deadlines and the Quartz scheduler are no longer used. The Quartz library remains only to supply the historical Liquibase schema resource.
 
 ### Running the end-to-end tests
 

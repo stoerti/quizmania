@@ -39,7 +39,6 @@ data class GameRound(
   }
 
   fun numCurrentAnswers(): Int = currentQuestion?.numAnswers() ?: 0
-  fun numCurrentBuzzers(): Int = (currentQuestion?.numBuzzers() ?: 0) - numCurrentAnswers()
 
   fun hasMoreQuestions(): Boolean = finishedQuestions < questionList.size
 
@@ -72,11 +71,18 @@ data class GameRound(
   }
 
   fun buzz(gamePlayerId: GamePlayerId, clientBuzzerTimestamp: Instant) {
-    withCurrentQuestion { it.buzz(gamePlayerId, clientBuzzerTimestamp) }
+    withCurrentQuestion {
+      it.buzz(gamePlayerId, clientBuzzerTimestamp)
+      it.startBuzzerCollectionIfNeeded(Instant.now())
+    }
   }
 
-  fun evaluateBuzzes() {
-    withCurrentQuestion { it.evaluateBuzzes() }
+  fun evaluateBuzzerCollection(questionId: GameQuestionId, windowId: UUID) {
+    currentQuestion?.takeIf { it.id == questionId }?.evaluateBuzzerCollection(windowId)
+  }
+
+  fun on(event: BuzzerCollectionStartedEvent) {
+    withCurrentQuestion { it.on(event) }
   }
 
   fun answerBuzzWinner(correctAnswer: Boolean) {
