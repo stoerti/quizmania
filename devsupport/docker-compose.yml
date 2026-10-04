@@ -5,8 +5,9 @@ services:
     image: postgres:18.1
     container_name: db
     environment:
-      - POSTGRES_USER=quizmania
-      - POSTGRES_PASSWORD=quizmania
+      POSTGRES_DB: quizmania
+      POSTGRES_USER: quizmania
+      POSTGRES_PASSWORD: quizmania
     ports:
       - '5432:5432'
   axonserver:
