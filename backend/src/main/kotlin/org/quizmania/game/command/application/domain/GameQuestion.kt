@@ -1,8 +1,7 @@
 package org.quizmania.game.command.application.domain
 
-import org.axonframework.eventsourcing.EventSourcingHandler
-import org.axonframework.modelling.command.AggregateLifecycle
-import org.axonframework.modelling.command.EntityId
+import org.axonframework.eventsourcing.annotation.EventSourcingHandler
+import org.axonframework.messaging.eventhandling.gateway.EventAppender
 import org.quizmania.game.api.*
 import org.quizmania.question.api.Question
 import org.quizmania.question.api.QuestionType
@@ -14,7 +13,6 @@ data class GameQuestion(
   val gameId: GameId, // aggregate identifier
   val isModerated: Boolean,
 
-  @EntityId(routingKey = "gameQuestionId")
   val id: GameQuestionId,
   val number: RoundQuestionNumber,
   val question: Question,
@@ -73,7 +71,7 @@ data class GameQuestion(
     }
   }
 
-  fun answer(gamePlayerId: GamePlayerId, answer: String, answerTimestamp: Instant) {
+  fun answer(gamePlayerId: GamePlayerId, answer: String, answerTimestamp: Instant, eventAppender: EventAppender) {
     if (this.questionMode == GameQuestionMode.BUZZER) {
       throw QuestionInBuzzerModeProblem(this.gameId, this.id)
     }
@@ -81,7 +79,7 @@ data class GameQuestion(
     assertNotClosed()
     assertNotAlreadyAnswered(gamePlayerId)
 
-    AggregateLifecycle.apply(
+    eventAppender.append(
       QuestionAnsweredEvent(
         gameId = gameId,
         gameQuestionId = id,
@@ -93,7 +91,7 @@ data class GameQuestion(
     )
   }
 
-  fun overrideAnswer(gamePlayerId: GamePlayerId, answer: String) {
+  fun overrideAnswer(gamePlayerId: GamePlayerId, answer: String, eventAppender: EventAppender) {
     if (this.questionMode == GameQuestionMode.BUZZER) {
       throw QuestionInBuzzerModeProblem(this.gameId, this.id)
     }
@@ -104,7 +102,7 @@ data class GameQuestion(
     }
     val answerId = playerAnswers.first { it.gamePlayerId == gamePlayerId }.playerAnswerId
 
-    AggregateLifecycle.apply(
+    eventAppender.append(
       QuestionAnswerOverriddenEvent(
         gameId = gameId,
         gameQuestionId = id,
@@ -115,7 +113,7 @@ data class GameQuestion(
     )
   }
 
-  fun buzz(gamePlayerId: GamePlayerId, clientBuzzerTimestamp: Instant) {
+  fun buzz(gamePlayerId: GamePlayerId, clientBuzzerTimestamp: Instant, eventAppender: EventAppender) {
     if (this.questionMode != GameQuestionMode.BUZZER) {
       throw QuestionNotInBuzzerModeProblem(this.gameId, this.id)
     }
@@ -130,7 +128,7 @@ data class GameQuestion(
     assertNotClosed()
     assertNotAlreadyBuzzed(gamePlayerId)
 
-    AggregateLifecycle.apply(
+    eventAppender.append(
       QuestionBuzzedEvent(
         gameId = gameId,
         gameQuestionId = id,
@@ -140,7 +138,7 @@ data class GameQuestion(
     )
   }
 
-  private fun evaluateBuzzes() {
+  private fun evaluateBuzzes(eventAppender: EventAppender) {
     assertNotClosed()
 
     val answeredPlayerIds = playerAnswers.map { it.gamePlayerId }.toSet()
@@ -150,7 +148,7 @@ data class GameQuestion(
     val buzzWinner = remainingBuzzes.minByOrNull { it.buzzTimestamp } // sort all others ascending by buzzer time
 
     if (buzzWinner != null) {
-      AggregateLifecycle.apply(
+      eventAppender.append(
         QuestionBuzzerWonEvent(
           gameId = gameId,
           gameQuestionId = id,
@@ -162,7 +160,7 @@ data class GameQuestion(
       // This happens when playerBuzzes.size == playerAnswers.size, meaning only the current
       // player who just answered wrong has buzzed (no other players have buzzed yet).
       if (playerBuzzes.size == playerAnswers.size) {
-        AggregateLifecycle.apply(
+        eventAppender.append(
           QuestionBuzzerReopenedEvent(
             gameId = gameId,
             gameQuestionId = id
@@ -170,24 +168,24 @@ data class GameQuestion(
         )
       } else {
         // all players who buzzed have already answered incorrectly
-        closeQuestion()
+        closeQuestion(eventAppender)
       }
     }
   }
 
-  fun startBuzzerCollectionIfNeeded(now: Instant) {
+  fun startBuzzerCollectionIfNeeded(now: Instant, eventAppender: EventAppender) {
     if (collectionWindowId == null && currentBuzzWinner == null && !isClosed()) {
-      AggregateLifecycle.apply(BuzzerCollectionStartedEvent(gameId, id, UUID.randomUUID(), now.plusMillis(500)))
+      eventAppender.append(BuzzerCollectionStartedEvent(gameId, id, UUID.randomUUID(), now.plusMillis(500)))
     }
   }
 
-  fun evaluateBuzzerCollection(windowId: UUID) {
+  fun evaluateBuzzerCollection(windowId: UUID, eventAppender: EventAppender) {
     if (!isClosed() && currentBuzzWinner == null && collectionWindowId == windowId) {
-      evaluateBuzzes()
+      evaluateBuzzes(eventAppender)
     }
   }
 
-  fun answerBuzzWinner(correctAnswer: Boolean) {
+  fun answerBuzzWinner(correctAnswer: Boolean, eventAppender: EventAppender) {
     if (this.questionMode != GameQuestionMode.BUZZER) {
       throw QuestionNotInBuzzerModeProblem(this.gameId, this.id)
     }
@@ -199,7 +197,7 @@ data class GameQuestion(
     assertNotAlreadyAnswered(this.currentBuzzWinner!!)
 
     if (correctAnswer) {
-      AggregateLifecycle.apply(
+      eventAppender.append(
         QuestionAnsweredEvent(
           gameId = gameId,
           gameQuestionId = id,
@@ -209,16 +207,16 @@ data class GameQuestion(
           0
         )
       )
-      AggregateLifecycle.apply(
+      eventAppender.append(
         QuestionClosedEvent(
           gameId = gameId,
           gameQuestionId = id,
         )
       )
 
-      rateQuestion()
+      rateQuestion(eventAppender)
     } else {
-      AggregateLifecycle.apply(
+      eventAppender.append(
         QuestionAnsweredEvent(
           gameId = gameId,
           gameQuestionId = id,
@@ -229,25 +227,25 @@ data class GameQuestion(
         )
       )
 
-      evaluateBuzzes()
+      evaluateBuzzes(eventAppender)
     }
   }
 
-  fun removePlayer(gamePlayerId: GamePlayerId) {
+  fun removePlayer(gamePlayerId: GamePlayerId, eventAppender: EventAppender) {
     if (isBuzzable()) {
       this.playerBuzzes.removeIf { it.gamePlayerId == gamePlayerId }
       if (this.currentBuzzWinner == gamePlayerId) {
-        evaluateBuzzes()
+        evaluateBuzzes(eventAppender)
       }
     } else {
       this.playerAnswers.removeIf { it.gamePlayerId == gamePlayerId }
     }
   }
 
-  fun closeQuestion() {
+  fun closeQuestion(eventAppender: EventAppender) {
     assertNotClosed()
 
-    AggregateLifecycle.apply(
+    eventAppender.append(
       QuestionClosedEvent(
         gameId = gameId,
         gameQuestionId = id,
@@ -256,17 +254,17 @@ data class GameQuestion(
 
     // if the game is moderated and it is a free input question the moderator can overrule answers
     if (this.questionMode == GameQuestionMode.BUZZER || !(this.isModerated && QuestionType.FREE_INPUT == this.question.type)) {
-      rateQuestion()
+      rateQuestion(eventAppender)
     }
   }
 
-  fun rateQuestion() {
+  fun rateQuestion(eventAppender: EventAppender) {
     if (isRated()) {
       throw QuestionAlreadyClosedProblem(gameId, id)
     }
 
     val points = resolvePoints()
-    AggregateLifecycle.apply(
+    eventAppender.append(
       QuestionScoredEvent(
         gameId = gameId,
         gameQuestionId = id,

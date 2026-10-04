@@ -1,6 +1,6 @@
 package org.quizmania.rest.adapter.`in`.rest
 
-import org.axonframework.commandhandling.gateway.CommandGateway
+import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.quizmania.game.api.JoinGameCommand
 import org.quizmania.game.api.CreateGameCommand
 import org.quizmania.game.api.GameConfig
@@ -71,7 +71,7 @@ class AdminController(
             val gameName = if (isModerated) "${shuffledPlayers[0]}'s game $gameNumber" else "Game $gameNumber"
             val players = shuffledPlayers.subList(1, numPlayers)
 
-            commandGateway.sendAndWait<Void>(
+            commandGateway.sendAndWait(
                 CreateGameCommand(
                     gameId = gameId,
                     name = gameName,
@@ -85,7 +85,7 @@ class AdminController(
             )
 
             players.forEach {
-                commandGateway.sendAndWait<Void>(
+                commandGateway.sendAndWait(
                     JoinGameCommand(
                         gameId = gameId,
                         username = it

@@ -1,7 +1,6 @@
 package org.quizmania.game.command.application.domain
 
-import org.axonframework.modelling.command.AggregateLifecycle
-import org.axonframework.modelling.command.EntityId
+import org.axonframework.messaging.eventhandling.gateway.EventAppender
 import org.quizmania.game.api.*
 import org.quizmania.game.command.port.out.QuestionPort
 import org.quizmania.question.api.QuestionId
@@ -13,7 +12,6 @@ data class GameRound(
   val gameId: GameId, // aggregate identifier
   val isModerated: Boolean,
 
-  @EntityId(routingKey = "gameRoundId")
   val id: GameRoundId,
   val number: GameRoundNumber,
   val gameConfig: GameConfig,
@@ -42,9 +40,9 @@ data class GameRound(
 
   fun hasMoreQuestions(): Boolean = finishedQuestions < questionList.size
 
-  fun scoreRound() {
+  fun scoreRound(eventAppender: EventAppender) {
     assertNotScored()
-    AggregateLifecycle.apply(
+    eventAppender.append(
       RoundScoredEvent(
         gameId = gameId,
         gameRoundId = id,
@@ -52,9 +50,9 @@ data class GameRound(
     )
   }
 
-  fun closeRound() {
+  fun closeRound(eventAppender: EventAppender) {
     assertNotEnded()
-    AggregateLifecycle.apply(
+    eventAppender.append(
       RoundScoredEvent(
         gameId = gameId,
         gameRoundId = id,
@@ -62,49 +60,49 @@ data class GameRound(
     )
   }
 
-  fun answer(gamePlayerId: GamePlayerId, answer: String, answerTimestamp: Instant) {
-    withCurrentQuestion { it.answer(gamePlayerId, answer, answerTimestamp) }
+  fun answer(gamePlayerId: GamePlayerId, answer: String, answerTimestamp: Instant, eventAppender: EventAppender) {
+    withCurrentQuestion { it.answer(gamePlayerId, answer, answerTimestamp, eventAppender) }
   }
 
-  fun overrideAnswer(gamePlayerId: GamePlayerId, answer: String) {
-    withCurrentQuestion { it.overrideAnswer(gamePlayerId, answer) }
+  fun overrideAnswer(gamePlayerId: GamePlayerId, answer: String, eventAppender: EventAppender) {
+    withCurrentQuestion { it.overrideAnswer(gamePlayerId, answer, eventAppender) }
   }
 
-  fun buzz(gamePlayerId: GamePlayerId, clientBuzzerTimestamp: Instant) {
+  fun buzz(gamePlayerId: GamePlayerId, clientBuzzerTimestamp: Instant, eventAppender: EventAppender) {
     withCurrentQuestion {
-      it.buzz(gamePlayerId, clientBuzzerTimestamp)
-      it.startBuzzerCollectionIfNeeded(Instant.now())
+      it.buzz(gamePlayerId, clientBuzzerTimestamp, eventAppender)
+      it.startBuzzerCollectionIfNeeded(Instant.now(), eventAppender)
     }
   }
 
-  fun evaluateBuzzerCollection(questionId: GameQuestionId, windowId: UUID) {
-    currentQuestion?.takeIf { it.id == questionId }?.evaluateBuzzerCollection(windowId)
+  fun evaluateBuzzerCollection(questionId: GameQuestionId, windowId: UUID, eventAppender: EventAppender) {
+    currentQuestion?.takeIf { it.id == questionId }?.evaluateBuzzerCollection(windowId, eventAppender)
   }
 
   fun on(event: BuzzerCollectionStartedEvent) {
     withCurrentQuestion { it.on(event) }
   }
 
-  fun answerBuzzWinner(correctAnswer: Boolean) {
-    withCurrentQuestion { it.answerBuzzWinner(correctAnswer) }
+  fun answerBuzzWinner(correctAnswer: Boolean, eventAppender: EventAppender) {
+    withCurrentQuestion { it.answerBuzzWinner(correctAnswer, eventAppender) }
   }
 
-  fun removePlayer(gamePlayerId: GamePlayerId) {
-    withCurrentQuestion { it.removePlayer(gamePlayerId) }
+  fun removePlayer(gamePlayerId: GamePlayerId, eventAppender: EventAppender) {
+    withCurrentQuestion { it.removePlayer(gamePlayerId, eventAppender) }
   }
 
-  fun closeQuestion() {
-    withCurrentQuestion { it.closeQuestion() }
+  fun closeQuestion(eventAppender: EventAppender) {
+    withCurrentQuestion { it.closeQuestion(eventAppender) }
   }
 
-  fun expireQuestion(questionId: GameQuestionId) {
+  fun expireQuestion(questionId: GameQuestionId, eventAppender: EventAppender) {
     currentQuestion?.takeIf {
       it.id == questionId && !it.isClosed() && it.questionMode == GameQuestionMode.COLLECTIVE
-    }?.closeQuestion()
+    }?.closeQuestion(eventAppender)
   }
 
-  fun rateQuestion() {
-    withCurrentQuestion { it.rateQuestion() }
+  fun rateQuestion(eventAppender: EventAppender) {
+    withCurrentQuestion { it.rateQuestion(eventAppender) }
   }
 
   fun on(event: QuestionAskedEvent) {
@@ -156,14 +154,14 @@ data class GameRound(
     currentQuestion = null
   }
 
-  fun askNextQuestion(questionPort: QuestionPort) {
+  fun askNextQuestion(questionPort: QuestionPort, eventAppender: EventAppender) {
     val question = questionPort.getQuestion(questionList[finishedQuestions])
 
     val questionMode = if (this.roundConfig.useBuzzer) GameQuestionMode.BUZZER else GameQuestionMode.COLLECTIVE
     val questionId = UUID.randomUUID()
     val askedAt = Instant.now()
 
-    AggregateLifecycle.apply(
+    eventAppender.append(
       QuestionAskedEvent(
         gameId = gameId,
         gameQuestionId = questionId,

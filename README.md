@@ -74,6 +74,16 @@ Question sets are defined in JSON files in the resource folder ./backend/src/mai
 
 ## Developer Hints
 
+### Axon 5 baseline
+
+The backend uses Java 21, Spring Boot 3.5, and the Axoniq Framework 5.3.3 BOM/starter (including Axon Framework 5.3.3 and the Axon Server connector). Docker configurations pin Axon Server to `2026.1.4-jdk-21`. The connector is an Axoniq-licensed component, available for evaluation without credentials; consult the [Axoniq licensing guidance](https://docs.axoniq.io/axon-framework-reference/5.3/advanced-migration/paths/5.0-to-5.1/) before use beyond evaluation.
+
+This is an architecture-preserving migration: `GameAggregate` remains the game-wide consistency boundary, using Axon 5's event-sourced entity and explicit `EventAppender` APIs. The aggregate-compatible Axon Server storage engine preserves per-game event sequence numbers for REST history and websocket delivery. Dynamic consistency boundaries are deliberately deferred. Switching to DCB storage later will also require revisiting the client event cursor contract.
+
+Event processors explicitly preserve ordering within each game. Axon 5 subscriptions use concrete event names, so the websocket listener lists every game event; a regression test checks this list against the sealed event hierarchy. Jackson 2 remains the event/message converter alongside Spring Boot 3.
+
+The migration is verified with fresh test databases and event stores, not as an in-place upgrade of Axon 4 data. Existing development event stores and processor tokens are not automatically converted or deleted. Use a separate fresh development stack, or explicitly reset disposable development data before switching versions. The backend integration tests now start PostgreSQL and Axon Server through Testcontainers; Docker is required for `./gradlew :backend:test`.
+
 ### Question timeout timers
 
 The game module's subscribing `QuestionTimerEventListener` reacts to live `QuestionAskedEvent` events for collective questions with a positive answer timeout. It schedules an in-memory command after the originating transaction commits; the aggregate and round do not depend on the timer. The due time is the event's question timestamp plus its answer duration. Replay is disabled for this listener. Expiry commands for closed questions, older questions, or games that have ended are ignored, so timers do not need cancellation when everyone answers early.

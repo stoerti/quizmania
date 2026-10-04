@@ -21,10 +21,10 @@ logging:
     org.quizmania: DEBUG
 
 axon:
-  serializer:
-    general: jackson
-    events: jackson
-    messages: jackson
+  converter:
+    general: jackson2
+    events: jackson2
+    messages: jackson2
 
 quizmania:
   abandoned-game-cleanup:

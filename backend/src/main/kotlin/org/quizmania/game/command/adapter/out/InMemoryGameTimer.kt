@@ -1,8 +1,7 @@
 package org.quizmania.game.command.adapter.out
 
 import mu.KLogging
-import org.axonframework.commandhandling.gateway.CommandGateway
-import org.axonframework.messaging.unitofwork.CurrentUnitOfWork
+import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.quizmania.game.api.GameCommand
 import org.quizmania.game.command.port.out.GameTimer
 import org.springframework.beans.factory.annotation.Qualifier
@@ -18,16 +17,14 @@ class InMemoryGameTimer(
   companion object : KLogging()
 
   override fun schedule(dueAt: Instant, command: GameCommand) {
-    CurrentUnitOfWork.get().root().afterCommit {
-      scheduler.schedule(Runnable {
-        try {
-          commandGateway.send<Any?>(command).whenComplete { _, error ->
-            if (error != null) logger.error(error) { "Game timer command failed: $command" }
-          }
-        } catch (error: Exception) {
-          logger.error(error) { "Could not dispatch game timer command: $command" }
+    scheduler.schedule(Runnable {
+      try {
+        commandGateway.send(command, Any::class.java).whenComplete { _, error ->
+          if (error != null) logger.error(error) { "Game timer command failed: $command" }
         }
-      }, dueAt)
-    }
+      } catch (error: Exception) {
+        logger.error(error) { "Could not dispatch game timer command: $command" }
+      }
+    }, dueAt)
   }
 }

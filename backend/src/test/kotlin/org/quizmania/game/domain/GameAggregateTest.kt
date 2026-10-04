@@ -1,8 +1,11 @@
 package org.quizmania.game.domain
 
-import org.axonframework.commandhandling.CommandExecutionException
-import org.axonframework.test.aggregate.AggregateTestFixture
-import org.axonframework.test.matchers.Matchers
+import org.axonframework.messaging.commandhandling.CommandExecutionException
+import org.axonframework.test.fixture.AxonTestFixture
+import org.axonframework.eventsourcing.configuration.EventSourcingConfigurer
+import org.axonframework.eventsourcing.configuration.EventSourcedEntityModule
+import org.junit.jupiter.api.AfterEach
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -48,146 +51,149 @@ class GameAggregateTest {
 
   @Test
   fun firstBuzzStartsOneWindow() {
-    fixture.registerIgnoredField(BuzzerCollectionStartedEvent::class.java, "windowId")
-    fixture.registerIgnoredField(BuzzerCollectionStartedEvent::class.java, "evaluateAt")
-    fixture.given(*buzzerHistory())
-      .`when`(GameCommandFixtures.buzzQuestion(GAME_QUESTION_1, USERNAME_1))
-      .expectEvents(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted())
+    fixture.given().events(*buzzerHistory())
+      .`when`().command(GameCommandFixtures.buzzQuestion(GAME_QUESTION_1, USERNAME_1)).then()
+      .events(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted())
   }
 
   @Test
   fun subsequentBuzzDoesNotRestartWindow() {
-    fixture.given(*buzzerHistory())
-      .andGiven(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted())
-      .`when`(GameCommandFixtures.buzzQuestion(GAME_QUESTION_1, USERNAME_2))
-      .expectEvents(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_2))
+    fixture.given().events(*buzzerHistory())
+      .events(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted())
+      .`when`().command(GameCommandFixtures.buzzQuestion(GAME_QUESTION_1, USERNAME_2)).then()
+      .events(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_2))
   }
 
   @Test
   fun duplicateEvaluationIsIgnored() {
-    fixture.given(*buzzerHistory())
-      .andGiven(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted(), questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1))
-      .`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
-      .expectSuccessfulHandlerExecution().expectNoEvents()
+    fixture.given().events(*buzzerHistory())
+      .events(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted(), questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1))
+      .`when`().command(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId)).then()
+      .success().noEvents()
   }
 
   @Test
   fun oldWindowCannotEvaluateReopenedQuestion() {
-    fixture.given(*buzzerHistory()).andGiven(
+    fixture.given().events(*buzzerHistory()).events(
       questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted(), questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), ""), questionBuzzerReopened(GAME_QUESTION_1),
       questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_2), collectionStarted().copy(windowId = UUID.randomUUID()),
-    ).`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
-      .expectSuccessfulHandlerExecution().expectNoEvents()
+    ).`when`().command(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId)).then()
+      .success().noEvents()
   }
 
   @Test
   fun closedQuestionIgnoresEvaluation() {
-    fixture.given(*buzzerHistory()).andGiven(
+    fixture.given().events(*buzzerHistory()).events(
       questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted(), QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
-    ).`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
-      .expectSuccessfulHandlerExecution().expectNoEvents()
+    ).`when`().command(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId)).then()
+      .success().noEvents()
   }
 
   @Test
   fun canceledGameIgnoresBuzzerEvaluation() {
-    fixture.given(*buzzerHistory()).andGiven(
+    fixture.given().events(*buzzerHistory()).events(
       questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted(), gameCanceled(),
-    ).`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
-      .expectSuccessfulHandlerExecution().expectNoEvents()
+    ).`when`().command(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId)).then()
+      .success().noEvents()
   }
 
   @Test
   fun oldQuestionCannotEvaluateCurrentBuzzerWindow() {
-    fixture.given(*buzzerHistory()).andGiven(
+    fixture.given().events(*buzzerHistory()).events(
       questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted(),
       QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
       QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, emptyMap()),
       questionAsked(GAME_QUESTION_2, 2, question = choiceQuestion(), mode = GameQuestionMode.BUZZER),
       questionBuzzed(GAME_QUESTION_2, GAME_PLAYER_1),
       collectionStarted().copy(gameQuestionId = GAME_QUESTION_2),
-    ).`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
-      .expectSuccessfulHandlerExecution().expectNoEvents()
+    ).`when`().command(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId)).then()
+      .success().noEvents()
   }
 
-  private lateinit var fixture: AggregateTestFixture<GameAggregate>
+  private lateinit var fixture: AxonTestFixture
   private lateinit var questionPort: QuestionPort
 
   @BeforeEach
   fun before() {
     this.questionPort = Mockito.mock(QuestionPort::class.java)
 
-    this.fixture = AggregateTestFixture(GameAggregate::class.java)
-    this.fixture.registerInjectableResource(questionPort)
-
-    // Register ignored fields for all tests
-    fixture.registerIgnoredField(PlayerJoinedGameEvent::class.java, "gamePlayerId")
-    fixture.registerIgnoredField(RoundStartedEvent::class.java, "gameRoundId")
-    fixture.registerIgnoredField(QuestionAskedEvent::class.java, "gameQuestionId")
-    fixture.registerIgnoredField(QuestionAskedEvent::class.java, "questionTimestamp")
-    fixture.registerIgnoredField(QuestionAnsweredEvent::class.java, "playerAnswerId")
-    fixture.registerIgnoredField(QuestionBuzzedEvent::class.java, "buzzerTimestamp")
+    val configurer = EventSourcingConfigurer.create()
+      .registerEntity(EventSourcedEntityModule.autodetected(UUID::class.java, GameAggregate::class.java))
+      .componentRegistry { it.registerComponent(QuestionPort::class.java) { questionPort } }
+    fixture = AxonTestFixture.with(configurer) {
+      it.registerIgnoredField(PlayerJoinedGameEvent::class.java, "gamePlayerId")
+        .registerIgnoredField(RoundStartedEvent::class.java, "gameRoundId")
+        .registerIgnoredField(QuestionAskedEvent::class.java, "gameQuestionId")
+        .registerIgnoredField(QuestionAskedEvent::class.java, "questionTimestamp")
+        .registerIgnoredField(QuestionAnsweredEvent::class.java, "playerAnswerId")
+        .registerIgnoredField(QuestionBuzzedEvent::class.java, "buzzerTimestamp")
+        .registerIgnoredField(BuzzerCollectionStartedEvent::class.java, "windowId")
+        .registerIgnoredField(BuzzerCollectionStartedEvent::class.java, "evaluateAt")
+    }
   }
+
+  @AfterEach
+  fun stopFixture() = fixture.stop()
 
   @Test
   fun createGame_ok() {
     whenever(questionPort.getQuestionSet(QUESTION_SET_ID)).thenReturn(questionSet())
 
-    fixture.givenNoPriorActivity()
-      .`when`(GameCommandFixtures.createGame())
-      .expectEvents(gameCreated(config = GameConfig(questionSetId = QUESTION_SET_ID)))
-      .expectNoScheduledDeadlines()
+    fixture.given()
+      .`when`().command(GameCommandFixtures.createGame()).then()
+      .events(gameCreated(config = GameConfig(questionSetId = QUESTION_SET_ID)))
   }
 
   @Test
   fun addPlayer_ok() {
-    fixture.given(gameCreated())
-      .`when`(GameCommandFixtures.addPlayer(USERNAME_1))
-      .expectEvents(playerAdded(USERNAME_1))
+    fixture.given().events(gameCreated())
+      .`when`().command(GameCommandFixtures.addPlayer(USERNAME_1)).then()
+      .events(playerAdded(USERNAME_1))
   }
 
   @Test
   fun addPlayer_alreadyRegistered() {
-    fixture.given(gameCreated(), playerAdded(USERNAME_1))
-      .`when`(GameCommandFixtures.addPlayer(USERNAME_1))
-      .expectException(CommandExecutionException::class.java)
-      .expectException(Matchers.matches<CommandExecutionException> { it.cause is UsernameTakenProblem })
+    fixture.given().events(gameCreated(), playerAdded(USERNAME_1))
+      .`when`().command(GameCommandFixtures.addPlayer(USERNAME_1)).then()
+      .exception(CommandExecutionException::class.java)
+      .exceptionSatisfies { assertThat(it.cause).isInstanceOf(UsernameTakenProblem::class.java) }
   }
 
   @Test
   fun addPlayer_gameAlreadyFull() {
-    fixture.given(gameCreated(USERNAME_1, GameConfig(maxPlayers = 2, questionSetId = QUESTION_SET_ID)), playerAdded(USERNAME_1), playerAdded(USERNAME_2))
-      .`when`(GameCommandFixtures.addPlayer("Another player"))
-      .expectException(CommandExecutionException::class.java)
-      .expectException(Matchers.matches<CommandExecutionException> { it.cause is GameAlreadyFullProblem })
+    fixture.given().events(gameCreated(USERNAME_1, GameConfig(maxPlayers = 2, questionSetId = QUESTION_SET_ID)), playerAdded(USERNAME_1), playerAdded(USERNAME_2))
+      .`when`().command(GameCommandFixtures.addPlayer("Another player")).then()
+      .exception(CommandExecutionException::class.java)
+      .exceptionSatisfies { assertThat(it.cause).isInstanceOf(GameAlreadyFullProblem::class.java) }
   }
 
   @Test
   fun removePlayer_ok() {
-    fixture.given(gameCreated(), playerAdded(USERNAME_1, GAME_PLAYER_1), playerAdded(USERNAME_2, GAME_PLAYER_2))
-      .`when`(GameCommandFixtures.removePlayer(USERNAME_2))
-      .expectEvents(playerRemoved(USERNAME_2, GAME_PLAYER_2))
+    fixture.given().events(gameCreated(), playerAdded(USERNAME_1, GAME_PLAYER_1), playerAdded(USERNAME_2, GAME_PLAYER_2))
+      .`when`().command(GameCommandFixtures.removePlayer(USERNAME_2)).then()
+      .events(playerRemoved(USERNAME_2, GAME_PLAYER_2))
   }
 
   @Test
   fun removePlayer_ok_and_gameEnded() {
-    fixture.given(gameCreated(), playerAdded(USERNAME_1, GAME_PLAYER_1))
-      .`when`(GameCommandFixtures.removePlayer(USERNAME_1))
-      .expectEvents(playerRemoved(USERNAME_1, GAME_PLAYER_1), gameCanceled())
+    fixture.given().events(gameCreated(), playerAdded(USERNAME_1, GAME_PLAYER_1))
+      .`when`().command(GameCommandFixtures.removePlayer(USERNAME_1)).then()
+      .events(playerRemoved(USERNAME_1, GAME_PLAYER_1), gameCanceled())
   }
 
   @Test
   fun abandonGame_activeGameIsCanceled() {
-    fixture.given(gameCreated())
-      .`when`(AbandonGameCommand(GAME_UUID))
-      .expectEvents(gameCanceled())
+    fixture.given().events(gameCreated())
+      .`when`().command(AbandonGameCommand(GAME_UUID)).then()
+      .events(gameCanceled())
   }
 
   @Test
   fun abandonGame_canceledGameIsIgnored() {
-    fixture.given(gameCreated(), gameCanceled())
-      .`when`(AbandonGameCommand(GAME_UUID))
-      .expectNoEvents()
+    fixture.given().events(gameCreated(), gameCanceled())
+      .`when`().command(AbandonGameCommand(GAME_UUID)).then()
+      .noEvents()
   }
 
   @Test
@@ -195,16 +201,16 @@ class GameAggregateTest {
     val question = choiceQuestion()
     whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
 
-    fixture.given(gameCreated(), playerAdded(USERNAME_1, GAME_PLAYER_1), playerAdded(USERNAME_2, GAME_PLAYER_2))
-      .`when`(startGame())
-      .expectEvents(gameStarted(), roundStarted(), questionAsked(UUID.randomUUID(), 1, 1, question))
+    fixture.given().events(gameCreated(), playerAdded(USERNAME_1, GAME_PLAYER_1), playerAdded(USERNAME_2, GAME_PLAYER_2))
+      .`when`().command(startGame()).then()
+      .events(gameStarted(), roundStarted(), questionAsked(UUID.randomUUID(), 1, 1, question))
   }
 
   @Test
   fun answerQuestion_ok() {
     val question = choiceQuestion()
 
-    fixture.given(
+    fixture.given().events(
       gameCreated(),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
@@ -212,56 +218,56 @@ class GameAggregateTest {
       roundStarted(),
       questionAsked(GAME_QUESTION_1, 1, 1, question)
     )
-      .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_1, "Answer 1"))
-      .expectEvents(questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "Answer 1"))
+      .`when`().command(answerQuestion(GAME_QUESTION_1, USERNAME_1, "Answer 1")).then()
+      .events(questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "Answer 1"))
   }
 
   @Test
   fun expireQuestion_closesOpenQuestion() {
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Moderator"), gameStarted(), roundStarted(),
       questionAsked(GAME_QUESTION_1, 1, question = freeInputQuestion()),
-    ).`when`(ExpireQuestionCommand(GAME_UUID, GAME_QUESTION_1))
-      .expectSuccessfulHandlerExecution()
-      .expectEvents(QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1))
+    ).`when`().command(ExpireQuestionCommand(GAME_UUID, GAME_QUESTION_1)).then()
+      .success()
+      .events(QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1))
   }
 
   @Test
   fun expireQuestion_ignoresClosedQuestion() {
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Moderator"), gameStarted(), roundStarted(),
       questionAsked(GAME_QUESTION_1, 1, question = freeInputQuestion()),
       QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
-    ).`when`(ExpireQuestionCommand(GAME_UUID, GAME_QUESTION_1))
-      .expectSuccessfulHandlerExecution().expectNoEvents()
+    ).`when`().command(ExpireQuestionCommand(GAME_UUID, GAME_QUESTION_1)).then()
+      .success().noEvents()
   }
 
   @Test
   fun expireQuestion_oldTimerDoesNotCloseNextQuestion() {
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Moderator"), gameStarted(), roundStarted(),
       questionAsked(GAME_QUESTION_1, 1, question = freeInputQuestion()),
       QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
       QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, emptyMap()),
       questionAsked(GAME_QUESTION_2, 2, question = freeInputQuestion()),
-    ).`when`(ExpireQuestionCommand(GAME_UUID, GAME_QUESTION_1))
-      .expectSuccessfulHandlerExecution().expectNoEvents()
+    ).`when`().command(ExpireQuestionCommand(GAME_UUID, GAME_QUESTION_1)).then()
+      .success().noEvents()
   }
 
   @Test
   fun expireQuestion_ignoresCanceledGame() {
-    fixture.given(
+    fixture.given().events(
       gameCreated(), gameStarted(), roundStarted(),
       questionAsked(GAME_QUESTION_1, 1, question = freeInputQuestion()), gameCanceled(),
-    ).`when`(ExpireQuestionCommand(GAME_UUID, GAME_QUESTION_1))
-      .expectSuccessfulHandlerExecution().expectNoEvents()
+    ).`when`().command(ExpireQuestionCommand(GAME_UUID, GAME_QUESTION_1)).then()
+      .success().noEvents()
   }
 
   @Test
   fun answerChoiceQuestion_complete_ok() {
     val question = choiceQuestion()
 
-    fixture.given(
+    fixture.given().events(
       gameCreated(),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
@@ -270,8 +276,8 @@ class GameAggregateTest {
       questionAsked(GAME_QUESTION_1, 1, 1, question),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "Answer 1")
     )
-      .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2"))
-      .expectEvents(
+      .`when`().command(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2")).then()
+      .events(
         questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "Answer 2"),
         QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
         QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_PLAYER_1 to 10))
@@ -282,7 +288,7 @@ class GameAggregateTest {
   fun answerFreeInputQuestion_complete_ok() {
     val question = freeInputQuestion()
 
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Some moderator"),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
@@ -291,8 +297,8 @@ class GameAggregateTest {
       questionAsked(GAME_QUESTION_1, 1, 1, question),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "Answer 1")
     )
-      .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2"))
-      .expectEvents(
+      .`when`().command(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2")).then()
+      .events(
         questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "Answer 2"),
         QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1)
       )
@@ -302,7 +308,7 @@ class GameAggregateTest {
   fun rateFreeInputQuestion_complete_ok() {
     val question = freeInputQuestion()
 
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Some moderator"),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
@@ -312,8 +318,8 @@ class GameAggregateTest {
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "Answer 1"),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "Answer 2"),
     )
-      .`when`(scoreQuestion(GAME_QUESTION_1))
-      .expectEvents(
+      .`when`().command(scoreQuestion(GAME_QUESTION_1)).then()
+      .events(
         QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_PLAYER_1 to 10))
       )
   }
@@ -322,7 +328,7 @@ class GameAggregateTest {
   fun rateFreeInputBuzzerQuestion_complete_ok() {
     val question = freeInputQuestion()
 
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Some moderator"),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
@@ -332,8 +338,8 @@ class GameAggregateTest {
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "Answer 1"),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "Answer 2"),
     )
-      .`when`(scoreQuestion(GAME_QUESTION_1))
-      .expectEvents(
+      .`when`().command(scoreQuestion(GAME_QUESTION_1)).then()
+      .events(
         QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_PLAYER_1 to 20, GAME_PLAYER_2 to -10))
       )
   }
@@ -343,7 +349,7 @@ class GameAggregateTest {
     val question = freeInputQuestion()
     val questionAnswerId = UUID.randomUUID()
 
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Some moderator"),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
@@ -354,8 +360,8 @@ class GameAggregateTest {
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, questionAnswerId, "Answer 2"),
       questionAnswerOverridden(GAME_QUESTION_1, GAME_PLAYER_2, questionAnswerId, "Answer 1"),
     )
-      .`when`(scoreQuestion(GAME_QUESTION_1))
-      .expectEvents(
+      .`when`().command(scoreQuestion(GAME_QUESTION_1)).then()
+      .events(
         QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_PLAYER_1 to 10, GAME_PLAYER_2 to 10))
       )
   }
@@ -364,7 +370,7 @@ class GameAggregateTest {
   fun answerEstimateQuestion_complete_ok() {
     val question = estimateQuestion()
 
-    fixture.given(
+    fixture.given().events(
       gameCreated(),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
@@ -373,8 +379,8 @@ class GameAggregateTest {
       questionAsked(GAME_QUESTION_1, 1, 1, question),
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), "80")
     )
-      .`when`(answerQuestion(GAME_QUESTION_1, USERNAME_2, "150"))
-      .expectEvents(
+      .`when`().command(answerQuestion(GAME_QUESTION_1, USERNAME_2, "150")).then()
+      .events(
         questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "150"),
         QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
         QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_PLAYER_1 to 20, GAME_PLAYER_2 to 10))
@@ -386,7 +392,7 @@ class GameAggregateTest {
     val question = choiceQuestion()
     whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
 
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Moderator"),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
@@ -397,8 +403,8 @@ class GameAggregateTest {
       questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1),
       questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1)
     )
-      .`when`(answerBuzzerQuestion(GAME_QUESTION_1, false))
-      .expectEvents(
+      .`when`().command(answerBuzzerQuestion(GAME_QUESTION_1, false)).then()
+      .events(
         questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), ""),
         questionBuzzerReopened(GAME_QUESTION_1)
       )
@@ -409,7 +415,7 @@ class GameAggregateTest {
     val question = choiceQuestion()
     whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
 
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Moderator"),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
@@ -421,8 +427,8 @@ class GameAggregateTest {
       questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_2),
       questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1)
     )
-      .`when`(answerBuzzerQuestion(GAME_QUESTION_1, false))
-      .expectEvents(
+      .`when`().command(answerBuzzerQuestion(GAME_QUESTION_1, false)).then()
+      .events(
         questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), ""),
         questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_2)
       )
@@ -433,7 +439,7 @@ class GameAggregateTest {
     val question = choiceQuestion()
     whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
 
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Moderator"),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       gameStarted(),
@@ -443,8 +449,8 @@ class GameAggregateTest {
       questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1),
       questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1)
     )
-      .`when`(answerBuzzerQuestion(GAME_QUESTION_1, true))
-      .expectEvents(
+      .`when`().command(answerBuzzerQuestion(GAME_QUESTION_1, true)).then()
+      .events(
         questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), question.correctAnswer),
         QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
         QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_PLAYER_1 to 20))
@@ -456,7 +462,7 @@ class GameAggregateTest {
     val question = choiceQuestion()
     whenever(questionPort.getQuestion(QUESTION_ID_1)).thenReturn(question)
 
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Moderator"),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
@@ -464,9 +470,9 @@ class GameAggregateTest {
       roundStarted(roundNumber = 1).copy(roundConfig = RoundConfig(useBuzzer = true)),
       questionAsked(GAME_QUESTION_1, 1, 1, question, GameQuestionMode.BUZZER),
     )
-      .andGiven(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted())
-      .`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
-      .expectEvents(
+      .events(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted())
+      .`when`().command(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId)).then()
+      .events(
         questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1),
       )
   }
@@ -478,7 +484,7 @@ class GameAggregateTest {
 
 
     // Test that after two reopens, a third player can buzz
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Moderator"),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
@@ -492,11 +498,11 @@ class GameAggregateTest {
       questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1),
       questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1),
     )
-      .`when`(
+      .`when`().command(
         // and second player answers wrong
         answerBuzzerQuestion(GAME_QUESTION_1, false)
-      )
-      .expectEvents(
+      ).then()
+      .events(
         questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), ""),
         questionBuzzerReopened(GAME_QUESTION_1),
       )
@@ -509,7 +515,7 @@ class GameAggregateTest {
 
     // Test that when evaluateBuzzes() is called after two reopens and a third buzz,
     // it correctly selects the third player as winner (who hasn't answered yet)
-    fixture.given(
+    fixture.given().events(
       gameCreated(moderator = "Moderator"),
       playerAdded(USERNAME_1, GAME_PLAYER_1),
       playerAdded(USERNAME_2, GAME_PLAYER_2),
@@ -530,9 +536,9 @@ class GameAggregateTest {
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), ""),
       questionBuzzerReopened(GAME_QUESTION_1),
     )
-      .andGiven(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_3), collectionStarted())
-      .`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
-      .expectEvents(
+      .events(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_3), collectionStarted())
+      .`when`().command(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId)).then()
+      .events(
         questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_3)
       )
   }

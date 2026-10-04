@@ -1,9 +1,10 @@
 package org.quizmania.rest.adapter.`in`.rest
 
 import jakarta.servlet.http.HttpServletRequest
-import org.axonframework.axonserver.connector.ErrorCode
-import org.axonframework.axonserver.connector.command.AxonServerNonTransientRemoteCommandHandlingException
-import org.axonframework.commandhandling.CommandExecutionException
+import io.axoniq.framework.axonserver.connector.shared.ErrorCode
+import io.axoniq.framework.axonserver.connector.api.command.AxonServerNonTransientRemoteCommandHandlingException
+import org.axonframework.messaging.commandhandling.CommandExecutionException
+import org.axonframework.modelling.entity.EntityMissingForInstanceCommandHandlerException
 import org.quizmania.common.axon.problem.CommandExecutionProblemCategory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -28,9 +29,7 @@ class AxonExceptionHandlerAdvice : ResponseEntityExceptionHandler() {
   }
 
   private fun handleCustomError(ex: CommandExecutionException, request: HttpServletRequest): ResponseEntity<Map<String, Any?>> {
-    return ex.getDetails<Any>()
-      .filter { it is Map<*, *> }
-      .map { it as Map<*, *> }
+    return ex.getDetails(Map::class.java)
       .map {
         val httpStatus = when (it["category"]) {
           CommandExecutionProblemCategory.BUSINESS_INVALID_COMMAND.name -> HttpStatus.BAD_REQUEST
@@ -64,7 +63,10 @@ class AxonExceptionHandlerAdvice : ResponseEntityExceptionHandler() {
     val errorCode = getAxonErrorCode(ex)
     val errorDescription = getAxonErrorDescription(ex)
 
-    return if (errorCode == ErrorCode.COMMAND_EXECUTION_NON_TRANSIENT_ERROR && errorDescription.contains("The aggregate was not found in the event store")) {
+    val missingEntity = errorDescription.any {
+      it.startsWith("${EntityMissingForInstanceCommandHandlerException::class.java.name}:")
+    }
+    return if (errorCode == ErrorCode.COMMAND_EXECUTION_NON_TRANSIENT_ERROR && missingEntity) {
       buildResponse(
         mapOf(
           "errorCode" to "AGGREGATE_NOT_FOUND",

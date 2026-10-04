@@ -1,19 +1,19 @@
 package org.quizmania.rest.adapter.`in`.axon
 
 import mu.KLogging
-import org.axonframework.config.ProcessingGroup
-import org.axonframework.eventhandling.EventHandler
-import org.axonframework.eventhandling.SequenceNumber
-import org.axonframework.eventhandling.Timestamp
+import org.axonframework.messaging.eventhandling.annotation.EventHandler
+import org.axonframework.messaging.eventhandling.annotation.SequenceNumber
+import org.axonframework.messaging.eventhandling.annotation.Timestamp
+import org.axonframework.messaging.core.annotation.SequencingPolicy
+import org.axonframework.messaging.core.sequencing.SequentialPerAggregatePolicy
 import org.quizmania.common.EventMetaData
 import org.quizmania.game.api.*
-import org.quizmania.rest.adapter.`in`.axon.GameEventListener.Companion.PROCESSING_GROUP
 import org.quizmania.rest.port.`in`.GameEventHappenedInPort
 import org.springframework.stereotype.Component
 import java.time.Instant
 
 @Component
-@ProcessingGroup(PROCESSING_GROUP)
+@SequencingPolicy(type = SequentialPerAggregatePolicy::class)
 class GameEventListener(
   val gameEventHappenedInPort: GameEventHappenedInPort
 ) {

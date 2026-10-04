@@ -4,6 +4,3 @@ spring:
     generate-unique-name: true
     hikari:
       minimum-idle: 1
-axon:
-  axonserver:
-    enabled: false

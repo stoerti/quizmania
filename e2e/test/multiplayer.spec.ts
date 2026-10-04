@@ -62,7 +62,7 @@ test.describe('moderated multiplayer games', () => {
       await expect(game.moderator.page.getByText('Wie heißt die Hauptstadt von Deutschland?', {exact: true})).toBeVisible();
       await expect(game.moderator.page.locator('#closeQuestion')).toBeVisible();
 
-      // Nobody answers question two. Its three-second aggregate deadline must close and score it.
+      // Nobody answers question two. Its three-second in-memory timer must close and score it.
       await expect(game.moderator.page.locator('#nextQuestion')).toBeVisible({timeout: 6_000});
       await game.moderator.page.locator('#nextQuestion').click();
 
