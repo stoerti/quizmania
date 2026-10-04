@@ -6,6 +6,8 @@ import org.axonframework.eventhandling.EventHandler
 import org.quizmania.game.api.ExpireQuestionCommand
 import org.quizmania.game.api.GameQuestionMode
 import org.quizmania.game.api.QuestionAskedEvent
+import org.quizmania.game.api.BuzzerCollectionStartedEvent
+import org.quizmania.game.api.EvaluateBuzzesCommand
 import org.quizmania.game.command.port.out.GameTimer
 import org.springframework.stereotype.Component
 
@@ -25,5 +27,10 @@ class QuestionTimerEventListener(private val gameTimer: GameTimer) {
         ExpireQuestionCommand(event.gameId, event.gameQuestionId),
       )
     }
+  }
+
+  @EventHandler
+  fun on(event: BuzzerCollectionStartedEvent) {
+    gameTimer.schedule(event.evaluateAt, EvaluateBuzzesCommand(event.gameId, event.gameQuestionId, event.windowId))
   }
 }

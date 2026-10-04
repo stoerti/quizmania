@@ -32,10 +32,83 @@ import org.quizmania.game.api.*
 import org.quizmania.game.command.application.domain.GameAggregate
 import org.quizmania.game.command.port.out.QuestionPort
 import org.quizmania.question.api.RoundConfig
-import java.time.Duration
+import java.time.Instant
 import java.util.*
 
 class GameAggregateTest {
+  private val windowId = UUID.randomUUID()
+  private fun collectionStarted() = BuzzerCollectionStartedEvent(GAME_UUID, GAME_QUESTION_1, windowId, Instant.now().plusMillis(500))
+
+  private fun buzzerHistory() = arrayOf(
+    gameCreated(moderator = "Moderator"), playerAdded(USERNAME_1, GAME_PLAYER_1),
+    playerAdded(USERNAME_2, GAME_PLAYER_2), gameStarted(),
+    roundStarted().copy(roundConfig = RoundConfig(useBuzzer = true)),
+    questionAsked(GAME_QUESTION_1, 1, question = choiceQuestion(), mode = GameQuestionMode.BUZZER),
+  )
+
+  @Test
+  fun firstBuzzStartsOneWindow() {
+    fixture.registerIgnoredField(BuzzerCollectionStartedEvent::class.java, "windowId")
+    fixture.registerIgnoredField(BuzzerCollectionStartedEvent::class.java, "evaluateAt")
+    fixture.given(*buzzerHistory())
+      .`when`(GameCommandFixtures.buzzQuestion(GAME_QUESTION_1, USERNAME_1))
+      .expectEvents(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted())
+  }
+
+  @Test
+  fun subsequentBuzzDoesNotRestartWindow() {
+    fixture.given(*buzzerHistory())
+      .andGiven(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted())
+      .`when`(GameCommandFixtures.buzzQuestion(GAME_QUESTION_1, USERNAME_2))
+      .expectEvents(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_2))
+  }
+
+  @Test
+  fun duplicateEvaluationIsIgnored() {
+    fixture.given(*buzzerHistory())
+      .andGiven(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted(), questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1))
+      .`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
+      .expectSuccessfulHandlerExecution().expectNoEvents()
+  }
+
+  @Test
+  fun oldWindowCannotEvaluateReopenedQuestion() {
+    fixture.given(*buzzerHistory()).andGiven(
+      questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted(), questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1),
+      questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), ""), questionBuzzerReopened(GAME_QUESTION_1),
+      questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_2), collectionStarted().copy(windowId = UUID.randomUUID()),
+    ).`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
+      .expectSuccessfulHandlerExecution().expectNoEvents()
+  }
+
+  @Test
+  fun closedQuestionIgnoresEvaluation() {
+    fixture.given(*buzzerHistory()).andGiven(
+      questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted(), QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
+    ).`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
+      .expectSuccessfulHandlerExecution().expectNoEvents()
+  }
+
+  @Test
+  fun canceledGameIgnoresBuzzerEvaluation() {
+    fixture.given(*buzzerHistory()).andGiven(
+      questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted(), gameCanceled(),
+    ).`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
+      .expectSuccessfulHandlerExecution().expectNoEvents()
+  }
+
+  @Test
+  fun oldQuestionCannotEvaluateCurrentBuzzerWindow() {
+    fixture.given(*buzzerHistory()).andGiven(
+      questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted(),
+      QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
+      QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, emptyMap()),
+      questionAsked(GAME_QUESTION_2, 2, question = choiceQuestion(), mode = GameQuestionMode.BUZZER),
+      questionBuzzed(GAME_QUESTION_2, GAME_PLAYER_1),
+      collectionStarted().copy(gameQuestionId = GAME_QUESTION_2),
+    ).`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
+      .expectSuccessfulHandlerExecution().expectNoEvents()
+  }
 
   private lateinit var fixture: AggregateTestFixture<GameAggregate>
   private lateinit var questionPort: QuestionPort
@@ -391,8 +464,8 @@ class GameAggregateTest {
       roundStarted(roundNumber = 1).copy(roundConfig = RoundConfig(useBuzzer = true)),
       questionAsked(GAME_QUESTION_1, 1, 1, question, GameQuestionMode.BUZZER),
     )
-      .andGivenCommands(GameCommandFixtures.buzzQuestion(GAME_QUESTION_1, USERNAME_1))
-      .whenTimeElapses(Duration.ofSeconds(1))
+      .andGiven(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), collectionStarted())
+      .`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
       .expectEvents(
         questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1),
       )
@@ -457,10 +530,8 @@ class GameAggregateTest {
       questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), ""),
       questionBuzzerReopened(GAME_QUESTION_1),
     )
-      // this must be a given command to simulate the deadline trigger
-      .andGivenCommands(GameCommandFixtures.buzzQuestion(GAME_QUESTION_1, USERNAME_3))
-      // when the deadline triggers evaluation of buzzes
-      .whenTimeElapses(Duration.ofSeconds(1))
+      .andGiven(questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_3), collectionStarted())
+      .`when`(EvaluateBuzzesCommand(GAME_UUID, GAME_QUESTION_1, windowId))
       .expectEvents(
         questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_3)
       )

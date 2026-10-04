@@ -42,7 +42,8 @@ dependencies {
   implementation("org.springframework.session:spring-session-core")
 
   implementation("org.axonframework:axon-spring-boot-starter:4.13.0")
-  implementation("org.springframework.boot:spring-boot-starter-quartz")
+  // Retain the historical Liquibase changelog resource without starting a Quartz scheduler.
+  runtimeOnly("org.quartz-scheduler:quartz")
 
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.16")
