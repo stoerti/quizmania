@@ -1,8 +1,8 @@
 package org.quizmania.game.command.adapter.`in`.axon
 
-import org.axonframework.config.ProcessingGroup
-import org.axonframework.eventhandling.DisallowReplay
-import org.axonframework.eventhandling.EventHandler
+import org.axonframework.messaging.core.unitofwork.ProcessingContext
+import org.axonframework.messaging.eventhandling.replay.annotation.DisallowReplay
+import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.quizmania.game.api.ExpireQuestionCommand
 import org.quizmania.game.api.GameQuestionMode
 import org.quizmania.game.api.QuestionAskedEvent
@@ -12,7 +12,6 @@ import org.quizmania.game.command.port.out.GameTimer
 import org.springframework.stereotype.Component
 
 @Component
-@ProcessingGroup(QuestionTimerEventListener.PROCESSING_GROUP)
 @DisallowReplay
 class QuestionTimerEventListener(private val gameTimer: GameTimer) {
   companion object {
@@ -20,17 +19,21 @@ class QuestionTimerEventListener(private val gameTimer: GameTimer) {
   }
 
   @EventHandler
-  fun on(event: QuestionAskedEvent) {
+  fun on(event: QuestionAskedEvent, context: ProcessingContext) {
     if (event.questionMode == GameQuestionMode.COLLECTIVE && event.timeToAnswer > 0) {
-      gameTimer.schedule(
-        event.questionTimestamp.plusMillis(event.timeToAnswer),
-        ExpireQuestionCommand(event.gameId, event.gameQuestionId),
-      )
+      context.runOnAfterCommit {
+        gameTimer.schedule(
+          event.questionTimestamp.plusMillis(event.timeToAnswer),
+          ExpireQuestionCommand(event.gameId, event.gameQuestionId),
+        )
+      }
     }
   }
 
   @EventHandler
-  fun on(event: BuzzerCollectionStartedEvent) {
-    gameTimer.schedule(event.evaluateAt, EvaluateBuzzesCommand(event.gameId, event.gameQuestionId, event.windowId))
+  fun on(event: BuzzerCollectionStartedEvent, context: ProcessingContext) {
+    context.runOnAfterCommit {
+      gameTimer.schedule(event.evaluateAt, EvaluateBuzzesCommand(event.gameId, event.gameQuestionId, event.windowId))
+    }
   }
 }

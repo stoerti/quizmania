@@ -1,7 +1,6 @@
 package org.quizmania.game.api
 
-import org.axonframework.modelling.command.AggregateIdentifier
-import org.axonframework.modelling.command.TargetAggregateIdentifier
+import org.axonframework.modelling.annotation.TargetEntityId
 import java.time.Instant
 import java.util.UUID
 
@@ -10,14 +9,14 @@ sealed interface GameCommand {
 }
 
 data class EvaluateBuzzesCommand(
-  @TargetAggregateIdentifier
+  @TargetEntityId
   override val gameId: UUID,
   val gameQuestionId: UUID,
   val windowId: UUID,
 ) : GameCommand
 
 data class CreateGameCommand(
-  @AggregateIdentifier
+  @TargetEntityId
     override val gameId: UUID,
   val name: String,
   val config: GameConfig,
@@ -26,46 +25,46 @@ data class CreateGameCommand(
 ): GameCommand
 
 data class JoinGameCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
     val username: String,
 ): GameCommand
 
 data class LeaveGameCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
     val username: String,
 ): GameCommand
 
 data class AbandonGameCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
 ): GameCommand
 
 data class StartGameCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
 ): GameCommand
 
 data class StartNextRoundCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
 ): GameCommand
 
 data class ScoreRoundCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
 ): GameCommand
 
 data class CloseRoundCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
 ): GameCommand
 
 
 
 data class AnswerQuestionCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
     val gameQuestionId: UUID,
     val username: String,
@@ -74,7 +73,7 @@ data class AnswerQuestionCommand(
 ): GameCommand
 
 data class OverrideAnswerCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
     val gameQuestionId: UUID,
     val gamePlayerId: UUID,
@@ -82,7 +81,7 @@ data class OverrideAnswerCommand(
 ): GameCommand
 
 data class BuzzQuestionCommand(
-  @TargetAggregateIdentifier
+  @TargetEntityId
   override val gameId: GameId,
   val gameQuestionId: GameQuestionId,
   val username: String,
@@ -90,31 +89,31 @@ data class BuzzQuestionCommand(
 ) : GameCommand
 
 data class AnswerBuzzerQuestionCommand(
-  @TargetAggregateIdentifier
+  @TargetEntityId
   override val gameId: GameId,
   val gameQuestionId: GameQuestionId,
   val answerCorrect: Boolean
 ) : GameCommand
 
 data class AskNextQuestionCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
 ): GameCommand
 
 data class CloseQuestionCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
     val gameQuestionId: UUID,
 ): GameCommand
 
 data class ExpireQuestionCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
     val gameQuestionId: UUID,
 ): GameCommand
 
 data class ScoreQuestionCommand(
-    @TargetAggregateIdentifier
+    @TargetEntityId
     override val gameId: UUID,
     val gameQuestionId: UUID,
 ): GameCommand

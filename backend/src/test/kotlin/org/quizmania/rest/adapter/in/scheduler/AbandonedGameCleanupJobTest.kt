@@ -1,6 +1,6 @@
 package org.quizmania.rest.adapter.`in`.scheduler
 
-import org.axonframework.commandhandling.gateway.CommandGateway
+import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -38,7 +38,7 @@ class AbandonedGameCleanupJobTest {
     job.abandonExpiredGames()
 
     verify(gameRepository).findGameIdsCreatedBefore(ACTIVE_GAME_STATUSES, cutoff)
-    verify(commandGateway).sendAndWait<Any?>(AbandonGameCommand(firstGameId))
-    verify(commandGateway).sendAndWait<Any?>(AbandonGameCommand(secondGameId))
+    verify(commandGateway).sendAndWait(AbandonGameCommand(firstGameId))
+    verify(commandGateway).sendAndWait(AbandonGameCommand(secondGameId))
   }
 }

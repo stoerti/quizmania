@@ -4,6 +4,6 @@ import org.quizmania.game.api.GameCommand
 import java.time.Instant
 
 interface GameTimer {
-  /** Dispatch the command at the given time, only after the current command commits. */
+  /** Dispatch the command at the given time. The event listener calls this only after commit. */
   fun schedule(dueAt: Instant, command: GameCommand)
 }

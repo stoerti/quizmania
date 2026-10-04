@@ -41,7 +41,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.session:spring-session-core")
 
-  implementation("org.axonframework:axon-spring-boot-starter:4.13.0")
+  implementation(platform("io.axoniq.framework:axoniq-framework-bom:5.3.3"))
+  implementation("io.axoniq.framework:axoniq-spring-boot-starter")
   // Retain the historical Liquibase changelog resource without starting a Quartz scheduler.
   runtimeOnly("org.quartz-scheduler:quartz")
 
@@ -68,7 +69,8 @@ dependencies {
   testImplementation("org.testcontainers:testcontainers")
   testImplementation("org.testcontainers:junit-jupiter")
   testImplementation("org.testcontainers:postgresql")
-  testImplementation("org.axonframework:axon-test:4.13.0")
+  testImplementation("org.axonframework:axon-test")
+  testImplementation("io.axoniq.framework:axoniq-testcontainer")
   testRuntimeOnly("org.postgresql:postgresql")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

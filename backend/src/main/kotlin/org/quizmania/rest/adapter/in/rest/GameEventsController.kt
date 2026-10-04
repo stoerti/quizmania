@@ -2,7 +2,15 @@ package org.quizmania.rest.adapter.`in`.rest
 
 import com.fasterxml.jackson.annotation.JsonRawValue
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.axonframework.eventsourcing.eventstore.EventStore
+import org.axonframework.eventsourcing.eventstore.EventStorageEngine
+import org.axonframework.eventsourcing.eventstore.SourcingCondition
+import org.axonframework.eventsourcing.eventstore.AggregateSequenceNumberPosition
+import org.axonframework.eventsourcing.eventstore.TerminalEventMessage
+import org.axonframework.messaging.eventstreaming.EventCriteria
+import org.axonframework.messaging.eventstreaming.Tag
+import org.axonframework.messaging.core.GenericMessage
+import org.axonframework.messaging.core.MessageType
+import org.axonframework.messaging.core.LegacyResources
 import org.quizmania.game.api.GameId
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -17,7 +25,7 @@ import java.util.*
 @RestController
 @RequestMapping(value = ["/api/game"], produces = [MediaType.APPLICATION_JSON_VALUE])
 class GameEventsController(
-  val eventStore: EventStore,
+  val eventStore: EventStorageEngine,
   val objectMapper: ObjectMapper,
 ) {
 
@@ -26,16 +34,26 @@ class GameEventsController(
     @PathVariable("gameId") gameId: String,
     @RequestParam("firstSeqNo", defaultValue = "0", required = false) firstSeqNo: Long,
   ): ResponseEntity<List<GameEventWrapperDto>> {
-    return eventStore.readEvents(gameId, firstSeqNo).asStream().map {
-      GameEventWrapperDto(
-        gameId = UUID.fromString(it.aggregateIdentifier),
-        sequenceNumber = it.sequenceNumber,
-        timestamp = it.timestamp,
-        eventType = it.payloadType.simpleName,
-        payload = objectMapper.writeValueAsString(it.payload)
-      )
-    }.toList()
-      .let { ResponseEntity.ok(it) }
+    require(firstSeqNo >= 0) { "firstSeqNo must not be negative" }
+    val id = UUID.fromString(gameId)
+    val condition = SourcingCondition.conditionFor(
+      AggregateSequenceNumberPosition(firstSeqNo), EventCriteria.havingTags(Tag("GameAggregate", id.toString())),
+    )
+    val events = eventStore.source(condition)
+      .filter { it.message() !is TerminalEventMessage }
+      .map { entry -> entry.map { event ->
+        val payload = event.payload()
+        GenericMessage(MessageType(GameEventWrapperDto::class.java), GameEventWrapperDto(
+          gameId = id,
+          sequenceNumber = requireNotNull(entry.getResource(LegacyResources.AGGREGATE_SEQUENCE_NUMBER_KEY)),
+          timestamp = event.timestamp(),
+          eventType = event.type().qualifiedName().localName(),
+          payload = if (payload is ByteArray) payload.toString(Charsets.UTF_8) else objectMapper.writeValueAsString(payload),
+        ))
+      } }
+      .collect({ mutableListOf<GameEventWrapperDto>() }, { list, message -> list.add(message.payload() as GameEventWrapperDto) })
+      .join()
+    return ResponseEntity.ok(events)
   }
 }
 

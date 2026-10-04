@@ -1,7 +1,7 @@
 package org.quizmania.rest.adapter.`in`.scheduler
 
 import mu.KLogging
-import org.axonframework.commandhandling.gateway.CommandGateway
+import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.quizmania.game.api.AbandonGameCommand
 import org.quizmania.rest.application.domain.GameStatus
 import org.quizmania.rest.port.out.GameRepository
@@ -35,7 +35,7 @@ class AbandonedGameCleanupJob(
     logger.info { "Found ${gameIds.size} active games created before $cutoff" }
     gameIds.forEach { gameId ->
       try {
-        commandGateway.sendAndWait<Any?>(AbandonGameCommand(gameId))
+        commandGateway.sendAndWait(AbandonGameCommand(gameId))
       } catch (exception: RuntimeException) {
         logger.error(exception) { "Could not abandon game $gameId" }
       }

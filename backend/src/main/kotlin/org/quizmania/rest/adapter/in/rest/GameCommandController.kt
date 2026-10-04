@@ -1,7 +1,7 @@
 package org.quizmania.rest.adapter.`in`.rest
 
 import mu.KLogging
-import org.axonframework.commandhandling.gateway.CommandGateway
+import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.quizmania.game.api.*
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -33,7 +33,7 @@ class GameCommandController(
 
     val gameId = UUID.randomUUID()
 
-    commandGateway.sendAndWait<Void>(
+    commandGateway.sendAndWait(
       CreateGameCommand(
         gameId,
         newGameDto.name,
@@ -44,7 +44,7 @@ class GameCommandController(
     )
 
     if (!newGameDto.withModerator) {
-      commandGateway.sendAndWait<Void>(
+      commandGateway.sendAndWait(
         JoinGameCommand(
           gameId,
           username
@@ -60,7 +60,7 @@ class GameCommandController(
     @PathVariable("gameId") gameId: UUID,
     @CookieValue(name = "username", defaultValue = "someUser") username: String,
   ): ResponseEntity<Void> {
-    commandGateway.sendAndWait<Void>(
+    commandGateway.sendAndWait(
       JoinGameCommand(
         gameId,
         username
@@ -74,7 +74,7 @@ class GameCommandController(
     @PathVariable("gameId") gameId: UUID,
     @CookieValue(name = "username", defaultValue = "someUser") username: String,
   ): ResponseEntity<Void> {
-    commandGateway.sendAndWait<Void>(
+    commandGateway.sendAndWait(
       LeaveGameCommand(
         gameId,
         username
@@ -88,7 +88,7 @@ class GameCommandController(
   fun startGame(
     @PathVariable("gameId") gameId: UUID
   ): ResponseEntity<Void> {
-    commandGateway.sendAndWait<Void>(
+    commandGateway.sendAndWait(
       StartGameCommand(
         gameId
       )
@@ -102,7 +102,7 @@ class GameCommandController(
     @CookieValue(name = "username", defaultValue = "someUser") username: String,
     @RequestBody answer: AnswerDto
   ): ResponseEntity<Void> {
-    commandGateway.sendAndWait<Void>(
+    commandGateway.sendAndWait(
       AnswerQuestionCommand(
         gameId = gameId,
         gameQuestionId = answer.gameQuestionId,
@@ -120,7 +120,7 @@ class GameCommandController(
     @CookieValue(name = "username", defaultValue = "someUser") username: String,
     @RequestBody answer: BuzzDto
   ): ResponseEntity<Void> {
-    commandGateway.sendAndWait<Void>(
+    commandGateway.sendAndWait(
       BuzzQuestionCommand(
         gameId = gameId,
         gameQuestionId = answer.gameQuestionId,
@@ -136,7 +136,7 @@ class GameCommandController(
     @PathVariable("gameId") gameId: UUID,
     @RequestBody answer: BuzzerAnswerDto
   ): ResponseEntity<Void> {
-    commandGateway.sendAndWait<Void>(
+    commandGateway.sendAndWait(
       AnswerBuzzerQuestionCommand(
         gameId = gameId,
         gameQuestionId = answer.gameQuestionId,
@@ -151,7 +151,7 @@ class GameCommandController(
     @PathVariable("gameId") gameId: UUID,
     @RequestBody answer: AnswerOverrideDto
   ): ResponseEntity<Void> {
-    commandGateway.sendAndWait<Void>(
+    commandGateway.sendAndWait(
       OverrideAnswerCommand(
         gameId = gameId,
         gameQuestionId = answer.gameQuestionId,
@@ -166,7 +166,7 @@ class GameCommandController(
   fun closeRound(
     @PathVariable("gameId") gameId: UUID
   ): ResponseEntity<Void> {
-    commandGateway.sendAndWait<Void>(CloseRoundCommand(gameId = gameId))
+    commandGateway.sendAndWait(CloseRoundCommand(gameId = gameId))
     return ResponseEntity.ok().build()
   }
 
@@ -174,7 +174,7 @@ class GameCommandController(
   fun askNextQuestion(
     @PathVariable("gameId") gameId: UUID
   ): ResponseEntity<Void> {
-    commandGateway.sendAndWait<Void>(AskNextQuestionCommand(gameId = gameId))
+    commandGateway.sendAndWait(AskNextQuestionCommand(gameId = gameId))
     return ResponseEntity.ok().build()
   }
 
@@ -183,7 +183,7 @@ class GameCommandController(
     @PathVariable("gameId") gameId: UUID,
     @PathVariable("gameQuestionId") gameQuestionId: GameQuestionId,
   ): ResponseEntity<Void> {
-    commandGateway.sendAndWait<Void>(CloseQuestionCommand(gameId = gameId, gameQuestionId = gameQuestionId))
+    commandGateway.sendAndWait(CloseQuestionCommand(gameId = gameId, gameQuestionId = gameQuestionId))
     return ResponseEntity.ok().build()
   }
 
@@ -192,7 +192,7 @@ class GameCommandController(
     @PathVariable("gameId") gameId: UUID,
     @PathVariable("gameQuestionId") gameQuestionId: GameQuestionId,
   ): ResponseEntity<Void> {
-    commandGateway.sendAndWait<Void>(ScoreQuestionCommand(gameId = gameId, gameQuestionId = gameQuestionId))
+    commandGateway.sendAndWait(ScoreQuestionCommand(gameId = gameId, gameQuestionId = gameQuestionId))
     return ResponseEntity.ok().build()
   }
 }

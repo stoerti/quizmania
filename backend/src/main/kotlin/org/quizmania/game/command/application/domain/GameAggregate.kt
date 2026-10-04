@@ -1,24 +1,37 @@
 package org.quizmania.game.command.application.domain
 
 import mu.KLogging
-import org.axonframework.commandhandling.CommandExecutionException
-import org.axonframework.commandhandling.CommandHandler
-import org.axonframework.eventsourcing.EventSourcingHandler
-import org.axonframework.messaging.Message
-import org.axonframework.messaging.interceptors.ExceptionHandler
-import org.axonframework.modelling.command.*
-import org.axonframework.spring.stereotype.Aggregate
+import org.axonframework.messaging.commandhandling.CommandExecutionException
+import org.axonframework.messaging.commandhandling.annotation.CommandHandler
+import org.axonframework.eventsourcing.annotation.EventSourcingHandler
+import org.axonframework.messaging.core.Message
+import org.axonframework.messaging.core.interception.annotation.ExceptionHandler
+import org.axonframework.messaging.eventhandling.gateway.EventAppender
+import org.axonframework.eventsourcing.annotation.reflection.EntityCreator
+import org.axonframework.extension.spring.stereotype.EventSourced
 import org.quizmania.game.api.*
 import org.quizmania.game.command.port.out.QuestionPort
 import org.quizmania.question.api.Round
 import java.util.*
 
-@Aggregate
-internal class GameAggregate() {
+@EventSourced(idType = UUID::class, tagKey = "GameAggregate")
+internal class GameAggregate @EntityCreator constructor() {
 
-  companion object : KLogging()
+  companion object : KLogging() {
+    @JvmStatic
+    @CommandHandler
+    fun create(command: CreateGameCommand, questionPort: QuestionPort, eventAppender: EventAppender) {
+      val questionSet = questionPort.getQuestionSet(command.config.questionSetId)
+      if (questionSet.rounds.any { it.roundConfig.useBuzzer } && command.moderatorUsername == null) {
+        throw InvalidConfigProblem(command.gameId, "Buzzer game needs a moderator")
+      }
+      eventAppender.append(GameCreatedEvent(
+        command.gameId, command.name, command.config, questionSet.rounds,
+        command.creatorUsername, command.moderatorUsername,
+      ))
+    }
+  }
 
-  @AggregateIdentifier
   private lateinit var gameId: UUID
   private lateinit var config: GameConfig
   private lateinit var roundList: List<Round>
@@ -30,33 +43,11 @@ internal class GameAggregate() {
   private var currentRound: GameRound? = null
 
   @CommandHandler
-  @CreationPolicy(AggregateCreationPolicy.ALWAYS)
-  fun create(command: CreateGameCommand, questionPort: QuestionPort) {
-    logger.info { "Executing CreateGameCommand for game ${command.gameId}" }
-
-    val questionSet = questionPort.getQuestionSet(command.config.questionSetId)
-    if (questionSet.rounds.any { it.roundConfig.useBuzzer } && command.moderatorUsername == null) {
-      throw InvalidConfigProblem(command.gameId, "Buzzer game needs a moderator")
-    }
-
-    AggregateLifecycle.apply(
-      GameCreatedEvent(
-        command.gameId,
-        command.name,
-        command.config,
-        questionSet.rounds,
-        command.creatorUsername,
-        command.moderatorUsername
-      )
-    )
-  }
-
-  @CommandHandler
-  fun handle(command: JoinGameCommand) {
+  fun handle(command: JoinGameCommand, eventAppender: EventAppender) {
     logger.info { "Executing AddPlayerCommand for game ${command.gameId} and player ${command.username}" }
     if (players.size < config.maxPlayers) {
       if (!players.containsUsername(command.username) && moderatorUsername != command.username) {
-        AggregateLifecycle.apply(
+        eventAppender.append(
           PlayerJoinedGameEvent(
             command.gameId,
             UUID.randomUUID(),
@@ -72,17 +63,17 @@ internal class GameAggregate() {
   }
 
   @CommandHandler
-  fun handle(command: LeaveGameCommand) {
+  fun handle(command: LeaveGameCommand, eventAppender: EventAppender) {
     logger.info { "Executing LeaveGameCommand for game ${command.gameId} and player ${command.username}" }
 
     if (command.username == this.moderatorUsername) {
-      AggregateLifecycle.apply(
+      eventAppender.append(
         GameCanceledEvent(gameId)
       )
     } else {
       val player = players.findByUsername(command.username)
       if (player != null) {
-        AggregateLifecycle.apply(
+        eventAppender.append(
           PlayerLeftGameEvent(
             command.gameId,
             player.gamePlayerId,
@@ -91,27 +82,27 @@ internal class GameAggregate() {
         )
 
         if (this.players.size == 0) {
-          AggregateLifecycle.apply(
+          eventAppender.append(
             GameCanceledEvent(gameId)
           )
         } else if (gameStatus == GameStatus.STARTED) {
-          currentRound?.removePlayer(player.gamePlayerId)
+          currentRound?.removePlayer(player.gamePlayerId, eventAppender)
         }
       }
     }
   }
 
   @CommandHandler
-  fun handle(command: AbandonGameCommand) {
+  fun handle(command: AbandonGameCommand, eventAppender: EventAppender) {
     logger.info { "Executing AbandonGameCommand for game ${command.gameId}" }
 
     if (gameStatus != GameStatus.CANCELED && gameStatus != GameStatus.ENDED) {
-      AggregateLifecycle.apply(GameCanceledEvent(gameId))
+      eventAppender.append(GameCanceledEvent(gameId))
     }
   }
 
   @CommandHandler
-  fun handle(command: StartGameCommand, questionPort: QuestionPort) {
+  fun handle(command: StartGameCommand, questionPort: QuestionPort, eventAppender: EventAppender) {
     logger.info { "Executing StartGameCommand for game ${command.gameId}" }
     if (roundList.any { it.roundConfig.useBuzzer } && this.players.size < 2) {
       throw InvalidConfigProblem(this.gameId, "Buzzer game needs at least two players")
@@ -120,16 +111,16 @@ internal class GameAggregate() {
       throw GameAlreadyStartedProblem(this.gameId)
     }
 
-    AggregateLifecycle.apply(GameStartedEvent(command.gameId))
-    startNextRound()
+    eventAppender.append(GameStartedEvent(command.gameId))
+    startNextRound(eventAppender)
 
     if (this.roundList.size == 1) {
-      askNextQuestion(questionPort)
+      askNextQuestion(questionPort, eventAppender)
     }
   }
 
   @CommandHandler
-  fun handle(command: StartNextRoundCommand) {
+  fun handle(command: StartNextRoundCommand, eventAppender: EventAppender) {
     logger.info { "Executing StartNextRoundCommand for game ${command.gameId}" }
     if (this.gameStatus != GameStatus.STARTED) {
       throw GameNotStartedProblem(this.gameId)
@@ -138,12 +129,12 @@ internal class GameAggregate() {
     if (this.currentRound == null) {
       throw RoundAlreadyStartedProblem(this.gameId)
     } else {
-      startNextRound()
+      startNextRound(eventAppender)
     }
   }
 
   @CommandHandler
-  fun handle(command: CloseRoundCommand) {
+  fun handle(command: CloseRoundCommand, eventAppender: EventAppender) {
     logger.info { "Executing CloseRoundCommand for game ${command.gameId}" }
     if (this.gameStatus != GameStatus.STARTED) {
       throw GameNotStartedProblem(this.gameId)
@@ -152,7 +143,7 @@ internal class GameAggregate() {
     if (this.currentRound == null) {
       throw RoundAlreadyClosedProblem(this.gameId)
     } else {
-      AggregateLifecycle.apply(
+      eventAppender.append(
         RoundClosedEvent(
           gameId = this.gameId,
           gameRoundId = this.currentRound!!.id
@@ -160,54 +151,54 @@ internal class GameAggregate() {
       )
 
       if (this.roundList.size == this.finishedRounds) {
-        endGame()
+        endGame(eventAppender)
       } else {
-        startNextRound()
+        startNextRound(eventAppender)
       }
     }
   }
 
   @CommandHandler
-  fun handle(command: AnswerQuestionCommand) {
+  fun handle(command: AnswerQuestionCommand, eventAppender: EventAppender) {
     logger.info { "Executing AnswerQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
     val player = players.getByUsername(command.username)
     withCurrentRound { round ->
-      round.answer(player.gamePlayerId, command.answer, command.answerTimestamp)
+      round.answer(player.gamePlayerId, command.answer, command.answerTimestamp, eventAppender)
       // after QuestionAnsweredEvent is applied, the player-answer is actually in the list
       if (players.size == round.numCurrentAnswers()) {
-        round.closeQuestion()
+        round.closeQuestion(eventAppender)
       }
     }
   }
 
   @CommandHandler
-  fun handle(command: OverrideAnswerCommand) {
+  fun handle(command: OverrideAnswerCommand, eventAppender: EventAppender) {
     logger.info { "Executing OverrideAnswerCommand for game ${command.gameId}: $command" }
     assertStarted()
 
     withCurrentRound { round ->
-      round.overrideAnswer(command.gamePlayerId, command.answer)
+      round.overrideAnswer(command.gamePlayerId, command.answer, eventAppender)
     }
   }
 
   @CommandHandler
-  fun handle(command: BuzzQuestionCommand) {
+  fun handle(command: BuzzQuestionCommand, eventAppender: EventAppender) {
     logger.info { "Executing BuzzQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
     val player = players.getByUsername(command.username)
 
     withCurrentRound { round ->
-      round.buzz(player.gamePlayerId, command.buzzerTimestamp)
+      round.buzz(player.gamePlayerId, command.buzzerTimestamp, eventAppender)
     }
   }
 
   @CommandHandler
-  fun handle(command: EvaluateBuzzesCommand) {
+  fun handle(command: EvaluateBuzzesCommand, eventAppender: EventAppender) {
     if (gameStatus == GameStatus.STARTED) {
-      currentRound?.evaluateBuzzerCollection(command.gameQuestionId, command.windowId)
+      currentRound?.evaluateBuzzerCollection(command.gameQuestionId, command.windowId, eventAppender)
     }
   }
 
@@ -217,55 +208,55 @@ internal class GameAggregate() {
   }
 
   @CommandHandler
-  fun handle(command: AnswerBuzzerQuestionCommand) {
+  fun handle(command: AnswerBuzzerQuestionCommand, eventAppender: EventAppender) {
     logger.info { "Executing AnswerBuzzerQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
     withCurrentRound { round ->
-      round.answerBuzzWinner(command.answerCorrect)
+      round.answerBuzzWinner(command.answerCorrect, eventAppender)
     }
   }
 
   @CommandHandler
-  fun handle(command: CloseQuestionCommand) {
+  fun handle(command: CloseQuestionCommand, eventAppender: EventAppender) {
     logger.info { "Executing CloseQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
     withCurrentRound { round ->
-      round.closeQuestion()
+      round.closeQuestion(eventAppender)
     }
   }
 
   @CommandHandler
-  fun handle(command: ExpireQuestionCommand) {
+  fun handle(command: ExpireQuestionCommand, eventAppender: EventAppender) {
     if (gameStatus == GameStatus.STARTED) {
-      currentRound?.expireQuestion(command.gameQuestionId)
+      currentRound?.expireQuestion(command.gameQuestionId, eventAppender)
     }
   }
 
   @CommandHandler
-  fun handle(command: ScoreQuestionCommand) {
+  fun handle(command: ScoreQuestionCommand, eventAppender: EventAppender) {
     logger.info { "Executing RateQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
     withCurrentRound { round ->
-      round.rateQuestion()
+      round.rateQuestion(eventAppender)
     }
   }
 
 
   @CommandHandler
-  fun handle(command: AskNextQuestionCommand, questionPort: QuestionPort) {
+  fun handle(command: AskNextQuestionCommand, questionPort: QuestionPort, eventAppender: EventAppender) {
     logger.info { "Executing AskNextQuestionCommand for game ${command.gameId}: $command" }
     assertStarted()
 
     withCurrentRound { round ->
       if (round.hasMoreQuestions()) {
-        askNextQuestion(questionPort)
+        askNextQuestion(questionPort, eventAppender)
       } else {
-        round.scoreRound()
+        round.scoreRound(eventAppender)
         if (this.roundList.size == 1) {
-          endGame()
+          endGame(eventAppender)
         }
       }
     }
@@ -375,14 +366,14 @@ internal class GameAggregate() {
     this.currentRound = null
   }
 
-  @ExceptionHandler(resultType = GameProblem::class, messageType = Message::class, payloadType = Any::class)
+  @ExceptionHandler(resultType = GameProblem::class, messageType = Message::class)
   fun onException(ex: GameProblem) {
     throw CommandExecutionException(
-      ex.message, ex, mapOf(
+      ex.message ?: ex.title ?: "Command rejected", ex, mapOf(
         "type" to ex.type,
         "title" to ex.title,
         "detail" to ex.detail,
-        "category" to ex.category,
+        "category" to ex.category.name,
         "context" to (ex.context ?: emptyMap()) + mapOf("aggregateId" to ex.gameId)
       )
     )
@@ -395,10 +386,10 @@ internal class GameAggregate() {
     block(currentRound!!)
   }
 
-  private fun startNextRound() {
+  private fun startNextRound(eventAppender: EventAppender) {
     val currentRoundNumber = this.finishedRounds + 1
     val round = this.roundList[currentRoundNumber - 1]
-    AggregateLifecycle.apply(
+    eventAppender.append(
       RoundStartedEvent(
         gameId = gameId,
         gameRoundId = UUID.randomUUID(),
@@ -410,15 +401,15 @@ internal class GameAggregate() {
     )
   }
 
-  private fun askNextQuestion(questionPort: QuestionPort) {
+  private fun askNextQuestion(questionPort: QuestionPort, eventAppender: EventAppender) {
     withCurrentRound { round ->
-      round.askNextQuestion(questionPort)
+      round.askNextQuestion(questionPort, eventAppender)
     }
   }
 
-  private fun endGame() {
-    currentRound?.closeRound()
-    AggregateLifecycle.apply(
+  private fun endGame(eventAppender: EventAppender) {
+    currentRound?.closeRound(eventAppender)
+    eventAppender.append(
       GameEndedEvent(
         gameId = gameId
       )

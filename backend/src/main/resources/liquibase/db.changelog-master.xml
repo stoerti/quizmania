@@ -43,4 +43,11 @@
             <column name="CREATED_AT" />
         </createIndex>
     </changeSet>
+    <changeSet id="003_axon5_token_segment_mask" author="codex">
+        <addColumn tableName="TOKEN_ENTRY">
+            <column name="MASK" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
