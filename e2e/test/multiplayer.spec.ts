@@ -55,6 +55,10 @@ test.describe('moderated multiplayer games', () => {
       await game.alice.answerChoice('9');
       await expect(game.alice.page.getByText('1 of 2 players answered', {exact: true})).toBeVisible();
 
+      // Rebuild from DCB history, then resume live delivery without duplicating the answer.
+      await game.alice.page.reload();
+      await expect(game.alice.page.getByText('1 of 2 players answered', {exact: true})).toBeVisible();
+
       await game.bob.answerChoice('7');
       await expect(game.moderator.page.locator('#nextQuestion')).toBeVisible({timeout: 2_000});
 

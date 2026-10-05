@@ -12,6 +12,27 @@ import {
 import { Game, GameStatus } from '../GameModel';
 
 describe('testing game read model', () => {
+  test('departed players keep their recorded answers, names, and scores', () => {
+    let game = new Game(gameCreatedEvent())
+      .onPlayerJoined(playerAddedEvent("player2", "Player 2"))
+      .onQuestionAsked(questionAsked("question1", 1, "Question", "Correct"))
+      .onQuestionAnswered(questionAnswered("question1", "player2", "answer1", "Correct"))
+      .onPlayerLeft(playerRemovedEvent("player2", "Player 2"))
+      .onQuestionScored(questionScored("question1", {"player2": 10}));
+    expect(game.players).toHaveLength(0);
+    expect(game.currentQuestion!.answers).toHaveLength(1);
+    expect(game.findPlayerName("player2")).toBe("Player 2");
+    expect(game.findPlayerPoints("player2")).toBe(10);
+  });
+
+  test('joining does not change the eligibility snapshot of the current question', () => {
+    const game = new Game(gameCreatedEvent())
+      .onQuestionAsked(questionAsked("question1", 1, "Question", "Correct"))
+      .onPlayerJoined(playerAddedEvent("late", "Late joiner"));
+    expect(game.players).toHaveLength(1);
+    expect(game.currentQuestion!.eligiblePlayerIds).not.toContain("late");
+  });
+
   test('newly created game should have status CREATED', () => {
     const event: GameCreatedEvent = gameCreatedEvent()
     const game = new Game(event)
@@ -172,6 +193,8 @@ function questionAsked(id: string, number: number, phrase: string, answer: strin
   return {
     gameId: "game1",
     gameQuestionId: id,
+    gameRoundId: "round1",
+    eligiblePlayerIds: ["player1", "player2"],
     roundNumber: number,
     roundQuestionNumber: number,
     questionTimestamp: new Date().toISOString(),

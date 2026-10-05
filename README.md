@@ -78,11 +78,24 @@ Question sets are defined in JSON files in the resource folder ./backend/src/mai
 
 The backend uses Java 21, Spring Boot 3.5, and the Axoniq Framework 5.3.3 BOM/starter (including Axon Framework 5.3.3 and the Axon Server connector). Docker configurations pin Axon Server to `2026.1.4-jdk-21`. The connector is an Axoniq-licensed component, available for evaluation without credentials; consult the [Axoniq licensing guidance](https://docs.axoniq.io/axon-framework-reference/5.3/advanced-migration/paths/5.0-to-5.1/) before use beyond evaluation.
 
-This is an architecture-preserving migration: `GameAggregate` remains the game-wide consistency boundary, using Axon 5's event-sourced entity and explicit `EventAppender` APIs. The aggregate-compatible Axon Server storage engine preserves per-game event sequence numbers for REST history and websocket delivery. Dynamic consistency boundaries are deliberately deferred. Switching to DCB storage later will also require revisiting the client event cursor contract.
+### DCB command model
 
-Event processors explicitly preserve ordering within each game. Axon 5 subscriptions use concrete event names, so the websocket listener lists every game event; a regression test checks this list against the sealed event hierarchy. Jackson 2 remains the event/message converter alongside Spring Boot 3.
+The game-wide aggregate has been replaced by six independent event-sourced states: game lifecycle/configuration, participation, progression, question lifecycle, answers, and buzzer arbitration. Command handlers compose only the states their decision needs in one Axon processing context. Each state selects explicit event types and a game or question tag. State transitions only reconstruct facts; shared completion, scoring, and buzzer-selection policies make decisions without loading other states.
 
-The migration is verified with fresh test databases and event stores, not as an in-place upgrade of Axon 4 data. Existing development event stores and processor tokens are not automatically converted or deleted. Use a separate fresh development stack, or explicitly reset disposable development data before switching versions. The backend integration tests now start PostgreSQL and Axon Server through Testcontainers; Docker is required for `./gradlew :backend:test`.
+- Players eligible for a question are captured in `QuestionAskedEvent`. Late joiners wait for the next question.
+- Departures remove the obligation to answer and can close a collective question or promote the next buzzer winner. Submitted answers and their scores remain intact, including after replay.
+- Interactive commands must target the current question. Obsolete timer commands are ignored.
+- Closing and scoring are distinct phases for moderated free-input questions; scoring an open question is rejected. The next question cannot start before scoring.
+- Answer/close/score and wrong-buzzer-answer/promotion events are appended atomically.
+- DCB does not imply fully parallel commands: routing still uses the game ID. Consistency is enforced by the selected histories, not by routing alone.
+
+REST history and websocket envelopes expose `cursor` as a decimal string, representing the next global store position. Resume with `GET /api/game/{id}/events?afterCursor={cursor}`. Positions may have gaps within one game; they are not aggregate sequence numbers. The browser uses lossless comparisons, buffers live events during catch-up, and resumes on reconnect. Event processors explicitly sequence by `gameId`.
+
+#### Fresh development storage required
+
+Docker configurations initialize the default Axon Server context with `AXONIQ_AXONSERVER_STANDALONE_DCB=true`. This only initializes fresh storage: it does not convert an existing aggregate-format context. Use a separate fresh development stack/database when trying this branch. Existing development data is never reset automatically by the application. Historical event payload/tag conversion and processor-token migration are not part of this refactoring.
+
+Backend integration tests start PostgreSQL and a DCB-enabled Axon Server through Testcontainers, so Docker is required for `./gradlew :backend:test`. The isolated `./scripts/e2e-test` stack also uses DCB. Tests cover replay, participation changes, stale commands, round progression, event cursors, and conditional-append conflicts.
 
 ### Question timeout timers
 

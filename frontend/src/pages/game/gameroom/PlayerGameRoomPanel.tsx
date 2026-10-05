@@ -34,13 +34,16 @@ export const PlayerGameRoomPanel = ({game, player}: PlayerGameRoomPanelProps) =>
     if (question === undefined) {
       return <StartRoundPanel game={game} isModerator={player.name === game.creator}/>
     } else if (question.status === QuestionStatus.OPEN) {
+      if (!question.eligiblePlayerIds.includes(player.id)) {
+        return <Typography>Waiting for the next question</Typography>
+      }
       if (question.hasPlayerAlreadyAnswered(player.id)) {
         return <Stack spacing={2} alignItems={"center"}>
           <QuestionPhrasePanel gameQuestion={question}/>
           <Paper sx={{padding: 2}}>
             <Box sx={{display: 'block', m: 'auto', alignContent: 'center'}}>
               <Typography sx={{flex: '1 1 100%', textAlign: 'center'}} variant="h4" component="div">
-                {question.answers.length} of {game.players.length} players answered
+                {question.answers.filter(answer => game.players.some(player => player.id === answer.gamePlayerId)).length} of {game.players.filter(player => question.eligiblePlayerIds.includes(player.id)).length} players answered
               </Typography>
               <Box sx={{display: 'flex', justifyContent: 'center'}}>
                 <CircularProgress/>

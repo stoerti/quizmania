@@ -16,7 +16,7 @@ services:
   axonserver:
     image: axoniq/axonserver:2026.1.4-jdk-21
     environment:
-      AXONIQ_AXONSERVER_STANDALONE: "true"
+      AXONIQ_AXONSERVER_STANDALONE_DCB: "true"
     ports:
       - "${QUIZMANIA_E2E_AXON_HTTP_PORT:-58024}:8024"
       - "${QUIZMANIA_E2E_AXON_GRPC_PORT:-58124}:8124"

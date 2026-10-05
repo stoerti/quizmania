@@ -3,6 +3,7 @@ package org.quizmania.common
 import java.time.Instant
 
 data class EventMetaData(
-  val sequenceNumber: Long,
+  /** Next global event-store position, not a per-game sequence number. */
+  val position: Long,
   val timestamp: Instant
 )
