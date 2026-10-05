@@ -6,29 +6,23 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.quizmania.game.*
 import org.quizmania.game.api.GameQuestionMode
-import org.quizmania.game.command.application.domain.GameQuestion
-import org.quizmania.game.command.application.domain.PlayerAnswer
+import org.quizmania.game.command.application.domain.QuestionScoringPolicy
+import org.quizmania.game.command.application.state.PlayerAnswer
 import org.quizmania.question.api.EstimateQuestion
 import org.quizmania.question.api.FreeInputQuestion
 import org.quizmania.question.api.SortQuestion
-import java.time.Instant
 import java.util.*
 
-class GameQuestionTest {
+class QuestionScoringPolicyTest {
   @Test
   fun estimateQuestion() {
-    val gameQuestion = GameQuestion(
-      gameId = GAME_UUID,
-      isModerated = false,
-      GAME_QUESTION_1,
-      1,
+    val gameQuestion = QuestionScoringPolicy(
       EstimateQuestion(
         id = UUID.randomUUID().toString(),
         phrase = "Question?",
         correctAnswer = "100"
       ),
       GameQuestionMode.COLLECTIVE,
-      Instant.now(),
       mutableListOf(
         PlayerAnswer(PLAYER_ANSWER_1, GAME_PLAYER_1, "90"),
         PlayerAnswer(PLAYER_ANSWER_2, GAME_PLAYER_2, "98"),
@@ -47,11 +41,7 @@ class GameQuestionTest {
 
   @Test
   fun sortQuestion() {
-    val gameQuestion = GameQuestion(
-      gameId = GAME_UUID,
-      isModerated = false,
-      GAME_QUESTION_1,
-      1,
+    val gameQuestion = QuestionScoringPolicy(
       SortQuestion(
         id = UUID.randomUUID().toString(),
         phrase = "Sort these items?",
@@ -59,7 +49,6 @@ class GameQuestionTest {
         answerOptions = listOf("A", "B", "C", "D")
       ),
       GameQuestionMode.COLLECTIVE,
-      Instant.now(),
       mutableListOf(
         PlayerAnswer(PLAYER_ANSWER_1, GAME_PLAYER_1, "A, B, C, D"), // Perfect - distance 0
         PlayerAnswer(PLAYER_ANSWER_2, GAME_PLAYER_2, "A, B, D, C"), // 1 swap - distance 1
@@ -82,11 +71,7 @@ class GameQuestionTest {
 
   @Test
   fun sortQuestion_withSixItems() {
-    val gameQuestion = GameQuestion(
-      gameId = GAME_UUID,
-      isModerated = false,
-      GAME_QUESTION_1,
-      1,
+    val gameQuestion = QuestionScoringPolicy(
       SortQuestion(
         id = UUID.randomUUID().toString(),
         phrase = "Sort these items?",
@@ -94,7 +79,6 @@ class GameQuestionTest {
         answerOptions = listOf("A", "B", "C", "D", "E", "F")
       ),
       GameQuestionMode.COLLECTIVE,
-      Instant.now(),
       mutableListOf(
         PlayerAnswer(PLAYER_ANSWER_1, GAME_PLAYER_1, "A, B, C, D, E, F"), // Perfect - distance 0
         PlayerAnswer(PLAYER_ANSWER_2, GAME_PLAYER_2, "A, B, C, D, F, E"), // 1 swap - distance 1
@@ -119,11 +103,7 @@ class GameQuestionTest {
 
   @Test
   fun sortQuestion_calculateDistance() {
-    val gameQuestion = GameQuestion(
-      gameId = GAME_UUID,
-      isModerated = false,
-      GAME_QUESTION_1,
-      1,
+    val gameQuestion = QuestionScoringPolicy(
       SortQuestion(
         id = UUID.randomUUID().toString(),
         phrase = "Sort these items?",
@@ -131,7 +111,7 @@ class GameQuestionTest {
         answerOptions = listOf("A", "B", "C", "D")
       ),
       GameQuestionMode.COLLECTIVE,
-      Instant.now(),
+      emptyList(),
     )
 
     // Test perfect order
@@ -166,18 +146,13 @@ class GameQuestionTest {
     "Ironman,Lronman,false",
   )
   fun createGame_ok(correctAnswer: String, playerAnswer: String, correct: Boolean) {
-    val gameQuestion = GameQuestion(
-      gameId = GAME_UUID,
-      isModerated = false,
-      GAME_QUESTION_1,
-      1,
+    val gameQuestion = QuestionScoringPolicy(
       FreeInputQuestion(
         id = UUID.randomUUID().toString(),
         phrase = "Question?",
         correctAnswer = correctAnswer
       ),
       GameQuestionMode.COLLECTIVE,
-      Instant.now(),
       mutableListOf(PlayerAnswer(PLAYER_ANSWER_1, GAME_PLAYER_1, playerAnswer)),
     )
 
@@ -202,6 +177,6 @@ class GameQuestionTest {
     "Fuß,fuss",
   )
   fun cleanupAnswerString(source: String, target: String) {
-    Assertions.assertThat(GameQuestion.cleanupAnswerString(source)).isEqualTo(target)
+    Assertions.assertThat(QuestionScoringPolicy.cleanupAnswerString(source)).isEqualTo(target)
   }
 }

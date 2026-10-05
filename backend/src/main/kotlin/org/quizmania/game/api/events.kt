@@ -22,7 +22,7 @@ enum class GameQuestionMode {
 }
 
 data class GameCreatedEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
   val name: String,
   val config: GameConfig,
@@ -32,37 +32,38 @@ data class GameCreatedEvent(
 ) : GameEvent
 
 data class PlayerJoinedGameEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
   val gamePlayerId: GamePlayerId,
   val username: String,
 ) : GameEvent
 
 data class PlayerLeftGameEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
   val gamePlayerId: GamePlayerId,
   val username: String,
 ) : GameEvent
 
 data class GameStartedEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
 ) : GameEvent
 
 data class GameEndedEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
 ) : GameEvent
 
 data class GameCanceledEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
 ) : GameEvent
 
 data class RoundStartedEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
+  @field:EventTag(key = "gameRoundId")
   val gameRoundId: GameRoundId,
   val roundNumber: Int,
   val roundName: String,
@@ -71,20 +72,23 @@ data class RoundStartedEvent(
 ) : GameEvent
 
 data class RoundScoredEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
+  @field:EventTag(key = "gameRoundId")
   val gameRoundId: GameRoundId,
 ) : GameEvent
 
 data class RoundClosedEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
+  @field:EventTag(key = "gameRoundId")
   val gameRoundId: GameRoundId,
 ) : GameEvent
 
 data class QuestionAskedEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
+  @field:EventTag(key = "gameQuestionId")
   override val gameQuestionId: GameQuestionId,
   val roundNumber: GameRoundNumber,
   val roundQuestionNumber: RoundQuestionNumber,
@@ -92,11 +96,15 @@ data class QuestionAskedEvent(
   val questionTimestamp: Instant,
   val timeToAnswer: Long,
   val question: Question,
+  @field:EventTag(key = "gameRoundId")
+  val gameRoundId: GameRoundId,
+  val eligiblePlayerIds: Set<GamePlayerId>,
 ) : GameQuestionEvent
 
 data class QuestionAnsweredEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
+  @field:EventTag(key = "gameQuestionId")
   override val gameQuestionId: GameQuestionId,
   val gamePlayerId: GamePlayerId,
   val playerAnswerId: UUID,
@@ -105,8 +113,9 @@ data class QuestionAnsweredEvent(
 ) : GameQuestionEvent
 
 data class QuestionAnswerOverriddenEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
+  @field:EventTag(key = "gameQuestionId")
   override val gameQuestionId: GameQuestionId,
   val gamePlayerId: GamePlayerId,
   val playerAnswerId: UUID,
@@ -114,43 +123,49 @@ data class QuestionAnswerOverriddenEvent(
 ) : GameQuestionEvent
 
 data class QuestionBuzzedEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
+  @field:EventTag(key = "gameQuestionId")
   override val gameQuestionId: GameQuestionId,
   val gamePlayerId: GamePlayerId,
   val buzzerTimestamp: Instant
 ) : GameQuestionEvent
 
 data class QuestionBuzzerWonEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
+  @field:EventTag(key = "gameQuestionId")
   override val gameQuestionId: GameQuestionId,
   val gamePlayerId: GamePlayerId,
 ) : GameQuestionEvent
 
 data class BuzzerCollectionStartedEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
+  @field:EventTag(key = "gameQuestionId")
   override val gameQuestionId: GameQuestionId,
   val windowId: UUID,
   val evaluateAt: Instant,
 ) : GameQuestionEvent
 
 data class QuestionBuzzerReopenedEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
+  @field:EventTag(key = "gameQuestionId")
   override val gameQuestionId: GameQuestionId,
 ) : GameQuestionEvent
 
 data class QuestionClosedEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
+  @field:EventTag(key = "gameQuestionId")
   override val gameQuestionId: GameQuestionId,
 ) : GameQuestionEvent
 
 data class QuestionScoredEvent(
-  @field:EventTag(key = "GameAggregate")
+  @field:EventTag(key = "gameId")
   override val gameId: GameId,
+  @field:EventTag(key = "gameQuestionId")
   override val gameQuestionId: GameQuestionId,
   /**
    * key = gamePlayerId

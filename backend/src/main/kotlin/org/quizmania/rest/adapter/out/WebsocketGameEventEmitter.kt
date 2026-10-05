@@ -22,7 +22,7 @@ class WebsocketGameEventEmitter(
   override fun emitGameChangeEventToPlayers(evt: GameEvent, eventMetaData: EventMetaData) {
     val wrappedEvent = GameEventWrapperDto(
       gameId = evt.gameId,
-      sequenceNumber = eventMetaData.sequenceNumber,
+      cursor = eventMetaData.position.toString(),
       timestamp = eventMetaData.timestamp,
       eventType = evt.javaClass.simpleName,
       payload = objectMapper.writeValueAsString(evt)
@@ -34,11 +34,10 @@ class WebsocketGameEventEmitter(
 
   data class GameEventWrapperDto(
     val gameId: GameId,
-    val sequenceNumber: Long,
+    val cursor: String,
     val timestamp: Instant,
     val eventType: String,
     @JsonRawValue
     val payload: String,
   )
 }
-

@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest
 import io.axoniq.framework.axonserver.connector.shared.ErrorCode
 import io.axoniq.framework.axonserver.connector.api.command.AxonServerNonTransientRemoteCommandHandlingException
 import org.axonframework.messaging.commandhandling.CommandExecutionException
-import org.axonframework.modelling.entity.EntityMissingForInstanceCommandHandlerException
+import org.axonframework.modelling.repository.EntityNotFoundException
 import org.quizmania.common.axon.problem.CommandExecutionProblemCategory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -64,7 +64,7 @@ class AxonExceptionHandlerAdvice : ResponseEntityExceptionHandler() {
     val errorDescription = getAxonErrorDescription(ex)
 
     val missingEntity = errorDescription.any {
-      it.startsWith("${EntityMissingForInstanceCommandHandlerException::class.java.name}:")
+      it.startsWith("${EntityNotFoundException::class.java.name}:")
     }
     return if (errorCode == ErrorCode.COMMAND_EXECUTION_NON_TRANSIENT_ERROR && missingEntity) {
       buildResponse(

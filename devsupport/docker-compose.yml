@@ -14,7 +14,7 @@ services:
     image: axoniq/axonserver:2026.1.4-jdk-21
     hostname: axonserver
     environment:
-      AXONIQ_AXONSERVER_STANDALONE: "true"
+      AXONIQ_AXONSERVER_STANDALONE_DCB: "true"
     #    volumes:
 #      - axonserver-data:/data
 #      - axonserver-events:/eventdata

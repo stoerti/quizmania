@@ -23,10 +23,10 @@ export type GameEventType =
   | 'QuestionClosedEvent'
   | 'QuestionScoredEvent';
 
-type GameEventWrapper = {
+export type GameEventWrapper = {
   gameId: string,
   eventType: GameEventType,
-  sequenceNumber: number,
+  cursor: string,
   timestamp: string,
   payload: GameEvent
 }
@@ -38,7 +38,7 @@ interface GameEventHandler {
 export class GameRepository {
   client?: Client;
   currentGameState: Game | undefined
-  lastReceivedSeqNo: number = -1
+  lastReceivedCursor: string = "0"
 
   public subscribeToGame(gameId: string, gameEventHandler: GameEventHandler) {
     if (this.client == null) {
@@ -59,7 +59,7 @@ export class GameRepository {
       this.client.deactivate()
       this.client = undefined
       this.currentGameState = undefined
-      this.lastReceivedSeqNo = -1
+      this.lastReceivedCursor = "0"
     } else {
       console.log("Client not active")
     }
@@ -102,10 +102,35 @@ export class GameRepository {
     const client = new Client({
       brokerURL: this.SOCKET_URL,
       onConnect: () => {
-        this.client!.subscribe('/game/' + gameId, message => {
+        // Subscribe first, then catch up from the REST cursor. Buffer live events
+        // while catching up to close the initial-connect/reconnect delivery gap.
+        const receipt = 'game-subscription-' + crypto.randomUUID();
+        let catchingUp = true;
+        const buffered: GameEventWrapper[] = [];
+        client.watchForReceipt(receipt, () => {
+          fetch('/api/game/' + gameId + '/events?afterCursor=' + this.lastReceivedCursor)
+            .then(response => {
+              if (!response.ok) throw new Error('Could not catch up game events');
+              return response.json() as Promise<GameEventWrapper[]>;
+            })
+            .then(history => {
+              if (this.client !== client) return;
+              const events = [...history, ...buffered].sort((a, b) =>
+                BigInt(a.cursor) < BigInt(b.cursor) ? -1 : BigInt(a.cursor) > BigInt(b.cursor) ? 1 : 0);
+              events.forEach(event => this.handleEvent(event, gameEventHandler));
+              catchingUp = false;
+            })
+            .catch(error => {
+              console.error(error);
+              // Reconnect and retry catch-up; never advance past missing history.
+              if (this.client === client) client.forceDisconnect();
+            });
+        });
+        client.subscribe('/game/' + gameId, message => {
           const wrapper: GameEventWrapper = JSON.parse(message.body);
-          this.handleEvent(wrapper, gameEventHandler)
-        })
+          if (catchingUp) buffered.push(wrapper);
+          else this.handleEvent(wrapper, gameEventHandler);
+        }, {receipt});
       },
       onWebSocketError: (e: Event) => {
         console.log(e)
@@ -122,10 +147,10 @@ export class GameRepository {
    * @param gameEventHandler the eventHandler to forward the result to
    */
   private handleEvent(wrappedEvent: GameEventWrapper, gameEventHandler: GameEventHandler) {
-    if (wrappedEvent.sequenceNumber <= this.lastReceivedSeqNo) {
-      console.log("Ignoring duplicate event with SeqNo ", wrappedEvent.sequenceNumber)
+    if (BigInt(wrappedEvent.cursor) <= BigInt(this.lastReceivedCursor)) {
+      console.log("Ignoring duplicate event with cursor ", wrappedEvent.cursor)
     } else {
-      this.lastReceivedSeqNo = wrappedEvent.sequenceNumber
+      this.lastReceivedCursor = wrappedEvent.cursor
       // evolve read model to next state
       this.currentGameState = this.currentGameState!.onGameEvent(wrappedEvent.payload, wrappedEvent.eventType)
       // forward event and new read model state to the eventHandler
@@ -140,6 +165,7 @@ export class GameRepository {
     for (let i = 1; i < events.length; i++) {
       game = game.onGameEvent(events[i].payload, events[i].eventType)
     }
+    this.lastReceivedCursor = events[events.length - 1].cursor;
     return game;
   }
 }

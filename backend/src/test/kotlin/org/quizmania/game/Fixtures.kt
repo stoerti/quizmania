@@ -187,6 +187,8 @@ class GameEventFixtures {
         timeToAnswer = 30000,
         question = question,
         questionMode = mode,
+        gameRoundId = GAME_ROUND_1,
+        eligiblePlayerIds = setOf(GAME_PLAYER_1, GAME_PLAYER_2, GAME_PLAYER_3, GAME_PLAYER_4),
       )
     }
 

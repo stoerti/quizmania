@@ -42,6 +42,7 @@ export class Game {
   readonly moderator: string | undefined;
   readonly status: GameStatus;
   readonly players: Player[];
+  readonly departedPlayers: Player[] = [];
   readonly totalQuestions: number;
   readonly currentQuestion: GameQuestion | undefined;
   readonly currentRound: GameRound | undefined;
@@ -124,6 +125,9 @@ export class Game {
 
   public onPlayerJoined(event: PlayerJoinedGameEvent): Game {
     return this.copyWith({
+      currentRound: this.currentRound?.copyWith({
+        players: [...this.currentRound.players, new Player(event.gamePlayerId, event.username)]
+      }),
       players: [
         ...this.players,
         new Player(event.gamePlayerId, event.username)
@@ -133,7 +137,8 @@ export class Game {
 
   public onPlayerLeft(event: PlayerLeftGameEvent): Game {
     return this.copyWith({
-      players: this.players.filter(player => player.id != event.gamePlayerId)
+      players: this.players.filter(player => player.id != event.gamePlayerId),
+      departedPlayers: [...this.departedPlayers, ...this.players.filter(player => player.id === event.gamePlayerId)]
     })
   }
 
@@ -233,20 +238,23 @@ export class Game {
 
     return game.copyWith({
       players: newPlayers,
+      departedPlayers: game.departedPlayers.map(player => ({
+        ...player, points: player.points + (event.points[player.id] ?? 0)
+      })),
       currentRound: game.currentRound?.onQuestionScored(event)
     })
   }
 
   public findPlayerName(gamePlayerId: string): string {
-    return this.players.find(player => player.id === gamePlayerId)?.name ?? 'unknown'
+    return [...this.players, ...this.departedPlayers].find(player => player.id === gamePlayerId)?.name ?? 'unknown'
   }
 
   public findPlayerPoints(gamePlayerId: string): number {
-    return this.players.find(player => player.id === gamePlayerId)?.points ?? 0
+    return [...this.players, ...this.departedPlayers].find(player => player.id === gamePlayerId)?.points ?? 0
   }
 
   public findAverageAnswerTime(gamePlayerId: string): number {
-    const totalAnswerTime = this.players.find(player => player.id === gamePlayerId)?.totalAnswerTime ?? 0
+    const totalAnswerTime = [...this.players, ...this.departedPlayers].find(player => player.id === gamePlayerId)?.totalAnswerTime ?? 0
     return totalAnswerTime / this.totalQuestions
   }
 }
@@ -301,6 +309,7 @@ export class GameRound {
 }
 
 export class GameQuestion {
+  readonly eligiblePlayerIds: string[];
   readonly gameQuestionId: string;
   readonly roundQuestionNumber: number;
   readonly question: Question;
@@ -313,6 +322,7 @@ export class GameQuestion {
   readonly questionTimeout: number;
 
   constructor(event: QuestionAskedEvent) {
+    this.eligiblePlayerIds = event.eligiblePlayerIds
     this.gameQuestionId = event.gameQuestionId
     this.roundQuestionNumber = event.roundQuestionNumber
     this.question = event.question

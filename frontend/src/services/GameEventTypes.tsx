@@ -87,6 +87,8 @@ export type PlayerLeftGameEvent = {
 }
 
 export type QuestionAskedEvent = {
+  gameRoundId: string,
+  eligiblePlayerIds: string[],
   gameId: string,
   roundNumber: number,
   roundQuestionNumber: number,
@@ -149,4 +151,3 @@ export type QuestionScoredEvent = {
 
 export type GameEvent = GameStartedEvent
   | GameEndedEvent
-

@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonRawValue
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.axonframework.eventsourcing.eventstore.EventStorageEngine
 import org.axonframework.eventsourcing.eventstore.SourcingCondition
-import org.axonframework.eventsourcing.eventstore.AggregateSequenceNumberPosition
+import org.axonframework.eventsourcing.eventstore.GlobalIndexPosition
 import org.axonframework.eventsourcing.eventstore.TerminalEventMessage
 import org.axonframework.messaging.eventstreaming.EventCriteria
 import org.axonframework.messaging.eventstreaming.Tag
 import org.axonframework.messaging.core.GenericMessage
 import org.axonframework.messaging.core.MessageType
-import org.axonframework.messaging.core.LegacyResources
+import org.axonframework.messaging.eventhandling.processing.streaming.token.TrackingToken
 import org.quizmania.game.api.GameId
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -32,12 +32,12 @@ class GameEventsController(
   @GetMapping("/{gameId}/events")
   fun getGameEvents(
     @PathVariable("gameId") gameId: String,
-    @RequestParam("firstSeqNo", defaultValue = "0", required = false) firstSeqNo: Long,
+    @RequestParam("afterCursor", defaultValue = "0", required = false) afterCursor: Long,
   ): ResponseEntity<List<GameEventWrapperDto>> {
-    require(firstSeqNo >= 0) { "firstSeqNo must not be negative" }
+    require(afterCursor >= 0) { "afterCursor must not be negative" }
     val id = UUID.fromString(gameId)
     val condition = SourcingCondition.conditionFor(
-      AggregateSequenceNumberPosition(firstSeqNo), EventCriteria.havingTags(Tag("GameAggregate", id.toString())),
+      GlobalIndexPosition(afterCursor), EventCriteria.havingTags(Tag("gameId", id.toString())),
     )
     val events = eventStore.source(condition)
       .filter { it.message() !is TerminalEventMessage }
@@ -45,7 +45,7 @@ class GameEventsController(
         val payload = event.payload()
         GenericMessage(MessageType(GameEventWrapperDto::class.java), GameEventWrapperDto(
           gameId = id,
-          sequenceNumber = requireNotNull(entry.getResource(LegacyResources.AGGREGATE_SEQUENCE_NUMBER_KEY)),
+          cursor = requireNotNull(entry.getResource(TrackingToken.RESOURCE_KEY)).position().orElseThrow().toString(),
           timestamp = event.timestamp(),
           eventType = event.type().qualifiedName().localName(),
           payload = if (payload is ByteArray) payload.toString(Charsets.UTF_8) else objectMapper.writeValueAsString(payload),
@@ -59,7 +59,7 @@ class GameEventsController(
 
 data class GameEventWrapperDto(
   val gameId: GameId,
-  val sequenceNumber: Long,
+  val cursor: String,
   val timestamp: Instant,
   val eventType: String,
   @JsonRawValue
