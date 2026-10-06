@@ -14,10 +14,8 @@ import org.quizmania.game.GameEventFixtures.Companion.questionAsked
 import org.quizmania.game.GameEventFixtures.Companion.questionBuzzed
 import org.quizmania.game.GameEventFixtures.Companion.questionBuzzerWon
 import org.quizmania.game.GameEventFixtures.Companion.roundStarted
-import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
 import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
 import org.quizmania.game.api.*
-import org.quizmania.question.api.RoundConfig
 
 class ParticipationHandlerTest : GameCommandHandlerTest() {
   @Test
@@ -81,7 +79,7 @@ class ParticipationHandlerTest : GameCommandHandlerTest() {
   }
 
   @Test
-  fun leavingClosesQuestionWhenRemainingPlayersAnswered() {
+  fun leavingCollectiveQuestionOnlyRecordsTheDeparture() {
     fixture
       .given()
       .events(*collectiveHistory())
@@ -91,13 +89,11 @@ class ParticipationHandlerTest : GameCommandHandlerTest() {
       .`when`()
       .command(GameCommandFixtures.removePlayer(USERNAME_2))
       .then()
-      .events(
-        playerRemoved(USERNAME_2, GAME_PLAYER_2), QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
-      )
+      .events(playerRemoved(USERNAME_2, GAME_PLAYER_2))
   }
 
   @Test
-  fun departedBuzzerWinnerPromotesQueuedPlayer() {
+  fun leavingAsBuzzerWinnerOnlyRecordsTheDeparture() {
     fixture
       .given()
       .events(*buzzerHistory())
@@ -108,9 +104,7 @@ class ParticipationHandlerTest : GameCommandHandlerTest() {
       .`when`()
       .command(GameCommandFixtures.removePlayer(USERNAME_1))
       .then()
-      .events(
-        playerRemoved(USERNAME_1, GAME_PLAYER_1), questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_2),
-      )
+      .events(playerRemoved(USERNAME_1, GAME_PLAYER_1))
   }
 
   private fun collectiveHistory() = arrayOf(
@@ -123,7 +117,7 @@ class ParticipationHandlerTest : GameCommandHandlerTest() {
   private fun buzzerHistory() = arrayOf(
     gameCreated(moderator = "Moderator"), playerAdded(USERNAME_1, GAME_PLAYER_1),
     playerAdded(USERNAME_2, GAME_PLAYER_2), gameStarted(),
-    roundStarted().copy(roundConfig = RoundConfig(useBuzzer = true)),
-    questionAsked(GAME_QUESTION_1, 1, question = choiceQuestion(), mode = GameQuestionMode.BUZZER),
+    roundStarted(),
+    questionAsked(GAME_QUESTION_1, 1, question = freeInputQuestion(), mode = GameQuestionMode.BUZZER),
   )
 }

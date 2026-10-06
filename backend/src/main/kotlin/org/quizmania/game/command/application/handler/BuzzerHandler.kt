@@ -13,48 +13,45 @@ import java.util.UUID
 @Component
 class BuzzerHandler : GameCommandHandler() {
   @CommandHandler
-  fun handle(command: BuzzQuestionCommand, @InjectEntity game: GameState, @InjectEntity progress: ProgressionState,
-    @InjectEntity players: ParticipationState,
+  fun handle(command: BuzzQuestionCommand, @InjectEntity game: GameState,
     @InjectEntity(idProperty = "gameQuestionId") question: QuestionState,
     @InjectEntity(idProperty = "gameQuestionId") buzzer: BuzzerState, appender: EventAppender,
   ) {
-    QuestionDecisions.assertTarget(game, progress, question, command.gameQuestionId)
+    game.assertStarted()
+    question.assertBelongsTo(command.gameId)
     assertBuzzer(question)
-    val player = QuestionDecisions.assertEligible(game, question, players, command.username)
+    val player = QuestionDecisions.assertEligible(game, question, command.username)
     if (player in buzzer.buzzes) throw QuestionAlreadyBuzzedProblem(command.gameId, command.gameQuestionId, player)
     val now = Instant.now()
     val timestamp = if (command.buzzerTimestamp.isBefore(now.minusMillis(500))) now else command.buzzerTimestamp
     val events = mutableListOf<GameEvent>(QuestionBuzzedEvent(command.gameId, command.gameQuestionId, player, timestamp))
     if (buzzer.windowId == null && buzzer.winner == null)
       events += BuzzerCollectionStartedEvent(command.gameId, command.gameQuestionId, UUID.randomUUID(), now.plusMillis(500))
-    appender.append(*events.toTypedArray())
+    appender.append(events)
   }
 
   @CommandHandler
-  fun handle(command: EvaluateBuzzesCommand, @InjectEntity game: GameState, @InjectEntity progress: ProgressionState,
-    @InjectEntity players: ParticipationState,
+  fun handle(command: EvaluateBuzzesCommand, @InjectEntity game: GameState,
     @InjectEntity(idProperty = "gameQuestionId") question: QuestionState,
     @InjectEntity(idProperty = "gameQuestionId") answers: AnswersState,
     @InjectEntity(idProperty = "gameQuestionId") buzzer: BuzzerState, appender: EventAppender,
   ) {
-    if (game.status != GameStatus.STARTED || progress.questionId != command.gameQuestionId ||
-        question.asked.gameId != command.gameId || !question.isOpen ||
+    if (game.status != GameStatus.STARTED || question.asked.gameId != command.gameId || !question.isOpen ||
         buzzer.winner != null || buzzer.windowId != command.windowId) return
     appender.append(QuestionDecisions.selectBuzzer(question, buzzer, answers.answeredPlayers,
-      QuestionDecisions.eligible(question, players)))
+      QuestionDecisions.eligible(question, game)))
   }
 
   @CommandHandler
-  fun handle(command: AnswerBuzzerQuestionCommand, @InjectEntity game: GameState, @InjectEntity progress: ProgressionState,
-    @InjectEntity players: ParticipationState,
+  fun handle(command: AnswerBuzzerQuestionCommand, @InjectEntity game: GameState,
     @InjectEntity(idProperty = "gameQuestionId") question: QuestionState,
     @InjectEntity(idProperty = "gameQuestionId") answers: AnswersState,
     @InjectEntity(idProperty = "gameQuestionId") buzzer: BuzzerState, appender: EventAppender,
   ) {
-    QuestionDecisions.assertTarget(game, progress, question, command.gameQuestionId)
+    game.assertStarted()
+    question.assertBelongsTo(command.gameId)
     assertBuzzer(question)
     val winner = buzzer.winner ?: throw NoBuzzerWinnerProblem(command.gameId, command.gameQuestionId)
-    if (winner !in QuestionDecisions.eligible(question, players)) throw NoBuzzerWinnerProblem(command.gameId, command.gameQuestionId)
     if (winner in answers.answeredPlayers) throw QuestionAlreadyAnsweredProblem(command.gameId, command.gameQuestionId, winner)
     val answer = QuestionAnsweredEvent(command.gameId, command.gameQuestionId, winner, UUID.randomUUID(),
       if (command.answerCorrect) question.asked.question.correctAnswer else "", 0)
@@ -63,9 +60,9 @@ class BuzzerHandler : GameCommandHandler() {
       events += QuestionDecisions.close(game, question, answers.answers + PlayerAnswer(answer.playerAnswerId, winner, answer.answer))
     } else {
       events += QuestionDecisions.selectBuzzer(question, buzzer, answers.answeredPlayers + winner,
-        QuestionDecisions.eligible(question, players))
+        QuestionDecisions.eligible(question, game))
     }
-    appender.append(*events.toTypedArray())
+    appender.append(events)
   }
 
   private fun assertBuzzer(question: QuestionState) {

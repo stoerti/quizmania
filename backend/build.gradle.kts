@@ -41,14 +41,19 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.session:spring-session-core")
 
-  implementation(platform("io.axoniq.framework:axoniq-framework-bom:5.3.3"))
+  implementation(platform("io.axoniq.framework:axoniq-framework-bom:5.4.0-RC1"))
   implementation("io.axoniq.framework:axoniq-spring-boot-starter")
+  implementation("io.axoniq.framework:axon-server-connector:5.4.0-RC1")
+  implementation("io.axoniq.framework:axoniq-workflow-engine:5.4.0-RC1")
+  implementation("io.axoniq.framework:axoniq-workflow-dsl-kotlin:5.4.0-RC1")
   // Retain the historical Liquibase changelog resource without starting a Quartz scheduler.
   runtimeOnly("org.quartz-scheduler:quartz")
 
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.16")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  // The 5.4 workflow preview uses annotations introduced in Jackson 2.22.
+  implementation("com.fasterxml.jackson.core:jackson-annotations:2.22")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.liquibase:liquibase-core")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -71,6 +76,7 @@ dependencies {
   testImplementation("org.testcontainers:postgresql")
   testImplementation("org.axonframework:axon-test")
   testImplementation("io.axoniq.framework:axoniq-testcontainer")
+  testImplementation("io.axoniq.framework:axoniq-workflow-test:5.4.0-RC1")
   testRuntimeOnly("org.postgresql:postgresql")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

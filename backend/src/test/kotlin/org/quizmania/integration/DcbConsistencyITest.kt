@@ -28,7 +28,7 @@ class DcbConsistencyITest : AbstractSpringIntegrationTest() {
   @Autowired private lateinit var axon: Configuration
 
   @Test
-  fun `a roster change invalidates a decision that read participation`() {
+  fun `a roster change invalidates a decision that read game state`() {
     val id = createGame()
     val loaded = CompletableFuture<Void>()
     val release = CompletableFuture<Void>().orTimeout(15, TimeUnit.SECONDS)
@@ -36,8 +36,6 @@ class DcbConsistencyITest : AbstractSpringIntegrationTest() {
       axon.getComponent(UnitOfWorkFactory::class.java).create().executeWithResult { context ->
         val manager = context.component(StateManager::class.java)
         manager.loadEntity(GameState::class.java, id, context).thenCompose {
-          manager.loadEntity(ParticipationState::class.java, id, context)
-        }.thenCompose {
           loaded.complete(null)
           release.thenApply {
             EventAppender.forContext(context).append(PlayerJoinedGameEvent(id, UUID.randomUUID(), "candidate"))
@@ -57,31 +55,6 @@ class DcbConsistencyITest : AbstractSpringIntegrationTest() {
       .hasCauseInstanceOf(org.axonframework.eventsourcing.eventstore.AppendEventsTransactionRejectedException::class.java)
     assertThat(events.getGameEvents(id.toString(), 0).body!!.map { it.payload })
       .noneMatch { it.contains("candidate") }
-  }
-
-  @Test
-  fun `a roster change does not invalidate an independent lifecycle decision`() {
-    val id = createGame()
-    val loaded = CompletableFuture<Void>()
-    val release = CompletableFuture<Void>().orTimeout(15, TimeUnit.SECONDS)
-    val pending = CompletableFuture.supplyAsync {
-      axon.getComponent(UnitOfWorkFactory::class.java).create().executeWithResult { context ->
-        context.component(StateManager::class.java).loadEntity(GameState::class.java, id, context).thenCompose {
-          loaded.complete(null)
-          release.thenApply { EventAppender.forContext(context).append(GameCanceledEvent(id)) }
-        }
-      }
-    }.thenCompose { it }
-
-    try {
-      loaded.get(10, TimeUnit.SECONDS)
-      commands.joinGame(id, OTHER_USERNAME)
-    } finally {
-      release.complete(null)
-    }
-
-    pending.get(10, TimeUnit.SECONDS)
-    assertThat(events.getGameEvents(id.toString(), 0).body!!.last().eventType).isEqualTo("GameCanceledEvent")
   }
 
   @Test
@@ -119,15 +92,13 @@ class DcbConsistencyITest : AbstractSpringIntegrationTest() {
       axon.getComponent(UnitOfWorkFactory::class.java).create().executeWithResult { context ->
         val manager = context.component(StateManager::class.java)
         val game = manager.loadEntity(GameState::class.java, id, context).join()!!
-        val participation = manager.loadEntity(ParticipationState::class.java, id, context).join()!!
-        val progress = manager.loadEntity(ProgressionState::class.java, id, context).join()!!
         val questionState = manager.loadEntity(QuestionState::class.java, question.gameQuestionId, context).join()!!
         val answers = manager.loadEntity(AnswersState::class.java, question.gameQuestionId, context).join()!!
         val buzzer = manager.loadEntity(BuzzerState::class.java, question.gameQuestionId, context).join()!!
         loaded.complete(null)
         release.thenApply {
           BuzzerHandler().handle(
-            evaluation, game, progress, participation, questionState, answers, buzzer,
+            evaluation, game, questionState, answers, buzzer,
             EventAppender.forContext(context),
           )
         }

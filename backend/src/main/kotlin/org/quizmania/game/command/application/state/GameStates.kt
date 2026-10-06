@@ -7,6 +7,8 @@ import org.axonframework.extension.spring.stereotype.EventSourced
 import org.axonframework.messaging.eventstreaming.EventCriteria
 import org.axonframework.messaging.eventstreaming.Tag
 import org.quizmania.game.api.*
+import org.quizmania.question.api.QuestionSet
+import org.quizmania.question.api.Round
 import java.util.UUID
 
 internal fun criteria(tag: String, id: UUID, vararg types: Class<*>): EventCriteria =
@@ -14,46 +16,95 @@ internal fun criteria(tag: String, id: UUID, vararg types: Class<*>): EventCrite
 
 enum class GameStatus { CREATED, STARTED, ENDED, CANCELED }
 
-/** Lifecycle and immutable game rules; no players, answers, or nested entities. */
+/** Game configuration, lifecycle, and participation; no round progression or question details. */
 @EventSourced(idType = UUID::class, tagKey = "gameId")
-class GameState @EntityCreator constructor() {
-  final lateinit var created: GameCreatedEvent
-    private set
-  final var status = GameStatus.CREATED
-    private set
+class GameState private constructor(
+  val gameId: GameId,
+  val config: GameConfig,
+  val rounds: List<Round>,
+  val moderatorUsername: String?,
+  val status: GameStatus,
+  private val players: Map<GamePlayerId, String>,
+) {
+  @EntityCreator
+  constructor(event: GameCreatedEvent) : this(
+    gameId = event.gameId,
+    config = event.config,
+    rounds = event.rounds.toList(),
+    moderatorUsername = event.moderatorUsername,
+    status = GameStatus.CREATED,
+    players = emptyMap(),
+  )
 
-  @EventSourcingHandler fun on(event: GameCreatedEvent) { created = event }
-  @EventSourcingHandler fun on(event: GameStartedEvent) { status = GameStatus.STARTED }
-  @EventSourcingHandler fun on(event: GameEndedEvent) { status = GameStatus.ENDED }
-  @EventSourcingHandler fun on(event: GameCanceledEvent) { status = GameStatus.CANCELED }
-
-  fun assertStarted() {
-    if (status != GameStatus.STARTED) throw GameAlreadyEndedProblem(created.gameId)
-  }
-
-  companion object {
-    @JvmStatic @EventCriteriaBuilder
-    fun resolve(id: UUID) = criteria("gameId", id, GameCreatedEvent::class.java, GameStartedEvent::class.java,
-      GameEndedEvent::class.java, GameCanceledEvent::class.java)
-  }
-}
-
-@EventSourced(idType = UUID::class, tagKey = "gameId")
-class ParticipationState @EntityCreator constructor() {
-  private val players = linkedMapOf<GamePlayerId, String>()
   val activePlayerIds: Set<GamePlayerId> get() = players.keys.toSet()
   val size: Int get() = players.size
 
-  @EventSourcingHandler fun on(event: GameCreatedEvent) { players.clear() }
-  @EventSourcingHandler fun on(event: PlayerJoinedGameEvent) { players[event.gamePlayerId] = event.username }
-  @EventSourcingHandler fun on(event: PlayerLeftGameEvent) { players.remove(event.gamePlayerId) }
+  @EventSourcingHandler
+  fun evolve(event: GameStartedEvent): GameState = withStatus(GameStatus.STARTED)
+
+  @EventSourcingHandler
+  fun evolve(event: GameEndedEvent): GameState = withStatus(GameStatus.ENDED)
+
+  @EventSourcingHandler
+  fun evolve(event: GameCanceledEvent): GameState = withStatus(GameStatus.CANCELED)
+
+  @EventSourcingHandler
+  fun evolve(event: PlayerJoinedGameEvent): GameState = withPlayers(players + (event.gamePlayerId to event.username))
+
+  @EventSourcingHandler
+  fun evolve(event: PlayerLeftGameEvent): GameState = withPlayers(players - event.gamePlayerId)
+
+  fun decide(command: JoinGameCommand): List<GameEvent> {
+    if (status == GameStatus.ENDED || status == GameStatus.CANCELED) throw GameAlreadyEndedProblem(command.gameId)
+    if (size >= config.maxPlayers) throw GameAlreadyFullProblem(command.gameId)
+    if (findPlayer(command.username) != null || command.username == moderatorUsername)
+      throw UsernameTakenProblem(command.gameId)
+    return listOf(PlayerJoinedGameEvent(command.gameId, UUID.randomUUID(), command.username))
+  }
+
+  fun decide(command: LeaveGameCommand): List<GameEvent> {
+    if (command.username == moderatorUsername) {
+      return if (status == GameStatus.ENDED || status == GameStatus.CANCELED) emptyList()
+      else listOf(GameCanceledEvent(command.gameId))
+    }
+    val player = findPlayer(command.username) ?: return emptyList()
+    return buildList {
+      add(PlayerLeftGameEvent(command.gameId, player, command.username))
+      if (this@GameState.size == 1 && status != GameStatus.ENDED && status != GameStatus.CANCELED)
+        add(GameCanceledEvent(command.gameId))
+    }
+  }
+
+  fun decide(command: AbandonGameCommand): List<GameEvent> =
+    if (status == GameStatus.CANCELED || status == GameStatus.ENDED) emptyList()
+    else listOf(GameCanceledEvent(command.gameId))
+
+  fun assertStarted() {
+    if (status != GameStatus.STARTED) throw GameAlreadyEndedProblem(gameId)
+  }
 
   fun findPlayer(username: String): GamePlayerId? = players.entries.find { it.value == username }?.key
-  fun player(gameId: GameId, username: String) = findPlayer(username) ?: throw PlayerNotFoundProblem(gameId, username)
+  fun player(username: String) = findPlayer(username) ?: throw PlayerNotFoundProblem(gameId, username)
+
+  private fun withStatus(status: GameStatus) = GameState(gameId, config, rounds, moderatorUsername, status, players)
+
+  private fun withPlayers(players: Map<GamePlayerId, String>) =
+    GameState(gameId, config, rounds, moderatorUsername, status, players)
 
   companion object {
+    fun decide(command: CreateGameCommand, questionSet: QuestionSet): List<GameEvent> {
+      if (questionSet.rounds.isEmpty() || questionSet.rounds.any { it.questions.isEmpty() })
+        throw InvalidConfigProblem(command.gameId, "A game needs rounds with questions")
+      if (questionSet.rounds.any { it.roundConfig.useBuzzer } && command.moderatorUsername == null)
+        throw InvalidConfigProblem(command.gameId, "Buzzer game needs a moderator")
+
+      return listOf(GameCreatedEvent(command.gameId, command.name, command.config, questionSet.rounds,
+        command.creatorUsername, command.moderatorUsername))
+    }
+
     @JvmStatic @EventCriteriaBuilder
-    fun resolve(id: UUID) = criteria("gameId", id, GameCreatedEvent::class.java,
+    fun resolve(id: UUID) = criteria("gameId", id, GameCreatedEvent::class.java, GameStartedEvent::class.java,
+      GameEndedEvent::class.java, GameCanceledEvent::class.java,
       PlayerJoinedGameEvent::class.java, PlayerLeftGameEvent::class.java)
   }
 }
@@ -83,10 +134,6 @@ class ProgressionState @EntityCreator constructor() {
   @EventSourcingHandler fun on(event: QuestionAskedEvent) { questionId = event.gameQuestionId }
   @EventSourcingHandler fun on(event: QuestionClosedEvent) { finishedQuestions++ }
   @EventSourcingHandler fun on(event: QuestionScoredEvent) { questionId = null }
-
-  fun assertCurrent(gameId: GameId, id: GameQuestionId) {
-    if (questionId != id) throw QuestionNotFoundProblem(gameId, id)
-  }
 
   companion object {
     @JvmStatic @EventCriteriaBuilder

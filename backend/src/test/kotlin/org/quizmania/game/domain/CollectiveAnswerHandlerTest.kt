@@ -33,7 +33,7 @@ class CollectiveAnswerHandlerTest : GameCommandHandlerTest() {
   }
 
   @Test
-  fun answerChoiceQuestion_complete_ok() {
+  fun answeringLastChoiceQuestionOnlyRecordsTheAnswer() {
     fixture
       .given()
       .events(
@@ -44,15 +44,11 @@ class CollectiveAnswerHandlerTest : GameCommandHandlerTest() {
       .`when`()
       .command(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2"))
       .then()
-      .events(
-        questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "Answer 2"),
-        QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
-        QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_PLAYER_1 to 10)),
-      )
+      .events(questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "Answer 2"))
   }
 
   @Test
-  fun answerFreeInputQuestion_complete_ok() {
+  fun answeringLastFreeInputQuestionOnlyRecordsTheAnswer() {
     fixture
       .given()
       .events(
@@ -64,14 +60,11 @@ class CollectiveAnswerHandlerTest : GameCommandHandlerTest() {
       .`when`()
       .command(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2"))
       .then()
-      .events(
-        questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "Answer 2"),
-        QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
-      )
+      .events(questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "Answer 2"))
   }
 
   @Test
-  fun answerEstimateQuestion_complete_ok() {
+  fun answeringLastEstimateQuestionOnlyRecordsTheAnswer() {
     fixture
       .given()
       .events(
@@ -82,11 +75,7 @@ class CollectiveAnswerHandlerTest : GameCommandHandlerTest() {
       .`when`()
       .command(answerQuestion(GAME_QUESTION_1, USERNAME_2, "150"))
       .then()
-      .events(
-        questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "150"),
-        QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
-        QuestionScoredEvent(GAME_UUID, GAME_QUESTION_1, mapOf(GAME_PLAYER_1 to 20, GAME_PLAYER_2 to 10)),
-      )
+      .events(questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "150"))
   }
 
   @Test
@@ -103,7 +92,7 @@ class CollectiveAnswerHandlerTest : GameCommandHandlerTest() {
   }
 
   @Test
-  fun lateJoinerDoesNotPreventAutomaticClosure() {
+  fun lateJoinerDoesNotChangeAnswerHandling() {
     fixture
       .given()
       .events(*collectiveHistory())
@@ -114,14 +103,11 @@ class CollectiveAnswerHandlerTest : GameCommandHandlerTest() {
       .`when`()
       .command(answerQuestion(GAME_QUESTION_1, USERNAME_2, "Answer 2"))
       .then()
-      .events(
-        questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "Answer 2"),
-        QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1),
-      )
+      .events(questionAnswered(GAME_QUESTION_1, GAME_PLAYER_2, UUID.randomUUID(), "Answer 2"))
   }
 
   @Test
-  fun staleInteractiveAnswerCannotAnswerNextQuestion() {
+  fun staleInteractiveAnswerCannotAnswerClosedQuestion() {
     fixture
       .given()
       .events(*collectiveHistory())
@@ -133,7 +119,7 @@ class CollectiveAnswerHandlerTest : GameCommandHandlerTest() {
       .command(answerQuestion(GAME_QUESTION_1, USERNAME_1, "Answer 1"))
       .then()
       .exception(CommandExecutionException::class.java)
-      .exceptionSatisfies { assertThat(it.cause).isInstanceOf(QuestionNotFoundProblem::class.java) }
+      .exceptionSatisfies { assertThat(it.cause).isInstanceOf(QuestionAlreadyClosedProblem::class.java) }
   }
 
   private fun collectiveHistory() = arrayOf(

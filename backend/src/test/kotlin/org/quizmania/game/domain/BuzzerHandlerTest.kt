@@ -165,6 +165,27 @@ class BuzzerHandlerTest : GameCommandHandlerTest() {
   }
 
   @Test
+  fun buzzerQuestion_departedWinnerCanBeMarkedWrongAndQueuedPlayerWins() {
+    val question = choiceQuestion()
+    fixture
+      .given()
+      .events(
+        gameCreated(moderator = "Moderator"), playerAdded(USERNAME_1, GAME_PLAYER_1), playerAdded(USERNAME_2, GAME_PLAYER_2),
+        gameStarted(), roundStarted().copy(roundConfig = RoundConfig(useBuzzer = true)),
+        questionAsked(GAME_QUESTION_1, 1, 1, question, GameQuestionMode.BUZZER),
+        questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_1), questionBuzzed(GAME_QUESTION_1, GAME_PLAYER_2),
+        questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_1), playerRemoved(USERNAME_1, GAME_PLAYER_1),
+      )
+      .`when`()
+      .command(answerBuzzerQuestion(GAME_QUESTION_1, false))
+      .then()
+      .events(
+        questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, UUID.randomUUID(), ""),
+        questionBuzzerWon(GAME_QUESTION_1, GAME_PLAYER_2),
+      )
+  }
+
+  @Test
   fun buzzerQuestion_playerAnswersCorrect_questionClosed() {
     val question = choiceQuestion()
     fixture

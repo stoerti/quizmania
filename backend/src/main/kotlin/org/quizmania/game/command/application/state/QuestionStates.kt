@@ -26,6 +26,10 @@ class QuestionState @EntityCreator constructor() {
     if (!isOpen) throw QuestionAlreadyClosedProblem(asked.gameId, asked.gameQuestionId)
   }
 
+  fun assertBelongsTo(gameId: GameId) {
+    if (asked.gameId != gameId) throw QuestionNotFoundProblem(gameId, asked.gameQuestionId)
+  }
+
   companion object {
     @JvmStatic @EventCriteriaBuilder
     fun resolve(id: UUID) = criteria("gameQuestionId", id, QuestionAskedEvent::class.java,

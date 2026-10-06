@@ -20,6 +20,34 @@ import java.util.UUID
 
 class QuestionCompletionHandlerTest : GameCommandHandlerTest() {
   @Test
+  fun completeQuestionIfReady_closesWhenAllRemainingPlayersAnswered() {
+    fixture
+      .given()
+      .events(*collectiveHistory())
+      .events(
+        questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, PLAYER_ANSWER_1, "Answer 1"),
+        playerRemoved(USERNAME_2, GAME_PLAYER_2),
+      )
+      .`when`()
+      .command(CompleteQuestionIfReadyCommand(GAME_UUID, GAME_QUESTION_1))
+      .then()
+      .events(QuestionClosedEvent(GAME_UUID, GAME_QUESTION_1))
+  }
+
+  @Test
+  fun completeQuestionIfReady_ignoresQuestionWithOutstandingPlayer() {
+    fixture
+      .given()
+      .events(*collectiveHistory())
+      .events(questionAnswered(GAME_QUESTION_1, GAME_PLAYER_1, PLAYER_ANSWER_1, "Answer 1"))
+      .`when`()
+      .command(CompleteQuestionIfReadyCommand(GAME_UUID, GAME_QUESTION_1))
+      .then()
+      .success()
+      .noEvents()
+  }
+
+  @Test
   fun expireQuestion_closesOpenQuestion() {
     fixture
       .given()

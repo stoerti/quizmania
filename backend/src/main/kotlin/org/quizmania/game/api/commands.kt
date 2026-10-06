@@ -112,6 +112,16 @@ data class ExpireQuestionCommand(
     val gameQuestionId: UUID,
 ): GameCommand
 
+/**
+ * Idempotent workflow command that closes a collective question only when every
+ * player who is still eligible has answered it.
+ */
+data class CompleteQuestionIfReadyCommand(
+    @TargetEntityId
+    override val gameId: UUID,
+    val gameQuestionId: UUID,
+): GameCommand
+
 data class ScoreQuestionCommand(
     @TargetEntityId
     override val gameId: UUID,

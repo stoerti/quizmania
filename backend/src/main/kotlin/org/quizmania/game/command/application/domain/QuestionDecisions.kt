@@ -6,14 +6,14 @@ import org.quizmania.question.api.QuestionType
 
 /** Shared pure decisions. States never load one another or emit events. */
 object QuestionDecisions {
-  fun eligible(question: QuestionState, players: ParticipationState): Set<GamePlayerId> =
-    question.asked.eligiblePlayerIds.intersect(players.activePlayerIds)
+  fun eligible(question: QuestionState, game: GameState): Set<GamePlayerId> =
+    question.asked.eligiblePlayerIds.intersect(game.activePlayerIds)
 
   fun close(game: GameState, question: QuestionState, answers: List<PlayerAnswer>): List<GameEvent> {
     question.assertOpen()
     val asked = question.asked
     val events = mutableListOf<GameEvent>(QuestionClosedEvent(asked.gameId, asked.gameQuestionId))
-    val waitsForReview = game.created.moderatorUsername != null &&
+    val waitsForReview = game.moderatorUsername != null &&
       asked.questionMode == GameQuestionMode.COLLECTIVE && asked.question.type == QuestionType.FREE_INPUT
     if (!waitsForReview) events.add(score(question, answers))
     return events
@@ -36,16 +36,10 @@ object QuestionDecisions {
     else QuestionBuzzerWonEvent(asked.gameId, asked.gameQuestionId, winner)
   }
 
-  fun assertTarget(game: GameState, progress: ProgressionState, question: QuestionState, id: GameQuestionId) {
-    game.assertStarted()
-    progress.assertCurrent(game.created.gameId, id)
-    if (question.asked.gameId != game.created.gameId) throw QuestionNotFoundProblem(game.created.gameId, id)
-  }
-
-  fun assertEligible(game: GameState, question: QuestionState, players: ParticipationState, username: String): GamePlayerId {
-    val player = players.player(game.created.gameId, username)
-    if (player !in eligible(question, players)) {
-      throw GameProblem(game.created.gameId, "urn:quizmania:question:playerNotEligible",
+  fun assertEligible(game: GameState, question: QuestionState, username: String): GamePlayerId {
+    val player = game.player(username)
+    if (player !in eligible(question, game)) {
+      throw GameProblem(game.gameId, "urn:quizmania:question:playerNotEligible",
         "Player joined after this question started")
     }
     return player
