@@ -21,10 +21,4 @@ class SchedulingConfig {
     setThreadNamePrefix("scheduled-job-")
   }
 
-  @Bean
-  fun gameTimerScheduler() = ThreadPoolTaskScheduler().apply {
-    poolSize = 2
-    setThreadNamePrefix("game-timer-")
-    setExecuteExistingDelayedTasksAfterShutdownPolicy(false)
-  }
 }

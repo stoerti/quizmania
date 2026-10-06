@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.Awaitility.await
 import org.quizmania.game.api.GameId
 import org.quizmania.game.api.GameQuestionId
+import org.quizmania.rest.adapter.`in`.rest.GameEventsController
 import org.quizmania.rest.adapter.`in`.rest.GameReadController
 import org.quizmania.rest.application.domain.GameStatus
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,8 +21,14 @@ class BaseThenStage : Stage<BaseThenStage>() {
   @Autowired
   private lateinit var gameReadController: GameReadController
 
+  @Autowired
+  private lateinit var gameEventsController: GameEventsController
+
   @ExpectedScenarioState
   private lateinit var gameId: GameId
+
+  @ExpectedScenarioState
+  private lateinit var gameQuestionId: GameQuestionId
 
   fun `the game can be queried`() = step {
     await()
@@ -52,6 +59,17 @@ class BaseThenStage : Stage<BaseThenStage>() {
       .atMost(10, TimeUnit.SECONDS)
       .untilAsserted {
         assertThat(gameReadController.get(gameId).body!!.players).hasSize(numPlayers)
+      }
+  }
+
+  fun `the current question is closed`() = step {
+    await()
+      .atMost(10, TimeUnit.SECONDS)
+      .untilAsserted {
+        val questionClosed = gameEventsController.getGameEvents(gameId.toString(), 0).body!!
+          .filter { it.eventType == "QuestionClosedEvent" }
+          .any { it.payload.contains(gameQuestionId.toString()) }
+        assertThat(questionClosed).isTrue()
       }
   }
 }

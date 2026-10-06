@@ -16,8 +16,9 @@ enum class QuestionType(
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.PROPERTY,
-    property = "type"
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
+    property = "type",
+    visible = true,
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = ChoiceQuestion::class, name = "CHOICE"),

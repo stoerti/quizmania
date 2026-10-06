@@ -24,7 +24,6 @@ abstract class GameCommandHandlerTest {
 
     val configurer = EventSourcingConfigurer.create()
       .registerEntity(EventSourcedEntityModule.autodetected(UUID::class.java, GameState::class.java))
-      .registerEntity(EventSourcedEntityModule.autodetected(UUID::class.java, ParticipationState::class.java))
       .registerEntity(EventSourcedEntityModule.autodetected(UUID::class.java, ProgressionState::class.java))
       .registerEntity(EventSourcedEntityModule.autodetected(UUID::class.java, QuestionState::class.java))
       .registerEntity(EventSourcedEntityModule.autodetected(UUID::class.java, AnswersState::class.java))

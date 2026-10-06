@@ -29,6 +29,19 @@ class GameITest : AbstractSpringIntegrationTest() {
       .`the game is started`()
   }
 
+  @Test
+  fun `collective question closes when every player answered`() {
+    GIVEN
+      .`a game is created by user $`(USERNAME)
+      .`the game starts`()
+
+    WHEN
+      .`user $ answers the current question`(USERNAME)
+
+    THEN
+      .`the current question is closed`()
+  }
+
   companion object {
     private const val USERNAME = "test-user"
   }

@@ -1,5 +1,6 @@
 package org.quizmania.integration._jgiven
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.tngtech.jgiven.Stage
 import com.tngtech.jgiven.annotation.ProvidedScenarioState
 import com.tngtech.jgiven.annotation.Quoted
@@ -11,12 +12,15 @@ import org.quizmania.game.api.GameConfig
 import org.quizmania.game.api.GameId
 import org.quizmania.game.api.GameQuestionId
 import org.quizmania.question.api.QuestionSetId
+import org.quizmania.rest.adapter.`in`.rest.AnswerDto
 import org.quizmania.rest.adapter.`in`.rest.GameCommandController
+import org.quizmania.rest.adapter.`in`.rest.GameEventsController
 import org.quizmania.rest.adapter.`in`.rest.GameReadController
 import org.quizmania.rest.adapter.`in`.rest.NewGameDto
 import org.quizmania.rest.application.domain.GameStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -29,8 +33,17 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
   @Autowired
   private lateinit var gameReadController: GameReadController
 
+  @Autowired
+  private lateinit var gameEventsController: GameEventsController
+
+  @Autowired
+  private lateinit var objectMapper: ObjectMapper
+
   @ProvidedScenarioState
   private lateinit var gameId: GameId
+
+  @ProvidedScenarioState
+  private lateinit var gameQuestionId: GameQuestionId
 
   fun `a game is created by user $`(
     @Quoted username: String,
@@ -98,6 +111,27 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
           val game = exchangeSuccessfully { gameReadController.get(gameId) }
           assertThat(game.players.filter { it.name == username }).isNotEmpty
         }
+    }
+  }
+
+  fun `user $ answers the current question`(@Quoted username: String) = step {
+    Awaitility.await()
+      .atMost(10, TimeUnit.SECONDS)
+      .untilAsserted {
+        val questionAsked = gameEventsController.getGameEvents(gameId.toString(), 0).body!!
+          .lastOrNull { it.eventType == "QuestionAskedEvent" }
+        assertThat(questionAsked).isNotNull
+        gameQuestionId = UUID.fromString(
+          objectMapper.readTree(questionAsked!!.payload).get("gameQuestionId").asText()
+        )
+      }
+
+    executeSuccessfully {
+      gameCommandController.answerQuestion(
+        gameId,
+        username,
+        AnswerDto(gameQuestionId, "integration answer", Instant.now()),
+      )
     }
   }
 
