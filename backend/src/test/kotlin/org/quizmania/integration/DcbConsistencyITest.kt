@@ -92,13 +92,11 @@ class DcbConsistencyITest : AbstractSpringIntegrationTest() {
       axon.getComponent(UnitOfWorkFactory::class.java).create().executeWithResult { context ->
         val manager = context.component(StateManager::class.java)
         val game = manager.loadEntity(GameState::class.java, id, context).join()!!
-        val questionState = manager.loadEntity(QuestionState::class.java, question.gameQuestionId, context).join()!!
-        val answers = manager.loadEntity(AnswersState::class.java, question.gameQuestionId, context).join()!!
-        val buzzer = manager.loadEntity(BuzzerState::class.java, question.gameQuestionId, context).join()!!
+        val questionState = manager.loadEntity(GameQuestionState::class.java, question.gameQuestionId, context).join()!!
         loaded.complete(null)
         release.thenApply {
           BuzzerHandler().handle(
-            evaluation, game, questionState, answers, buzzer,
+            evaluation, game, questionState,
             EventAppender.forContext(context),
           )
         }

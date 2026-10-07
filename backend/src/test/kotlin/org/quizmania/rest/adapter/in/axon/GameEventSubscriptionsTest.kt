@@ -1,10 +1,9 @@
-package org.quizmania.game
+package org.quizmania.rest.adapter.`in`.axon
 
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.quizmania.game.api.GameEvent
-import org.quizmania.rest.adapter.`in`.axon.SubscribingGameEventListener
 import kotlin.reflect.KClass
 
 class GameEventSubscriptionsTest {

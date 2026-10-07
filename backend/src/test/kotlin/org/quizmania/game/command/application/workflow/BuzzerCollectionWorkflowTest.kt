@@ -1,4 +1,4 @@
-package org.quizmania.game
+package org.quizmania.game.command.application.workflow
 
 import io.axoniq.framework.workflow.dsl.api.WorkflowStatus
 import io.axoniq.framework.workflow.dsl.kotlin.WorkflowKontext
@@ -12,8 +12,9 @@ import org.axonframework.messaging.eventhandling.conversion.DelegatingEventConve
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
+import org.quizmania.game.GAME_QUESTION_1
+import org.quizmania.game.GAME_UUID
 import org.quizmania.game.api.BuzzerCollectionStartedEvent
-import org.quizmania.game.command.application.workflow.BuzzerCollectionWorkflow
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
