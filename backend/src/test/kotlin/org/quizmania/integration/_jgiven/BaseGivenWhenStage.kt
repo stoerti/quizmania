@@ -13,6 +13,8 @@ import org.quizmania.game.api.GameId
 import org.quizmania.game.api.GameQuestionId
 import org.quizmania.question.api.QuestionSetId
 import org.quizmania.rest.adapter.`in`.rest.AnswerDto
+import org.quizmania.rest.adapter.`in`.rest.BuzzDto
+import org.quizmania.rest.adapter.`in`.rest.BuzzerAnswerDto
 import org.quizmania.rest.adapter.`in`.rest.GameCommandController
 import org.quizmania.rest.adapter.`in`.rest.GameEventsController
 import org.quizmania.rest.adapter.`in`.rest.GameReadController
@@ -65,6 +67,22 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
     moderated = true
   )
 
+  fun `a collective game is created by user $`(@Quoted username: String) = `a game is created`(
+    username = username,
+    gameConfig = GameConfig(maxPlayers = 2, questionSetId = TestFixtures.QUESTION_SET_E2E_COLLECTIVE),
+  )
+
+  fun `a buzzer game is created by moderator $`(@Quoted username: String) = `a game is created`(
+    username = username,
+    gameConfig = GameConfig(maxPlayers = 2, questionSetId = TestFixtures.QUESTION_SET_E2E_BUZZER),
+    moderated = true,
+  )
+
+  fun `a sorting game is created by user $`(@Quoted username: String) = `a game is created`(
+    username = username,
+    gameConfig = GameConfig(maxPlayers = 1, questionSetId = TestFixtures.QUESTION_SET_E2E_SORT),
+  )
+
   fun `a game is created`(
     username: String,
     gameConfig: GameConfig,
@@ -91,6 +109,17 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
   fun `the game starts`(synchronizeWithProjection: Boolean = false) = step {
     executeSuccessfully { gameCommandController.startGame(gameId) }
 
+    Awaitility.await()
+      .atMost(10, TimeUnit.SECONDS)
+      .untilAsserted {
+        val questionAsked = gameEventsController.getGameEvents(gameId.toString(), 0).body!!
+          .lastOrNull { it.eventType == "QuestionAskedEvent" }
+        assertThat(questionAsked).isNotNull
+        gameQuestionId = UUID.fromString(
+          objectMapper.readTree(questionAsked!!.payload).get("gameQuestionId").asText()
+        )
+      }
+
     if (synchronizeWithProjection) {
       Awaitility.await()
         .atMost(10, TimeUnit.SECONDS)
@@ -115,22 +144,43 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
   }
 
   fun `user $ answers the current question`(@Quoted username: String) = step {
-    Awaitility.await()
-      .atMost(10, TimeUnit.SECONDS)
-      .untilAsserted {
-        val questionAsked = gameEventsController.getGameEvents(gameId.toString(), 0).body!!
-          .lastOrNull { it.eventType == "QuestionAskedEvent" }
-        assertThat(questionAsked).isNotNull
-        gameQuestionId = UUID.fromString(
-          objectMapper.readTree(questionAsked!!.payload).get("gameQuestionId").asText()
-        )
-      }
+    answerCurrentQuestion(username, "integration answer")
+  }
 
+  fun `user $ answers the current question with $`(@Quoted username: String, @Quoted answer: String) = step {
+    answerCurrentQuestion(username, answer)
+  }
+
+  fun `user $ buzzes the current question`(@Quoted username: String) = step {
+    executeSuccessfully {
+      gameCommandController.buzzQuestion(
+        gameId,
+        username,
+        BuzzDto(gameQuestionId, Instant.now()),
+      )
+    }
+  }
+
+  fun `users $ then $ buzz the current question`(@Quoted first: String, @Quoted second: String) = step {
+    val firstTimestamp = Instant.now()
+    executeSuccessfully { gameCommandController.buzzQuestion(gameId, first, BuzzDto(gameQuestionId, firstTimestamp)) }
+    executeSuccessfully {
+      gameCommandController.buzzQuestion(gameId, second, BuzzDto(gameQuestionId, firstTimestamp.plusMillis(100)))
+    }
+  }
+
+  fun `the moderator marks the buzzer answer as $`(answerCorrect: Boolean) = step {
+    executeSuccessfully {
+      gameCommandController.buzzerAnswerQuestion(gameId, BuzzerAnswerDto(gameQuestionId, answerCorrect))
+    }
+  }
+
+  private fun answerCurrentQuestion(username: String, answer: String) {
     executeSuccessfully {
       gameCommandController.answerQuestion(
         gameId,
         username,
-        AnswerDto(gameQuestionId, "integration answer", Instant.now()),
+        AnswerDto(gameQuestionId, answer, Instant.now()),
       )
     }
   }
