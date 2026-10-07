@@ -57,10 +57,18 @@ class BuzzerCollectionWorkflowTest {
     fixture
       .then()
       .waitingIn("buzzerWindowDeadline")
+      .noStep("evaluateBuzzes")
 
     fixture
       .`when`()
-      .timePasses(Duration.ofMillis(500))
+      .timePasses(Duration.ofMillis(499))
+      .then()
+      .waitingIn("buzzerWindowDeadline")
+      .noStep("evaluateBuzzes")
+
+    fixture
+      .`when`()
+      .timePasses(Duration.ofMillis(1))
       .executeReturning("evaluateBuzzes", emptyMap<String, Any?>())
       .then()
       .workflowFinished(WorkflowStatus.COMPLETED)
