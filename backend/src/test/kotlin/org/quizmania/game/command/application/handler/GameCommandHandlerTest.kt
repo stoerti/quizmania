@@ -1,4 +1,4 @@
-package org.quizmania.game.domain
+package org.quizmania.game.command.application.handler
 
 import org.axonframework.eventsourcing.configuration.EventSourcedEntityModule
 import org.axonframework.eventsourcing.configuration.EventSourcingConfigurer
@@ -8,7 +8,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.Mockito
 import org.quizmania.game.api.*
-import org.quizmania.game.command.application.handler.*
 import org.quizmania.game.command.application.state.*
 import org.quizmania.game.command.port.out.QuestionPort
 import java.util.UUID
@@ -25,9 +24,7 @@ abstract class GameCommandHandlerTest {
     val configurer = EventSourcingConfigurer.create()
       .registerEntity(EventSourcedEntityModule.autodetected(UUID::class.java, GameState::class.java))
       .registerEntity(EventSourcedEntityModule.autodetected(UUID::class.java, ProgressionState::class.java))
-      .registerEntity(EventSourcedEntityModule.autodetected(UUID::class.java, QuestionState::class.java))
-      .registerEntity(EventSourcedEntityModule.autodetected(UUID::class.java, AnswersState::class.java))
-      .registerEntity(EventSourcedEntityModule.autodetected(UUID::class.java, BuzzerState::class.java))
+      .registerEntity(EventSourcedEntityModule.autodetected(UUID::class.java, GameQuestionState::class.java))
       .registerCommandHandlingModule(
         CommandHandlingModule.named("game").commandHandlers()
           .autodetectedCommandHandlingComponent { GameLifecycleHandler(questionPort) }

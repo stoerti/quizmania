@@ -1,4 +1,4 @@
-package org.quizmania.game
+package org.quizmania.game.command.application.workflow
 
 import io.axoniq.framework.workflow.dsl.api.WorkflowStatus
 import io.axoniq.framework.workflow.dsl.kotlin.WorkflowKontext
@@ -12,11 +12,16 @@ import org.axonframework.messaging.eventhandling.conversion.DelegatingEventConve
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
+import org.quizmania.game.GAME_PLAYER_1
+import org.quizmania.game.GAME_PLAYER_2
+import org.quizmania.game.GAME_QUESTION_1
+import org.quizmania.game.PLAYER_ANSWER_1
+import org.quizmania.game.PLAYER_ANSWER_2
 import org.quizmania.game.GameEventFixtures.Companion.playerRemoved
 import org.quizmania.game.GameEventFixtures.Companion.questionAnswered
 import org.quizmania.game.GameEventFixtures.Companion.questionAsked
 import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
-import org.quizmania.game.command.application.workflow.QuestionLifecycleWorkflow
+import org.quizmania.game.USERNAME_2
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant

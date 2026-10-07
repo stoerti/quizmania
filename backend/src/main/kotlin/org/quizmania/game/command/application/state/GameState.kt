@@ -4,21 +4,16 @@ import org.axonframework.eventsourcing.annotation.EventCriteriaBuilder
 import org.axonframework.eventsourcing.annotation.EventSourcingHandler
 import org.axonframework.eventsourcing.annotation.reflection.EntityCreator
 import org.axonframework.extension.spring.stereotype.EventSourced
-import org.axonframework.messaging.eventstreaming.EventCriteria
-import org.axonframework.messaging.eventstreaming.Tag
 import org.quizmania.game.api.*
 import org.quizmania.question.api.QuestionSet
 import org.quizmania.question.api.Round
 import java.util.UUID
 
-internal fun criteria(tag: String, id: UUID, vararg types: Class<*>): EventCriteria =
-  EventCriteria.havingTags(Tag(tag, id.toString())).andBeingOneOfTypes(*types.map { it.name }.toTypedArray())
-
 enum class GameStatus { CREATED, STARTED, ENDED, CANCELED }
 
 /** Game configuration, lifecycle, and participation; no round progression or question details. */
 @EventSourced(idType = UUID::class, tagKey = "gameId")
-class GameState private constructor(
+data class GameState private constructor(
   val gameId: GameId,
   val config: GameConfig,
   val rounds: List<Round>,
@@ -40,19 +35,20 @@ class GameState private constructor(
   val size: Int get() = players.size
 
   @EventSourcingHandler
-  fun evolve(event: GameStartedEvent): GameState = withStatus(GameStatus.STARTED)
+  fun evolve(event: GameStartedEvent): GameState = copy(status = GameStatus.STARTED)
 
   @EventSourcingHandler
-  fun evolve(event: GameEndedEvent): GameState = withStatus(GameStatus.ENDED)
+  fun evolve(event: GameEndedEvent): GameState = copy(status = GameStatus.ENDED)
 
   @EventSourcingHandler
-  fun evolve(event: GameCanceledEvent): GameState = withStatus(GameStatus.CANCELED)
+  fun evolve(event: GameCanceledEvent): GameState = copy(status = GameStatus.CANCELED)
 
   @EventSourcingHandler
-  fun evolve(event: PlayerJoinedGameEvent): GameState = withPlayers(players + (event.gamePlayerId to event.username))
+  fun evolve(event: PlayerJoinedGameEvent): GameState =
+    copy(players = players + (event.gamePlayerId to event.username))
 
   @EventSourcingHandler
-  fun evolve(event: PlayerLeftGameEvent): GameState = withPlayers(players - event.gamePlayerId)
+  fun evolve(event: PlayerLeftGameEvent): GameState = copy(players = players - event.gamePlayerId)
 
   fun decide(command: JoinGameCommand): List<GameEvent> {
     if (status == GameStatus.ENDED || status == GameStatus.CANCELED) throw GameAlreadyEndedProblem(command.gameId)
@@ -86,11 +82,6 @@ class GameState private constructor(
   fun findPlayer(username: String): GamePlayerId? = players.entries.find { it.value == username }?.key
   fun player(username: String) = findPlayer(username) ?: throw PlayerNotFoundProblem(gameId, username)
 
-  private fun withStatus(status: GameStatus) = GameState(gameId, config, rounds, moderatorUsername, status, players)
-
-  private fun withPlayers(players: Map<GamePlayerId, String>) =
-    GameState(gameId, config, rounds, moderatorUsername, status, players)
-
   companion object {
     fun decide(command: CreateGameCommand, questionSet: QuestionSet): List<GameEvent> {
       if (questionSet.rounds.isEmpty() || questionSet.rounds.any { it.questions.isEmpty() })
@@ -98,47 +89,22 @@ class GameState private constructor(
       if (questionSet.rounds.any { it.roundConfig.useBuzzer } && command.moderatorUsername == null)
         throw InvalidConfigProblem(command.gameId, "Buzzer game needs a moderator")
 
-      return listOf(GameCreatedEvent(command.gameId, command.name, command.config, questionSet.rounds,
-        command.creatorUsername, command.moderatorUsername))
+      return listOf(GameCreatedEvent(
+        gameId = command.gameId,
+        name = command.name,
+        config = command.config,
+        rounds = questionSet.rounds,
+        creatorUsername = command.creatorUsername,
+        moderatorUsername = command.moderatorUsername,
+      ))
     }
 
-    @JvmStatic @EventCriteriaBuilder
-    fun resolve(id: UUID) = criteria("gameId", id, GameCreatedEvent::class.java, GameStartedEvent::class.java,
+    @JvmStatic
+    @EventCriteriaBuilder
+    fun resolve(id: UUID) = criteria(
+      "gameId", id, GameCreatedEvent::class.java, GameStartedEvent::class.java,
       GameEndedEvent::class.java, GameCanceledEvent::class.java,
-      PlayerJoinedGameEvent::class.java, PlayerLeftGameEvent::class.java)
-  }
-}
-
-/** Only navigation facts. Answer contents and buzzer activity never enter this boundary. */
-@EventSourced(idType = UUID::class, tagKey = "gameId")
-class ProgressionState @EntityCreator constructor() {
-  final var round: RoundStartedEvent? = null
-    private set
-  final var finishedRounds = 0
-    private set
-  final var finishedQuestions = 0
-    private set
-  final var questionId: GameQuestionId? = null
-    private set
-  final var roundScored = false
-    private set
-
-  @EventSourcingHandler fun on(event: GameCreatedEvent) {}
-  @EventSourcingHandler fun on(event: RoundStartedEvent) {
-    round = event; finishedQuestions = 0; questionId = null; roundScored = false
-  }
-  @EventSourcingHandler fun on(event: RoundScoredEvent) { roundScored = true }
-  @EventSourcingHandler fun on(event: RoundClosedEvent) {
-    finishedRounds++; round = null; questionId = null
-  }
-  @EventSourcingHandler fun on(event: QuestionAskedEvent) { questionId = event.gameQuestionId }
-  @EventSourcingHandler fun on(event: QuestionClosedEvent) { finishedQuestions++ }
-  @EventSourcingHandler fun on(event: QuestionScoredEvent) { questionId = null }
-
-  companion object {
-    @JvmStatic @EventCriteriaBuilder
-    fun resolve(id: UUID) = criteria("gameId", id, GameCreatedEvent::class.java, RoundStartedEvent::class.java,
-      RoundScoredEvent::class.java, RoundClosedEvent::class.java, QuestionAskedEvent::class.java,
-      QuestionClosedEvent::class.java, QuestionScoredEvent::class.java)
+      PlayerJoinedGameEvent::class.java, PlayerLeftGameEvent::class.java,
+    )
   }
 }

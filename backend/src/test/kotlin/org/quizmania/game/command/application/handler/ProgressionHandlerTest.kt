@@ -1,4 +1,4 @@
-package org.quizmania.game.domain
+package org.quizmania.game.command.application.handler
 
 import org.axonframework.messaging.commandhandling.CommandExecutionException
 import org.junit.jupiter.api.Test
