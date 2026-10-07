@@ -1,7 +1,6 @@
 package org.quizmania.game.command.application.workflow
 
 import io.axoniq.framework.workflow.annotation.Workflow
-import io.axoniq.framework.workflow.dsl.api.EventConditions
 import io.axoniq.framework.workflow.dsl.kotlin.Kontext
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.axonframework.messaging.eventhandling.conversion.EventConverter
@@ -31,7 +30,7 @@ class BuzzerCollectionWorkflow(
       .coerceAtLeast(0)
       .milliseconds
 
-    waitForEvent("buzzerWindowDeadline", EventConditions.never(), delay)
+    sleep("buzzerWindowDeadline", delay)
     awaitExecute("evaluateBuzzes") { _, _ ->
       commandGateway.send(
         EvaluateBuzzesCommand(
