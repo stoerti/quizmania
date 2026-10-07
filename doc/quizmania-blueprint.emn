@@ -1,0 +1,2461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<emn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:emn="https://holixon.io/spec/EMN/20241231/MODEL" xmlns:emndi="https://holixon.io/spec/EMN/20241231/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:emnic="https://holixon.io/spec/EMN/20241231/IC" id="simple" name="Simple" targetNamespace="https://holixon.io/schema/emn" xsi:schemaLocation="https://holixon.io/spec/EMN/20241231/MODEL ../../../../emn-moddle/resources/emn/xsd/EMN.xsd">
+  <emn:types>
+    <emn:schemaDefinition id="GameId" name="GameId">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameId",
+        "type": "string",
+        "format": "uuid"
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="GameQuestionId" name="GameQuestionId">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameQuestionId",
+        "type": "string",
+        "format": "uuid"
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="GamePlayerId" name="GamePlayerId">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GamePlayerId",
+        "type": "string",
+        "format": "uuid"
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="GameRoundId" name="GameRoundId">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameRoundId",
+        "type": "string",
+        "format": "uuid"
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="GameConfig" name="GameConfig">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameConfig",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "maxPlayers": {
+        "type": "integer"
+        },
+        "questionSetId": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "questionSetId"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="Round" name="Round">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "Round",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "name": {
+        "type": "string"
+        },
+        "roundConfig": {
+        "$ref": "RoundConfig"
+        },
+        "questions": {
+        "type": "array",
+        "items": {
+        "type": "string"
+        }
+        }
+        },
+        "required": [
+        "name",
+        "roundConfig",
+        "questions"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="RoundConfig" name="RoundConfig">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "RoundConfig",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "useBuzzer": {
+        "type": "boolean"
+        },
+        "secondsToAnswer": {
+        "type": "integer",
+        "format": "int64"
+        }
+        }
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="GameQuestionMode" name="GameQuestionMode">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameQuestionMode",
+        "type": "string",
+        "enum": [
+        "COLLECTIVE",
+        "BUZZER"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="GameStatus" name="GameStatus">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameStatus",
+        "type": "string",
+        "enum": [
+        "CREATED",
+        "STARTED",
+        "ENDED",
+        "CANCELED"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="QuestionType" name="QuestionType">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionType",
+        "type": "string",
+        "enum": [
+        "CHOICE",
+        "MULTIPLE_CHOICE",
+        "FREE_INPUT",
+        "ESTIMATE",
+        "SORT"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="QuestionBase" name="QuestionBase">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionBase",
+        "type": "object",
+        "properties": {
+        "type": {
+        "$ref": "QuestionType"
+        },
+        "id": {
+        "type": "string"
+        },
+        "phrase": {
+        "type": "string"
+        },
+        "imagePath": {
+        "type": [
+        "string",
+        "null"
+        ]
+        },
+        "answerImagePath": {
+        "type": [
+        "string",
+        "null"
+        ]
+        },
+        "correctAnswer": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "type",
+        "id",
+        "phrase",
+        "correctAnswer"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="ChoiceQuestion" name="ChoiceQuestion">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "ChoiceQuestion",
+        "allOf": [
+        {
+        "$ref": "QuestionBase"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "CHOICE"
+        },
+        "answerOptions": {
+        "type": "array",
+        "items": {
+        "type": "string"
+        }
+        }
+        },
+        "required": [
+        "answerOptions"
+        ]
+        }
+        ],
+        "unevaluatedProperties": false
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="MultipleChoiceQuestion" name="MultipleChoiceQuestion">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "MultipleChoiceQuestion",
+        "allOf": [
+        {
+        "$ref": "QuestionBase"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "MULTIPLE_CHOICE"
+        },
+        "answerOptions": {
+        "type": "array",
+        "items": {
+        "type": "string"
+        }
+        }
+        },
+        "required": [
+        "answerOptions"
+        ]
+        }
+        ],
+        "unevaluatedProperties": false
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="FreeInputQuestion" name="FreeInputQuestion">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "FreeInputQuestion",
+        "allOf": [
+        {
+        "$ref": "QuestionBase"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "FREE_INPUT"
+        }
+        }
+        }
+        ],
+        "unevaluatedProperties": false
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="EstimateQuestion" name="EstimateQuestion">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "EstimateQuestion",
+        "allOf": [
+        {
+        "$ref": "QuestionBase"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "ESTIMATE"
+        }
+        }
+        }
+        ],
+        "unevaluatedProperties": false
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="SortQuestion" name="SortQuestion">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "SortQuestion",
+        "allOf": [
+        {
+        "$ref": "QuestionBase"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "SORT"
+        },
+        "answerOptions": {
+        "type": "array",
+        "items": {
+        "type": "string"
+        }
+        }
+        },
+        "required": [
+        "answerOptions"
+        ]
+        }
+        ],
+        "unevaluatedProperties": false
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="Question" name="Question">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "Question",
+        "oneOf": [
+        {
+        "$ref": "ChoiceQuestion"
+        },
+        {
+        "$ref": "MultipleChoiceQuestion"
+        },
+        {
+        "$ref": "FreeInputQuestion"
+        },
+        {
+        "$ref": "EstimateQuestion"
+        },
+        {
+        "$ref": "SortQuestion"
+        }
+        ],
+        "discriminator": {
+        "propertyName": "type"
+        }
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="GamePlayerScores" name="GamePlayerScores">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GamePlayerScores",
+        "type": "object",
+        "additionalProperties": {
+        "type": "integer"
+        }
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="GamePlayerDto" name="GamePlayerDto">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GamePlayerDto",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "id": {
+        "$ref": "GamePlayerId"
+        },
+        "name": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "id",
+        "name"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="GameDto" name="GameDto">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameDto",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "name": {
+        "type": "string"
+        },
+        "maxPlayers": {
+        "type": "integer"
+        },
+        "numQuestions": {
+        "type": "integer"
+        },
+        "creator": {
+        "type": "string"
+        },
+        "moderator": {
+        "type": [
+        "string",
+        "null"
+        ]
+        },
+        "status": {
+        "$ref": "GameStatus"
+        },
+        "players": {
+        "type": "array",
+        "items": {
+        "$ref": "GamePlayerDto"
+        }
+        }
+        },
+        "required": [
+        "gameId",
+        "name",
+        "maxPlayers",
+        "numQuestions",
+        "creator",
+        "moderator",
+        "status",
+        "players"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:commandType id="CommandType_CreateGameCommand" name="CreateGameCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "CreateGameCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "name": {
+        "type": "string"
+        },
+        "config": {
+        "$ref": "GameConfig"
+        },
+        "creator": {
+        "type": "string"
+        },
+        "moderator": {
+        "type": [
+        "string",
+        "null"
+        ]
+        }
+        },
+        "required": [
+        "gameId",
+        "name",
+        "config",
+        "creator",
+        "moderator"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_JoinGameCommand" name="JoinGameCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "JoinGameCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "username": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "gameId",
+        "username"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_LeaveGameCommand" name="LeaveGameCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "LeaveGameCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "username": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "gameId",
+        "username"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_StartGameCommand" name="StartGameCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "StartGameCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        }
+        },
+        "required": [
+        "gameId"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_StartNextRoundCommand" name="StartNextRoundCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "StartNextRoundCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        }
+        },
+        "required": [
+        "gameId"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_ScoreRoundCommand" name="ScoreRoundCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "ScoreRoundCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        }
+        },
+        "required": [
+        "gameId"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_CloseRoundCommand" name="CloseRoundCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "CloseRoundCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        }
+        },
+        "required": [
+        "gameId"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_AnswerQuestionCommand" name="AnswerQuestionCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "AnswerQuestionCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "username": {
+        "type": "string"
+        },
+        "answer": {
+        "type": "string"
+        },
+        "answerTimestamp": {
+        "type": "string",
+        "format": "date-time"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId",
+        "username",
+        "answer",
+        "answerTimestamp"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_OverrideAnswerCommand" name="OverrideAnswerCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "OverrideAnswerCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        },
+        "answer": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId",
+        "gamePlayerId",
+        "answer"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_BuzzQuestionCommand" name="BuzzQuestionCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "BuzzQuestionCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "username": {
+        "type": "string"
+        },
+        "buzzerTimestamp": {
+        "type": "string",
+        "format": "date-time"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId",
+        "username",
+        "buzzerTimestamp"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_AnswerBuzzerQuestionCommand" name="AnswerBuzzerQuestionCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "AnswerBuzzerQuestionCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "answerCorrect": {
+        "type": "boolean"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId",
+        "answerCorrect"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_AskNextQuestionCommand" name="AskNextQuestionCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "AskNextQuestionCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        }
+        },
+        "required": [
+        "gameId"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_CloseQuestionCommand" name="CloseQuestionCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "CloseQuestionCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:commandType id="CommandType_ScoreQuestionCommand" name="ScoreQuestionCommand">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "ScoreQuestionCommand",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId"
+        ]
+        }</emn:schema>
+    </emn:commandType>
+    <emn:eventType id="EventType_GameCreatedEvent" name="GameCreatedEvent">
+      <emn:extensionElements>
+        <emnic:informationCompleteness>
+          <emnic:ignoredProperties>
+            <emnic:ignoredProperty name="rounds" comment="Derived from questionSet" />
+          </emnic:ignoredProperties>
+        </emnic:informationCompleteness>
+      </emn:extensionElements>
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameCreatedEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "name": {
+        "type": "string"
+        },
+        "config": {
+        "$ref": "GameConfig"
+        },
+        "rounds": {
+        "type": "array",
+        "items": {
+        "$ref": "Round"
+        }
+        },
+        "creator": {
+        "type": "string"
+        },
+        "moderator": {
+        "type": [
+        "string",
+        "null"
+        ]
+        }
+        },
+        "required": [
+        "gameId",
+        "name",
+        "config",
+        "rounds",
+        "creator",
+        "moderator"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_PlayerJoinedGameEvent" name="PlayerJoinedGameEvent">
+      <emn:extensionElements>
+        <emnic:informationCompleteness>
+          <emnic:ignoredProperties>
+            <emnic:ignoredProperty name="gamePlayerId" comment="" />
+          </emnic:ignoredProperties>
+        </emnic:informationCompleteness>
+      </emn:extensionElements>
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "PlayerJoinedGameEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        },
+        "username": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "gameId",
+        "gamePlayerId",
+        "username"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_PlayerLeftGameEvent" name="PlayerLeftGameEvent">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "PlayerLeftGameEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        },
+        "username": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "gameId",
+        "gamePlayerId",
+        "username"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_GameStartedEvent" name="GameStartedEvent">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameStartedEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        }
+        },
+        "required": [
+        "gameId"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_GameEndedEvent" name="GameEndedEvent">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameEndedEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        }
+        },
+        "required": [
+        "gameId"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_GameCanceledEvent" name="GameCanceledEvent">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameCanceledEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        }
+        },
+        "required": [
+        "gameId"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_RoundStartedEvent" name="RoundStartedEvent">
+      <emn:extensionElements>
+        <emnic:informationCompleteness>
+          <emnic:ignoredProperties>
+            <emnic:ignoredProperty name="gameRoundId" comment="" />
+            <emnic:ignoredProperty name="roundNumber" comment="" />
+            <emnic:ignoredProperty name="roundConfig" comment="" />
+            <emnic:ignoredProperty name="questions" comment="" />
+            <emnic:ignoredProperty name="roundName" comment="" />
+          </emnic:ignoredProperties>
+        </emnic:informationCompleteness>
+      </emn:extensionElements>
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "RoundStartedEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameRoundId": {
+        "$ref": "GameRoundId"
+        },
+        "roundNumber": {
+        "type": "integer"
+        },
+        "roundName": {
+        "type": "string"
+        },
+        "roundConfig": {
+        "$ref": "RoundConfig"
+        },
+        "questions": {
+        "type": "array",
+        "items": {
+        "type": "string"
+        }
+        }
+        },
+        "required": [
+        "gameId",
+        "gameRoundId",
+        "roundNumber",
+        "roundName",
+        "roundConfig",
+        "questions"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_RoundScoredEvent" name="RoundScoredEvent">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "RoundScoredEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameRoundId": {
+        "$ref": "GameRoundId"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameRoundId"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_RoundClosedEvent" name="RoundClosedEvent">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "RoundClosedEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameRoundId": {
+        "$ref": "GameRoundId"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameRoundId"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_QuestionAskedEvent" name="QuestionAskedEvent">
+      <emn:extensionElements>
+        <emnic:informationCompleteness>
+          <emnic:ignoredProperties>
+            <emnic:ignoredProperty name="gameQuestionId" comment="" />
+            <emnic:ignoredProperty name="roundNumber" comment="" />
+            <emnic:ignoredProperty name="roundQuestionNumber" comment="" />
+            <emnic:ignoredProperty name="questionMode" comment="" />
+            <emnic:ignoredProperty name="timeToAnswer" comment="" />
+            <emnic:ignoredProperty name="question" comment="" />
+            <emnic:ignoredProperty name="questionTimestamp" comment="" />
+          </emnic:ignoredProperties>
+        </emnic:informationCompleteness>
+      </emn:extensionElements>
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionAskedEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "roundNumber": {
+        "type": "integer"
+        },
+        "roundQuestionNumber": {
+        "type": "integer"
+        },
+        "questionMode": {
+        "$ref": "GameQuestionMode"
+        },
+        "questionTimestamp": {
+        "type": "string",
+        "format": "date-time"
+        },
+        "timeToAnswer": {
+        "type": "integer",
+        "format": "int64"
+        },
+        "question": {
+        "$ref": "Question"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId",
+        "roundNumber",
+        "roundQuestionNumber",
+        "questionMode",
+        "questionTimestamp",
+        "timeToAnswer",
+        "question"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_QuestionAnsweredEvent" name="QuestionAnsweredEvent">
+      <emn:extensionElements>
+        <emnic:informationCompleteness>
+          <emnic:ignoredProperties>
+            <emnic:ignoredProperty name="gamePlayerId" comment="" />
+            <emnic:ignoredProperty name="playerAnswerId" comment="" />
+            <emnic:ignoredProperty name="timeToAnswer" comment="" />
+          </emnic:ignoredProperties>
+        </emnic:informationCompleteness>
+      </emn:extensionElements>
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionAnsweredEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        },
+        "playerAnswerId": {
+        "type": "string",
+        "format": "uuid"
+        },
+        "answer": {
+        "type": "string"
+        },
+        "timeToAnswer": {
+        "type": "integer",
+        "format": "int64"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId",
+        "gamePlayerId",
+        "playerAnswerId",
+        "answer",
+        "timeToAnswer"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_QuestionAnswerOverriddenEvent" name="QuestionAnswerOverriddenEvent">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionAnswerOverriddenEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        },
+        "playerAnswerId": {
+        "type": "string",
+        "format": "uuid"
+        },
+        "answer": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId",
+        "gamePlayerId",
+        "playerAnswerId",
+        "answer"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_QuestionBuzzedEvent" name="QuestionBuzzedEvent">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionBuzzedEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        },
+        "buzzerTimestamp": {
+        "type": "string",
+        "format": "date-time"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId",
+        "gamePlayerId",
+        "buzzerTimestamp"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_QuestionBuzzerWonEvent" name="QuestionBuzzerWonEvent">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionBuzzerWonEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId",
+        "gamePlayerId"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_QuestionClosedEvent" name="QuestionClosedEvent">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionClosedEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_QuestionScoredEvent" name="QuestionScoredEvent">
+      <emn:extensionElements>
+        <emnic:informationCompleteness>
+          <emnic:ignoredProperties>
+            <emnic:ignoredProperty name="points" comment="Calculated by system" />
+          </emnic:ignoredProperties>
+        </emnic:informationCompleteness>
+      </emn:extensionElements>
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionScoredEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "points": {
+        "$ref": "GamePlayerScores"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId",
+        "points"
+        ]
+        }</emn:schema>
+    </emn:eventType>
+    <emn:queryType id="QueryType_SearchGames" name="SearchGames">
+      <emn:extensionElements>
+        <emnic:informationCompleteness>
+          <emnic:ignoredProperties>
+            <emnic:ignoredProperty name="maxPlayers" comment="from config.maxPlayers" />
+            <emnic:ignoredProperty name="numQuestions" comment="from rounds.questions" />
+            <emnic:ignoredProperty name="status" comment="local state" />
+            <emnic:ignoredProperty name="players" comment="local collection" />
+          </emnic:ignoredProperties>
+        </emnic:informationCompleteness>
+      </emn:extensionElements>
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "SearchGames",
+        "type": "array",
+        "items": {
+        "$ref": "GameDto"
+        }
+        }</emn:schema>
+    </emn:queryType>
+    <emn:queryType id="QueryType_GameState" name="Game State">
+      <emn:extensionElements>
+        <emnic:informationCompleteness>
+          <emnic:ignoredProperties>
+            <emnic:ignoredProperty name="status" comment="" />
+            <emnic:ignoredProperty name="players" comment="" />
+            <emnic:ignoredProperty name="moderator" comment="" />
+            <emnic:ignoredProperty name="creator" comment="" />
+            <emnic:ignoredProperty name="numQuestions" comment="" />
+            <emnic:ignoredProperty name="maxPlayers" comment="" />
+          </emnic:ignoredProperties>
+        </emnic:informationCompleteness>
+      </emn:extensionElements>
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameState",
+        "type": "object",
+        "additionalProperties": false,
+        "anyOf": [
+        {
+        "$ref": "GameDto"
+        },
+        {
+        "type": "null"
+        }
+        ],
+        "properties": {
+        "gameId": {
+        "type": "string"
+        },
+        "name": {
+        "type": "string"
+        }
+        }
+        }</emn:schema>
+    </emn:queryType>
+    <emn:viewType id="ViewType_0203j24" name="View" />
+    <emn:informationFlowType id="InformationFlowType_10n7a3b" name="InformationFlow" sourceRef="ViewType_0203j24" />
+    <emn:informationFlowType id="InformationFlowType_1re567x" name="InformationFlow" />
+    <emn:viewType id="ViewType_02a74lt" name="View" />
+    <emn:informationFlowType id="InformationFlowType_13ru9q3" name="InformationFlow" targetRef="ViewType_02a74lt" />
+    <emn:informationFlowType id="InformationFlowType_0dcgu0v" name="InformationFlow" sourceRef="EventType_GameCreatedEvent" />
+    <emn:informationFlowType id="InformationFlowType_17ea21j" name="InformationFlow" />
+    <emn:informationFlowType id="InformationFlowType_0c1eoxv" name="InformationFlow" sourceRef="ViewType_02a74lt" />
+    <emn:viewType id="ViewType_1y7npw1" name="View" />
+    <emn:informationFlowType id="InformationFlowType_1eoe9qe" name="InformationFlow" targetRef="ViewType_1y7npw1" />
+    <emn:informationFlowType id="InformationFlowType_0b7ahn5" name="InformationFlow" sourceRef="EventType_PlayerJoinedGameEvent" />
+    <emn:informationFlowType id="InformationFlowType_1a77s5p" name="InformationFlow" />
+    <emn:informationFlowType id="InformationFlowType_0hr9skd" name="InformationFlow" sourceRef="ViewType_1y7npw1" />
+    <emn:automationType id="AutomationType_0xyx4ih" name="Start Round Automation" />
+    <emn:informationFlowType id="InformationFlowType_1n8zd8h" name="InformationFlow" targetRef="AutomationType_0xyx4ih" />
+    <emn:informationFlowType id="InformationFlowType_09nkp5o" name="InformationFlow" sourceRef="AutomationType_0xyx4ih" />
+    <emn:informationFlowType id="InformationFlowType_1qy8bl6" name="InformationFlow" sourceRef="EventType_GameStartedEvent" targetRef="QueryType_GameState" />
+    <emn:informationFlowType id="InformationFlowType_06d34ao" name="InformationFlow" sourceRef="CommandType_StartNextRoundCommand" targetRef="EventType_RoundStartedEvent" />
+    <emn:automationType id="AutomationType_1dtxp9p" name="Ask First Question Automation" />
+    <emn:informationFlowType id="InformationFlowType_08yuteh" name="InformationFlow" targetRef="AutomationType_1dtxp9p" />
+    <emn:informationFlowType id="InformationFlowType_0hhb57l" name="InformationFlow" sourceRef="AutomationType_1dtxp9p" />
+    <emn:informationFlowType id="InformationFlowType_03awjix" name="InformationFlow" sourceRef="EventType_RoundStartedEvent" />
+    <emn:informationFlowType id="InformationFlowType_0jqg3i4" name="InformationFlow" sourceRef="CommandType_AskNextQuestionCommand" targetRef="EventType_QuestionAskedEvent" />
+    <emn:viewType id="ViewType_13ic2sp" name="View" />
+    <emn:informationFlowType id="InformationFlowType_18rvizj" name="InformationFlow" targetRef="ViewType_13ic2sp" />
+    <emn:informationFlowType id="InformationFlowType_0imjbct" name="InformationFlow" sourceRef="EventType_QuestionAskedEvent" />
+    <emn:informationFlowType id="InformationFlowType_04rn3qf" name="InformationFlow" />
+    <emn:informationFlowType id="InformationFlowType_006mveb" name="InformationFlow" sourceRef="ViewType_13ic2sp" />
+    <emn:informationFlowType id="InformationFlowType_1agvh0p" name="InformationFlow" sourceRef="EventType_GameCreatedEvent" targetRef="QueryType_GameState" />
+    <emn:queryType id="QueryType_StartRoundAutomationQuery" name="StartRoundAutomationQuery">
+      <emn:extensionElements>
+        <emnic:informationCompleteness>
+          <emnic:ignoredProperties>
+            <emnic:ignoredProperty name="status" comment="" />
+            <emnic:ignoredProperty name="roundsStarted" comment="" />
+          </emnic:ignoredProperties>
+        </emnic:informationCompleteness>
+      </emn:extensionElements>
+      <emn:schema schemaFormat="application/schema+json">{
+        "type": "array",
+        "items": {
+        "type": "object",
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        }
+        }
+        }
+        }</emn:schema>
+    </emn:queryType>
+    <emn:informationFlowType id="InformationFlowType_1miye9c" name="InformationFlow" sourceRef="EventType_RoundStartedEvent" targetRef="QueryType_StartRoundAutomationQuery" />
+    <emn:queryType id="QueryType_0ewa4re" name="Query" />
+    <emn:queryType id="QueryType_AskFirstQuestionAutomationQuery" name="AskFirstQuestionAutomationQuery">
+      <emn:schema schemaFormat="application/schema+json">{
+        "type": "array",
+        "items": {
+        "type": "object",
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        }
+        }
+        }
+        }</emn:schema>
+    </emn:queryType>
+    <emn:informationFlowType id="InformationFlowType_07gri34" name="InformationFlow" sourceRef="EventType_QuestionAskedEvent" targetRef="QueryType_AskFirstQuestionAutomationQuery" />
+    <emn:queryType id="QueryType_OpenQuestion" name="OpenQuestion">
+      <emn:schema schemaFormat="application/schema+json">{
+        "type": "object",
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "roundNumber": {
+        "type": "integer"
+        },
+        "roundQuestionNumber": {
+        "type": "integer"
+        },
+        "question": {
+        "$ref": "Question"
+        },
+        "timeToAnswer": {
+        "type": "integer"
+        },
+        "questionMode": {
+        "type": "string"
+        }
+        }
+        }</emn:schema>
+    </emn:queryType>
+    <emn:queryType id="QueryType_CloseQuestionAutomationQuery" name="CloseQuestionAutomationQuery">
+      <emn:schema schemaFormat="application/schema+json">{
+        "type": "array",
+        "items": {
+        "type": "object",
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        }
+        }
+        }
+        }</emn:schema>
+    </emn:queryType>
+    <emn:automationType id="AutomationType_05gbvie" name="Automation" />
+    <emn:informationFlowType id="InformationFlowType_0a6vsek" name="InformationFlow" sourceRef="QueryType_CloseQuestionAutomationQuery" targetRef="AutomationType_05gbvie" />
+    <emn:informationFlowType id="InformationFlowType_0w52yvu" name="InformationFlow" sourceRef="AutomationType_05gbvie" />
+    <emn:informationFlowType id="InformationFlowType_1rhkqjd" name="InformationFlow" />
+    <emn:informationFlowType id="InformationFlowType_166jlwx" name="InformationFlow" sourceRef="EventType_QuestionAnsweredEvent" targetRef="QueryType_CloseQuestionAutomationQuery" />
+    <emn:informationFlowType id="InformationFlowType_19qqhh5" name="InformationFlow" sourceRef="EventType_QuestionAskedEvent" targetRef="QueryType_CloseQuestionAutomationQuery" />
+    <emn:informationFlowType id="InformationFlowType_17aercp" name="InformationFlow" sourceRef="EventType_PlayerJoinedGameEvent" targetRef="QueryType_CloseQuestionAutomationQuery" />
+    <emn:queryType id="QueryType_UnscoredQuestionsQuery" name="UnscoredQuestionsQuery">
+      <emn:schema schemaFormat="application/schema+json">{
+        "type": "array",
+        "items": {
+        "type": "object",
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        }
+        }
+        }
+        }</emn:schema>
+    </emn:queryType>
+    <emn:automationType id="AutomationType_0s3n00i" name="Automation" />
+    <emn:informationFlowType id="InformationFlowType_1hjcxvt" name="InformationFlow" sourceRef="QueryType_UnscoredQuestionsQuery" targetRef="AutomationType_0s3n00i" />
+    <emn:informationFlowType id="InformationFlowType_0yp9h5x" name="InformationFlow" sourceRef="AutomationType_0s3n00i" />
+    <emn:informationFlowType id="InformationFlowType_0fopf41" name="InformationFlow" />
+    <emn:informationFlowType id="InformationFlowType_0dlcdy6" name="InformationFlow" sourceRef="EventType_QuestionClosedEvent" targetRef="QueryType_UnscoredQuestionsQuery" />
+    <emn:queryType id="QueryType_QuestionScoreboardQuery" name="QuestionScoreboardQuery">
+      <emn:extensionElements>
+        <emnic:informationCompleteness>
+          <emnic:ignoredProperties>
+            <emnic:ignoredProperty name="playerAnswers" comment="Aggregation of player answer events" />
+          </emnic:ignoredProperties>
+        </emnic:informationCompleteness>
+      </emn:extensionElements>
+      <emn:schema schemaFormat="application/schema+json">{
+        "type": "object",
+        "properties": {
+        "gameId": {
+        "type": "string"
+        },
+        "gameQuestionId": {
+        "type": "string"
+        },
+        "question": {
+        "$ref": "Question"
+        },
+        "playerAnswers": {
+        "type": "array",
+        "items": {
+        "type": "object",
+        "properties": {
+        "gamePlayer1": {
+        "type": "object",
+        "properties": {
+        "answer": {
+        "type": "string"
+        },
+        "points": {
+        "type": "integer"
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }</emn:schema>
+    </emn:queryType>
+    <emn:viewType id="ViewType_1oa7o7p" name="View" />
+    <emn:informationFlowType id="InformationFlowType_14pb3i5" name="InformationFlow" sourceRef="QueryType_QuestionScoreboardQuery" targetRef="ViewType_1oa7o7p" />
+    <emn:informationFlowType id="InformationFlowType_0jn881s" name="InformationFlow" sourceRef="EventType_QuestionScoredEvent" targetRef="QueryType_QuestionScoreboardQuery" />
+    <emn:informationFlowType id="InformationFlowType_0nlk1i7" name="InformationFlow" sourceRef="EventType_QuestionAnsweredEvent" targetRef="QueryType_QuestionScoreboardQuery" />
+    <emn:informationFlowType id="InformationFlowType_1a6vw1t" name="InformationFlow" sourceRef="EventType_QuestionAskedEvent" targetRef="QueryType_QuestionScoreboardQuery" />
+    <emn:informationFlowType id="InformationFlowType_10oqvwd" name="InformationFlow" sourceRef="EventType_PlayerJoinedGameEvent" targetRef="QueryType_QuestionScoreboardQuery" />
+    <emn:informationFlowType id="InformationFlowType_111cc3l" name="InformationFlow" />
+    <emn:informationFlowType id="InformationFlowType_0xfxfkq" name="InformationFlow" sourceRef="ViewType_1oa7o7p" />
+    <emn:informationFlowType id="InformationFlowType_08m1xv0" name="InformationFlow" sourceRef="CommandType_AskNextQuestionCommand" targetRef="EventType_RoundClosedEvent" />
+    <emn:queryType id="QueryType_AutoCloseGameQuery" name="AutoCloseGameQuery" />
+    <emn:automationType id="AutomationType_10qqqtx" name="Automation" />
+    <emn:commandType id="CommandType_CloseGameCommand" name="CloseGameCommand" />
+    <emn:informationFlowType id="InformationFlowType_0ap82y7" name="InformationFlow" sourceRef="QueryType_AutoCloseGameQuery" targetRef="AutomationType_10qqqtx" />
+    <emn:informationFlowType id="InformationFlowType_0o2pt9l" name="InformationFlow" sourceRef="AutomationType_10qqqtx" targetRef="CommandType_CloseGameCommand" />
+    <emn:informationFlowType id="InformationFlowType_13uovvg" name="InformationFlow" sourceRef="CommandType_CloseGameCommand" />
+    <emn:informationFlowType id="InformationFlowType_1gcuedd" name="InformationFlow" sourceRef="EventType_RoundClosedEvent" targetRef="QueryType_AutoCloseGameQuery" />
+    <emn:informationFlowType id="InformationFlowType_13gsu75" name="InformationFlow" targetRef="QueryType_SearchGames" />
+    <emn:informationFlowType id="InformationFlowType_0wjujap" name="InformationFlow" targetRef="QueryType_SearchGames" />
+    <emn:eventType id="EventType_0nkjff9" name="Event">
+      <emn:schema schemaFormat="application/schema+json">{
+        "type": "object",
+        "properties": {
+        "foo": {
+        "type": "string"
+        },
+        "test": {
+        "type": "boolean"
+        }
+        }
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventType id="EventType_1m54k8f" name="Event">
+      <emn:schema schemaFormat="application/schema+json">{
+        "type": "object",
+        "properties": {
+        "test": {
+        "type": "boolean"
+        },
+        "var": {
+        "type": "string"
+        }
+        }
+        }</emn:schema>
+    </emn:eventType>
+    <emn:eventSequenceType id="EventSequenceType_GameWith2Players" name="Game with two players">
+      <emn:eventTypeRef>EventType_GameCreatedEvent</emn:eventTypeRef>
+      <emn:eventTypeRef>EventType_PlayerJoinedGameEvent</emn:eventTypeRef>
+      <emn:eventTypeRef>EventType_GameStartedEvent</emn:eventTypeRef>
+    </emn:eventSequenceType>
+    <emn:queryType id="QueryType_0a69h48" name="Query" />
+    <emn:informationFlowType id="InformationFlowType_1b5x4fc" name="InformationFlow" sourceRef="EventSequenceType_GameWith2Players" targetRef="QueryType_0a69h48" />
+  </emn:types>
+  <emn:timeline id="timeline_1" name="Timeline">
+    <emn:laneSet id="lanes_1">
+      <emn:triggerLaneSet>
+        <emn:triggerLane id="triggerLane_1" name="Trigger">
+          <emn:flowNodeRef>View_051r73g</emn:flowNodeRef>
+          <emn:flowNodeRef>View_1lptv0b</emn:flowNodeRef>
+          <emn:flowNodeRef>View_0pu9cbd</emn:flowNodeRef>
+          <emn:flowNodeRef>Automation_0t2k31x</emn:flowNodeRef>
+          <emn:flowNodeRef>Automation_0kearoh</emn:flowNodeRef>
+          <emn:flowNodeRef>View_0u6nw9e</emn:flowNodeRef>
+          <emn:flowNodeRef>Automation_0t61vvg</emn:flowNodeRef>
+          <emn:flowNodeRef>Automation_1n8uruh</emn:flowNodeRef>
+          <emn:flowNodeRef>View_03q8ig7</emn:flowNodeRef>
+          <emn:flowNodeRef>Automation_15lb7gk</emn:flowNodeRef>
+        </emn:triggerLane>
+      </emn:triggerLaneSet>
+      <emn:interactionLane id="interaction_1" name="Interaction">
+        <emn:flowNodeRef>Command_1udc34n</emn:flowNodeRef>
+        <emn:flowNodeRef>Query_0d6rxc3</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_0sksipr</emn:flowNodeRef>
+        <emn:flowNodeRef>Query_0jfwalt</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_0ir1eeg</emn:flowNodeRef>
+        <emn:flowNodeRef>Query_1f15fg8</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_0z2emxv</emn:flowNodeRef>
+        <emn:flowNodeRef>Query_0tv24n2</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_1ok5yfr</emn:flowNodeRef>
+        <emn:flowNodeRef>Query_1qf95x6</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_10vlyt5</emn:flowNodeRef>
+        <emn:flowNodeRef>Query_0pwbx98</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_12421i5</emn:flowNodeRef>
+        <emn:flowNodeRef>Query_0xmnv79</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_1r7qil9</emn:flowNodeRef>
+        <emn:flowNodeRef>Query_0o0kkyc</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_1701zqp</emn:flowNodeRef>
+        <emn:flowNodeRef>Query_1m4bjly</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_0r7b941</emn:flowNodeRef>
+      </emn:interactionLane>
+      <emn:conceptLaneSet>
+        <emn:conceptLane id="ConceptLane_0h6eawq" name="Concept">
+          <emn:flowNodeRef>Event_11cno4u</emn:flowNodeRef>
+          <emn:flowNodeRef>Event_1ni18xa</emn:flowNodeRef>
+          <emn:flowNodeRef>Event_1bu80i4</emn:flowNodeRef>
+          <emn:flowNodeRef>Event_07hnffa</emn:flowNodeRef>
+          <emn:flowNodeRef>Event_04b1upt</emn:flowNodeRef>
+          <emn:flowNodeRef>Event_1ltl9h9</emn:flowNodeRef>
+          <emn:flowNodeRef>Event_1li1sfm</emn:flowNodeRef>
+          <emn:flowNodeRef>Event_0wjb7jl</emn:flowNodeRef>
+          <emn:flowNodeRef>Event_0munu7e</emn:flowNodeRef>
+          <emn:flowNodeRef>Event_14cxu6k</emn:flowNodeRef>
+          <emn:flowNodeRef>Event_0tz0dkd</emn:flowNodeRef>
+          <emn:flowNodeRef>Event_1ojm24a</emn:flowNodeRef>
+          <emn:flowNodeRef>Event_0rvc4lg</emn:flowNodeRef>
+        </emn:conceptLane>
+      </emn:conceptLaneSet>
+    </emn:laneSet>
+    <emn:sliceSet id="SliceSet_0apnv8k">
+      <emn:slice id="Slice_0pmxnmh" name="Command Slice">
+        <emn:flowNodeRef>View_051r73g</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_1udc34n</emn:flowNodeRef>
+        <emn:flowNodeRef>Event_11cno4u</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_0q9rxs9" name="View Slice">
+        <emn:flowNodeRef>Query_0d6rxc3</emn:flowNodeRef>
+        <emn:flowNodeRef>View_1lptv0b</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_0esbivl" name="Command Slice">
+        <emn:flowNodeRef>Command_0sksipr</emn:flowNodeRef>
+        <emn:flowNodeRef>Event_1ni18xa</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_1im6s6g" name="View Slice">
+        <emn:flowNodeRef>Query_0jfwalt</emn:flowNodeRef>
+        <emn:flowNodeRef>View_0pu9cbd</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_0visy19" name="Command Slice">
+        <emn:flowNodeRef>Command_0ir1eeg</emn:flowNodeRef>
+        <emn:flowNodeRef>Event_1bu80i4</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_0a948yf" name="Automation Slice">
+        <emn:flowNodeRef>Event_07hnffa</emn:flowNodeRef>
+        <emn:flowNodeRef>Query_1f15fg8</emn:flowNodeRef>
+        <emn:flowNodeRef>Automation_0t2k31x</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_0z2emxv</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_1f2b90c" name="Automation Slice">
+        <emn:flowNodeRef>Event_04b1upt</emn:flowNodeRef>
+        <emn:flowNodeRef>Query_0tv24n2</emn:flowNodeRef>
+        <emn:flowNodeRef>Automation_0kearoh</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_1ok5yfr</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_0ujl0t6" name="View Slice">
+        <emn:flowNodeRef>Query_1qf95x6</emn:flowNodeRef>
+        <emn:flowNodeRef>View_0u6nw9e</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_0sftikc" name="Command Slice">
+        <emn:flowNodeRef>Command_10vlyt5</emn:flowNodeRef>
+        <emn:flowNodeRef>Event_1ltl9h9</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_03d12ne" name="Automation Slice">
+        <emn:flowNodeRef>Query_0pwbx98</emn:flowNodeRef>
+        <emn:flowNodeRef>Automation_0t61vvg</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_12421i5</emn:flowNodeRef>
+        <emn:flowNodeRef>Event_1li1sfm</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_1lmj8g2" name="Automation Slice">
+        <emn:flowNodeRef>Query_0xmnv79</emn:flowNodeRef>
+        <emn:flowNodeRef>Automation_1n8uruh</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_1r7qil9</emn:flowNodeRef>
+        <emn:flowNodeRef>Event_0wjb7jl</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_0xm0e5y" name="View Slice">
+        <emn:flowNodeRef>Query_0o0kkyc</emn:flowNodeRef>
+        <emn:flowNodeRef>View_03q8ig7</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_0hzvhds" name="Command Slice">
+        <emn:flowNodeRef>Command_1701zqp</emn:flowNodeRef>
+        <emn:flowNodeRef>Event_0munu7e</emn:flowNodeRef>
+        <emn:flowNodeRef>Event_14cxu6k</emn:flowNodeRef>
+      </emn:slice>
+      <emn:slice id="Slice_1g9o1s0" name="Automation Slice">
+        <emn:flowNodeRef>Query_1m4bjly</emn:flowNodeRef>
+        <emn:flowNodeRef>Automation_15lb7gk</emn:flowNodeRef>
+        <emn:flowNodeRef>Command_0r7b941</emn:flowNodeRef>
+        <emn:flowNodeRef>Event_0tz0dkd</emn:flowNodeRef>
+      </emn:slice>
+    </emn:sliceSet>
+    <emn:view id="View_051r73g" typeRef="ViewType_0203j24" />
+    <emn:command id="Command_1udc34n" typeRef="CommandType_CreateGameCommand">
+      <emn:value>{
+        "gameId": "game1",
+        "name": "My Game",
+        "creator": "Christian",
+        "moderator": "Christian",
+        "config": {
+        "maxPlayers": 10
+        }
+        }</emn:value>
+    </emn:command>
+    <emn:event id="Event_11cno4u" typeRef="EventType_GameCreatedEvent">
+      <emn:value>{
+        "gameId": "game1",
+        "name": "My Game",
+        "creator": "Christian",
+        "moderator": "Christian",
+        "config": {
+        "maxPlayers": 10
+        },
+        "rounds": [
+        {
+        "name": "Round 1",
+        "roundConfig": {
+        "useBuzzer": false,
+        "secondsToAnswer": 30
+        },
+        "questions": [
+        "question1"
+        ]
+        }
+        ]
+        }</emn:value>
+    </emn:event>
+    <emn:informationFlow id="Flow_1fcjqi5" typeRef="InformationFlowType_10n7a3b" sourceRef="View_051r73g" targetRef="Command_1udc34n" />
+    <emn:informationFlow id="Flow_0o1rt5k" typeRef="InformationFlowType_1re567x" sourceRef="Command_1udc34n" targetRef="Event_11cno4u" />
+    <emn:query id="Query_0d6rxc3" typeRef="QueryType_SearchGames">
+      <emn:value>[
+        {
+        "gameId": "game1",
+        "name": "My Game",
+        "maxPlayers": 10,
+        "numQuestions": 1,
+        "creator": "Christian",
+        "moderator": "Christian",
+        "status": "CREATED",
+        "players": []
+        }
+        ]</emn:value>
+    </emn:query>
+    <emn:view id="View_1lptv0b" typeRef="ViewType_02a74lt" />
+    <emn:informationFlow id="Flow_0mzarm8" typeRef="InformationFlowType_13ru9q3" sourceRef="Query_0d6rxc3" targetRef="View_1lptv0b" />
+    <emn:informationFlow id="Flow_1kna28r" typeRef="InformationFlowType_0dcgu0v" sourceRef="Event_11cno4u" targetRef="Query_0d6rxc3" />
+    <emn:command id="Command_0sksipr" typeRef="CommandType_JoinGameCommand">
+      <emn:value>{
+        "gameId": "game1",
+        "username": "Patrick"
+        }</emn:value>
+    </emn:command>
+    <emn:event id="Event_1ni18xa" typeRef="EventType_PlayerJoinedGameEvent">
+      <emn:value>{
+        "gameId": "game1",
+        "username": "Patrick"
+        }</emn:value>
+    </emn:event>
+    <emn:informationFlow id="Flow_0l8octk" typeRef="InformationFlowType_17ea21j" sourceRef="Command_0sksipr" targetRef="Event_1ni18xa" />
+    <emn:informationFlow id="Flow_0o34b16" typeRef="InformationFlowType_0c1eoxv" sourceRef="View_1lptv0b" targetRef="Command_0sksipr" />
+    <emn:query id="Query_0jfwalt" typeRef="QueryType_GameState">
+      <emn:value>{
+        "gameId": "game1",
+        "name": "My Game",
+        "status": "CREATED",
+        "maxPlayers": 10,
+        "numQuestions": 1,
+        "creator": "Christian",
+        "moderator": "Christian",
+        "players": [
+        {
+        "gamePlayerId": "player1",
+        "name": "Patrick"
+        }
+        ]
+        }</emn:value>
+    </emn:query>
+    <emn:view id="View_0pu9cbd" typeRef="ViewType_1y7npw1" />
+    <emn:informationFlow id="Flow_19shqx0" typeRef="InformationFlowType_1eoe9qe" sourceRef="Query_0jfwalt" targetRef="View_0pu9cbd" />
+    <emn:informationFlow id="Flow_0wozdzg" typeRef="InformationFlowType_0b7ahn5" sourceRef="Event_1ni18xa" targetRef="Query_0jfwalt" />
+    <emn:command id="Command_0ir1eeg" typeRef="CommandType_StartGameCommand">
+      <emn:value>{
+        "gameId": "game1"
+        }</emn:value>
+    </emn:command>
+    <emn:event id="Event_1bu80i4" typeRef="EventType_GameStartedEvent">
+      <emn:value>{
+        "gameId": "game1"
+        }</emn:value>
+    </emn:event>
+    <emn:informationFlow id="Flow_0cl7y3x" typeRef="InformationFlowType_1a77s5p" sourceRef="Command_0ir1eeg" targetRef="Event_1bu80i4" />
+    <emn:informationFlow id="Flow_1c70gw3" typeRef="InformationFlowType_0hr9skd" sourceRef="View_0pu9cbd" targetRef="Command_0ir1eeg" />
+    <emn:event id="Event_07hnffa" typeRef="EventType_RoundStartedEvent">
+      <emn:value>{
+        "gameId": "game1",
+        "gameRoundId": "round1",
+        "roundNumber": 1,
+        "roundConfig": {
+        "useBuzzer": false,
+        "secondsToAnswer": 30
+        },
+        "questions": [
+        "question1"
+        ]
+        }</emn:value>
+    </emn:event>
+    <emn:event id="Event_04b1upt" typeRef="EventType_QuestionAskedEvent">
+      <emn:value>{
+        "gameId": "game1",
+        "gameQuestionId": "gameQuestion1",
+        "roundNumber": 1,
+        "roundQuestionNumber": 1,
+        "questionMode": "COLLECTIVE",
+        "timeToAnswer": 30,
+        "question": {
+        "questionPhrase": "What is the capital of Germany?",
+        "answerOptions": [
+        "Berlin",
+        "Hamburg",
+        "Munich"
+        ]
+        }
+        }</emn:value>
+    </emn:event>
+    <emn:query id="Query_1f15fg8" typeRef="QueryType_StartRoundAutomationQuery">
+      <emn:value>[
+        {
+        "gameId": "game1"
+        }
+        ]</emn:value>
+    </emn:query>
+    <emn:automation id="Automation_0t2k31x" typeRef="AutomationType_0xyx4ih" />
+    <emn:command id="Command_0z2emxv" typeRef="CommandType_StartNextRoundCommand">
+      <emn:value>{
+        "gameId": "game1"
+        }</emn:value>
+    </emn:command>
+    <emn:informationFlow id="Flow_12ypez1" typeRef="InformationFlowType_1n8zd8h" sourceRef="Query_1f15fg8" targetRef="Automation_0t2k31x" />
+    <emn:informationFlow id="Flow_1ghsilw" typeRef="InformationFlowType_09nkp5o" sourceRef="Automation_0t2k31x" targetRef="Command_0z2emxv" />
+    <emn:informationFlow id="Flow_0iqczfw" typeRef="InformationFlowType_1qy8bl6" sourceRef="Event_1bu80i4" targetRef="Query_1f15fg8" />
+    <emn:informationFlow id="Flow_1jj7mss" typeRef="InformationFlowType_06d34ao" sourceRef="Command_0z2emxv" targetRef="Event_07hnffa" />
+    <emn:query id="Query_0tv24n2" typeRef="QueryType_AskFirstQuestionAutomationQuery">
+      <emn:value>[
+        {
+        "gameId": "game1"
+        }
+        ]</emn:value>
+    </emn:query>
+    <emn:automation id="Automation_0kearoh" typeRef="AutomationType_1dtxp9p" />
+    <emn:command id="Command_1ok5yfr" typeRef="CommandType_AskNextQuestionCommand">
+      <emn:value>{
+        "gameId": "game1"
+        }</emn:value>
+    </emn:command>
+    <emn:informationFlow id="Flow_158oq7v" typeRef="InformationFlowType_08yuteh" sourceRef="Query_0tv24n2" targetRef="Automation_0kearoh" />
+    <emn:informationFlow id="Flow_0nmfowa" typeRef="InformationFlowType_0hhb57l" sourceRef="Automation_0kearoh" targetRef="Command_1ok5yfr" />
+    <emn:informationFlow id="Flow_18w1xvx" typeRef="InformationFlowType_03awjix" sourceRef="Event_07hnffa" targetRef="Query_0tv24n2" />
+    <emn:informationFlow id="Flow_064f5lr" typeRef="InformationFlowType_0jqg3i4" sourceRef="Command_1ok5yfr" targetRef="Event_04b1upt" />
+    <emn:query id="Query_1qf95x6" typeRef="QueryType_OpenQuestion">
+      <emn:value>{
+        "gameId": "game1",
+        "gameQuestionId": "gameQuestion1",
+        "question": {
+        "questionPhrase": "What is the capital of Germany?",
+        "answerOptions": [
+        "Berlin",
+        "Hamburg",
+        "Munich"
+        ]
+        },
+        "timeToAnswer": 30,
+        "questionMode": "COLLECTIVE"
+        }</emn:value>
+    </emn:query>
+    <emn:view id="View_0u6nw9e" typeRef="ViewType_13ic2sp" />
+    <emn:informationFlow id="Flow_0ukychc" typeRef="InformationFlowType_18rvizj" sourceRef="Query_1qf95x6" targetRef="View_0u6nw9e" />
+    <emn:informationFlow id="Flow_1xboemf" typeRef="InformationFlowType_0imjbct" sourceRef="Event_04b1upt" targetRef="Query_1qf95x6" />
+    <emn:command id="Command_10vlyt5" typeRef="CommandType_AnswerQuestionCommand">
+      <emn:value>{
+        "gameId": "game1",
+        "gameQuestionId": "gameQuestion1",
+        "username": "Patrick",
+        "answer": "Berlin",
+        "answerTimestamp": "now"
+        }</emn:value>
+    </emn:command>
+    <emn:event id="Event_1ltl9h9" typeRef="EventType_QuestionAnsweredEvent">
+      <emn:value>{
+        "gameId": "game1",
+        "gameQuestionId": "gameQuestion1",
+        "gamePlayerId": "player1",
+        "playerAnswerId": "answer1.1",
+        "answer": "foo",
+        "timeToAnswer": "PT2S"
+        }</emn:value>
+    </emn:event>
+    <emn:informationFlow id="Flow_0fhi0e4" typeRef="InformationFlowType_04rn3qf" sourceRef="Command_10vlyt5" targetRef="Event_1ltl9h9" />
+    <emn:informationFlow id="Flow_1prp3ar" typeRef="InformationFlowType_006mveb" sourceRef="View_0u6nw9e" targetRef="Command_10vlyt5" />
+    <emn:informationFlow id="Flow_0pjwilb" typeRef="InformationFlowType_1agvh0p" sourceRef="Event_11cno4u" targetRef="Query_0jfwalt" />
+    <emn:informationFlow id="Flow_1g0tlwb" typeRef="InformationFlowType_1miye9c" sourceRef="Event_07hnffa" targetRef="Query_1f15fg8" />
+    <emn:informationFlow id="Flow_1815xh5" typeRef="InformationFlowType_07gri34" sourceRef="Event_04b1upt" targetRef="Query_0tv24n2" />
+    <emn:query id="Query_0pwbx98" typeRef="QueryType_CloseQuestionAutomationQuery">
+      <emn:value>[
+        {
+        "gameId": "game1",
+        "gameQuestionId": "gameQuestion1"
+        }
+        ]</emn:value>
+    </emn:query>
+    <emn:automation id="Automation_0t61vvg" typeRef="AutomationType_05gbvie" />
+    <emn:command id="Command_12421i5" typeRef="CommandType_CloseQuestionCommand">
+      <emn:value>{
+        "gameId": "game1",
+        "gameQuestionId": "gameQuestion1"
+        }</emn:value>
+    </emn:command>
+    <emn:event id="Event_1li1sfm" typeRef="EventType_QuestionClosedEvent">
+      <emn:value>{
+        "gameId": "game1",
+        "gameQuestionId": "gameQuestion1"
+        }</emn:value>
+    </emn:event>
+    <emn:informationFlow id="Flow_1m6jq9x" typeRef="InformationFlowType_0a6vsek" sourceRef="Query_0pwbx98" targetRef="Automation_0t61vvg" />
+    <emn:informationFlow id="Flow_09j1l86" typeRef="InformationFlowType_0w52yvu" sourceRef="Automation_0t61vvg" targetRef="Command_12421i5" />
+    <emn:informationFlow id="Flow_1j8wdrv" typeRef="InformationFlowType_1rhkqjd" sourceRef="Command_12421i5" targetRef="Event_1li1sfm" />
+    <emn:informationFlow id="Flow_16t5w9p" typeRef="InformationFlowType_166jlwx" sourceRef="Event_1ltl9h9" targetRef="Query_0pwbx98" />
+    <emn:informationFlow id="Flow_0z2c6nt" typeRef="InformationFlowType_19qqhh5" sourceRef="Event_04b1upt" targetRef="Query_0pwbx98" />
+    <emn:informationFlow id="Flow_14xvotb" typeRef="InformationFlowType_17aercp" sourceRef="Event_1ni18xa" targetRef="Query_0pwbx98" />
+    <emn:query id="Query_0xmnv79" typeRef="QueryType_UnscoredQuestionsQuery">
+      <emn:value>[
+        {
+        "gameId": "game1",
+        "gameQuestionId": "gameQuestion1"
+        }
+        ]</emn:value>
+    </emn:query>
+    <emn:automation id="Automation_1n8uruh" typeRef="AutomationType_0s3n00i" />
+    <emn:command id="Command_1r7qil9" typeRef="CommandType_ScoreQuestionCommand">
+      <emn:value>{
+        "gameId": "game1",
+        "gameQuestionId": "gameQuestion1"
+        }</emn:value>
+    </emn:command>
+    <emn:event id="Event_0wjb7jl" typeRef="EventType_QuestionScoredEvent">
+      <emn:value>[
+        {
+        "gameId": "game1",
+        "gameQuestionId": "gameQuestion1",
+        "points": {
+        "gamePlayer1": 10
+        }
+        }
+        ]</emn:value>
+    </emn:event>
+    <emn:informationFlow id="Flow_1uucioa" typeRef="InformationFlowType_1hjcxvt" sourceRef="Query_0xmnv79" targetRef="Automation_1n8uruh" />
+    <emn:informationFlow id="Flow_1ui51n0" typeRef="InformationFlowType_0yp9h5x" sourceRef="Automation_1n8uruh" targetRef="Command_1r7qil9" />
+    <emn:informationFlow id="Flow_11qu72t" typeRef="InformationFlowType_0fopf41" sourceRef="Command_1r7qil9" targetRef="Event_0wjb7jl" />
+    <emn:informationFlow id="Flow_0h4ea3n" typeRef="InformationFlowType_0dlcdy6" sourceRef="Event_1li1sfm" targetRef="Query_0xmnv79" />
+    <emn:query id="Query_0o0kkyc" typeRef="QueryType_QuestionScoreboardQuery">
+      <emn:value>{
+        "gameId": "game1",
+        "gameQuestionId": "gameQuestion1",
+        "question": {
+        "questionPhrase": "What is the capital of Germany?",
+        "answerOptions": [
+        "Berlin",
+        "Hamburg",
+        "Munich"
+        ],
+        "correctAnswer": "Berlin"
+        },
+        "playerAnswers": [
+        {
+        "gamePlayer1": {
+        "answer": "Berlin",
+        "points": 10
+        }
+        }
+        ]
+        }</emn:value>
+    </emn:query>
+    <emn:view id="View_03q8ig7" typeRef="ViewType_1oa7o7p" />
+    <emn:informationFlow id="Flow_0ui5eyj" typeRef="InformationFlowType_14pb3i5" sourceRef="Query_0o0kkyc" targetRef="View_03q8ig7" />
+    <emn:informationFlow id="Flow_099gp4g" typeRef="InformationFlowType_0jn881s" sourceRef="Event_0wjb7jl" targetRef="Query_0o0kkyc" />
+    <emn:informationFlow id="Flow_05mtfpb" typeRef="InformationFlowType_0nlk1i7" sourceRef="Event_1ltl9h9" targetRef="Query_0o0kkyc" />
+    <emn:informationFlow id="Flow_1bdqd31" typeRef="InformationFlowType_1a6vw1t" sourceRef="Event_04b1upt" targetRef="Query_0o0kkyc" />
+    <emn:informationFlow id="Flow_1slvj1a" typeRef="InformationFlowType_10oqvwd" sourceRef="Event_1ni18xa" targetRef="Query_0o0kkyc" />
+    <emn:command id="Command_1701zqp" typeRef="CommandType_AskNextQuestionCommand">
+      <emn:value>{
+        "gameId": "game1"
+        }</emn:value>
+    </emn:command>
+    <emn:event id="Event_0munu7e" typeRef="EventType_RoundScoredEvent" />
+    <emn:informationFlow id="Flow_1ri4md9" typeRef="InformationFlowType_111cc3l" sourceRef="Command_1701zqp" targetRef="Event_0munu7e" />
+    <emn:informationFlow id="Flow_1dydqns" typeRef="InformationFlowType_0xfxfkq" sourceRef="View_03q8ig7" targetRef="Command_1701zqp" />
+    <emn:event id="Event_14cxu6k" typeRef="EventType_RoundClosedEvent" />
+    <emn:informationFlow id="Flow_0ggdw7l" typeRef="InformationFlowType_08m1xv0" sourceRef="Command_1701zqp" targetRef="Event_14cxu6k" />
+    <emn:query id="Query_1m4bjly" typeRef="QueryType_AutoCloseGameQuery" />
+    <emn:automation id="Automation_15lb7gk" typeRef="AutomationType_10qqqtx" />
+    <emn:command id="Command_0r7b941" typeRef="CommandType_CloseGameCommand" />
+    <emn:event id="Event_0tz0dkd" typeRef="EventType_GameEndedEvent" />
+    <emn:informationFlow id="Flow_1sxg0ey" typeRef="InformationFlowType_0ap82y7" sourceRef="Query_1m4bjly" targetRef="Automation_15lb7gk" />
+    <emn:informationFlow id="Flow_199fuh5" typeRef="InformationFlowType_0o2pt9l" sourceRef="Automation_15lb7gk" targetRef="Command_0r7b941" />
+    <emn:informationFlow id="Flow_0qj0zct" typeRef="InformationFlowType_13uovvg" sourceRef="Command_0r7b941" targetRef="Event_0tz0dkd" />
+    <emn:informationFlow id="Flow_1nuz8vp" typeRef="InformationFlowType_1gcuedd" sourceRef="Event_14cxu6k" targetRef="Query_1m4bjly" />
+    <emn:informationFlow id="Flow_0fkcqk8" typeRef="InformationFlowType_13gsu75" targetRef="Query_0d6rxc3" />
+    <emn:event id="Event_1ojm24a" typeRef="EventType_0nkjff9">
+      <emn:value>{
+        "foo": "bar",
+        "test": true
+        }</emn:value>
+    </emn:event>
+    <emn:event id="Event_0rvc4lg" typeRef="EventType_1m54k8f">
+      <emn:value>{
+        "test": true,
+        "var": "val"
+        }</emn:value>
+    </emn:event>
+    <emn:textAnnotation id="TextAnnotation_1frfzwi">
+      <emn:text>Lists all games and questions where every player has answered the question to automatically close the question</emn:text>
+    </emn:textAnnotation>
+    <emn:association id="Association_0mbn4rh" associationDirection="None" sourceRef="Query_0pwbx98" targetRef="TextAnnotation_1frfzwi" />
+    <emn:textAnnotation id="TextAnnotation_14ke3x7">
+      <emn:text>Lists all games and questions where the question is closed and the question type is scored automatically</emn:text>
+    </emn:textAnnotation>
+    <emn:association id="Association_1oh6l5j" associationDirection="None" sourceRef="Query_0xmnv79" targetRef="TextAnnotation_14ke3x7" />
+  </emn:timeline>
+  <emn:timeline id="Timeline_1oj9a8i" name="new timeline">
+    <emn:laneSet id="LaneSet_1u3px5r">
+      <emn:triggerLaneSet id="TriggerLaneSet_0kvvfjo">
+        <emn:triggerLane id="TriggerLane_1y13xtd" name="Trigger" />
+      </emn:triggerLaneSet>
+      <emn:interactionLane id="InteractionLane_0vmsvj5" name="Interaction">
+        <emn:flowNodeRef>Query_0kzdo1z</emn:flowNodeRef>
+      </emn:interactionLane>
+      <emn:conceptLaneSet id="ConceptLaneSet_0rray74">
+        <emn:conceptLane id="ConceptLane_1crrnhh" name="Concept">
+          <emn:flowNodeRef>EventSequence_01qh2wq</emn:flowNodeRef>
+        </emn:conceptLane>
+      </emn:conceptLaneSet>
+    </emn:laneSet>
+    <emn:informationFlow id="Flow_0fcv42e" typeRef="InformationFlowType_0wjujap" />
+    <emn:query id="Query_0kzdo1z" typeRef="QueryType_0a69h48" />
+    <emn:informationFlow id="Flow_0qzd0dx" typeRef="InformationFlowType_1b5x4fc" targetRef="Query_0kzdo1z" />
+    <emn:eventSequence id="EventSequence_01qh2wq" definitionRef="EventSequenceDefinition_032laud" />
+  </emn:timeline>
+  <emn:specification id="Specification_05qygdo">
+    <emn:given id="Specification_05qygdo_given" />
+    <emn:when id="Specification_05qygdo_when" />
+    <emn:then id="Specification_05qygdo_then" />
+  </emn:specification>
+  <emn:eventSequenceDefinition id="EventSequenceDefinition_032laud" typeRef="EventSequenceType_GameWith2Players" />
+  <emndi:EMNDiagram id="EMNDiagram_1">
+    <emndi:EMNPlane id="EMNPlane_1" emnElement="timeline_1">
+      <emndi:EMNShape id="ConceptLane_0h6eawq_di" emnElement="ConceptLane_0h6eawq" isHorizontal="true">
+        <dc:Bounds x="200" y="440" width="7020" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="interaction_1_di" emnElement="interaction_1" isHorizontal="true">
+        <dc:Bounds x="200" y="280" width="7020" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="triggerLane_1_di" emnElement="triggerLane_1" isHorizontal="true">
+        <dc:Bounds x="200" y="105" width="7020" height="175" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_1g9o1s0_di" emnElement="Slice_1g9o1s0">
+        <dc:Bounds x="5700" y="72" width="550" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_0hzvhds_di" emnElement="Slice_0hzvhds">
+        <dc:Bounds x="5110" y="72" width="570" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_0xm0e5y_di" emnElement="Slice_0xm0e5y">
+        <dc:Bounds x="4790" y="72" width="300" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_1lmj8g2_di" emnElement="Slice_1lmj8g2">
+        <dc:Bounds x="4210" y="72" width="550" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_03d12ne_di" emnElement="Slice_03d12ne">
+        <dc:Bounds x="3640" y="72" width="550" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_0sftikc_di" emnElement="Slice_0sftikc">
+        <dc:Bounds x="3320" y="72" width="300" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_0ujl0t6_di" emnElement="Slice_0ujl0t6">
+        <dc:Bounds x="3000" y="72" width="300" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_1f2b90c_di" emnElement="Slice_1f2b90c">
+        <dc:Bounds x="2420" y="72" width="550" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_0a948yf_di" emnElement="Slice_0a948yf">
+        <dc:Bounds x="1840" y="72" width="550" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_0visy19_di" emnElement="Slice_0visy19">
+        <dc:Bounds x="1530" y="72" width="290" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_1im6s6g_di" emnElement="Slice_1im6s6g">
+        <dc:Bounds x="1210" y="72" width="300" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_0esbivl_di" emnElement="Slice_0esbivl">
+        <dc:Bounds x="890" y="72" width="300" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_0q9rxs9_di" emnElement="Slice_0q9rxs9">
+        <dc:Bounds x="570" y="72" width="300" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Slice_0pmxnmh_di" emnElement="Slice_0pmxnmh">
+        <dc:Bounds x="250" y="72" width="300" height="555" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="View_051r73g_di" emnElement="View_051r73g">
+        <dc:Bounds x="380" y="173" width="40" height="40" />
+        <emndi:EMNLabel>
+          <dc:Bounds x="388" y="155" width="24" height="14" />
+        </emndi:EMNLabel>
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_1udc34n_di" emnElement="Command_1udc34n">
+        <dc:Bounds x="300" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_11cno4u_di" emnElement="Event_11cno4u">
+        <dc:Bounds x="300" y="460" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Query_0d6rxc3_di" emnElement="Query_0d6rxc3">
+        <dc:Bounds x="620" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="View_1lptv0b_di" emnElement="View_1lptv0b">
+        <dc:Bounds x="700" y="173" width="40" height="40" />
+        <emndi:EMNLabel>
+          <dc:Bounds x="708" y="155" width="24" height="14" />
+        </emndi:EMNLabel>
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_0sksipr_di" emnElement="Command_0sksipr">
+        <dc:Bounds x="940" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_1ni18xa_di" emnElement="Event_1ni18xa">
+        <dc:Bounds x="940" y="460" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Query_0jfwalt_di" emnElement="Query_0jfwalt">
+        <dc:Bounds x="1260" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="View_0pu9cbd_di" emnElement="View_0pu9cbd">
+        <dc:Bounds x="1340" y="173" width="40" height="40" />
+        <emndi:EMNLabel>
+          <dc:Bounds x="1348" y="155" width="24" height="14" />
+        </emndi:EMNLabel>
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_0ir1eeg_di" emnElement="Command_0ir1eeg">
+        <dc:Bounds x="1580" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_1bu80i4_di" emnElement="Event_1bu80i4">
+        <dc:Bounds x="1580" y="460" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_07hnffa_di" emnElement="Event_07hnffa">
+        <dc:Bounds x="2160" y="460" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_04b1upt_di" emnElement="Event_04b1upt">
+        <dc:Bounds x="2740" y="460" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Query_1f15fg8_di" emnElement="Query_1f15fg8">
+        <dc:Bounds x="1870" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Automation_0t2k31x_di" emnElement="Automation_0t2k31x">
+        <dc:Bounds x="2240" y="173" width="40" height="40" />
+        <emndi:EMNLabel>
+          <dc:Bounds x="2231" y="155" width="59" height="27" />
+        </emndi:EMNLabel>
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_0z2emxv_di" emnElement="Command_0z2emxv">
+        <dc:Bounds x="2160" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Query_0tv24n2_di" emnElement="Query_0tv24n2">
+        <dc:Bounds x="2450" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Automation_0kearoh_di" emnElement="Automation_0kearoh">
+        <dc:Bounds x="2820" y="173" width="40" height="40" />
+        <emndi:EMNLabel>
+          <dc:Bounds x="2812" y="130" width="56" height="40" />
+        </emndi:EMNLabel>
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_1ok5yfr_di" emnElement="Command_1ok5yfr">
+        <dc:Bounds x="2740" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Query_1qf95x6_di" emnElement="Query_1qf95x6">
+        <dc:Bounds x="3050" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="View_0u6nw9e_di" emnElement="View_0u6nw9e">
+        <dc:Bounds x="3130" y="173" width="40" height="40" />
+        <emndi:EMNLabel>
+          <dc:Bounds x="3138" y="155" width="24" height="14" />
+        </emndi:EMNLabel>
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_10vlyt5_di" emnElement="Command_10vlyt5">
+        <dc:Bounds x="3370" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_1ltl9h9_di" emnElement="Event_1ltl9h9">
+        <dc:Bounds x="3370" y="460" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Query_0pwbx98_di" emnElement="Query_0pwbx98">
+        <dc:Bounds x="3670" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Automation_0t61vvg_di" emnElement="Automation_0t61vvg">
+        <dc:Bounds x="4040" y="173" width="40" height="40" />
+        <emndi:EMNLabel>
+          <dc:Bounds x="4032" y="155" width="56" height="14" />
+        </emndi:EMNLabel>
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_12421i5_di" emnElement="Command_12421i5">
+        <dc:Bounds x="3960" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_1li1sfm_di" emnElement="Event_1li1sfm">
+        <dc:Bounds x="3960" y="460" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Query_0xmnv79_di" emnElement="Query_0xmnv79">
+        <dc:Bounds x="4240" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Automation_1n8uruh_di" emnElement="Automation_1n8uruh">
+        <dc:Bounds x="4610" y="173" width="40" height="40" />
+        <emndi:EMNLabel>
+          <dc:Bounds x="4602" y="155" width="56" height="14" />
+        </emndi:EMNLabel>
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_1r7qil9_di" emnElement="Command_1r7qil9">
+        <dc:Bounds x="4530" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0wjb7jl_di" emnElement="Event_0wjb7jl">
+        <dc:Bounds x="4530" y="460" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Query_0o0kkyc_di" emnElement="Query_0o0kkyc">
+        <dc:Bounds x="4840" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="View_03q8ig7_di" emnElement="View_03q8ig7">
+        <dc:Bounds x="4920" y="173" width="40" height="40" />
+        <emndi:EMNLabel>
+          <dc:Bounds x="4928" y="155" width="24" height="14" />
+        </emndi:EMNLabel>
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_1701zqp_di" emnElement="Command_1701zqp">
+        <dc:Bounds x="5160" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0munu7e_di" emnElement="Event_0munu7e">
+        <dc:Bounds x="5160" y="460" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_14cxu6k_di" emnElement="Event_14cxu6k">
+        <dc:Bounds x="5400" y="460" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Query_1m4bjly_di" emnElement="Query_1m4bjly">
+        <dc:Bounds x="5730" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Automation_15lb7gk_di" emnElement="Automation_15lb7gk">
+        <dc:Bounds x="6100" y="173" width="40" height="40" />
+        <emndi:EMNLabel>
+          <dc:Bounds x="6092" y="155" width="56" height="14" />
+        </emndi:EMNLabel>
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_0r7b941_di" emnElement="Command_0r7b941">
+        <dc:Bounds x="6020" y="300" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0tz0dkd_di" emnElement="Event_0tz0dkd">
+        <dc:Bounds x="6020" y="460" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_1ojm24a_di" emnElement="Event_1ojm24a">
+        <dc:Bounds x="6330" y="460" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0rvc4lg_di" emnElement="Event_0rvc4lg">
+        <dc:Bounds x="6620" y="460" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="TextAnnotation_1frfzwi_di" emnElement="TextAnnotation_1frfzwi">
+        <dc:Bounds x="3720" y="475" width="160" height="90" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="TextAnnotation_14ke3x7_di" emnElement="TextAnnotation_14ke3x7">
+        <dc:Bounds x="4290" y="475" width="160" height="90" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNEdge id="Flow_1fcjqi5_di" emnElement="Flow_1fcjqi5">
+        <di:waypoint x="400" y="213" />
+        <di:waypoint x="400" y="300" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0o1rt5k_di" emnElement="Flow_0o1rt5k">
+        <di:waypoint x="400" y="420" />
+        <di:waypoint x="400" y="460" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0mzarm8_di" emnElement="Flow_0mzarm8">
+        <di:waypoint x="720" y="300" />
+        <di:waypoint x="720" y="213" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1kna28r_di" emnElement="Flow_1kna28r">
+        <di:waypoint x="400" y="460" />
+        <di:waypoint x="400" y="440" />
+        <di:waypoint x="720" y="440" />
+        <di:waypoint x="720" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0l8octk_di" emnElement="Flow_0l8octk">
+        <di:waypoint x="1040" y="420" />
+        <di:waypoint x="1040" y="460" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0o34b16_di" emnElement="Flow_0o34b16">
+        <di:waypoint x="720" y="213" />
+        <di:waypoint x="720" y="257" />
+        <di:waypoint x="1040" y="257" />
+        <di:waypoint x="1040" y="300" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_19shqx0_di" emnElement="Flow_19shqx0">
+        <di:waypoint x="1360" y="300" />
+        <di:waypoint x="1360" y="213" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0wozdzg_di" emnElement="Flow_0wozdzg">
+        <di:waypoint x="1040" y="460" />
+        <di:waypoint x="1040" y="440" />
+        <di:waypoint x="1360" y="440" />
+        <di:waypoint x="1360" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0cl7y3x_di" emnElement="Flow_0cl7y3x">
+        <di:waypoint x="1680" y="420" />
+        <di:waypoint x="1680" y="460" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1c70gw3_di" emnElement="Flow_1c70gw3">
+        <di:waypoint x="1360" y="213" />
+        <di:waypoint x="1360" y="257" />
+        <di:waypoint x="1680" y="257" />
+        <di:waypoint x="1680" y="300" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_12ypez1_di" emnElement="Flow_12ypez1">
+        <di:waypoint x="1970" y="300" />
+        <di:waypoint x="1970" y="260" />
+        <di:waypoint x="2260" y="260" />
+        <di:waypoint x="2260" y="213" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1ghsilw_di" emnElement="Flow_1ghsilw">
+        <di:waypoint x="2260" y="213" />
+        <di:waypoint x="2260" y="300" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0iqczfw_di" emnElement="Flow_0iqczfw">
+        <di:waypoint x="1680" y="460" />
+        <di:waypoint x="1680" y="440" />
+        <di:waypoint x="1970" y="440" />
+        <di:waypoint x="1970" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1jj7mss_di" emnElement="Flow_1jj7mss">
+        <di:waypoint x="2260" y="420" />
+        <di:waypoint x="2260" y="460" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_158oq7v_di" emnElement="Flow_158oq7v">
+        <di:waypoint x="2550" y="300" />
+        <di:waypoint x="2550" y="260" />
+        <di:waypoint x="2840" y="260" />
+        <di:waypoint x="2840" y="213" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0nmfowa_di" emnElement="Flow_0nmfowa">
+        <di:waypoint x="2840" y="213" />
+        <di:waypoint x="2840" y="300" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_18w1xvx_di" emnElement="Flow_18w1xvx">
+        <di:waypoint x="2260" y="460" />
+        <di:waypoint x="2260" y="440" />
+        <di:waypoint x="2550" y="440" />
+        <di:waypoint x="2550" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_064f5lr_di" emnElement="Flow_064f5lr">
+        <di:waypoint x="2840" y="420" />
+        <di:waypoint x="2840" y="460" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0ukychc_di" emnElement="Flow_0ukychc">
+        <di:waypoint x="3150" y="300" />
+        <di:waypoint x="3150" y="213" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1xboemf_di" emnElement="Flow_1xboemf">
+        <di:waypoint x="2840" y="460" />
+        <di:waypoint x="2840" y="440" />
+        <di:waypoint x="3150" y="440" />
+        <di:waypoint x="3150" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0fhi0e4_di" emnElement="Flow_0fhi0e4">
+        <di:waypoint x="3470" y="420" />
+        <di:waypoint x="3470" y="460" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1prp3ar_di" emnElement="Flow_1prp3ar">
+        <di:waypoint x="3150" y="213" />
+        <di:waypoint x="3150" y="257" />
+        <di:waypoint x="3470" y="257" />
+        <di:waypoint x="3470" y="300" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0pjwilb_di" emnElement="Flow_0pjwilb">
+        <di:waypoint x="400" y="460" />
+        <di:waypoint x="400" y="440" />
+        <di:waypoint x="1360" y="440" />
+        <di:waypoint x="1360" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1g0tlwb_di" emnElement="Flow_1g0tlwb">
+        <di:waypoint x="2260" y="460" />
+        <di:waypoint x="2260" y="440" />
+        <di:waypoint x="1970" y="440" />
+        <di:waypoint x="1970" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1815xh5_di" emnElement="Flow_1815xh5">
+        <di:waypoint x="2840" y="460" />
+        <di:waypoint x="2840" y="440" />
+        <di:waypoint x="2550" y="440" />
+        <di:waypoint x="2550" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1m6jq9x_di" emnElement="Flow_1m6jq9x">
+        <di:waypoint x="3770" y="300" />
+        <di:waypoint x="3770" y="260" />
+        <di:waypoint x="4060" y="260" />
+        <di:waypoint x="4060" y="213" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_09j1l86_di" emnElement="Flow_09j1l86">
+        <di:waypoint x="4060" y="213" />
+        <di:waypoint x="4060" y="300" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1j8wdrv_di" emnElement="Flow_1j8wdrv">
+        <di:waypoint x="4060" y="420" />
+        <di:waypoint x="4060" y="460" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_16t5w9p_di" emnElement="Flow_16t5w9p">
+        <di:waypoint x="3470" y="460" />
+        <di:waypoint x="3470" y="440" />
+        <di:waypoint x="3780" y="440" />
+        <di:waypoint x="3780" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0z2c6nt_di" emnElement="Flow_0z2c6nt">
+        <di:waypoint x="2840" y="460" />
+        <di:waypoint x="2840" y="440" />
+        <di:waypoint x="3780" y="440" />
+        <di:waypoint x="3780" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_14xvotb_di" emnElement="Flow_14xvotb">
+        <di:waypoint x="1040" y="460" />
+        <di:waypoint x="1040" y="440" />
+        <di:waypoint x="3780" y="440" />
+        <di:waypoint x="3780" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1uucioa_di" emnElement="Flow_1uucioa">
+        <di:waypoint x="4340" y="300" />
+        <di:waypoint x="4340" y="260" />
+        <di:waypoint x="4630" y="260" />
+        <di:waypoint x="4630" y="213" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1ui51n0_di" emnElement="Flow_1ui51n0">
+        <di:waypoint x="4630" y="213" />
+        <di:waypoint x="4630" y="300" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_11qu72t_di" emnElement="Flow_11qu72t">
+        <di:waypoint x="4630" y="420" />
+        <di:waypoint x="4630" y="460" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0h4ea3n_di" emnElement="Flow_0h4ea3n">
+        <di:waypoint x="4060" y="460" />
+        <di:waypoint x="4060" y="440" />
+        <di:waypoint x="4340" y="440" />
+        <di:waypoint x="4340" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0ui5eyj_di" emnElement="Flow_0ui5eyj">
+        <di:waypoint x="4940" y="300" />
+        <di:waypoint x="4940" y="213" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_099gp4g_di" emnElement="Flow_099gp4g">
+        <di:waypoint x="4630" y="460" />
+        <di:waypoint x="4630" y="440" />
+        <di:waypoint x="4940" y="440" />
+        <di:waypoint x="4940" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_05mtfpb_di" emnElement="Flow_05mtfpb">
+        <di:waypoint x="3470" y="460" />
+        <di:waypoint x="3470" y="440" />
+        <di:waypoint x="4940" y="440" />
+        <di:waypoint x="4940" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1bdqd31_di" emnElement="Flow_1bdqd31">
+        <di:waypoint x="2840" y="460" />
+        <di:waypoint x="2840" y="440" />
+        <di:waypoint x="4940" y="440" />
+        <di:waypoint x="4940" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1slvj1a_di" emnElement="Flow_1slvj1a">
+        <di:waypoint x="1040" y="460" />
+        <di:waypoint x="1040" y="440" />
+        <di:waypoint x="4940" y="440" />
+        <di:waypoint x="4940" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1ri4md9_di" emnElement="Flow_1ri4md9">
+        <di:waypoint x="5260" y="420" />
+        <di:waypoint x="5260" y="460" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1dydqns_di" emnElement="Flow_1dydqns">
+        <di:waypoint x="4940" y="213" />
+        <di:waypoint x="4940" y="257" />
+        <di:waypoint x="5260" y="257" />
+        <di:waypoint x="5260" y="300" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0ggdw7l_di" emnElement="Flow_0ggdw7l">
+        <di:waypoint x="5260" y="420" />
+        <di:waypoint x="5260" y="440" />
+        <di:waypoint x="5500" y="440" />
+        <di:waypoint x="5500" y="460" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1sxg0ey_di" emnElement="Flow_1sxg0ey">
+        <di:waypoint x="5830" y="300" />
+        <di:waypoint x="5830" y="260" />
+        <di:waypoint x="6120" y="260" />
+        <di:waypoint x="6120" y="213" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_199fuh5_di" emnElement="Flow_199fuh5">
+        <di:waypoint x="6120" y="213" />
+        <di:waypoint x="6120" y="300" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_0qj0zct_di" emnElement="Flow_0qj0zct">
+        <di:waypoint x="6120" y="420" />
+        <di:waypoint x="6120" y="460" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Flow_1nuz8vp_di" emnElement="Flow_1nuz8vp">
+        <di:waypoint x="5500" y="460" />
+        <di:waypoint x="5500" y="440" />
+        <di:waypoint x="5830" y="440" />
+        <di:waypoint x="5830" y="420" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Association_0mbn4rh_di" emnElement="Association_0mbn4rh">
+        <di:waypoint x="3770" y="420" />
+        <di:waypoint x="3770" y="475" />
+      </emndi:EMNEdge>
+      <emndi:EMNEdge id="Association_1oh6l5j_di" emnElement="Association_1oh6l5j">
+        <di:waypoint x="4340" y="420" />
+        <di:waypoint x="4340" y="475" />
+      </emndi:EMNEdge>
+    </emndi:EMNPlane>
+  </emndi:EMNDiagram>
+  <emndi:EMNDiagram id="EMNDiagram_1qv2y7o">
+    <emndi:EMNPlane id="EMNPlane_0447iut" emnElement="simple">
+      <emndi:EMNShape id="EventType_GameCreatedEvent_di" emnElement="EventType_GameCreatedEvent">
+        <dc:Bounds x="140" y="280" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="EventType_GameStartedEvent_di" emnElement="EventType_GameStartedEvent">
+        <dc:Bounds x="460" y="280" width="200" height="120" />
+      </emndi:EMNShape>
+    </emndi:EMNPlane>
+  </emndi:EMNDiagram>
+  <emndi:EMNDiagram id="EMNDiagram_1vtkek1">
+    <emndi:EMNPlane id="EMNPlane_0wf3x4y" emnElement="Timeline_1oj9a8i">
+      <emndi:EMNShape id="ConceptLane_1crrnhh_di" emnElement="ConceptLane_1crrnhh" isHorizontal="true">
+        <dc:Bounds x="100" y="460" width="1000" height="180" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="InteractionLane_0vmsvj5_di" emnElement="InteractionLane_0vmsvj5" isHorizontal="true">
+        <dc:Bounds x="100" y="280" width="1000" height="180" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="TriggerLane_1y13xtd_di" emnElement="TriggerLane_1y13xtd" isHorizontal="true">
+        <dc:Bounds x="100" y="100" width="1000" height="180" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="EventSequence_01qh2wq_di" emnElement="EventSequence_01qh2wq">
+        <dc:Bounds x="160" y="480" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_05qygdo_di" emnElement="Specification_05qygdo">
+        <dc:Bounds x="100" y="740" width="500" height="550" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_05qygdo_given_di" emnElement="Specification_05qygdo_given">
+        <dc:Bounds x="110" y="780" width="480" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_05qygdo_when_di" emnElement="Specification_05qygdo_when">
+        <dc:Bounds x="110" y="950" width="480" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_05qygdo_then_di" emnElement="Specification_05qygdo_then">
+        <dc:Bounds x="110" y="1120" width="480" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Query_0kzdo1z_di" emnElement="Query_0kzdo1z">
+        <dc:Bounds x="390" y="300" width="200" height="120" />
+      </emndi:EMNShape>
+    </emndi:EMNPlane>
+  </emndi:EMNDiagram>
+</emn:definitions>
