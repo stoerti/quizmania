@@ -7,7 +7,9 @@ import com.tngtech.jgiven.annotation.Quoted
 import com.tngtech.jgiven.integration.spring.JGivenStage
 import io.toolisticon.testing.jgiven.step
 import org.assertj.core.api.Assertions.assertThat
-import org.awaitility.Awaitility
+import org.awaitility.kotlin.atMost
+import org.awaitility.kotlin.await
+import org.awaitility.kotlin.untilAsserted
 import org.quizmania.game.api.GameConfig
 import org.quizmania.game.api.GameId
 import org.quizmania.game.api.GameQuestionId
@@ -24,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import java.time.Instant
 import java.util.*
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.seconds
 
 @JGivenStage
 class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
@@ -99,34 +101,28 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
       )
     }.let { UUID.fromString(it) }
 
-    Awaitility.await()
-      .atMost(10, TimeUnit.SECONDS)
-      .untilAsserted {
-        executeSuccessfully { gameReadController.get(gameId) }
-      }
+    await atMost 10.seconds untilAsserted {
+      executeSuccessfully { gameReadController.get(gameId) }
+    }
   }
 
   fun `the game starts`(synchronizeWithProjection: Boolean = false) = step {
     executeSuccessfully { gameCommandController.startGame(gameId) }
 
-    Awaitility.await()
-      .atMost(10, TimeUnit.SECONDS)
-      .untilAsserted {
-        val questionAsked = gameEventsController.getGameEvents(gameId.toString(), 0).body!!
-          .lastOrNull { it.eventType == "QuestionAskedEvent" }
-        assertThat(questionAsked).isNotNull
-        gameQuestionId = UUID.fromString(
-          objectMapper.readTree(questionAsked!!.payload).get("gameQuestionId").asText()
-        )
-      }
+    await atMost 10.seconds untilAsserted {
+      val questionAsked = gameEventsController.getGameEvents(gameId.toString(), 0).body!!
+        .lastOrNull { it.eventType == "QuestionAskedEvent" }
+      assertThat(questionAsked).isNotNull
+      gameQuestionId = UUID.fromString(
+        objectMapper.readTree(questionAsked!!.payload).get("gameQuestionId").asText()
+      )
+    }
 
     if (synchronizeWithProjection) {
-      Awaitility.await()
-        .atMost(10, TimeUnit.SECONDS)
-        .untilAsserted {
-          val game = exchangeSuccessfully { gameReadController.get(gameId) }
-          assertThat(game.status).isEqualTo(GameStatus.STARTED)
-        }
+      await atMost 10.seconds untilAsserted {
+        val game = exchangeSuccessfully { gameReadController.get(gameId) }
+        assertThat(game.status).isEqualTo(GameStatus.STARTED)
+      }
     }
   }
 
@@ -134,12 +130,10 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
     executeSuccessfully { gameCommandController.joinGame(gameId, username) }
 
     if (synchronizeWithProjection) {
-      Awaitility.await()
-        .atMost(10, TimeUnit.SECONDS)
-        .untilAsserted {
-          val game = exchangeSuccessfully { gameReadController.get(gameId) }
-          assertThat(game.players.filter { it.name == username }).isNotEmpty
-        }
+      await atMost 10.seconds untilAsserted {
+        val game = exchangeSuccessfully { gameReadController.get(gameId) }
+        assertThat(game.players.filter { it.name == username }).isNotEmpty
+      }
     }
   }
 
