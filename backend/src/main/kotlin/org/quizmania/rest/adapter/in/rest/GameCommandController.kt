@@ -7,7 +7,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
-import java.time.Instant
+import java.time.OffsetDateTime
 import java.util.*
 
 /**
@@ -35,11 +35,11 @@ class GameCommandController(
 
     commandGateway.sendAndWait(
       CreateGameCommand(
-        gameId,
-        newGameDto.name,
-        newGameDto.config,
-        username,
-        if (newGameDto.withModerator) username else null
+        gameId = gameId,
+        name = newGameDto.name,
+        config = newGameDto.config,
+        creator = username,
+        moderator = if (newGameDto.withModerator) username else null,
       )
     )
 
@@ -206,12 +206,12 @@ data class NewGameDto(
 data class AnswerDto(
   val gameQuestionId: UUID,
   val answer: String,
-  val answerTimestamp: Instant
+  val answerTimestamp: OffsetDateTime
 )
 
 data class BuzzDto(
   val gameQuestionId: UUID,
-  val buzzerTimestamp: Instant
+  val buzzerTimestamp: OffsetDateTime
 )
 
 data class BuzzerAnswerDto(

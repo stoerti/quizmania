@@ -7,6 +7,7 @@ import org.axonframework.messaging.eventhandling.conversion.EventConverter
 import org.quizmania.game.api.BuzzerCollectionStartedEvent
 import org.quizmania.game.api.EvaluateBuzzesCommand
 import java.time.Clock
+import java.time.ZoneOffset
 import kotlin.time.Duration.Companion.milliseconds
 
 /** Owns one short fairness window opened by the first buzzer press. */
@@ -25,7 +26,8 @@ class BuzzerCollectionWorkflow(
     val collectionStarted = requireNotNull(eventConverter.convert(payload, BuzzerCollectionStartedEvent::class.java)) {
       "Workflow payload could not be converted to BuzzerCollectionStartedEvent"
     }
-    val delay = java.time.Duration.between(clock.instant(), collectionStarted.evaluateAt)
+    val now = clock.instant().atOffset(ZoneOffset.UTC)
+    val delay = java.time.Duration.between(now, collectionStarted.evaluateAt)
       .toMillis()
       .coerceAtLeast(0)
       .milliseconds

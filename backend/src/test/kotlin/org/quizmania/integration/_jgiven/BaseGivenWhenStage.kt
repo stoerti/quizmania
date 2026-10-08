@@ -20,7 +20,8 @@ import org.quizmania.rest.adapter.`in`.rest.NewGameDto
 import org.quizmania.rest.application.domain.GameStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -130,7 +131,7 @@ class BaseGivenWhenStage : Stage<BaseGivenWhenStage>() {
       gameCommandController.answerQuestion(
         gameId,
         username,
-        AnswerDto(gameQuestionId, "integration answer", Instant.now()),
+        AnswerDto(gameQuestionId, "integration answer", OffsetDateTime.now(ZoneOffset.UTC)),
       )
     }
   }

@@ -5,7 +5,7 @@ import org.quizmania.question.api.Question
 import org.quizmania.question.api.QuestionId
 import org.quizmania.question.api.Round
 import org.quizmania.question.api.RoundConfig
-import java.time.Instant
+import java.time.OffsetDateTime
 import java.util.*
 
 sealed interface GameEvent {
@@ -27,8 +27,8 @@ data class GameCreatedEvent(
   val name: String,
   val config: GameConfig,
   val rounds: List<Round>,
-  val creatorUsername: String,
-  val moderatorUsername: String?,
+  val creator: String,
+  val moderator: String?,
 ) : GameEvent
 
 data class PlayerJoinedGameEvent(
@@ -93,7 +93,7 @@ data class QuestionAskedEvent(
   val roundNumber: GameRoundNumber,
   val roundQuestionNumber: RoundQuestionNumber,
   val questionMode: GameQuestionMode,
-  val questionTimestamp: Instant,
+  val questionTimestamp: OffsetDateTime,
   val timeToAnswer: Long,
   val question: Question,
   @field:EventTag(key = "gameRoundId")
@@ -128,7 +128,7 @@ data class QuestionBuzzedEvent(
   @field:EventTag(key = "gameQuestionId")
   override val gameQuestionId: GameQuestionId,
   val gamePlayerId: GamePlayerId,
-  val buzzerTimestamp: Instant
+  val buzzerTimestamp: OffsetDateTime
 ) : GameQuestionEvent
 
 data class QuestionBuzzerWonEvent(
@@ -145,7 +145,7 @@ data class BuzzerCollectionStartedEvent(
   @field:EventTag(key = "gameQuestionId")
   override val gameQuestionId: GameQuestionId,
   val windowId: UUID,
-  val evaluateAt: Instant,
+  val evaluateAt: OffsetDateTime,
 ) : GameQuestionEvent
 
 data class QuestionBuzzerReopenedEvent(

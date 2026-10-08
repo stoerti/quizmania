@@ -51,8 +51,8 @@ export class Game {
     this.id = event.gameId
     this.name = event.name
     this.config = event.config
-    this.creator = event.creatorUsername
-    this.moderator = event.moderatorUsername
+    this.creator = event.creator
+    this.moderator = event.moderator
     this.status = GameStatus.CREATED
     this.totalQuestions = event.rounds.reduce((acc, round) => acc + round.questions.length, 0)
     this.players = []

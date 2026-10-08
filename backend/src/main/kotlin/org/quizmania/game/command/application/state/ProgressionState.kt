@@ -7,13 +7,13 @@ import org.axonframework.extension.spring.stereotype.EventSourced
 import org.quizmania.game.api.*
 import org.quizmania.question.api.Question
 import org.quizmania.question.api.QuestionId
-import java.time.Instant
+import java.time.OffsetDateTime
 import java.util.UUID
 
 data class PreparedQuestion(
   val question: Question,
   val gameQuestionId: GameQuestionId,
-  val askedAt: Instant,
+  val askedAt: OffsetDateTime,
 )
 
 /** Only navigation facts. Answer contents and buzzer activity never enter this boundary. */

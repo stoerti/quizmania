@@ -152,8 +152,8 @@ function gameCreatedEvent(): GameCreatedEvent {
       maxPlayers: 10,
       questionSetId: "questionSet1",
     },
-    creatorUsername: "player1",
-    moderatorUsername: undefined,
+    creator: "player1",
+    moderator: undefined,
     rounds: [
       {
         name: "Round 1",

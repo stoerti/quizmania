@@ -18,7 +18,8 @@ import org.quizmania.game.GameEventFixtures.Companion.questionBuzzerWon
 import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
 import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
 import org.quizmania.game.api.*
-import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 class GameQuestionStateTest {
@@ -146,7 +147,12 @@ class GameQuestionStateTest {
     val state = GameQuestionState(questionAsked(GAME_QUESTION_1, 1, question = choiceQuestion()))
 
     assertThatThrownBy {
-      state.decide(buzzQuestion(GAME_QUESTION_1, USERNAME_1), startedGame(), Instant.now(), UUID.randomUUID())
+      state.decide(
+        buzzQuestion(GAME_QUESTION_1, USERNAME_1),
+        startedGame(),
+        OffsetDateTime.now(ZoneOffset.UTC),
+        UUID.randomUUID(),
+      )
     }.isInstanceOf(QuestionNotInBuzzerModeProblem::class.java)
   }
 

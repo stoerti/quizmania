@@ -24,14 +24,14 @@ import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
 import org.quizmania.game.USERNAME_2
 import java.time.Clock
 import java.time.Duration
-import java.time.Instant
+import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 class QuestionLifecycleWorkflowTest {
-  private val now = Instant.parse("2026-10-06T10:00:00Z")
+  private val now = OffsetDateTime.parse("2026-10-06T10:00:00Z")
   private val workflow = QuestionLifecycleWorkflow(
     mock<CommandGateway>(),
-    Clock.fixed(now, ZoneOffset.UTC),
+    Clock.fixed(now.toInstant(), ZoneOffset.UTC),
     DelegatingEventConverter(Jackson2Converter()),
   )
   private val fixture = WorkflowTestFixture.of(

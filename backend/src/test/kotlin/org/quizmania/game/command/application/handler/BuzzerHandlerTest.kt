@@ -17,7 +17,8 @@ import org.quizmania.game.GameEventFixtures.Companion.roundStarted
 import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
 import org.quizmania.game.api.*
 import org.quizmania.question.api.RoundConfig
-import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 class BuzzerHandlerTest : GameCommandHandlerTest() {
@@ -274,7 +275,12 @@ class BuzzerHandlerTest : GameCommandHandlerTest() {
   }
 
   private fun collectionStarted() =
-    BuzzerCollectionStartedEvent(GAME_UUID, GAME_QUESTION_1, windowId, Instant.now().plusMillis(500))
+    BuzzerCollectionStartedEvent(
+      GAME_UUID,
+      GAME_QUESTION_1,
+      windowId,
+      OffsetDateTime.now(ZoneOffset.UTC).plus(java.time.Duration.ofMillis(500)),
+    )
 
   private fun buzzerHistory() = arrayOf(
     gameCreated(moderator = "Moderator"), playerAdded(USERNAME_1, GAME_PLAYER_1),

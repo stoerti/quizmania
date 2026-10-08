@@ -1,7 +1,7 @@
 package org.quizmania.game.api
 
 import org.axonframework.modelling.annotation.TargetEntityId
-import java.time.Instant
+import java.time.OffsetDateTime
 import java.util.UUID
 
 sealed interface GameCommand {
@@ -20,8 +20,8 @@ data class CreateGameCommand(
     override val gameId: UUID,
   val name: String,
   val config: GameConfig,
-  val creatorUsername: String,
-  val moderatorUsername: String?
+  val creator: String,
+  val moderator: String?
 ): GameCommand
 
 data class JoinGameCommand(
@@ -69,7 +69,7 @@ data class AnswerQuestionCommand(
     val gameQuestionId: UUID,
     val username: String,
     val answer: String,
-    val answerTimestamp: Instant,
+    val answerTimestamp: OffsetDateTime,
 ): GameCommand
 
 data class OverrideAnswerCommand(
@@ -85,7 +85,7 @@ data class BuzzQuestionCommand(
   override val gameId: GameId,
   val gameQuestionId: GameQuestionId,
   val username: String,
-  val buzzerTimestamp: Instant
+  val buzzerTimestamp: OffsetDateTime
 ) : GameCommand
 
 data class AnswerBuzzerQuestionCommand(

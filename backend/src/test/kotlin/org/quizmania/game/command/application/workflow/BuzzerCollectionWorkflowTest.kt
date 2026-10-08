@@ -17,15 +17,15 @@ import org.quizmania.game.GAME_UUID
 import org.quizmania.game.api.BuzzerCollectionStartedEvent
 import java.time.Clock
 import java.time.Duration
-import java.time.Instant
+import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.UUID
 
 class BuzzerCollectionWorkflowTest {
-  private val now = Instant.parse("2026-10-06T10:00:00Z")
+  private val now = OffsetDateTime.parse("2026-10-06T10:00:00Z")
   private val workflow = BuzzerCollectionWorkflow(
     mock<CommandGateway>(),
-    Clock.fixed(now, ZoneOffset.UTC),
+    Clock.fixed(now.toInstant(), ZoneOffset.UTC),
     DelegatingEventConverter(Jackson2Converter()),
   )
   private val fixture = WorkflowTestFixture.of(
@@ -51,7 +51,7 @@ class BuzzerCollectionWorkflowTest {
   fun `collection is evaluated when its fairness window ends`() {
     fixture
       .given()
-      .publishEvent(collectionStarted(now.plusMillis(500)))
+      .publishEvent(collectionStarted(now.plus(Duration.ofMillis(500))))
       .executionExists()
 
     fixture
@@ -74,6 +74,6 @@ class BuzzerCollectionWorkflowTest {
       .workflowFinished(WorkflowStatus.COMPLETED)
   }
 
-  private fun collectionStarted(evaluateAt: Instant) =
+  private fun collectionStarted(evaluateAt: OffsetDateTime) =
     BuzzerCollectionStartedEvent(GAME_UUID, GAME_QUESTION_1, UUID.randomUUID(), evaluateAt)
 }

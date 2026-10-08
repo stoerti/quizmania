@@ -6,7 +6,8 @@ import org.axonframework.modelling.annotation.InjectEntity
 import org.quizmania.game.api.*
 import org.quizmania.game.command.application.state.*
 import org.springframework.stereotype.Component
-import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 @Component
@@ -15,7 +16,7 @@ class BuzzerHandler : GameCommandHandler() {
   fun handle(command: BuzzQuestionCommand, @InjectEntity game: GameState,
     @InjectEntity(idProperty = "gameQuestionId") question: GameQuestionState, appender: EventAppender,
   ) {
-    val now = Instant.now()
+    val now = OffsetDateTime.now(ZoneOffset.UTC)
     appender.append(question.decide(command, game, now, UUID.randomUUID()))
   }
 

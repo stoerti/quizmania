@@ -40,8 +40,8 @@ export type GameCreatedEvent = {
   gameId: string,
   name: string,
   config: GameConfig,
-  creatorUsername: string,
-  moderatorUsername: string | undefined,
+  creator: string,
+  moderator: string | undefined,
   rounds: Round[]
 }
 

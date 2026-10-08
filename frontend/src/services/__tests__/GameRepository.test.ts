@@ -20,7 +20,7 @@ vi.mock("@stomp/stompjs", () => ({
 }));
 
 const created = {
-  gameId: "game", name: "Test", creatorUsername: "moderator", moderatorUsername: "moderator",
+  gameId: "game", name: "Test", creator: "moderator", moderator: "moderator",
   rounds: [], config: {maxPlayers: 10, questionSetId: "test"},
 } as GameCreatedEvent;
 const creation = {gameId: "game", cursor: "9007199254740993", timestamp: "", eventType: "GameCreatedEvent",

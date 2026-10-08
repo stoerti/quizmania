@@ -17,7 +17,7 @@ data class GameState private constructor(
   val gameId: GameId,
   val config: GameConfig,
   val rounds: List<Round>,
-  val moderatorUsername: String?,
+  val moderator: String?,
   val status: GameStatus,
   private val players: Map<GamePlayerId, String>,
 ) {
@@ -26,7 +26,7 @@ data class GameState private constructor(
     gameId = event.gameId,
     config = event.config,
     rounds = event.rounds.toList(),
-    moderatorUsername = event.moderatorUsername,
+    moderator = event.moderator,
     status = GameStatus.CREATED,
     players = emptyMap(),
   )
@@ -53,13 +53,13 @@ data class GameState private constructor(
   fun decide(command: JoinGameCommand): List<GameEvent> {
     if (status == GameStatus.ENDED || status == GameStatus.CANCELED) throw GameAlreadyEndedProblem(command.gameId)
     if (size >= config.maxPlayers) throw GameAlreadyFullProblem(command.gameId)
-    if (findPlayer(command.username) != null || command.username == moderatorUsername)
+    if (findPlayer(command.username) != null || command.username == moderator)
       throw UsernameTakenProblem(command.gameId)
     return listOf(PlayerJoinedGameEvent(command.gameId, UUID.randomUUID(), command.username))
   }
 
   fun decide(command: LeaveGameCommand): List<GameEvent> {
-    if (command.username == moderatorUsername) {
+    if (command.username == moderator) {
       return if (status == GameStatus.ENDED || status == GameStatus.CANCELED) emptyList()
       else listOf(GameCanceledEvent(command.gameId))
     }
@@ -86,7 +86,7 @@ data class GameState private constructor(
     fun decide(command: CreateGameCommand, questionSet: QuestionSet): List<GameEvent> {
       if (questionSet.rounds.isEmpty() || questionSet.rounds.any { it.questions.isEmpty() })
         throw InvalidConfigProblem(command.gameId, "A game needs rounds with questions")
-      if (questionSet.rounds.any { it.roundConfig.useBuzzer } && command.moderatorUsername == null)
+      if (questionSet.rounds.any { it.roundConfig.useBuzzer } && command.moderator == null)
         throw InvalidConfigProblem(command.gameId, "Buzzer game needs a moderator")
 
       return listOf(GameCreatedEvent(
@@ -94,8 +94,8 @@ data class GameState private constructor(
         name = command.name,
         config = command.config,
         rounds = questionSet.rounds,
-        creatorUsername = command.creatorUsername,
-        moderatorUsername = command.moderatorUsername,
+        creator = command.creator,
+        moderator = command.moderator,
       ))
     }
 

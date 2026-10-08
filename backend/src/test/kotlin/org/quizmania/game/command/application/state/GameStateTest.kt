@@ -25,7 +25,7 @@ class GameStateTest {
 
     assertThat(events).containsExactly(
       GameCreatedEvent(command.gameId, command.name, command.config, questionSet.rounds,
-        command.creatorUsername, command.moderatorUsername)
+        command.creator, command.moderator)
     )
   }
 

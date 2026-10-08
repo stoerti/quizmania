@@ -8,7 +8,8 @@ import org.quizmania.game.command.application.state.*
 import org.quizmania.game.command.port.out.QuestionPort
 import org.quizmania.question.api.QuestionId
 import org.springframework.stereotype.Component
-import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 @Component
@@ -53,7 +54,7 @@ class ProgressionHandler(private val questionPort: QuestionPort) : GameCommandHa
     PreparedQuestion(
       question = questionPort.getQuestion(it),
       gameQuestionId = UUID.randomUUID(),
-      askedAt = Instant.now(),
+      askedAt = OffsetDateTime.now(ZoneOffset.UTC),
     )
   }
 }

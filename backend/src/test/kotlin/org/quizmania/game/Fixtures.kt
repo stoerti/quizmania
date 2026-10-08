@@ -2,7 +2,8 @@ package org.quizmania.game
 
 import org.quizmania.game.api.*
 import org.quizmania.question.api.*
-import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 val GAME_UUID: GameId = UUID.randomUUID()
@@ -29,7 +30,7 @@ val ROUND_ID: QuestionSetId = UUID.randomUUID().toString()
 val QUESTION_ID_1: QuestionSetId = UUID.randomUUID().toString()
 val QUESTION_ID_2: QuestionSetId = UUID.randomUUID().toString()
 
-val NOW: Instant = Instant.now()
+val NOW: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC)
 
 class GameCommandFixtures {
   companion object {
@@ -41,8 +42,8 @@ class GameCommandFixtures {
         gameId = GAME_UUID,
         name = GAME_NAME,
         config = config,
-        creatorUsername = creator,
-        moderatorUsername = null
+        creator = creator,
+        moderator = null
       )
     }
 
@@ -120,8 +121,8 @@ class GameEventFixtures {
         gameId = GAME_UUID,
         name = GAME_NAME,
         config = config,
-        creatorUsername = creator,
-        moderatorUsername = moderator,
+        creator = creator,
+        moderator = moderator,
         rounds = listOf(
           Round(
             "Round 1",

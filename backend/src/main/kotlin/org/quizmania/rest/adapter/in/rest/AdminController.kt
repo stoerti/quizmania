@@ -79,8 +79,8 @@ class AdminController(
                         maxPlayers = maxPlayers,
                         questionSetId = "test01"
                     ),
-                    creatorUsername = shuffledPlayers[1],
-                    moderatorUsername = if (isModerated) shuffledPlayers[0] else null
+                    creator = shuffledPlayers[1],
+                    moderator = if (isModerated) shuffledPlayers[0] else null
                 )
             )
 

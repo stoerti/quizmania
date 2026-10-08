@@ -17,6 +17,7 @@ import org.quizmania.game.api.QuestionAnsweredEvent
 import org.quizmania.game.api.QuestionAskedEvent
 import org.quizmania.game.api.QuestionClosedEvent
 import java.time.Clock
+import java.time.ZoneOffset
 import java.util.function.Predicate
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
@@ -59,8 +60,9 @@ class QuestionLifecycleWorkflow(
     }
 
     val deadline = if (timeToAnswer > 0) {
-      val deadlineAt = questionTimestamp.plusMillis(timeToAnswer)
-      java.time.Duration.between(clock.instant(), deadlineAt).toMillis().coerceAtLeast(0).milliseconds
+      val deadlineAt = questionTimestamp.plus(java.time.Duration.ofMillis(timeToAnswer))
+      val now = clock.instant().atOffset(ZoneOffset.UTC)
+      java.time.Duration.between(now, deadlineAt).toMillis().coerceAtLeast(0).milliseconds
     } else {
       100.days
     }

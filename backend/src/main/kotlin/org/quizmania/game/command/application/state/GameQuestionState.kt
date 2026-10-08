@@ -7,7 +7,7 @@ import org.axonframework.extension.spring.stereotype.EventSourced
 import org.quizmania.game.api.*
 import org.quizmania.game.command.application.domain.QuestionScoringPolicy
 import org.quizmania.question.api.QuestionType
-import java.time.Instant
+import java.time.OffsetDateTime
 import java.util.UUID
 
 enum class QuestionPhase { OPEN, CLOSED, SCORED }
@@ -20,10 +20,10 @@ data class GameQuestionState private constructor(
   val asked: QuestionAskedEvent,
   val phase: QuestionPhase,
   private val recordedAnswers: Map<GamePlayerId, PlayerAnswer>,
-  private val recordedBuzzes: Map<GamePlayerId, Instant>,
+  private val recordedBuzzes: Map<GamePlayerId, OffsetDateTime>,
   val winner: GamePlayerId?,
   val windowId: UUID?,
-  val evaluateAt: Instant?,
+  val evaluateAt: OffsetDateTime?,
 ) {
   @EntityCreator
   constructor(event: QuestionAskedEvent) : this(
@@ -39,7 +39,7 @@ data class GameQuestionState private constructor(
   val isOpen: Boolean get() = phase == QuestionPhase.OPEN
   val answers: List<PlayerAnswer> get() = recordedAnswers.values.toList()
   val answeredPlayers: Set<GamePlayerId> get() = recordedAnswers.keys
-  val buzzes: Map<GamePlayerId, Instant> get() = recordedBuzzes
+  val buzzes: Map<GamePlayerId, OffsetDateTime> get() = recordedBuzzes
 
   @EventSourcingHandler
   fun evolve(event: QuestionAnsweredEvent): GameQuestionState = copy(
@@ -90,17 +90,19 @@ data class GameQuestionState private constructor(
       gamePlayerId = player,
       playerAnswerId = answerId,
       answer = command.answer,
-      timeToAnswer = command.answerTimestamp.toEpochMilli() - asked.questionTimestamp.toEpochMilli(),
+      timeToAnswer = command.answerTimestamp.toInstant().toEpochMilli() -
+        asked.questionTimestamp.toInstant().toEpochMilli(),
     ))
   }
 
-  fun decide(command: BuzzQuestionCommand, game: GameState, now: Instant, newWindowId: UUID): List<GameEvent> {
+  fun decide(command: BuzzQuestionCommand, game: GameState, now: OffsetDateTime, newWindowId: UUID): List<GameEvent> {
     game.assertStarted()
     assertInteractiveTarget(command.gameId)
     assertBuzzer()
     val player = eligiblePlayer(game, command.username)
     if (player in buzzes) throw QuestionAlreadyBuzzedProblem(command.gameId, command.gameQuestionId, player)
-    val timestamp = if (command.buzzerTimestamp.isBefore(now.minusMillis(BUZZER_WINDOW_MILLIS))) now
+    val buzzerWindow = java.time.Duration.ofMillis(BUZZER_WINDOW_MILLIS)
+    val timestamp = if (command.buzzerTimestamp.isBefore(now.minus(buzzerWindow))) now
     else command.buzzerTimestamp
     return buildList {
       add(QuestionBuzzedEvent(
@@ -113,7 +115,7 @@ data class GameQuestionState private constructor(
         gameId = command.gameId,
         gameQuestionId = command.gameQuestionId,
         windowId = newWindowId,
-        evaluateAt = now.plusMillis(BUZZER_WINDOW_MILLIS),
+        evaluateAt = now.plus(buzzerWindow),
       ))
     }
   }
@@ -194,7 +196,7 @@ data class GameQuestionState private constructor(
     assertOpen()
     return buildList {
       add(QuestionClosedEvent(asked.gameId, asked.gameQuestionId))
-      val waitsForReview = game.moderatorUsername != null &&
+      val waitsForReview = game.moderator != null &&
         asked.questionMode == GameQuestionMode.COLLECTIVE && asked.question.type == QuestionType.FREE_INPUT
       if (!waitsForReview) add(score(answers))
     }
