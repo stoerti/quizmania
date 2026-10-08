@@ -7,7 +7,10 @@ import org.axonframework.messaging.eventhandling.annotation.Timestamp
 import org.axonframework.messaging.core.annotation.SequencingPolicy
 import org.axonframework.messaging.core.sequencing.PropertySequencingPolicy
 import org.quizmania.common.EventMetaData
-import org.quizmania.game.api.*
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
 import org.quizmania.rest.adapter.out.WebsocketGameEventEmitter
 import org.springframework.stereotype.Component
 import java.time.Instant

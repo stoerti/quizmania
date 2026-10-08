@@ -1,7 +1,10 @@
 package org.quizmania.rest.port.`in`
 
 import org.quizmania.common.EventMetaData
-import org.quizmania.game.api.*
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
 
 interface GameEventHappenedInPort {
 

@@ -14,7 +14,10 @@ import org.quizmania.game.GameEventFixtures.Companion.roundStarted
 import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
 import org.quizmania.game.QuestionFixtures.Companion.estimateQuestion
 import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
-import org.quizmania.game.api.*
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
 import java.util.UUID
 
 class CollectiveAnswerHandlerTest : GameCommandHandlerTest() {

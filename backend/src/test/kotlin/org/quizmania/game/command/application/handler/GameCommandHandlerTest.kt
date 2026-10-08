@@ -7,7 +7,10 @@ import org.axonframework.test.fixture.AxonTestFixture
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.Mockito
-import org.quizmania.game.api.*
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
 import org.quizmania.game.command.application.state.*
 import org.quizmania.game.command.port.out.QuestionPort
 import java.util.UUID
@@ -39,7 +42,7 @@ abstract class GameCommandHandlerTest {
     fixture = AxonTestFixture.with(configurer) {
       it.registerIgnoredField(PlayerJoinedGameEvent::class.java, "gamePlayerId")
         .registerIgnoredField(RoundStartedEvent::class.java, "gameRoundId")
-        .registerIgnoredField(QuestionAskedEvent::class.java, "gameQuestionId")
+        .registerIgnoredField(GameQuestionEvent::class.java, "gameQuestionId")
         .registerIgnoredField(QuestionAskedEvent::class.java, "gameRoundId")
         .registerIgnoredField(QuestionAskedEvent::class.java, "questionTimestamp")
         .registerIgnoredField(QuestionAnsweredEvent::class.java, "playerAnswerId")

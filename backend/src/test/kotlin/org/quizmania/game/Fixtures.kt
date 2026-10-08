@@ -1,7 +1,10 @@
 package org.quizmania.game
 
-import org.quizmania.game.api.*
-import org.quizmania.question.api.*
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
+import org.quizmania.api.common.*
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.*
@@ -275,6 +278,7 @@ class QuestionFixtures {
 
     fun choiceQuestion(questionId: QuestionId = UUID.randomUUID().toString()): ChoiceQuestion {
       return ChoiceQuestion(
+        type = QuestionType.CHOICE,
         id = questionId,
         phrase = "Question?",
         correctAnswer = "Answer 1",
@@ -284,6 +288,7 @@ class QuestionFixtures {
 
     fun freeInputQuestion(questionId: QuestionId = UUID.randomUUID().toString()): FreeInputQuestion {
       return FreeInputQuestion(
+        type = QuestionType.FREE_INPUT,
         id = questionId,
         phrase = "Question?",
         correctAnswer = "Answer 1"
@@ -292,6 +297,7 @@ class QuestionFixtures {
 
     fun estimateQuestion(questionId: QuestionId = UUID.randomUUID().toString()): EstimateQuestion {
       return EstimateQuestion(
+        type = QuestionType.ESTIMATE,
         id = questionId,
         phrase = "Question?",
         correctAnswer = "100"

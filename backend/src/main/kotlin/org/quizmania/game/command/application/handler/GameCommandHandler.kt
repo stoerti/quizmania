@@ -2,7 +2,7 @@ package org.quizmania.game.command.application.handler
 
 import org.axonframework.messaging.commandhandling.CommandExecutionException
 import org.axonframework.messaging.core.interception.annotation.ExceptionHandler
-import org.quizmania.game.api.GameProblem
+import org.quizmania.api.GameProblem
 
 abstract class GameCommandHandler {
   @ExceptionHandler(resultType = GameProblem::class)

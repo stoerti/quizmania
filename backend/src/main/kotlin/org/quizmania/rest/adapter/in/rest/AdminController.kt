@@ -1,9 +1,9 @@
 package org.quizmania.rest.adapter.`in`.rest
 
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
-import org.quizmania.game.api.JoinGameCommand
-import org.quizmania.game.api.CreateGameCommand
-import org.quizmania.game.api.GameConfig
+import org.quizmania.api.command.JoinGameCommand
+import org.quizmania.api.command.CreateGameCommand
+import org.quizmania.api.common.GameConfig
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping

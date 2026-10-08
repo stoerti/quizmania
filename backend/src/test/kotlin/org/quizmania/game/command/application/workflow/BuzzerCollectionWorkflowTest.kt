@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.quizmania.game.GAME_QUESTION_1
 import org.quizmania.game.GAME_UUID
-import org.quizmania.game.api.BuzzerCollectionStartedEvent
+import org.quizmania.api.event.BuzzerCollectionStartedEvent
 import java.time.Clock
 import java.time.Duration
 import java.time.OffsetDateTime

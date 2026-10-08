@@ -7,7 +7,7 @@ import org.axonframework.messaging.core.MessageHandlerInterceptorChain
 import org.axonframework.messaging.core.MessageStream
 import org.axonframework.messaging.core.Message
 import org.axonframework.messaging.core.unitofwork.ProcessingContext
-import org.quizmania.game.api.GameCommand
+import org.quizmania.api.common.GameCommand
 import org.springframework.stereotype.Component
 
 @Component

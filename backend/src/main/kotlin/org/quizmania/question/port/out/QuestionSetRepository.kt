@@ -1,7 +1,7 @@
 package org.quizmania.question.port.out
 
-import org.quizmania.question.api.QuestionSet
-import org.quizmania.question.api.QuestionSetId
+import org.quizmania.api.common.QuestionSet
+import org.quizmania.api.common.QuestionSetId
 
 interface QuestionSetRepository {
 

@@ -17,7 +17,10 @@ import org.quizmania.game.GameEventFixtures.Companion.questionBuzzerReopened
 import org.quizmania.game.GameEventFixtures.Companion.questionBuzzerWon
 import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
 import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
-import org.quizmania.game.api.*
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.UUID

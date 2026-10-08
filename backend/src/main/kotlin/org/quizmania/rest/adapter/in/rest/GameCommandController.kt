@@ -2,7 +2,10 @@ package org.quizmania.rest.adapter.`in`.rest
 
 import mu.KLogging
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
-import org.quizmania.game.api.*
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional

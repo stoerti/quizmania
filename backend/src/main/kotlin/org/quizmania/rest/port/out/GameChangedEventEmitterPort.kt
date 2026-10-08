@@ -1,7 +1,7 @@
 package org.quizmania.rest.port.out
 
 import org.quizmania.common.EventMetaData
-import org.quizmania.game.api.GameEvent
+import org.quizmania.api.common.GameEvent
 
 interface GameChangedEventEmitterPort {
 

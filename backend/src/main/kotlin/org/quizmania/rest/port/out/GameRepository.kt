@@ -1,6 +1,6 @@
 package org.quizmania.rest.port.out
 
-import org.quizmania.game.api.GameId
+import org.quizmania.api.common.GameId
 import org.quizmania.rest.application.domain.Game
 import org.quizmania.rest.application.domain.GameStatus
 import java.time.Instant

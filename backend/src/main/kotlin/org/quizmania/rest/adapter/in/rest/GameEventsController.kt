@@ -11,7 +11,7 @@ import org.axonframework.messaging.eventstreaming.Tag
 import org.axonframework.messaging.core.GenericMessage
 import org.axonframework.messaging.core.MessageType
 import org.axonframework.messaging.eventhandling.processing.streaming.token.TrackingToken
-import org.quizmania.game.api.GameId
+import org.quizmania.api.common.GameId
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping

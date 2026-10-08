@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.quizmania.game.api.AbandonGameCommand
+import org.quizmania.api.command.AbandonGameCommand
 import org.quizmania.rest.adapter.`in`.scheduler.AbandonedGameCleanupJob.Companion.ACTIVE_GAME_STATUSES
 import org.quizmania.rest.port.out.GameRepository
 import java.time.Clock

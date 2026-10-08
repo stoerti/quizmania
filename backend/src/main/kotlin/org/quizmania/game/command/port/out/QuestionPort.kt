@@ -1,9 +1,9 @@
 package org.quizmania.game.command.port.out
 
-import org.quizmania.question.api.Question
-import org.quizmania.question.api.QuestionId
-import org.quizmania.question.api.QuestionSet
-import org.quizmania.question.api.QuestionSetId
+import org.quizmania.api.common.Question
+import org.quizmania.api.common.QuestionId
+import org.quizmania.api.common.QuestionSet
+import org.quizmania.api.common.QuestionSetId
 
 interface QuestionPort {
 

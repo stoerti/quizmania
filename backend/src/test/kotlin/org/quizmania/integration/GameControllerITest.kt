@@ -3,7 +3,7 @@ package org.quizmania.integration
 import jakarta.servlet.http.Cookie
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.quizmania.game.api.GameConfig
+import org.quizmania.api.common.GameConfig
 import org.quizmania.integration._jgiven.AbstractSpringIntegrationTest
 import org.quizmania.integration._jgiven.TestFixtures
 import org.quizmania.rest.adapter.`in`.rest.GameCommandController

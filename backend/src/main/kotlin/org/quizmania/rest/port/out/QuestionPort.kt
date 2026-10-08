@@ -1,6 +1,6 @@
 package org.quizmania.rest.port.out
 
-import org.quizmania.question.api.QuestionSet
+import org.quizmania.api.common.QuestionSet
 
 interface QuestionPort {
 

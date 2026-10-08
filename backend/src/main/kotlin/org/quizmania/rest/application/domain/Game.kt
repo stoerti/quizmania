@@ -1,6 +1,9 @@
 package org.quizmania.rest.application.domain
 
-import org.quizmania.game.api.*
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
 import java.time.Instant
 
 class Game(

@@ -1,7 +1,8 @@
-package org.quizmania.game.api
+package org.quizmania.api
 
 import org.quizmania.common.axon.problem.CommandExecutionProblem
 import org.quizmania.common.axon.problem.CommandExecutionProblemCategory
+import org.quizmania.api.common.GamePlayerId
 import java.util.*
 
 

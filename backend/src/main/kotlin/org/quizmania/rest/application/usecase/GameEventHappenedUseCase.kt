@@ -1,7 +1,10 @@
 package org.quizmania.rest.application.usecase
 
 import org.quizmania.common.EventMetaData
-import org.quizmania.game.api.*
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
 import org.quizmania.rest.application.domain.Game
 import org.quizmania.rest.port.`in`.GameEventHappenedInPort
 import org.quizmania.rest.port.out.GameRepository

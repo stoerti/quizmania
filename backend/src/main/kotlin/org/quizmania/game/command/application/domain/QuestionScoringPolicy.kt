@@ -1,9 +1,12 @@
 package org.quizmania.game.command.application.domain
 
-import org.quizmania.game.api.*
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
 import org.quizmania.game.command.application.state.PlayerAnswer
-import org.quizmania.question.api.Question
-import org.quizmania.question.api.QuestionType
+import org.quizmania.api.common.Question
+import org.quizmania.api.common.QuestionType
 import kotlin.math.absoluteValue
 
 /** Pure scoring calculation; recorded answers remain scoreable after a player leaves. */

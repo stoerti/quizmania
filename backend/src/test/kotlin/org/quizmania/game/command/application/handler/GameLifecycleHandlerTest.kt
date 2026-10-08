@@ -7,8 +7,8 @@ import org.quizmania.game.GameEventFixtures.Companion.gameCanceled
 import org.quizmania.game.GameEventFixtures.Companion.gameCreated
 import org.quizmania.game.QuestionFixtures.Companion.questionSet
 import org.quizmania.game.QUESTION_SET_ID
-import org.quizmania.game.api.AbandonGameCommand
-import org.quizmania.game.api.GameConfig
+import org.quizmania.api.command.AbandonGameCommand
+import org.quizmania.api.common.GameConfig
 import org.quizmania.game.GAME_UUID
 
 class GameLifecycleHandlerTest : GameCommandHandlerTest() {

@@ -4,9 +4,12 @@ import org.axonframework.eventsourcing.annotation.EventCriteriaBuilder
 import org.axonframework.eventsourcing.annotation.EventSourcingHandler
 import org.axonframework.eventsourcing.annotation.reflection.EntityCreator
 import org.axonframework.extension.spring.stereotype.EventSourced
-import org.quizmania.game.api.*
-import org.quizmania.question.api.QuestionSet
-import org.quizmania.question.api.Round
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
+import org.quizmania.api.common.QuestionSet
+import org.quizmania.api.common.Round
 import java.util.UUID
 
 enum class GameStatus { CREATED, STARTED, ENDED, CANCELED }

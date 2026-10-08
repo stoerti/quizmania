@@ -4,10 +4,10 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.annotation.PostConstruct
 import mu.KLogging
-import org.quizmania.question.api.Question
-import org.quizmania.question.api.QuestionId
-import org.quizmania.question.api.QuestionSet
-import org.quizmania.question.api.QuestionSetId
+import org.quizmania.api.common.Question
+import org.quizmania.api.common.QuestionId
+import org.quizmania.api.common.QuestionSet
+import org.quizmania.api.common.QuestionSetId
 import org.quizmania.question.port.out.QuestionRepository
 import org.quizmania.question.port.out.QuestionSetRepository
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver

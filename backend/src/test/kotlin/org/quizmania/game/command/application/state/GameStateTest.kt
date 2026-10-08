@@ -11,9 +11,12 @@ import org.quizmania.game.GameEventFixtures.Companion.playerAdded
 import org.quizmania.game.GameEventFixtures.Companion.playerRemoved
 import org.quizmania.game.QuestionFixtures.Companion.questionSet
 import org.quizmania.game.USERNAME_1
-import org.quizmania.game.api.*
-import org.quizmania.question.api.Round
-import org.quizmania.question.api.RoundConfig
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
+import org.quizmania.api.common.Round
+import org.quizmania.api.common.RoundConfig
 
 class GameStateTest {
   @Test

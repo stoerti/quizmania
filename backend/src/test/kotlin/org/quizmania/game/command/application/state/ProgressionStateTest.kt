@@ -17,9 +17,12 @@ import org.quizmania.game.GameEventFixtures.Companion.roundStarted
 import org.quizmania.game.NOW
 import org.quizmania.game.QUESTION_ID_1
 import org.quizmania.game.QuestionFixtures.Companion.choiceQuestion
-import org.quizmania.game.api.*
-import org.quizmania.question.api.Round
-import org.quizmania.question.api.RoundConfig
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
+import org.quizmania.api.common.Round
+import org.quizmania.api.common.RoundConfig
 
 class ProgressionStateTest {
   @Test

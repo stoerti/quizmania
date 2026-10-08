@@ -2,7 +2,7 @@ package org.quizmania.rest.adapter.`in`.scheduler
 
 import mu.KLogging
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
-import org.quizmania.game.api.AbandonGameCommand
+import org.quizmania.api.command.AbandonGameCommand
 import org.quizmania.rest.application.domain.GameStatus
 import org.quizmania.rest.port.out.GameRepository
 import org.springframework.boot.context.properties.ConfigurationProperties

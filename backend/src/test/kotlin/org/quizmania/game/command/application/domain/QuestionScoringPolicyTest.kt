@@ -5,11 +5,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.quizmania.game.*
-import org.quizmania.game.api.GameQuestionMode
+import org.quizmania.api.common.GameQuestionMode
+import org.quizmania.api.common.QuestionType
 import org.quizmania.game.command.application.state.PlayerAnswer
-import org.quizmania.question.api.EstimateQuestion
-import org.quizmania.question.api.FreeInputQuestion
-import org.quizmania.question.api.SortQuestion
+import org.quizmania.api.common.EstimateQuestion
+import org.quizmania.api.common.FreeInputQuestion
+import org.quizmania.api.common.SortQuestion
 import java.util.*
 
 class QuestionScoringPolicyTest {
@@ -17,6 +18,7 @@ class QuestionScoringPolicyTest {
   fun estimateQuestion() {
     val gameQuestion = QuestionScoringPolicy(
       EstimateQuestion(
+        type = QuestionType.ESTIMATE,
         id = UUID.randomUUID().toString(),
         phrase = "Question?",
         correctAnswer = "100"
@@ -42,6 +44,7 @@ class QuestionScoringPolicyTest {
   fun sortQuestion() {
     val gameQuestion = QuestionScoringPolicy(
       SortQuestion(
+        type = QuestionType.SORT,
         id = UUID.randomUUID().toString(),
         phrase = "Sort these items?",
         correctAnswer = "A, B, C, D",
@@ -72,6 +75,7 @@ class QuestionScoringPolicyTest {
   fun sortQuestion_withSixItems() {
     val gameQuestion = QuestionScoringPolicy(
       SortQuestion(
+        type = QuestionType.SORT,
         id = UUID.randomUUID().toString(),
         phrase = "Sort these items?",
         correctAnswer = "A, B, C, D, E, F",
@@ -104,6 +108,7 @@ class QuestionScoringPolicyTest {
   fun sortQuestion_calculateDistance() {
     val gameQuestion = QuestionScoringPolicy(
       SortQuestion(
+        type = QuestionType.SORT,
         id = UUID.randomUUID().toString(),
         phrase = "Sort these items?",
         correctAnswer = "A, B, C, D",
@@ -147,6 +152,7 @@ class QuestionScoringPolicyTest {
   fun createGame_ok(correctAnswer: String, playerAnswer: String, correct: Boolean) {
     val gameQuestion = QuestionScoringPolicy(
       FreeInputQuestion(
+        type = QuestionType.FREE_INPUT,
         id = UUID.randomUUID().toString(),
         phrase = "Question?",
         correctAnswer = correctAnswer

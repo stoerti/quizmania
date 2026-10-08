@@ -8,6 +8,7 @@ plugins {
   kotlin("jvm") version "2.3.20"
   kotlin("plugin.spring") version "2.3.20"
   kotlin("plugin.jpa") version "2.3.20"
+  id("io.holixon.emn.kotlin-schema") version "0.0.1-SNAPSHOT"
 }
 
 group = "org.quizmania"
@@ -29,6 +30,12 @@ kotlin {
 
 repositories {
   mavenCentral()
+}
+
+emnSchemaKotlin {
+  emnFiles.from(file("../doc/quizmania-blueprint.emn"))
+  rootPackageName.set("org.quizmania.api")
+  annotationEnhancers.set(listOf("axon5", "jackson"))
 }
 
 dependencies {

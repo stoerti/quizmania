@@ -15,7 +15,10 @@ import org.quizmania.game.GameEventFixtures.Companion.questionBuzzed
 import org.quizmania.game.GameEventFixtures.Companion.questionBuzzerWon
 import org.quizmania.game.GameEventFixtures.Companion.roundStarted
 import org.quizmania.game.QuestionFixtures.Companion.freeInputQuestion
-import org.quizmania.game.api.*
+import org.quizmania.api.*
+import org.quizmania.api.command.*
+import org.quizmania.api.common.*
+import org.quizmania.api.event.*
 
 class ParticipationHandlerTest : GameCommandHandlerTest() {
   @Test

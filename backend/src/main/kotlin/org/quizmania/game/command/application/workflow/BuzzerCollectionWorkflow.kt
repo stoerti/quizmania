@@ -4,8 +4,8 @@ import io.axoniq.framework.workflow.annotation.Workflow
 import io.axoniq.framework.workflow.dsl.kotlin.Kontext
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway
 import org.axonframework.messaging.eventhandling.conversion.EventConverter
-import org.quizmania.game.api.BuzzerCollectionStartedEvent
-import org.quizmania.game.api.EvaluateBuzzesCommand
+import org.quizmania.api.event.BuzzerCollectionStartedEvent
+import org.quizmania.api.command.EvaluateBuzzesCommand
 import java.time.Clock
 import java.time.ZoneOffset
 import kotlin.time.Duration.Companion.milliseconds
