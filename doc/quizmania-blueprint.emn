@@ -184,13 +184,15 @@
         "type": [
         "string",
         "null"
-        ]
+        ],
+        "default": null
         },
         "answerImagePath": {
         "type": [
         "string",
         "null"
-        ]
+        ],
+        "default": null
         },
         "correctAnswer": {
         "type": "string"
@@ -1426,33 +1428,33 @@
         }</emn:schema>
     </emn:queryType>
     <emn:viewType id="ViewType_0203j24" name="View" />
-    <emn:informationFlowType id="InformationFlowType_10n7a3b" name="InformationFlow" sourceRef="ViewType_0203j24" />
-    <emn:informationFlowType id="InformationFlowType_1re567x" name="InformationFlow" />
+    <emn:informationFlowType id="InformationFlowType_10n7a3b" name="InformationFlow" sourceRef="ViewType_0203j24" targetRef="CreateGameCommand" />
+    <emn:informationFlowType id="InformationFlowType_1re567x" name="InformationFlow" sourceRef="CreateGameCommand" targetRef="GameCreatedEvent" />
     <emn:viewType id="ViewType_02a74lt" name="View" />
-    <emn:informationFlowType id="InformationFlowType_13ru9q3" name="InformationFlow" targetRef="ViewType_02a74lt" />
-    <emn:informationFlowType id="InformationFlowType_0dcgu0v" name="InformationFlow" sourceRef="GameCreatedEvent" />
-    <emn:informationFlowType id="InformationFlowType_17ea21j" name="InformationFlow" />
-    <emn:informationFlowType id="InformationFlowType_0c1eoxv" name="InformationFlow" sourceRef="ViewType_02a74lt" />
+    <emn:informationFlowType id="InformationFlowType_13ru9q3" name="InformationFlow" sourceRef="SearchGames" targetRef="ViewType_02a74lt" />
+    <emn:informationFlowType id="InformationFlowType_0dcgu0v" name="InformationFlow" sourceRef="GameCreatedEvent" targetRef="SearchGames" />
+    <emn:informationFlowType id="InformationFlowType_17ea21j" name="InformationFlow" sourceRef="JoinGameCommand" targetRef="PlayerJoinedGameEvent" />
+    <emn:informationFlowType id="InformationFlowType_0c1eoxv" name="InformationFlow" sourceRef="ViewType_02a74lt" targetRef="JoinGameCommand" />
     <emn:viewType id="ViewType_1y7npw1" name="View" />
-    <emn:informationFlowType id="InformationFlowType_1eoe9qe" name="InformationFlow" targetRef="ViewType_1y7npw1" />
-    <emn:informationFlowType id="InformationFlowType_0b7ahn5" name="InformationFlow" sourceRef="PlayerJoinedGameEvent" />
-    <emn:informationFlowType id="InformationFlowType_1a77s5p" name="InformationFlow" />
-    <emn:informationFlowType id="InformationFlowType_0hr9skd" name="InformationFlow" sourceRef="ViewType_1y7npw1" />
+    <emn:informationFlowType id="InformationFlowType_1eoe9qe" name="InformationFlow" sourceRef="GameState" targetRef="ViewType_1y7npw1" />
+    <emn:informationFlowType id="InformationFlowType_0b7ahn5" name="InformationFlow" sourceRef="PlayerJoinedGameEvent" targetRef="GameState" />
+    <emn:informationFlowType id="InformationFlowType_1a77s5p" name="InformationFlow" sourceRef="StartGameCommand" targetRef="GameStartedEvent" />
+    <emn:informationFlowType id="InformationFlowType_0hr9skd" name="InformationFlow" sourceRef="ViewType_1y7npw1" targetRef="StartGameCommand" />
     <emn:automationType id="AutomationType_0xyx4ih" name="Start Round Automation" />
-    <emn:informationFlowType id="InformationFlowType_1n8zd8h" name="InformationFlow" targetRef="AutomationType_0xyx4ih" />
-    <emn:informationFlowType id="InformationFlowType_09nkp5o" name="InformationFlow" sourceRef="AutomationType_0xyx4ih" />
-    <emn:informationFlowType id="InformationFlowType_1qy8bl6" name="InformationFlow" sourceRef="GameStartedEvent" targetRef="GameState" />
+    <emn:informationFlowType id="InformationFlowType_1n8zd8h" name="InformationFlow" sourceRef="StartRoundAutomationQuery" targetRef="AutomationType_0xyx4ih" />
+    <emn:informationFlowType id="InformationFlowType_09nkp5o" name="InformationFlow" sourceRef="AutomationType_0xyx4ih" targetRef="StartNextRoundCommand" />
+    <emn:informationFlowType id="InformationFlowType_1qy8bl6" name="InformationFlow" sourceRef="GameStartedEvent" targetRef="StartRoundAutomationQuery" />
     <emn:informationFlowType id="InformationFlowType_06d34ao" name="InformationFlow" sourceRef="StartNextRoundCommand" targetRef="RoundStartedEvent" />
     <emn:automationType id="AutomationType_1dtxp9p" name="Ask First Question Automation" />
-    <emn:informationFlowType id="InformationFlowType_08yuteh" name="InformationFlow" targetRef="AutomationType_1dtxp9p" />
-    <emn:informationFlowType id="InformationFlowType_0hhb57l" name="InformationFlow" sourceRef="AutomationType_1dtxp9p" />
-    <emn:informationFlowType id="InformationFlowType_03awjix" name="InformationFlow" sourceRef="RoundStartedEvent" />
+    <emn:informationFlowType id="InformationFlowType_08yuteh" name="InformationFlow" sourceRef="AskFirstQuestionAutomationQuery" targetRef="AutomationType_1dtxp9p" />
+    <emn:informationFlowType id="InformationFlowType_0hhb57l" name="InformationFlow" sourceRef="AutomationType_1dtxp9p" targetRef="AskNextQuestionCommand" />
+    <emn:informationFlowType id="InformationFlowType_03awjix" name="InformationFlow" sourceRef="RoundStartedEvent" targetRef="AskFirstQuestionAutomationQuery" />
     <emn:informationFlowType id="InformationFlowType_0jqg3i4" name="InformationFlow" sourceRef="AskNextQuestionCommand" targetRef="QuestionAskedEvent" />
     <emn:viewType id="ViewType_13ic2sp" name="View" />
-    <emn:informationFlowType id="InformationFlowType_18rvizj" name="InformationFlow" targetRef="ViewType_13ic2sp" />
-    <emn:informationFlowType id="InformationFlowType_0imjbct" name="InformationFlow" sourceRef="QuestionAskedEvent" />
-    <emn:informationFlowType id="InformationFlowType_04rn3qf" name="InformationFlow" />
-    <emn:informationFlowType id="InformationFlowType_006mveb" name="InformationFlow" sourceRef="ViewType_13ic2sp" />
+    <emn:informationFlowType id="InformationFlowType_18rvizj" name="InformationFlow" sourceRef="OpenQuestion" targetRef="ViewType_13ic2sp" />
+    <emn:informationFlowType id="InformationFlowType_0imjbct" name="InformationFlow" sourceRef="QuestionAskedEvent" targetRef="OpenQuestion" />
+    <emn:informationFlowType id="InformationFlowType_04rn3qf" name="InformationFlow" sourceRef="AnswerQuestionCommand" targetRef="QuestionAnsweredEvent" />
+    <emn:informationFlowType id="InformationFlowType_006mveb" name="InformationFlow" sourceRef="ViewType_13ic2sp" targetRef="AnswerQuestionCommand" />
     <emn:informationFlowType id="InformationFlowType_1agvh0p" name="InformationFlow" sourceRef="GameCreatedEvent" targetRef="GameState" />
     <emn:queryType id="StartRoundAutomationQuery" name="StartRoundAutomationQuery">
       <emn:extensionElements>
@@ -1563,8 +1565,8 @@
     </emn:queryType>
     <emn:automationType id="AutomationType_05gbvie" name="Automation" />
     <emn:informationFlowType id="InformationFlowType_0a6vsek" name="InformationFlow" sourceRef="CloseQuestionAutomationQuery" targetRef="AutomationType_05gbvie" />
-    <emn:informationFlowType id="InformationFlowType_0w52yvu" name="InformationFlow" sourceRef="AutomationType_05gbvie" />
-    <emn:informationFlowType id="InformationFlowType_1rhkqjd" name="InformationFlow" />
+    <emn:informationFlowType id="InformationFlowType_0w52yvu" name="InformationFlow" sourceRef="AutomationType_05gbvie" targetRef="CloseQuestionCommand" />
+    <emn:informationFlowType id="InformationFlowType_1rhkqjd" name="InformationFlow" sourceRef="CloseQuestionCommand" targetRef="QuestionClosedEvent" />
     <emn:informationFlowType id="InformationFlowType_166jlwx" name="InformationFlow" sourceRef="QuestionAnsweredEvent" targetRef="CloseQuestionAutomationQuery" />
     <emn:informationFlowType id="InformationFlowType_19qqhh5" name="InformationFlow" sourceRef="QuestionAskedEvent" targetRef="CloseQuestionAutomationQuery" />
     <emn:informationFlowType id="InformationFlowType_17aercp" name="InformationFlow" sourceRef="PlayerJoinedGameEvent" targetRef="CloseQuestionAutomationQuery" />
@@ -1591,8 +1593,8 @@
     </emn:queryType>
     <emn:automationType id="AutomationType_0s3n00i" name="Automation" />
     <emn:informationFlowType id="InformationFlowType_1hjcxvt" name="InformationFlow" sourceRef="UnscoredQuestionsQuery" targetRef="AutomationType_0s3n00i" />
-    <emn:informationFlowType id="InformationFlowType_0yp9h5x" name="InformationFlow" sourceRef="AutomationType_0s3n00i" />
-    <emn:informationFlowType id="InformationFlowType_0fopf41" name="InformationFlow" />
+    <emn:informationFlowType id="InformationFlowType_0yp9h5x" name="InformationFlow" sourceRef="AutomationType_0s3n00i" targetRef="ScoreQuestionCommand" />
+    <emn:informationFlowType id="InformationFlowType_0fopf41" name="InformationFlow" sourceRef="ScoreQuestionCommand" targetRef="QuestionScoredEvent" />
     <emn:informationFlowType id="InformationFlowType_0dlcdy6" name="InformationFlow" sourceRef="QuestionClosedEvent" targetRef="UnscoredQuestionsQuery" />
     <emn:queryType id="QuestionScoreboardQuery" name="QuestionScoreboardQuery">
       <emn:extensionElements>
@@ -1654,18 +1656,16 @@
     <emn:informationFlowType id="InformationFlowType_0nlk1i7" name="InformationFlow" sourceRef="QuestionAnsweredEvent" targetRef="QuestionScoreboardQuery" />
     <emn:informationFlowType id="InformationFlowType_1a6vw1t" name="InformationFlow" sourceRef="QuestionAskedEvent" targetRef="QuestionScoreboardQuery" />
     <emn:informationFlowType id="InformationFlowType_10oqvwd" name="InformationFlow" sourceRef="PlayerJoinedGameEvent" targetRef="QuestionScoreboardQuery" />
-    <emn:informationFlowType id="InformationFlowType_111cc3l" name="InformationFlow" />
-    <emn:informationFlowType id="InformationFlowType_0xfxfkq" name="InformationFlow" sourceRef="ViewType_1oa7o7p" />
+    <emn:informationFlowType id="InformationFlowType_111cc3l" name="InformationFlow" sourceRef="AskNextQuestionCommand" targetRef="RoundScoredEvent" />
+    <emn:informationFlowType id="InformationFlowType_0xfxfkq" name="InformationFlow" sourceRef="ViewType_1oa7o7p" targetRef="AskNextQuestionCommand" />
     <emn:informationFlowType id="InformationFlowType_08m1xv0" name="InformationFlow" sourceRef="AskNextQuestionCommand" targetRef="RoundClosedEvent" />
     <emn:queryType id="AutoCloseGameQuery" name="AutoCloseGameQuery" />
     <emn:automationType id="AutomationType_10qqqtx" name="Automation" />
     <emn:commandType id="CloseGameCommand" name="CloseGameCommand" />
     <emn:informationFlowType id="InformationFlowType_0ap82y7" name="InformationFlow" sourceRef="AutoCloseGameQuery" targetRef="AutomationType_10qqqtx" />
     <emn:informationFlowType id="InformationFlowType_0o2pt9l" name="InformationFlow" sourceRef="AutomationType_10qqqtx" targetRef="CloseGameCommand" />
-    <emn:informationFlowType id="InformationFlowType_13uovvg" name="InformationFlow" sourceRef="CloseGameCommand" />
+    <emn:informationFlowType id="InformationFlowType_13uovvg" name="InformationFlow" sourceRef="CloseGameCommand" targetRef="GameEndedEvent" />
     <emn:informationFlowType id="InformationFlowType_1gcuedd" name="InformationFlow" sourceRef="RoundClosedEvent" targetRef="AutoCloseGameQuery" />
-    <emn:informationFlowType id="InformationFlowType_13gsu75" name="InformationFlow" targetRef="SearchGames" />
-    <emn:informationFlowType id="InformationFlowType_0wjujap" name="InformationFlow" targetRef="SearchGames" />
     <emn:eventSequenceType id="EventSequenceType_GameWith2Players" name="Game with two players">
       <emn:eventTypeRef>GameCreatedEvent</emn:eventTypeRef>
       <emn:eventTypeRef>PlayerJoinedGameEvent</emn:eventTypeRef>
@@ -2109,7 +2109,6 @@
     <emn:informationFlow id="Flow_199fuh5" typeRef="InformationFlowType_0o2pt9l" sourceRef="Automation_15lb7gk" targetRef="Command_0r7b941" />
     <emn:informationFlow id="Flow_0qj0zct" typeRef="InformationFlowType_13uovvg" sourceRef="Command_0r7b941" targetRef="Event_0tz0dkd" />
     <emn:informationFlow id="Flow_1nuz8vp" typeRef="InformationFlowType_1gcuedd" sourceRef="Event_14cxu6k" targetRef="Query_1m4bjly" />
-    <emn:informationFlow id="Flow_0fkcqk8" typeRef="InformationFlowType_13gsu75" targetRef="Query_0d6rxc3" />
     <emn:textAnnotation id="TextAnnotation_1frfzwi">
       <emn:text>Lists all games and questions where every player has answered the question to automatically close the question</emn:text>
     </emn:textAnnotation>
@@ -2133,9 +2132,8 @@
         </emn:conceptLane>
       </emn:conceptLaneSet>
     </emn:laneSet>
-    <emn:informationFlow id="Flow_0fcv42e" typeRef="InformationFlowType_0wjujap" />
     <emn:query id="Query_0kzdo1z" typeRef="0a69h48" />
-    <emn:informationFlow id="Flow_0qzd0dx" typeRef="InformationFlowType_1b5x4fc" targetRef="Query_0kzdo1z" />
+    <emn:informationFlow id="Flow_0qzd0dx" typeRef="InformationFlowType_1b5x4fc" sourceRef="EventSequence_01qh2wq" targetRef="Query_0kzdo1z" />
     <emn:eventSequence id="EventSequence_01qh2wq" definitionRef="EventSequenceDefinition_032laud" />
   </emn:timeline>
   <emn:specification id="Specification_05qygdo">
