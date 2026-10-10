@@ -438,429 +438,429 @@
     </emn:schemaDefinition>
     <emn:schemaDefinition id="GameEvent" name="GameEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "GameEvent",
-          "type": "object",
-          "properties": {
-            "gameId": {
-              "$ref": "GameId",
-              "x-emn-tag-key": "gameId"
-            }
-          },
-          "required": [
-            "gameId"
-          ]
+        "$id": "GameEvent",
+        "type": "object",
+        "properties": {
+        "gameId": {
+        "$ref": "GameId",
+        "x-emn-tag-key": "gameId"
+        }
+        },
+        "required": [
+        "gameId"
+        ]
         }</emn:schema>
     </emn:schemaDefinition>
     <emn:schemaDefinition id="GameQuestionEvent" name="GameQuestionEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "GameQuestionEvent",
-          "allOf": [
-            {
-              "$ref": "GameEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameQuestionId": {
-                  "$ref": "GameQuestionId",
-                  "x-emn-tag-key": "gameQuestionId"
-                }
-              },
-              "required": [
-                "gameQuestionId"
-              ]
-            }
-          ]
+        "$id": "GameQuestionEvent",
+        "allOf": [
+        {
+        "$ref": "GameEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameQuestionId": {
+        "$ref": "GameQuestionId",
+        "x-emn-tag-key": "gameQuestionId"
+        }
+        },
+        "required": [
+        "gameQuestionId"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:schemaDefinition>
     <emn:commandType id="EvaluateBuzzesCommand" name="EvaluateBuzzesCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "EvaluateBuzzesCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameQuestionId": {
-                  "$ref": "GameQuestionId"
-                },
-                "windowId": {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              },
-              "required": [
-                "gameQuestionId",
-                "windowId"
-              ]
-            }
-          ]
+        "$id": "EvaluateBuzzesCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "windowId": {
+        "type": "string",
+        "format": "uuid"
+        }
+        },
+        "required": [
+        "gameQuestionId",
+        "windowId"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="CreateGameCommand" name="CreateGameCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "CreateGameCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "config": {
-                  "$ref": "GameConfig"
-                },
-                "creator": {
-                  "type": "string"
-                },
-                "moderator": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              },
-              "required": [
-                "name",
-                "config",
-                "creator",
-                "moderator"
-              ]
-            }
-          ]
+        "$id": "CreateGameCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "name": {
+        "type": "string"
+        },
+        "config": {
+        "$ref": "GameConfig"
+        },
+        "creator": {
+        "type": "string"
+        },
+        "moderator": {
+        "type": [
+        "string",
+        "null"
+        ]
+        }
+        },
+        "required": [
+        "name",
+        "config",
+        "creator",
+        "moderator"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="JoinGameCommand" name="JoinGameCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "JoinGameCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "username": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "username"
-              ]
-            }
-          ]
+        "$id": "JoinGameCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "username": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "username"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="LeaveGameCommand" name="LeaveGameCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "LeaveGameCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "username": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "username"
-              ]
-            }
-          ]
+        "$id": "LeaveGameCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "username": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "username"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="AbandonGameCommand" name="AbandonGameCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "AbandonGameCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {}
-            }
-          ]
+        "$id": "AbandonGameCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {}
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="StartGameCommand" name="StartGameCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "StartGameCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {}
-            }
-          ]
+        "$id": "StartGameCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {}
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="StartNextRoundCommand" name="StartNextRoundCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "StartNextRoundCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {}
-            }
-          ]
+        "$id": "StartNextRoundCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {}
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="ScoreRoundCommand" name="ScoreRoundCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "ScoreRoundCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {}
-            }
-          ]
+        "$id": "ScoreRoundCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {}
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="CloseRoundCommand" name="CloseRoundCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "CloseRoundCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {}
-            }
-          ]
+        "$id": "CloseRoundCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {}
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="AnswerQuestionCommand" name="AnswerQuestionCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "AnswerQuestionCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameQuestionId": {
-                  "$ref": "GameQuestionId"
-                },
-                "username": {
-                  "type": "string"
-                },
-                "answer": {
-                  "type": "string"
-                },
-                "answerTimestamp": {
-                  "type": "string",
-                  "format": "date-time"
-                }
-              },
-              "required": [
-                "gameQuestionId",
-                "username",
-                "answer",
-                "answerTimestamp"
-              ]
-            }
-          ]
+        "$id": "AnswerQuestionCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "username": {
+        "type": "string"
+        },
+        "answer": {
+        "type": "string"
+        },
+        "answerTimestamp": {
+        "type": "string",
+        "format": "date-time"
+        }
+        },
+        "required": [
+        "gameQuestionId",
+        "username",
+        "answer",
+        "answerTimestamp"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="OverrideAnswerCommand" name="OverrideAnswerCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "OverrideAnswerCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameQuestionId": {
-                  "$ref": "GameQuestionId"
-                },
-                "gamePlayerId": {
-                  "$ref": "GamePlayerId"
-                },
-                "answer": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "gameQuestionId",
-                "gamePlayerId",
-                "answer"
-              ]
-            }
-          ]
+        "$id": "OverrideAnswerCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        },
+        "answer": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "gameQuestionId",
+        "gamePlayerId",
+        "answer"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="BuzzQuestionCommand" name="BuzzQuestionCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "BuzzQuestionCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameQuestionId": {
-                  "$ref": "GameQuestionId"
-                },
-                "username": {
-                  "type": "string"
-                },
-                "buzzerTimestamp": {
-                  "type": "string",
-                  "format": "date-time"
-                }
-              },
-              "required": [
-                "gameQuestionId",
-                "username",
-                "buzzerTimestamp"
-              ]
-            }
-          ]
+        "$id": "BuzzQuestionCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "username": {
+        "type": "string"
+        },
+        "buzzerTimestamp": {
+        "type": "string",
+        "format": "date-time"
+        }
+        },
+        "required": [
+        "gameQuestionId",
+        "username",
+        "buzzerTimestamp"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="AnswerBuzzerQuestionCommand" name="AnswerBuzzerQuestionCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "AnswerBuzzerQuestionCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameQuestionId": {
-                  "$ref": "GameQuestionId"
-                },
-                "answerCorrect": {
-                  "type": "boolean"
-                }
-              },
-              "required": [
-                "gameQuestionId",
-                "answerCorrect"
-              ]
-            }
-          ]
+        "$id": "AnswerBuzzerQuestionCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "answerCorrect": {
+        "type": "boolean"
+        }
+        },
+        "required": [
+        "gameQuestionId",
+        "answerCorrect"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="AskNextQuestionCommand" name="AskNextQuestionCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "AskNextQuestionCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {}
-            }
-          ]
+        "$id": "AskNextQuestionCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {}
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="CloseQuestionCommand" name="CloseQuestionCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "CloseQuestionCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameQuestionId": {
-                  "$ref": "GameQuestionId"
-                }
-              },
-              "required": [
-                "gameQuestionId"
-              ]
-            }
-          ]
+        "$id": "CloseQuestionCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        }
+        },
+        "required": [
+        "gameQuestionId"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="ExpireQuestionCommand" name="ExpireQuestionCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "ExpireQuestionCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameQuestionId": {
-                  "$ref": "GameQuestionId"
-                }
-              },
-              "required": [
-                "gameQuestionId"
-              ]
-            }
-          ]
+        "$id": "ExpireQuestionCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        }
+        },
+        "required": [
+        "gameQuestionId"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="CompleteQuestionIfReadyCommand" name="CompleteQuestionIfReadyCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "CompleteQuestionIfReadyCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameQuestionId": {
-                  "$ref": "GameQuestionId"
-                }
-              },
-              "required": [
-                "gameQuestionId"
-              ]
-            }
-          ]
+        "$id": "CompleteQuestionIfReadyCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        }
+        },
+        "required": [
+        "gameQuestionId"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:commandType id="ScoreQuestionCommand" name="ScoreQuestionCommand">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "ScoreQuestionCommand",
-          "allOf": [
-            {
-              "$ref": "GameCommand"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameQuestionId": {
-                  "$ref": "GameQuestionId"
-                }
-              },
-              "required": [
-                "gameQuestionId"
-              ]
-            }
-          ]
+        "$id": "ScoreQuestionCommand",
+        "allOf": [
+        {
+        "$ref": "GameCommand"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        }
+        },
+        "required": [
+        "gameQuestionId"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:commandType>
     <emn:eventType id="GameCreatedEvent" name="GameCreatedEvent">
@@ -872,45 +872,45 @@
         </emnic:informationCompleteness>
       </emn:extensionElements>
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "GameCreatedEvent",
-          "allOf": [
-            {
-              "$ref": "GameEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "config": {
-                  "$ref": "GameConfig"
-                },
-                "rounds": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "Round"
-                  }
-                },
-                "creator": {
-                  "type": "string"
-                },
-                "moderator": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              },
-              "required": [
-                "name",
-                "config",
-                "rounds",
-                "creator",
-                "moderator"
-              ]
-            }
-          ]
+        "$id": "GameCreatedEvent",
+        "allOf": [
+        {
+        "$ref": "GameEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "name": {
+        "type": "string"
+        },
+        "config": {
+        "$ref": "GameConfig"
+        },
+        "rounds": {
+        "type": "array",
+        "items": {
+        "$ref": "Round"
+        }
+        },
+        "creator": {
+        "type": "string"
+        },
+        "moderator": {
+        "type": [
+        "string",
+        "null"
+        ]
+        }
+        },
+        "required": [
+        "name",
+        "config",
+        "rounds",
+        "creator",
+        "moderator"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="PlayerJoinedGameEvent" name="PlayerJoinedGameEvent">
@@ -922,66 +922,66 @@
         </emnic:informationCompleteness>
       </emn:extensionElements>
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "PlayerJoinedGameEvent",
-          "allOf": [
-            {
-              "$ref": "GameEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gamePlayerId": {
-                  "$ref": "GamePlayerId"
-                },
-                "username": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "gamePlayerId",
-                "username"
-              ]
-            }
-          ]
+        "$id": "PlayerJoinedGameEvent",
+        "allOf": [
+        {
+        "$ref": "GameEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        },
+        "username": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "gamePlayerId",
+        "username"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="PlayerLeftGameEvent" name="PlayerLeftGameEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "PlayerLeftGameEvent",
-          "allOf": [
-            {
-              "$ref": "GameEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gamePlayerId": {
-                  "$ref": "GamePlayerId"
-                },
-                "username": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "gamePlayerId",
-                "username"
-              ]
-            }
-          ]
+        "$id": "PlayerLeftGameEvent",
+        "allOf": [
+        {
+        "$ref": "GameEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        },
+        "username": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "gamePlayerId",
+        "username"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="GameStartedEvent" name="GameStartedEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "GameStartedEvent",
-          "allOf": [
-            {
-              "$ref": "GameEvent"
-            },
-            {
-              "type": "object",
-              "properties": {}
-            }
-          ]
+        "$id": "GameStartedEvent",
+        "allOf": [
+        {
+        "$ref": "GameEvent"
+        },
+        {
+        "type": "object",
+        "properties": {}
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="GameEndedEvent" name="GameEndedEvent">
@@ -1000,16 +1000,16 @@
     </emn:eventType>
     <emn:eventType id="GameCanceledEvent" name="GameCanceledEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "GameCanceledEvent",
-          "allOf": [
-            {
-              "$ref": "GameEvent"
-            },
-            {
-              "type": "object",
-              "properties": {}
-            }
-          ]
+        "$id": "GameCanceledEvent",
+        "allOf": [
+        {
+        "$ref": "GameEvent"
+        },
+        {
+        "type": "object",
+        "properties": {}
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="RoundStartedEvent" name="RoundStartedEvent">
@@ -1025,88 +1025,88 @@
         </emnic:informationCompleteness>
       </emn:extensionElements>
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "RoundStartedEvent",
-          "allOf": [
-            {
-              "$ref": "GameEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameRoundId": {
-                  "$ref": "GameRoundId",
-                  "x-emn-tag-key": "gameRoundId"
-                },
-                "roundNumber": {
-                  "type": "integer",
-                  "format": "int32"
-                },
-                "roundName": {
-                  "type": "string"
-                },
-                "roundConfig": {
-                  "$ref": "RoundConfig"
-                },
-                "questions": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "QuestionId"
-                  }
-                }
-              },
-              "required": [
-                "gameRoundId",
-                "roundNumber",
-                "roundName",
-                "roundConfig",
-                "questions"
-              ]
-            }
-          ]
+        "$id": "RoundStartedEvent",
+        "allOf": [
+        {
+        "$ref": "GameEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameRoundId": {
+        "$ref": "GameRoundId",
+        "x-emn-tag-key": "gameRoundId"
+        },
+        "roundNumber": {
+        "type": "integer",
+        "format": "int32"
+        },
+        "roundName": {
+        "type": "string"
+        },
+        "roundConfig": {
+        "$ref": "RoundConfig"
+        },
+        "questions": {
+        "type": "array",
+        "items": {
+        "$ref": "QuestionId"
+        }
+        }
+        },
+        "required": [
+        "gameRoundId",
+        "roundNumber",
+        "roundName",
+        "roundConfig",
+        "questions"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="RoundScoredEvent" name="RoundScoredEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "RoundScoredEvent",
-          "allOf": [
-            {
-              "$ref": "GameEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameRoundId": {
-                  "$ref": "GameRoundId",
-                  "x-emn-tag-key": "gameRoundId"
-                }
-              },
-              "required": [
-                "gameRoundId"
-              ]
-            }
-          ]
+        "$id": "RoundScoredEvent",
+        "allOf": [
+        {
+        "$ref": "GameEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameRoundId": {
+        "$ref": "GameRoundId",
+        "x-emn-tag-key": "gameRoundId"
+        }
+        },
+        "required": [
+        "gameRoundId"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="RoundClosedEvent" name="RoundClosedEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "RoundClosedEvent",
-          "allOf": [
-            {
-              "$ref": "GameEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gameRoundId": {
-                  "$ref": "GameRoundId",
-                  "x-emn-tag-key": "gameRoundId"
-                }
-              },
-              "required": [
-                "gameRoundId"
-              ]
-            }
-          ]
+        "$id": "RoundClosedEvent",
+        "allOf": [
+        {
+        "$ref": "GameEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gameRoundId": {
+        "$ref": "GameRoundId",
+        "x-emn-tag-key": "gameRoundId"
+        }
+        },
+        "required": [
+        "gameRoundId"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="QuestionAskedEvent" name="QuestionAskedEvent">
@@ -1126,60 +1126,60 @@
         </emnic:informationCompleteness>
       </emn:extensionElements>
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "QuestionAskedEvent",
-          "allOf": [
-            {
-              "$ref": "GameQuestionEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "roundNumber": {
-                  "type": "integer",
-                  "format": "int32"
-                },
-                "roundQuestionNumber": {
-                  "type": "integer",
-                  "format": "int32"
-                },
-                "questionMode": {
-                  "$ref": "GameQuestionMode"
-                },
-                "questionTimestamp": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "timeToAnswer": {
-                  "type": "integer",
-                  "format": "int64"
-                },
-                "question": {
-                  "$ref": "Question"
-                },
-                "gameRoundId": {
-                  "$ref": "GameRoundId",
-                  "x-emn-tag-key": "gameRoundId"
-                },
-                "eligiblePlayerIds": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "GamePlayerId"
-                  },
-                  "uniqueItems": true
-                }
-              },
-              "required": [
-                "roundNumber",
-                "roundQuestionNumber",
-                "questionMode",
-                "questionTimestamp",
-                "timeToAnswer",
-                "question",
-                "gameRoundId",
-                "eligiblePlayerIds"
-              ]
-            }
-          ]
+        "$id": "QuestionAskedEvent",
+        "allOf": [
+        {
+        "$ref": "GameQuestionEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "roundNumber": {
+        "type": "integer",
+        "format": "int32"
+        },
+        "roundQuestionNumber": {
+        "type": "integer",
+        "format": "int32"
+        },
+        "questionMode": {
+        "$ref": "GameQuestionMode"
+        },
+        "questionTimestamp": {
+        "type": "string",
+        "format": "date-time"
+        },
+        "timeToAnswer": {
+        "type": "integer",
+        "format": "int64"
+        },
+        "question": {
+        "$ref": "Question"
+        },
+        "gameRoundId": {
+        "$ref": "GameRoundId",
+        "x-emn-tag-key": "gameRoundId"
+        },
+        "eligiblePlayerIds": {
+        "type": "array",
+        "items": {
+        "$ref": "GamePlayerId"
+        },
+        "uniqueItems": true
+        }
+        },
+        "required": [
+        "roundNumber",
+        "roundQuestionNumber",
+        "questionMode",
+        "questionTimestamp",
+        "timeToAnswer",
+        "question",
+        "gameRoundId",
+        "eligiblePlayerIds"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="QuestionAnsweredEvent" name="QuestionAnsweredEvent">
@@ -1193,169 +1193,169 @@
         </emnic:informationCompleteness>
       </emn:extensionElements>
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "QuestionAnsweredEvent",
-          "allOf": [
-            {
-              "$ref": "GameQuestionEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gamePlayerId": {
-                  "$ref": "GamePlayerId"
-                },
-                "playerAnswerId": {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                "answer": {
-                  "type": "string"
-                },
-                "timeToAnswer": {
-                  "type": "integer",
-                  "format": "int64"
-                }
-              },
-              "required": [
-                "gamePlayerId",
-                "playerAnswerId",
-                "answer",
-                "timeToAnswer"
-              ]
-            }
-          ]
+        "$id": "QuestionAnsweredEvent",
+        "allOf": [
+        {
+        "$ref": "GameQuestionEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        },
+        "playerAnswerId": {
+        "type": "string",
+        "format": "uuid"
+        },
+        "answer": {
+        "type": "string"
+        },
+        "timeToAnswer": {
+        "type": "integer",
+        "format": "int64"
+        }
+        },
+        "required": [
+        "gamePlayerId",
+        "playerAnswerId",
+        "answer",
+        "timeToAnswer"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="QuestionAnswerOverriddenEvent" name="QuestionAnswerOverriddenEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "QuestionAnswerOverriddenEvent",
-          "allOf": [
-            {
-              "$ref": "GameQuestionEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gamePlayerId": {
-                  "$ref": "GamePlayerId"
-                },
-                "playerAnswerId": {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                "answer": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "gamePlayerId",
-                "playerAnswerId",
-                "answer"
-              ]
-            }
-          ]
+        "$id": "QuestionAnswerOverriddenEvent",
+        "allOf": [
+        {
+        "$ref": "GameQuestionEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        },
+        "playerAnswerId": {
+        "type": "string",
+        "format": "uuid"
+        },
+        "answer": {
+        "type": "string"
+        }
+        },
+        "required": [
+        "gamePlayerId",
+        "playerAnswerId",
+        "answer"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="QuestionBuzzedEvent" name="QuestionBuzzedEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "QuestionBuzzedEvent",
-          "allOf": [
-            {
-              "$ref": "GameQuestionEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gamePlayerId": {
-                  "$ref": "GamePlayerId"
-                },
-                "buzzerTimestamp": {
-                  "type": "string",
-                  "format": "date-time"
-                }
-              },
-              "required": [
-                "gamePlayerId",
-                "buzzerTimestamp"
-              ]
-            }
-          ]
+        "$id": "QuestionBuzzedEvent",
+        "allOf": [
+        {
+        "$ref": "GameQuestionEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        },
+        "buzzerTimestamp": {
+        "type": "string",
+        "format": "date-time"
+        }
+        },
+        "required": [
+        "gamePlayerId",
+        "buzzerTimestamp"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="QuestionBuzzerWonEvent" name="QuestionBuzzerWonEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "QuestionBuzzerWonEvent",
-          "allOf": [
-            {
-              "$ref": "GameQuestionEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "gamePlayerId": {
-                  "$ref": "GamePlayerId"
-                }
-              },
-              "required": [
-                "gamePlayerId"
-              ]
-            }
-          ]
+        "$id": "QuestionBuzzerWonEvent",
+        "allOf": [
+        {
+        "$ref": "GameQuestionEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        }
+        },
+        "required": [
+        "gamePlayerId"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="BuzzerCollectionStartedEvent" name="BuzzerCollectionStartedEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "BuzzerCollectionStartedEvent",
-          "allOf": [
-            {
-              "$ref": "GameQuestionEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "windowId": {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                "evaluateAt": {
-                  "type": "string",
-                  "format": "date-time"
-                }
-              },
-              "required": [
-                "windowId",
-                "evaluateAt"
-              ]
-            }
-          ]
+        "$id": "BuzzerCollectionStartedEvent",
+        "allOf": [
+        {
+        "$ref": "GameQuestionEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "windowId": {
+        "type": "string",
+        "format": "uuid"
+        },
+        "evaluateAt": {
+        "type": "string",
+        "format": "date-time"
+        }
+        },
+        "required": [
+        "windowId",
+        "evaluateAt"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="QuestionBuzzerReopenedEvent" name="QuestionBuzzerReopenedEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "QuestionBuzzerReopenedEvent",
-          "allOf": [
-            {
-              "$ref": "GameQuestionEvent"
-            },
-            {
-              "type": "object",
-              "properties": {}
-            }
-          ]
+        "$id": "QuestionBuzzerReopenedEvent",
+        "allOf": [
+        {
+        "$ref": "GameQuestionEvent"
+        },
+        {
+        "type": "object",
+        "properties": {}
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="QuestionClosedEvent" name="QuestionClosedEvent">
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "QuestionClosedEvent",
-          "allOf": [
-            {
-              "$ref": "GameQuestionEvent"
-            },
-            {
-              "type": "object",
-              "properties": {}
-            }
-          ]
+        "$id": "QuestionClosedEvent",
+        "allOf": [
+        {
+        "$ref": "GameQuestionEvent"
+        },
+        {
+        "type": "object",
+        "properties": {}
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:eventType id="QuestionScoredEvent" name="QuestionScoredEvent">
@@ -1367,23 +1367,23 @@
         </emnic:informationCompleteness>
       </emn:extensionElements>
       <emn:schema schemaFormat="application/schema+json">{
-          "$id": "QuestionScoredEvent",
-          "allOf": [
-            {
-              "$ref": "GameQuestionEvent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "points": {
-                  "$ref": "GamePlayerScores"
-                }
-              },
-              "required": [
-                "points"
-              ]
-            }
-          ]
+        "$id": "QuestionScoredEvent",
+        "allOf": [
+        {
+        "$ref": "GameQuestionEvent"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "points": {
+        "$ref": "GamePlayerScores"
+        }
+        },
+        "required": [
+        "points"
+        ]
+        }
+        ]
         }</emn:schema>
     </emn:eventType>
     <emn:queryType id="SearchGames" name="SearchGames">
@@ -1482,7 +1482,6 @@
         }</emn:schema>
     </emn:queryType>
     <emn:informationFlowType id="InformationFlowType_1miye9c" name="InformationFlow" sourceRef="RoundStartedEvent" targetRef="StartRoundAutomationQuery" />
-    <emn:queryType id="0ewa4re" name="Query" />
     <emn:queryType id="AskFirstQuestionAutomationQuery" name="AskFirstQuestionAutomationQuery">
       <emn:schema schemaFormat="application/schema+json">{
         "type": "array",
@@ -1659,20 +1658,11 @@
     <emn:informationFlowType id="InformationFlowType_111cc3l" name="InformationFlow" sourceRef="AskNextQuestionCommand" targetRef="RoundScoredEvent" />
     <emn:informationFlowType id="InformationFlowType_0xfxfkq" name="InformationFlow" sourceRef="ViewType_1oa7o7p" targetRef="AskNextQuestionCommand" />
     <emn:informationFlowType id="InformationFlowType_08m1xv0" name="InformationFlow" sourceRef="AskNextQuestionCommand" targetRef="RoundClosedEvent" />
-    <emn:queryType id="AutoCloseGameQuery" name="AutoCloseGameQuery" />
-    <emn:automationType id="AutomationType_10qqqtx" name="Automation" />
-    <emn:commandType id="CloseGameCommand" name="CloseGameCommand" />
-    <emn:informationFlowType id="InformationFlowType_0ap82y7" name="InformationFlow" sourceRef="AutoCloseGameQuery" targetRef="AutomationType_10qqqtx" />
-    <emn:informationFlowType id="InformationFlowType_0o2pt9l" name="InformationFlow" sourceRef="AutomationType_10qqqtx" targetRef="CloseGameCommand" />
-    <emn:informationFlowType id="InformationFlowType_13uovvg" name="InformationFlow" sourceRef="CloseGameCommand" targetRef="GameEndedEvent" />
-    <emn:informationFlowType id="InformationFlowType_1gcuedd" name="InformationFlow" sourceRef="RoundClosedEvent" targetRef="AutoCloseGameQuery" />
     <emn:eventSequenceType id="EventSequenceType_GameWith2Players" name="Game with two players">
       <emn:eventTypeRef>GameCreatedEvent</emn:eventTypeRef>
       <emn:eventTypeRef>PlayerJoinedGameEvent</emn:eventTypeRef>
       <emn:eventTypeRef>GameStartedEvent</emn:eventTypeRef>
     </emn:eventSequenceType>
-    <emn:queryType id="0a69h48" name="Query" />
-    <emn:informationFlowType id="InformationFlowType_1b5x4fc" name="InformationFlow" sourceRef="EventSequenceType_GameWith2Players" targetRef="0a69h48" />
   </emn:types>
   <emn:timeline id="timeline_1" name="Timeline">
     <emn:laneSet id="lanes_1">
@@ -1687,7 +1677,6 @@
           <emn:flowNodeRef>Automation_0t61vvg</emn:flowNodeRef>
           <emn:flowNodeRef>Automation_1n8uruh</emn:flowNodeRef>
           <emn:flowNodeRef>View_03q8ig7</emn:flowNodeRef>
-          <emn:flowNodeRef>Automation_15lb7gk</emn:flowNodeRef>
         </emn:triggerLane>
       </emn:triggerLaneSet>
       <emn:interactionLane id="interaction_1" name="Interaction">
@@ -1708,8 +1697,6 @@
         <emn:flowNodeRef>Command_1r7qil9</emn:flowNodeRef>
         <emn:flowNodeRef>Query_0o0kkyc</emn:flowNodeRef>
         <emn:flowNodeRef>Command_1701zqp</emn:flowNodeRef>
-        <emn:flowNodeRef>Query_1m4bjly</emn:flowNodeRef>
-        <emn:flowNodeRef>Command_0r7b941</emn:flowNodeRef>
       </emn:interactionLane>
       <emn:conceptLaneSet>
         <emn:conceptLane id="ConceptLane_0h6eawq" name="Concept">
@@ -1723,7 +1710,6 @@
           <emn:flowNodeRef>Event_0wjb7jl</emn:flowNodeRef>
           <emn:flowNodeRef>Event_0munu7e</emn:flowNodeRef>
           <emn:flowNodeRef>Event_14cxu6k</emn:flowNodeRef>
-          <emn:flowNodeRef>Event_0tz0dkd</emn:flowNodeRef>
         </emn:conceptLane>
       </emn:conceptLaneSet>
     </emn:laneSet>
@@ -1789,12 +1775,6 @@
         <emn:flowNodeRef>Command_1701zqp</emn:flowNodeRef>
         <emn:flowNodeRef>Event_0munu7e</emn:flowNodeRef>
         <emn:flowNodeRef>Event_14cxu6k</emn:flowNodeRef>
-      </emn:slice>
-      <emn:slice id="Slice_1g9o1s0" name="Automation Slice">
-        <emn:flowNodeRef>Query_1m4bjly</emn:flowNodeRef>
-        <emn:flowNodeRef>Automation_15lb7gk</emn:flowNodeRef>
-        <emn:flowNodeRef>Command_0r7b941</emn:flowNodeRef>
-        <emn:flowNodeRef>Event_0tz0dkd</emn:flowNodeRef>
       </emn:slice>
     </emn:sliceSet>
     <emn:view id="View_051r73g" typeRef="ViewType_0203j24" />
@@ -2096,19 +2076,21 @@
         "gameId": "game1"
         }</emn:value>
     </emn:command>
-    <emn:event id="Event_0munu7e" typeRef="RoundScoredEvent" />
+    <emn:event id="Event_0munu7e" typeRef="RoundScoredEvent">
+      <emn:value>{
+        "gameId": "game1",
+        "gameRoundId": "round1"
+        }</emn:value>
+    </emn:event>
     <emn:informationFlow id="Flow_1ri4md9" typeRef="InformationFlowType_111cc3l" sourceRef="Command_1701zqp" targetRef="Event_0munu7e" />
     <emn:informationFlow id="Flow_1dydqns" typeRef="InformationFlowType_0xfxfkq" sourceRef="View_03q8ig7" targetRef="Command_1701zqp" />
-    <emn:event id="Event_14cxu6k" typeRef="RoundClosedEvent" />
+    <emn:event id="Event_14cxu6k" typeRef="RoundClosedEvent">
+      <emn:value>{
+        "gameId": "game1",
+        "gameRoundId": "round1"
+        }</emn:value>
+    </emn:event>
     <emn:informationFlow id="Flow_0ggdw7l" typeRef="InformationFlowType_08m1xv0" sourceRef="Command_1701zqp" targetRef="Event_14cxu6k" />
-    <emn:query id="Query_1m4bjly" typeRef="AutoCloseGameQuery" />
-    <emn:automation id="Automation_15lb7gk" typeRef="AutomationType_10qqqtx" />
-    <emn:command id="Command_0r7b941" typeRef="CloseGameCommand" />
-    <emn:event id="Event_0tz0dkd" typeRef="GameEndedEvent" />
-    <emn:informationFlow id="Flow_1sxg0ey" typeRef="InformationFlowType_0ap82y7" sourceRef="Query_1m4bjly" targetRef="Automation_15lb7gk" />
-    <emn:informationFlow id="Flow_199fuh5" typeRef="InformationFlowType_0o2pt9l" sourceRef="Automation_15lb7gk" targetRef="Command_0r7b941" />
-    <emn:informationFlow id="Flow_0qj0zct" typeRef="InformationFlowType_13uovvg" sourceRef="Command_0r7b941" targetRef="Event_0tz0dkd" />
-    <emn:informationFlow id="Flow_1nuz8vp" typeRef="InformationFlowType_1gcuedd" sourceRef="Event_14cxu6k" targetRef="Query_1m4bjly" />
     <emn:textAnnotation id="TextAnnotation_1frfzwi">
       <emn:text>Lists all games and questions where every player has answered the question to automatically close the question</emn:text>
     </emn:textAnnotation>
@@ -2118,29 +2100,6 @@
     </emn:textAnnotation>
     <emn:association id="Association_1oh6l5j" associationDirection="None" sourceRef="Query_0xmnv79" targetRef="TextAnnotation_14ke3x7" />
   </emn:timeline>
-  <emn:timeline id="Timeline_1oj9a8i" name="new timeline">
-    <emn:laneSet id="LaneSet_1u3px5r">
-      <emn:triggerLaneSet id="TriggerLaneSet_0kvvfjo">
-        <emn:triggerLane id="TriggerLane_1y13xtd" name="Trigger" />
-      </emn:triggerLaneSet>
-      <emn:interactionLane id="InteractionLane_0vmsvj5" name="Interaction">
-        <emn:flowNodeRef>Query_0kzdo1z</emn:flowNodeRef>
-      </emn:interactionLane>
-      <emn:conceptLaneSet id="ConceptLaneSet_0rray74">
-        <emn:conceptLane id="ConceptLane_1crrnhh" name="Concept">
-          <emn:flowNodeRef>EventSequence_01qh2wq</emn:flowNodeRef>
-        </emn:conceptLane>
-      </emn:conceptLaneSet>
-    </emn:laneSet>
-    <emn:query id="Query_0kzdo1z" typeRef="0a69h48" />
-    <emn:informationFlow id="Flow_0qzd0dx" typeRef="InformationFlowType_1b5x4fc" sourceRef="EventSequence_01qh2wq" targetRef="Query_0kzdo1z" />
-    <emn:eventSequence id="EventSequence_01qh2wq" definitionRef="EventSequenceDefinition_032laud" />
-  </emn:timeline>
-  <emn:specification id="Specification_05qygdo">
-    <emn:given id="Specification_05qygdo_given" />
-    <emn:when id="Specification_05qygdo_when" />
-    <emn:then id="Specification_05qygdo_then" />
-  </emn:specification>
   <emn:eventSequenceDefinition id="EventSequenceDefinition_032laud" typeRef="EventSequenceType_GameWith2Players" />
   <emndi:EMNDiagram id="EMNDiagram_1">
     <emndi:EMNPlane id="EMNPlane_1" emnElement="timeline_1">
@@ -2152,9 +2111,6 @@
       </emndi:EMNShape>
       <emndi:EMNShape id="triggerLane_1_di" emnElement="triggerLane_1" isHorizontal="true">
         <dc:Bounds x="200" y="105" width="7020" height="175" />
-      </emndi:EMNShape>
-      <emndi:EMNShape id="Slice_1g9o1s0_di" emnElement="Slice_1g9o1s0">
-        <dc:Bounds x="5700" y="72" width="550" height="555" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Slice_0hzvhds_di" emnElement="Slice_0hzvhds">
         <dc:Bounds x="5110" y="72" width="570" height="555" />
@@ -2353,24 +2309,6 @@
       </emndi:EMNShape>
       <emndi:EMNShape id="Event_14cxu6k_di" emnElement="Event_14cxu6k">
         <dc:Bounds x="5400" y="460" width="200" height="120" />
-      </emndi:EMNShape>
-      <emndi:EMNShape id="Query_1m4bjly_di" emnElement="Query_1m4bjly">
-        <dc:Bounds x="5730" y="300" width="200" height="120" />
-        <emndi:EMNLabel />
-      </emndi:EMNShape>
-      <emndi:EMNShape id="Automation_15lb7gk_di" emnElement="Automation_15lb7gk">
-        <dc:Bounds x="6100" y="173" width="40" height="40" />
-        <emndi:EMNLabel>
-          <dc:Bounds x="6092" y="155" width="56" height="14" />
-        </emndi:EMNLabel>
-      </emndi:EMNShape>
-      <emndi:EMNShape id="Command_0r7b941_di" emnElement="Command_0r7b941">
-        <dc:Bounds x="6020" y="300" width="200" height="120" />
-        <emndi:EMNLabel />
-      </emndi:EMNShape>
-      <emndi:EMNShape id="Event_0tz0dkd_di" emnElement="Event_0tz0dkd">
-        <dc:Bounds x="6020" y="460" width="200" height="120" />
-        <emndi:EMNLabel />
       </emndi:EMNShape>
       <emndi:EMNShape id="TextAnnotation_1frfzwi_di" emnElement="TextAnnotation_1frfzwi">
         <dc:Bounds x="3720" y="475" width="160" height="90" />
@@ -2602,26 +2540,6 @@
         <di:waypoint x="5500" y="440" />
         <di:waypoint x="5500" y="460" />
       </emndi:EMNEdge>
-      <emndi:EMNEdge id="Flow_1sxg0ey_di" emnElement="Flow_1sxg0ey">
-        <di:waypoint x="5830" y="300" />
-        <di:waypoint x="5830" y="260" />
-        <di:waypoint x="6120" y="260" />
-        <di:waypoint x="6120" y="213" />
-      </emndi:EMNEdge>
-      <emndi:EMNEdge id="Flow_199fuh5_di" emnElement="Flow_199fuh5">
-        <di:waypoint x="6120" y="213" />
-        <di:waypoint x="6120" y="300" />
-      </emndi:EMNEdge>
-      <emndi:EMNEdge id="Flow_0qj0zct_di" emnElement="Flow_0qj0zct">
-        <di:waypoint x="6120" y="420" />
-        <di:waypoint x="6120" y="460" />
-      </emndi:EMNEdge>
-      <emndi:EMNEdge id="Flow_1nuz8vp_di" emnElement="Flow_1nuz8vp">
-        <di:waypoint x="5500" y="460" />
-        <di:waypoint x="5500" y="440" />
-        <di:waypoint x="5830" y="440" />
-        <di:waypoint x="5830" y="420" />
-      </emndi:EMNEdge>
       <emndi:EMNEdge id="Association_0mbn4rh_di" emnElement="Association_0mbn4rh">
         <di:waypoint x="3770" y="420" />
         <di:waypoint x="3770" y="475" />
@@ -2639,37 +2557,6 @@
       </emndi:EMNShape>
       <emndi:EMNShape id="GameStartedEvent_di" emnElement="GameStartedEvent">
         <dc:Bounds x="460" y="280" width="200" height="120" />
-      </emndi:EMNShape>
-    </emndi:EMNPlane>
-  </emndi:EMNDiagram>
-  <emndi:EMNDiagram id="EMNDiagram_1vtkek1">
-    <emndi:EMNPlane id="EMNPlane_0wf3x4y" emnElement="Timeline_1oj9a8i">
-      <emndi:EMNShape id="ConceptLane_1crrnhh_di" emnElement="ConceptLane_1crrnhh" isHorizontal="true">
-        <dc:Bounds x="100" y="460" width="1000" height="180" />
-      </emndi:EMNShape>
-      <emndi:EMNShape id="InteractionLane_0vmsvj5_di" emnElement="InteractionLane_0vmsvj5" isHorizontal="true">
-        <dc:Bounds x="100" y="280" width="1000" height="180" />
-      </emndi:EMNShape>
-      <emndi:EMNShape id="TriggerLane_1y13xtd_di" emnElement="TriggerLane_1y13xtd" isHorizontal="true">
-        <dc:Bounds x="100" y="100" width="1000" height="180" />
-      </emndi:EMNShape>
-      <emndi:EMNShape id="EventSequence_01qh2wq_di" emnElement="EventSequence_01qh2wq">
-        <dc:Bounds x="160" y="480" width="200" height="120" />
-      </emndi:EMNShape>
-      <emndi:EMNShape id="Specification_05qygdo_di" emnElement="Specification_05qygdo">
-        <dc:Bounds x="100" y="740" width="500" height="550" />
-      </emndi:EMNShape>
-      <emndi:EMNShape id="Specification_05qygdo_given_di" emnElement="Specification_05qygdo_given">
-        <dc:Bounds x="110" y="780" width="480" height="160" />
-      </emndi:EMNShape>
-      <emndi:EMNShape id="Specification_05qygdo_when_di" emnElement="Specification_05qygdo_when">
-        <dc:Bounds x="110" y="950" width="480" height="160" />
-      </emndi:EMNShape>
-      <emndi:EMNShape id="Specification_05qygdo_then_di" emnElement="Specification_05qygdo_then">
-        <dc:Bounds x="110" y="1120" width="480" height="160" />
-      </emndi:EMNShape>
-      <emndi:EMNShape id="Query_0kzdo1z_di" emnElement="Query_0kzdo1z">
-        <dc:Bounds x="390" y="300" width="200" height="120" />
       </emndi:EMNShape>
     </emndi:EMNPlane>
   </emndi:EMNDiagram>
