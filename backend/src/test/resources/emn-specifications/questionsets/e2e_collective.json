@@ -1,0 +1,17 @@
+{
+  "id": "e2e_collective",
+  "name": "EMN Collective Questions",
+  "rounds": [
+    {
+      "name": "Round 1",
+      "roundConfig": {
+        "useBuzzer": false,
+        "secondsToAnswer": 30
+      },
+      "questions": [
+        "choice01",
+        "choice02"
+      ]
+    }
+  ]
+}

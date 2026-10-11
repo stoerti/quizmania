@@ -1,8 +1,9 @@
 import com.github.gradle.node.npm.task.NpmTask
 
-
 plugins {
+  base
   id("com.github.node-gradle.node") version "7.1.0"
+  id("io.holixon.emn.schema-export") version "0.0.1-SNAPSHOT"
 }
 
 group = "org.quizmania"
@@ -12,19 +13,51 @@ tasks.register<NpmTask>("appNpmInstall") {
   description = "Installs all dependencies from package.json"
   workingDir = file("${project.projectDir}")
   args = listOf("install")
-  // Skip if already installed by CI pipeline
-  onlyIf {
-    !file("${project.projectDir}/node_modules").exists() ||
-    System.getenv("CI") != "true"
-  }
+  inputs.files(file("package.json"), file("package-lock.json"))
+  outputs.file(file("node_modules/.package-lock.json"))
 }
 
-
 tasks.register<NpmTask>("appNpmBuild") {
-  dependsOn("appNpmInstall")
+  dependsOn("appNpmInstall", "generateEmnTypes")
   description = "Builds project"
   workingDir = file("${project.projectDir}")
   args = listOf("run", "build")
+  inputs.dir(file("src"))
+  inputs.files(
+    file("index.html"),
+    file("package.json"),
+    file("package-lock.json"),
+    file("tsconfig.json"),
+    file("tsconfig.app.json"),
+    file("tsconfig.node.json"),
+    file("vite.config.ts"),
+  )
+  inputs.file(layout.buildDirectory.file("generated/sources/emn/quizmania-api.ts"))
+  outputs.dir(file("dist"))
+}
+
+tasks.register<NpmTask>("appNpmStart") {
+  dependsOn("appNpmInstall", "generateEmnTypes")
+  description = "Generates EMN types and starts the frontend development server"
+  workingDir = projectDir
+  args = listOf("run", "start")
+}
+
+tasks.register<NpmTask>("generateEmnTypes") {
+  dependsOn("appNpmInstall", "exportEmnSchemas")
+  description = "Generates TypeScript types from the exported EMN JSON Schemas"
+  workingDir = projectDir
+  args = listOf("run", "generate:emn-types")
+  inputs.file(layout.buildDirectory.file("generated/resources/emn-schemas/manifest.json"))
+  inputs.dir(layout.buildDirectory.dir("generated/resources/emn-schemas/schemas"))
+  inputs.file(file("scripts/generate-emn-types.mjs"))
+  inputs.files(file("package.json"), file("package-lock.json"))
+  outputs.file(layout.buildDirectory.file("generated/sources/emn/quizmania-api.ts"))
+}
+
+emnSchemaExport {
+  emnFiles.from(file("../doc/quizmania-blueprint.emn"))
+  sourceRoot.set(file("../").canonicalPath)
 }
 
 node {

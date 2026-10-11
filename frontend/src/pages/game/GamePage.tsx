@@ -1,10 +1,10 @@
 import React, {useCallback, useEffect, useMemo} from "react";
-import {GameEvent, PlayerLeftGameEvent} from "../../services/GameEventTypes";
+import {GameEventPayload, GameEventType, PlayerLeftGameEvent} from "../../services/GameEventTypes";
 import {useSnackbar} from "notistack";
 import {GameLobbyPage} from "./GameLobby";
 import {GameRoomPage} from "./GameRoom";
 import {GameFinishedPage} from "./GameFinished";
-import {GameEventType, GameRepository} from "../../services/GameRepository";
+import {GameRepository} from "../../services/GameRepository";
 import {Game, GameStatus} from "../../domain/GameModel";
 import {useNavigate, useParams} from "react-router";
 import { useUsername } from "../../hooks/useUsername";
@@ -38,7 +38,7 @@ const GamePage = () => {
       onGameEnded()
     })
     gameRepository.subscribeToGame(gameId, {
-      onGameEvent(event: GameEvent, eventType: GameEventType, game: Game) {
+      onGameEvent(event: GameEventPayload, eventType: GameEventType, game: Game) {
         if (eventType === 'GameCanceledEvent') {
           gameRepository.unsubscribeFromGame()
           onGameEnded()

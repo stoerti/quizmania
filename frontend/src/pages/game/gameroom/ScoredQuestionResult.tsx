@@ -59,7 +59,7 @@ export const ScoredQuestionResult = ({game}: ScoredQuestionResultProps) => {
   }
 
   // For questions with answerImagePath, use two-column layout with answer text and image
-  if (question.question.answerImagePath && question.question.answerImagePath !== 'undefined') {
+  if (question.question.answerImagePath !== null) {
     return (
       <Grid container spacing={2} sx={{width: '100%', maxWidth: 1200}}>
         <Grid size={{xs: 12, md: 4}}>

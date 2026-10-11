@@ -1,7 +1,7 @@
 import {
   GameCanceledEvent,
   GameConfig,
-  GameCreatedEvent, GameEndedEvent, GameEvent, GameQuestionMode,
+  GameCreatedEvent, GameEndedEvent, GameEventPayload, GameEventType, GameQuestionMode,
   GameStartedEvent,
   Question,
   QuestionAnsweredEvent,
@@ -12,7 +12,6 @@ import {
   PlayerJoinedGameEvent,
   PlayerLeftGameEvent, RoundStartedEvent, RoundConfig, RoundScoredEvent, RoundClosedEvent
 } from "../services/GameEventTypes";
-import {GameEventType} from "../services/GameRepository";
 
 export enum GameStatus {
   CREATED = 'CREATED',
@@ -33,13 +32,16 @@ export enum QuestionStatus {
   SCORED = 'SCORED',
 }
 
+type NormalizedGameConfig = GameConfig & {maxPlayers: number}
+type NormalizedRoundConfig = RoundConfig & {useBuzzer: boolean, secondsToAnswer: number}
+type NormalizedQuestion = Question & {imagePath: string | null, answerImagePath: string | null}
 
 export class Game {
   readonly id: string;
   readonly name: string;
-  readonly config: GameConfig;
+  readonly config: NormalizedGameConfig;
   readonly creator: string;
-  readonly moderator: string | undefined;
+  readonly moderator: string | null;
   readonly status: GameStatus;
   readonly players: Player[];
   readonly departedPlayers: Player[] = [];
@@ -50,7 +52,10 @@ export class Game {
   constructor(event: GameCreatedEvent) {
     this.id = event.gameId
     this.name = event.name
-    this.config = event.config
+    this.config = {
+      ...event.config,
+      maxPlayers: event.config.maxPlayers ?? 10
+    }
     this.creator = event.creator
     this.moderator = event.moderator
     this.status = GameStatus.CREATED
@@ -62,7 +67,7 @@ export class Game {
     return Object.assign(Object.create(Game.prototype), {...this, ...modifyObject});
   }
 
-  public onGameEvent(event: GameEvent, eventType: GameEventType): Game {
+  public onGameEvent(event: GameEventPayload, eventType: GameEventType): Game {
     switch (eventType) {
       case "GameStartedEvent":
         return this.onGameStarted(event as GameStartedEvent)
@@ -265,7 +270,7 @@ export class GameRound {
   readonly roundNumber: number;
   readonly roundName: string;
   readonly status: RoundStatus;
-  readonly roundConfig: RoundConfig;
+  readonly roundConfig: NormalizedRoundConfig;
   readonly players: Player[];
   readonly numQuestions: number;
 
@@ -274,7 +279,11 @@ export class GameRound {
     this.roundNumber = event.roundNumber
     this.roundName = event.roundName
     this.status = RoundStatus.OPEN
-    this.roundConfig = event.roundConfig
+    this.roundConfig = {
+      ...event.roundConfig,
+      useBuzzer: event.roundConfig.useBuzzer ?? false,
+      secondsToAnswer: event.roundConfig.secondsToAnswer ?? 30
+    }
     this.numQuestions = event.questions.length
     // copy players with 0 points
     this.players = players.map(player => new Player(player.id, player.name))
@@ -312,7 +321,7 @@ export class GameQuestion {
   readonly eligiblePlayerIds: string[];
   readonly gameQuestionId: string;
   readonly roundQuestionNumber: number;
-  readonly question: Question;
+  readonly question: NormalizedQuestion;
   readonly questionMode: GameQuestionMode;
   readonly answers: Answer[] = [];
   readonly buzzedPlayerIds: string[] = [];
@@ -325,7 +334,11 @@ export class GameQuestion {
     this.eligiblePlayerIds = event.eligiblePlayerIds
     this.gameQuestionId = event.gameQuestionId
     this.roundQuestionNumber = event.roundQuestionNumber
-    this.question = event.question
+    this.question = {
+      ...event.question,
+      imagePath: event.question.imagePath ?? null,
+      answerImagePath: event.question.answerImagePath ?? null
+    }
     this.questionMode = event.questionMode
     this.status = QuestionStatus.OPEN
     this.questionAsked = new Date(event.questionTimestamp)

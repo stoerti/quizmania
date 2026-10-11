@@ -1,38 +1,26 @@
 import {Client} from "@stomp/stompjs";
-import {GameCreatedEvent, GameEvent,} from "./GameEventTypes";
+import {
+  GameCreatedEvent,
+  GameEventPayload,
+  GameEventPayloadByType,
+  GameEventType,
+} from "./GameEventTypes";
 import {Game} from "../domain/GameModel";
 
-
-export type GameEventType =
-  | 'BuzzerCollectionStartedEvent'
-  | 'GameCreatedEvent'
-  | 'GameStartedEvent'
-  | 'GameCanceledEvent'
-  | 'GameEndedEvent'
-  | 'RoundStartedEvent'
-  | 'RoundScoredEvent'
-  | 'RoundClosedEvent'
-  | 'PlayerJoinedGameEvent'
-  | 'PlayerLeftGameEvent'
-  | 'QuestionAskedEvent'
-  | 'QuestionAnsweredEvent'
-  | 'QuestionAnswerOverriddenEvent'
-  | 'QuestionBuzzedEvent'
-  | 'QuestionBuzzerWonEvent'
-  | 'QuestionBuzzerReopenedEvent'
-  | 'QuestionClosedEvent'
-  | 'QuestionScoredEvent';
+export type {GameEventType} from "./GameEventTypes";
 
 export type GameEventWrapper = {
-  gameId: string,
-  eventType: GameEventType,
-  cursor: string,
-  timestamp: string,
-  payload: GameEvent
-}
+  [Type in GameEventType]: {
+    gameId: string,
+    eventType: Type,
+    cursor: string,
+    timestamp: string,
+    payload: GameEventPayloadByType[Type]
+  }
+}[GameEventType]
 
 interface GameEventHandler {
-  onGameEvent(event: GameEvent, eventType: GameEventType, game: Game): void
+  onGameEvent(event: GameEventPayload, eventType: GameEventType, game: Game): void
 }
 
 export class GameRepository {

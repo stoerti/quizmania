@@ -1,5 +1,6 @@
 package org.quizmania.rest.adapter.`in`.axon
 
+import io.holixon.emn.verify.annotation.EmnReadModel
 import mu.KLogging
 import org.axonframework.messaging.eventhandling.annotation.EventHandler
 import org.axonframework.messaging.eventhandling.processing.streaming.token.TrackingToken
@@ -17,6 +18,7 @@ import java.time.Instant
 
 @Component
 @SequencingPolicy(type = PropertySequencingPolicy::class, parameters = ["gameId"])
+@EmnReadModel("SearchGames")
 class GameEventListener(
   val gameEventHappenedInPort: GameEventHappenedInPort
 ) {

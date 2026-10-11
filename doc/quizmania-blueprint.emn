@@ -1663,6 +1663,13 @@
       <emn:eventTypeRef>PlayerJoinedGameEvent</emn:eventTypeRef>
       <emn:eventTypeRef>GameStartedEvent</emn:eventTypeRef>
     </emn:eventSequenceType>
+    <emn:errorType id="CommandExecutionException" name="CommandExecutionException" />
+    <emn:eventSequenceType id="EventSequenceType_started_round_two_players" name="Started Round with two Players">
+      <emn:eventTypeRef>GameCreatedEvent</emn:eventTypeRef>
+      <emn:eventTypeRef>PlayerJoinedGameEvent</emn:eventTypeRef>
+      <emn:eventTypeRef>GameStartedEvent</emn:eventTypeRef>
+      <emn:eventTypeRef>RoundStartedEvent</emn:eventTypeRef>
+    </emn:eventSequenceType>
   </emn:types>
   <emn:timeline id="timeline_1" name="Timeline">
     <emn:laneSet id="lanes_1">
@@ -1714,7 +1721,7 @@
       </emn:conceptLaneSet>
     </emn:laneSet>
     <emn:sliceSet id="SliceSet_0apnv8k">
-      <emn:slice id="Slice_0pmxnmh" name="Command Slice">
+      <emn:slice id="Slice_0pmxnmh" name="Create Game">
         <emn:flowNodeRef>View_051r73g</emn:flowNodeRef>
         <emn:flowNodeRef>Command_1udc34n</emn:flowNodeRef>
         <emn:flowNodeRef>Event_11cno4u</emn:flowNodeRef>
@@ -1723,7 +1730,7 @@
         <emn:flowNodeRef>Query_0d6rxc3</emn:flowNodeRef>
         <emn:flowNodeRef>View_1lptv0b</emn:flowNodeRef>
       </emn:slice>
-      <emn:slice id="Slice_0esbivl" name="Command Slice">
+      <emn:slice id="Slice_join_game" name="Join Game">
         <emn:flowNodeRef>Command_0sksipr</emn:flowNodeRef>
         <emn:flowNodeRef>Event_1ni18xa</emn:flowNodeRef>
       </emn:slice>
@@ -1731,7 +1738,7 @@
         <emn:flowNodeRef>Query_0jfwalt</emn:flowNodeRef>
         <emn:flowNodeRef>View_0pu9cbd</emn:flowNodeRef>
       </emn:slice>
-      <emn:slice id="Slice_0visy19" name="Command Slice">
+      <emn:slice id="Slice_0visy19" name="Start Game">
         <emn:flowNodeRef>Command_0ir1eeg</emn:flowNodeRef>
         <emn:flowNodeRef>Event_1bu80i4</emn:flowNodeRef>
       </emn:slice>
@@ -1751,7 +1758,7 @@
         <emn:flowNodeRef>Query_1qf95x6</emn:flowNodeRef>
         <emn:flowNodeRef>View_0u6nw9e</emn:flowNodeRef>
       </emn:slice>
-      <emn:slice id="Slice_0sftikc" name="Command Slice">
+      <emn:slice id="Slice_0sftikc" name="Answer Question">
         <emn:flowNodeRef>Command_10vlyt5</emn:flowNodeRef>
         <emn:flowNodeRef>Event_1ltl9h9</emn:flowNodeRef>
       </emn:slice>
@@ -1840,7 +1847,8 @@
     <emn:event id="Event_1ni18xa" typeRef="PlayerJoinedGameEvent">
       <emn:value>{
         "gameId": "game1",
-        "username": "Patrick"
+        "username": "Patrick",
+        "gamePlayerId": "player1"
         }</emn:value>
     </emn:event>
     <emn:informationFlow id="Flow_0l8octk" typeRef="InformationFlowType_17ea21j" sourceRef="Command_0sksipr" targetRef="Event_1ni18xa" />
@@ -1882,6 +1890,7 @@
         "gameId": "game1",
         "gameRoundId": "round1",
         "roundNumber": 1,
+        "roundName": "Round 1",
         "roundConfig": {
         "useBuzzer": false,
         "secondsToAnswer": 30
@@ -2101,6 +2110,437 @@
     <emn:association id="Association_1oh6l5j" associationDirection="None" sourceRef="Query_0xmnv79" targetRef="TextAnnotation_14ke3x7" />
   </emn:timeline>
   <emn:eventSequenceDefinition id="EventSequenceDefinition_032laud" typeRef="EventSequenceType_GameWith2Players" />
+  <emn:specification id="spec_createGame" name="Create a new game" sliceRef="Slice_0pmxnmh">
+    <emn:given id="Specification_0tk80fj_given" stateName="nothing" />
+    <emn:when id="Specification_0tk80fj_when">
+      <emn:command id="Command_1p5wf86" typeRef="CreateGameCommand">
+        <emn:value>{
+          "gameId": "game1",
+          "name": "My Game",
+          "creator": "Christian",
+          "moderator": "Christian",
+          "config": {
+          "maxPlayers": 10,
+          "questionSetId": "e2e_collective"
+          }
+          }</emn:value>
+      </emn:command>
+    </emn:when>
+    <emn:then id="Specification_0tk80fj_then">
+      <emn:event id="Event_06mv4vw" typeRef="GameCreatedEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "name": "My Game",
+          "creator": "Christian",
+          "moderator": "Christian",
+          "config": {
+          "maxPlayers": 10,
+          "questionSetId": "e2e_collective"
+          },
+          "rounds": [
+          {
+          "name": "Round 1",
+          "roundConfig": {
+          "useBuzzer": false,
+          "secondsToAnswer": 30
+          },
+          "questions": [
+          "choice01",
+          "choice02"
+          ]
+          }
+          ]
+          }</emn:value>
+      </emn:event>
+    </emn:then>
+  </emn:specification>
+  <emn:specification id="Specification_player_joins" name="Player joins empty game" sliceRef="Slice_join_game">
+    <emn:given id="Specification_1b8bhtp_given" stateName="Empty Game">
+      <emn:event id="Event_104jcmt" typeRef="GameCreatedEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "name": "My Game",
+          "creator": "Christian",
+          "moderator": "Christian",
+          "config": {
+          "maxPlayers": 10,
+          "questionSetId": "e2e_collective"
+          },
+          "rounds": [
+          {
+          "name": "Round 1",
+          "roundConfig": {
+          "useBuzzer": false,
+          "secondsToAnswer": 30
+          },
+          "questions": [
+          "choice01",
+          "choice02"
+          ]
+          }
+          ]
+          }</emn:value>
+      </emn:event>
+    </emn:given>
+    <emn:when id="Specification_1b8bhtp_when">
+      <emn:command id="Command_1c2f98x" typeRef="JoinGameCommand">
+        <emn:value>{
+          "gameId": "game1",
+          "username": "Patrick"
+          }</emn:value>
+      </emn:command>
+    </emn:when>
+    <emn:then id="Specification_1b8bhtp_then">
+      <emn:event id="Event_1rb2jwn" typeRef="PlayerJoinedGameEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "username": "Patrick",
+          "gamePlayerId": "player1"
+          }</emn:value>
+      </emn:event>
+    </emn:then>
+  </emn:specification>
+  <emn:specification id="Specification_player_joins_game_twice" name="Player joins game twice" sliceRef="Slice_join_game">
+    <emn:given id="Specification_1ymg4bi_given">
+      <emn:event id="Event_0n04g6w" typeRef="GameCreatedEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "name": "My Game",
+          "creator": "Christian",
+          "moderator": "Christian",
+          "config": {
+          "maxPlayers": 10,
+          "questionSetId": "e2e_collective"
+          },
+          "rounds": [
+          {
+          "name": "Round 1",
+          "roundConfig": {
+          "useBuzzer": false,
+          "secondsToAnswer": 30
+          },
+          "questions": [
+          "choice01",
+          "choice02"
+          ]
+          }
+          ]
+          }</emn:value>
+      </emn:event>
+      <emn:event id="Event_1203ni7" typeRef="PlayerJoinedGameEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "username": "Patrick",
+          "gamePlayerId": "player1"
+          }</emn:value>
+      </emn:event>
+    </emn:given>
+    <emn:when id="Specification_1ymg4bi_when">
+      <emn:command id="Command_1hkzmpw" typeRef="JoinGameCommand">
+        <emn:value>{
+          "gameId": "game1",
+          "username": "Patrick"
+          }</emn:value>
+      </emn:command>
+    </emn:when>
+    <emn:then id="Specification_1ymg4bi_then">
+      <emn:error id="Error_11pma4m" typeRef="CommandExecutionException" />
+    </emn:then>
+  </emn:specification>S
+  <emn:specification id="Specification_player_joins_full_game" name="Player joins full game" sliceRef="Slice_join_game">
+    <emn:given id="Specification_0i04dbj_given">
+      <emn:event id="Event_0lrk0gh" typeRef="GameCreatedEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "name": "My Game",
+          "creator": "Christian",
+          "moderator": "Christian",
+          "config": {
+          "maxPlayers": 1,
+          "questionSetId": "e2e_collective"
+          },
+          "rounds": [
+          {
+          "name": "Round 1",
+          "roundConfig": {
+          "useBuzzer": false,
+          "secondsToAnswer": 30
+          },
+          "questions": [
+          "choice01",
+          "choice02"
+          ]
+          }
+          ]
+          }</emn:value>
+      </emn:event>
+      <emn:event id="Event_17dnyye" typeRef="PlayerJoinedGameEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "username": "Simon",
+          "gamePlayerId": "player1"
+          }</emn:value>
+      </emn:event>
+    </emn:given>
+    <emn:when id="Specification_0i04dbj_when">
+      <emn:command id="Command_1nvo5eq" typeRef="JoinGameCommand">
+        <emn:value>{
+          "gameId": "game1",
+          "username": "Patrick"
+          }</emn:value>
+      </emn:command>
+    </emn:when>
+    <emn:then id="Specification_0i04dbj_then">
+      <emn:error id="Error_game_already_full" typeRef="CommandExecutionException" />
+    </emn:then>
+  </emn:specification>
+  <emn:specification id="Specification_start_game" name="Start a game" sliceRef="Slice_0visy19">
+    <emn:given id="Specification_0lyauec_given">
+      <emn:event id="Event_0yfh7ko" typeRef="GameCreatedEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "name": "My Game",
+          "creator": "Christian",
+          "moderator": "Christian",
+          "config": {
+          "maxPlayers": 10,
+          "questionSetId": "e2e_collective"
+          },
+          "rounds": [
+          {
+          "name": "Round 1",
+          "roundConfig": {
+          "useBuzzer": false,
+          "secondsToAnswer": 30
+          },
+          "questions": [
+          "choice01",
+          "choice02"
+          ]
+          }
+          ]
+          }</emn:value>
+      </emn:event>
+      <emn:event id="Event_0atj30z" typeRef="PlayerJoinedGameEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "username": "Patrick",
+          "gamePlayerId": "player1"
+          }</emn:value>
+      </emn:event>
+    </emn:given>
+    <emn:when id="Specification_0lyauec_when">
+      <emn:command id="Command_08yuubu" typeRef="StartGameCommand">
+        <emn:value>{
+          "gameId": "game1"
+          }</emn:value>
+      </emn:command>
+    </emn:when>
+    <emn:then id="Specification_0lyauec_then">
+      <emn:event id="Event_0vw8elh" typeRef="GameStartedEvent">
+        <emn:value>{
+          "gameId": "game1"
+          }</emn:value>
+      </emn:event>
+    </emn:then>
+  </emn:specification>
+  <emn:specification id="Specification_start_empty_game" name="Start an empty game" sliceRef="Slice_0visy19">
+    <emn:given id="Given_111j8me">
+      <emn:event id="Event_0mp4fe8" typeRef="GameCreatedEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "name": "My Game",
+          "creator": "Christian",
+          "moderator": "Christian",
+          "config": {
+          "maxPlayers": 10,
+          "questionSetId": "e2e_collective"
+          },
+          "rounds": [
+          {
+          "name": "Round 1",
+          "roundConfig": {
+          "useBuzzer": false,
+          "secondsToAnswer": 30
+          },
+          "questions": [
+          "choice01",
+          "choice02"
+          ]
+          }
+          ]
+          }</emn:value>
+      </emn:event>
+    </emn:given>
+    <emn:when id="When_1w40o79">
+      <emn:command id="Command_0rrkcxd" typeRef="StartGameCommand">
+        <emn:value>{
+          "gameId": "game1"
+          }</emn:value>
+      </emn:command>
+    </emn:when>
+    <emn:then id="Then_1sogl82" />
+  </emn:specification>
+  <emn:specification id="Specification_start_game_twice" name="Start a game twice" sliceRef="Slice_0visy19">
+    <emn:given id="Given_0boy8xi">
+      <emn:event id="Event_1d3addu" typeRef="GameCreatedEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "name": "My Game",
+          "creator": "Christian",
+          "moderator": "Christian",
+          "config": {
+          "maxPlayers": 10,
+          "questionSetId": "e2e_collective"
+          },
+          "rounds": [
+          {
+          "name": "Round 1",
+          "roundConfig": {
+          "useBuzzer": false,
+          "secondsToAnswer": 30
+          },
+          "questions": [
+          "choice01",
+          "choice02"
+          ]
+          }
+          ]
+          }</emn:value>
+      </emn:event>
+      <emn:event id="Event_0qd6phw" typeRef="PlayerJoinedGameEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "username": "Patrick",
+          "gamePlayerId": "player1"
+          }</emn:value>
+      </emn:event>
+      <emn:event id="Event_1pe1fi4" typeRef="GameStartedEvent">
+        <emn:value>{
+          "gameId": "game1"
+          }</emn:value>
+      </emn:event>
+    </emn:given>
+    <emn:when id="When_1g6wksd">
+      <emn:command id="Command_0r5cd9h" typeRef="StartGameCommand">
+        <emn:value>{
+          "gameId": "game1"
+          }</emn:value>
+      </emn:command>
+    </emn:when>
+    <emn:then id="Then_0xnxr1f" />
+  </emn:specification>
+  <emn:eventSequenceDefinition id="EventSequenceDefinition_0a9dx4h" typeRef="EventSequenceType_started_round_two_players">
+    <emn:variableDefinition name="GAME_ID">game1</emn:variableDefinition>
+    <emn:event id="Event_0uszgdg" typeRef="GameCreatedEvent">
+      <emn:value>{
+        "gameId": "${GAME_ID}",
+        "name": "My Game",
+        "creator": "Christian",
+        "moderator": "Christian",
+        "config": {
+        "maxPlayers": 10,
+        "questionSetId": "e2e_collective"
+        },
+        "rounds": [
+        {
+        "name": "Round 1",
+        "roundConfig": {
+        "useBuzzer": false,
+        "secondsToAnswer": 30
+        },
+        "questions": [
+        "choice01",
+        "choice02"
+        ]
+        }
+        ]
+        }</emn:value>
+    </emn:event>
+    <emn:event id="Event_05okg5n" typeRef="PlayerJoinedGameEvent">
+      <emn:value>{
+        "gameId": "${GAME_ID}",
+        "username": "Patrick",
+        "gamePlayerId": "player1"
+        }</emn:value>
+    </emn:event>
+    <emn:event id="Event_1jo7hfy" typeRef="PlayerJoinedGameEvent">
+      <emn:value>{
+        "gameId": "${GAME_ID}",
+        "username": "Simon",
+        "gamePlayerId": "player2"
+        }</emn:value>
+    </emn:event>
+    <emn:event id="Event_15wseek" typeRef="GameStartedEvent">
+      <emn:value>{
+        "gameId": "${GAME_ID}"
+        }</emn:value>
+    </emn:event>
+    <emn:event id="Event_1uvnasy" typeRef="RoundStartedEvent">
+      <emn:value>{
+        "gameId": "${GAME_ID}",
+        "gameRoundId": "round1",
+        "roundNumber": 1,
+        "roundName": "Round 1",
+        "roundConfig": {
+        "useBuzzer": false,
+        "secondsToAnswer": 30
+        },
+        "questions": [
+        "choice01",
+        "choice02"
+        ]
+        }</emn:value>
+    </emn:event>
+  </emn:eventSequenceDefinition>
+  <emn:specification id="Specification_answer_collective_question" name="Answer a collective Question" sliceRef="Slice_0sftikc">
+    <emn:given id="Specification_0rt35pe_given" stateName="Asked Question">
+      <emn:eventSequence id="EventSequence_05zbp8c" definitionRef="EventSequenceDefinition_0a9dx4h" />
+      <emn:event id="Event_0jsk474" typeRef="QuestionAskedEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "gameQuestionId": "gameQuestion1",
+          "roundNumber": 1,
+          "roundQuestionNumber": 1,
+          "questionMode": "COLLECTIVE",
+          "timeToAnswer": 30,
+          "gameRoundId": "round1",
+          "eligiblePlayerIds": ["player1", "player2"],
+          "questionTimestamp": "2026-01-01T10:00:00Z",
+          "question":   {
+          "id": "choice_01",
+          "type": "CHOICE",
+          "phrase": "How many Nazgul are there?",
+          "correctAnswer": "9",
+          "answerOptions": ["3", "7", "9", "42"]
+          }
+          }</emn:value>
+      </emn:event>
+    </emn:given>
+    <emn:when id="Specification_0rt35pe_when">
+      <emn:command id="Command_1658f3y" typeRef="AnswerQuestionCommand">
+        <emn:value>{
+          "gameId": "game1",
+          "gameQuestionId": "gameQuestion1",
+          "username": "Patrick",
+          "answer": "Berlin",
+          "answerTimestamp": "2026-01-01T10:00:00Z"
+          }</emn:value>
+      </emn:command>
+    </emn:when>
+    <emn:then id="Specification_0rt35pe_then">
+      <emn:event id="Event_0vofp5w" typeRef="QuestionAnsweredEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "gameQuestionId": "gameQuestion1",
+          "gamePlayerId": "player1",
+          "playerAnswerId": "answer1.1",
+          "answer": "Berlin",
+          "timeToAnswer": "PT2S"
+          }</emn:value>
+      </emn:event>
+    </emn:then>
+  </emn:specification>
   <emndi:EMNDiagram id="EMNDiagram_1">
     <emndi:EMNPlane id="EMNPlane_1" emnElement="timeline_1">
       <emndi:EMNShape id="ConceptLane_0h6eawq_di" emnElement="ConceptLane_0h6eawq" isHorizontal="true">
@@ -2126,6 +2566,7 @@
       </emndi:EMNShape>
       <emndi:EMNShape id="Slice_0sftikc_di" emnElement="Slice_0sftikc">
         <dc:Bounds x="3320" y="72" width="300" height="555" />
+        <emndi:EMNLabel />
       </emndi:EMNShape>
       <emndi:EMNShape id="Slice_0ujl0t6_di" emnElement="Slice_0ujl0t6">
         <dc:Bounds x="3000" y="72" width="300" height="555" />
@@ -2138,18 +2579,112 @@
       </emndi:EMNShape>
       <emndi:EMNShape id="Slice_0visy19_di" emnElement="Slice_0visy19">
         <dc:Bounds x="1530" y="72" width="290" height="555" />
+        <emndi:EMNLabel />
       </emndi:EMNShape>
       <emndi:EMNShape id="Slice_1im6s6g_di" emnElement="Slice_1im6s6g">
         <dc:Bounds x="1210" y="72" width="300" height="555" />
       </emndi:EMNShape>
-      <emndi:EMNShape id="Slice_0esbivl_di" emnElement="Slice_0esbivl">
+      <emndi:EMNShape id="Slice_0esbivl_di" emnElement="Slice_join_game">
         <dc:Bounds x="890" y="72" width="300" height="555" />
+        <emndi:EMNLabel />
       </emndi:EMNShape>
       <emndi:EMNShape id="Slice_0q9rxs9_di" emnElement="Slice_0q9rxs9">
         <dc:Bounds x="570" y="72" width="300" height="555" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Slice_0pmxnmh_di" emnElement="Slice_0pmxnmh">
         <dc:Bounds x="250" y="72" width="300" height="555" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0i04dbj_di" emnElement="Specification_player_joins_full_game">
+        <dc:Bounds x="890" y="2027" width="300" height="703" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0i04dbj_given_di" emnElement="Specification_0i04dbj_given">
+        <dc:Bounds x="900" y="2067" width="280" height="313" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0lrk0gh_di" emnElement="Event_0lrk0gh">
+        <dc:Bounds x="940" y="2090" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_17dnyye_di" emnElement="Event_17dnyye">
+        <dc:Bounds x="940" y="2230" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0i04dbj_when_di" emnElement="Specification_0i04dbj_when">
+        <dc:Bounds x="900" y="2390" width="280" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_1nvo5eq_di" emnElement="Command_1nvo5eq">
+        <dc:Bounds x="940" y="2410" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0i04dbj_then_di" emnElement="Specification_0i04dbj_then">
+        <dc:Bounds x="900" y="2560" width="280" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_1ymg4bi_di" emnElement="Specification_player_joins_game_twice">
+        <dc:Bounds x="890" y="1295" width="300" height="695" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_1ymg4bi_given_di" emnElement="Specification_1ymg4bi_given">
+        <dc:Bounds x="900" y="1335" width="280" height="305" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0n04g6w_di" emnElement="Event_0n04g6w">
+        <dc:Bounds x="940" y="1350" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_1203ni7_di" emnElement="Event_1203ni7">
+        <dc:Bounds x="940" y="1500" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_1ymg4bi_when_di" emnElement="Specification_1ymg4bi_when">
+        <dc:Bounds x="900" y="1650" width="280" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_090bhdz_di" emnElement="Command_090bhdz">
+        <dc:Bounds x="940" y="1670" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_1ymg4bi_then_di" emnElement="Specification_1ymg4bi_then">
+        <dc:Bounds x="900" y="1820" width="280" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_1b8bhtp_di" emnElement="Specification_player_joins">
+        <dc:Bounds x="890" y="685" width="300" height="565" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_1b8bhtp_given_di" emnElement="Specification_1b8bhtp_given">
+        <dc:Bounds x="900" y="725" width="280" height="175" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_104jcmt_di" emnElement="Event_104jcmt">
+        <dc:Bounds x="950" y="760" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_1b8bhtp_when_di" emnElement="Specification_1b8bhtp_when">
+        <dc:Bounds x="900" y="910" width="280" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_1c2f98x_di" emnElement="Command_1c2f98x">
+        <dc:Bounds x="950" y="930" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_1b8bhtp_then_di" emnElement="Specification_1b8bhtp_then">
+        <dc:Bounds x="900" y="1080" width="280" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_1rb2jwn_di" emnElement="Event_1rb2jwn">
+        <dc:Bounds x="950" y="1100" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0tk80fj_di" emnElement="spec_createGame">
+        <dc:Bounds x="250" y="685" width="300" height="550" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0tk80fj_given_di" emnElement="Specification_0tk80fj_given">
+        <dc:Bounds x="260" y="725" width="280" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0tk80fj_when_di" emnElement="Specification_0tk80fj_when">
+        <dc:Bounds x="260" y="895" width="280" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_1p5wf86_di" emnElement="Command_1p5wf86">
+        <dc:Bounds x="310" y="910" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0tk80fj_then_di" emnElement="Specification_0tk80fj_then">
+        <dc:Bounds x="260" y="1065" width="280" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_06mv4vw_di" emnElement="Event_06mv4vw">
+        <dc:Bounds x="310" y="1090" width="200" height="120" />
+        <emndi:EMNLabel />
       </emndi:EMNShape>
       <emndi:EMNShape id="View_051r73g_di" emnElement="View_051r73g">
         <dc:Bounds x="380" y="173" width="40" height="40" />
@@ -2309,6 +2844,105 @@
       </emndi:EMNShape>
       <emndi:EMNShape id="Event_14cxu6k_di" emnElement="Event_14cxu6k">
         <dc:Bounds x="5400" y="460" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0lyauec_di" emnElement="Specification_start_game">
+        <dc:Bounds x="1530" y="685" width="290" height="705" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0lyauec_given_di" emnElement="Specification_0lyauec_given">
+        <dc:Bounds x="1540" y="725" width="270" height="315" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0yfh7ko_di" emnElement="Event_0yfh7ko">
+        <dc:Bounds x="1580" y="748" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0atj30z_di" emnElement="Event_0atj30z">
+        <dc:Bounds x="1580" y="880" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0lyauec_when_di" emnElement="Specification_0lyauec_when">
+        <dc:Bounds x="1540" y="1050" width="270" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_08yuubu_di" emnElement="Command_08yuubu">
+        <dc:Bounds x="1580" y="1070" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0lyauec_then_di" emnElement="Specification_0lyauec_then">
+        <dc:Bounds x="1540" y="1220" width="270" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0vw8elh_di" emnElement="Event_0vw8elh">
+        <dc:Bounds x="1580" y="1240" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_start_empty_game_di" emnElement="Specification_start_empty_game">
+        <dc:Bounds x="1530" y="1435" width="290" height="550" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Given_111j8me_di" emnElement="Given_111j8me">
+        <dc:Bounds x="1540" y="1475" width="270" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0yfh7ko_di" emnElement="Event_0mp4fe8">
+        <dc:Bounds x="1580" y="1498" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="When_1w40o79_di" emnElement="When_1w40o79">
+        <dc:Bounds x="1540" y="1645" width="270" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_0rrkcxd_di" emnElement="Command_0rrkcxd">
+        <dc:Bounds x="1580" y="1665" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Then_1sogl82_di" emnElement="Then_1sogl82">
+        <dc:Bounds x="1540" y="1815" width="270" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_15k8ghj_di" emnElement="Specification_start_game_twice">
+        <dc:Bounds x="1530" y="2027" width="290" height="825" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Given_0boy8xi_di" emnElement="Given_0boy8xi">
+        <dc:Bounds x="1540" y="2067" width="270" height="435" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_1d3addu_di" emnElement="Event_1d3addu">
+        <dc:Bounds x="1580" y="2090" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0atj30z_di" emnElement="Event_0qd6phw">
+        <dc:Bounds x="1580" y="2222" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0vw8elh_di" emnElement="Event_1pe1fi4">
+        <dc:Bounds x="1580" y="2360" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="When_1g6wksd_di" emnElement="When_1g6wksd">
+        <dc:Bounds x="1540" y="2512" width="270" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_0r5cd9h_di" emnElement="Command_0r5cd9h">
+        <dc:Bounds x="1580" y="2532" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Then_0xnxr1f_di" emnElement="Then_0xnxr1f">
+        <dc:Bounds x="1540" y="2682" width="270" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0rt35pe_di" emnElement="Specification_answer_collective_question">
+        <dc:Bounds x="3320" y="727" width="300" height="703" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0rt35pe_given_di" emnElement="Specification_0rt35pe_given">
+        <dc:Bounds x="3330" y="767" width="280" height="313" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0jsk474_di" emnElement="Event_0jsk474">
+        <dc:Bounds x="3370" y="940" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="EventSequence_05zbp8c_di" emnElement="EventSequence_05zbp8c">
+        <dc:Bounds x="3370" y="800" width="200" height="120" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0rt35pe_when_di" emnElement="Specification_0rt35pe_when">
+        <dc:Bounds x="3330" y="1090" width="280" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Command_1658f3y_di" emnElement="Command_1658f3y">
+        <dc:Bounds x="3370" y="1110" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Specification_0rt35pe_then_di" emnElement="Specification_0rt35pe_then">
+        <dc:Bounds x="3330" y="1260" width="280" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_0vofp5w_di" emnElement="Event_0vofp5w">
+        <dc:Bounds x="3370" y="1280" width="200" height="120" />
+        <emndi:EMNLabel />
       </emndi:EMNShape>
       <emndi:EMNShape id="TextAnnotation_1frfzwi_di" emnElement="TextAnnotation_1frfzwi">
         <dc:Bounds x="3720" y="475" width="160" height="90" />

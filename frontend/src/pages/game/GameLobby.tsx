@@ -103,7 +103,7 @@ export const GameLobbyPage = (props: GameLobbyPageProps) => {
               <RecordVoiceOver/>
             </ListItemIcon>
             <ListItemText
-              primary={props.game.moderator !== undefined && props.game.moderator != null ? props.game.moderator : 'Computer'}
+              primary={props.game.moderator !== null ? props.game.moderator : 'Computer'}
               secondary='game master'
             />
           </ListItem>

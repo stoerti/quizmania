@@ -4,7 +4,7 @@ export type GameDto = {
   maxPlayers: number,
   numQuestions: number,
   creator: string,
-  moderator: string,
+  moderator: string | null,
   status: GameStatus,
   players: PlayerDto[]
 }

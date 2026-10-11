@@ -40,6 +40,30 @@ describe('testing game read model', () => {
     expect(game.status).toBe(GameStatus.CREATED);
   });
 
+  test('optional payload values are normalized at the model boundary', () => {
+    let game = new Game({
+      ...gameCreatedEvent(),
+      config: {questionSetId: "questionSet1"},
+      moderator: null,
+    })
+
+    game = game.onRoundStarted({
+      gameId: "game1",
+      gameRoundId: "round1",
+      roundNumber: 1,
+      roundName: "Round 1",
+      roundConfig: {},
+      questions: [],
+    })
+    game = game.onQuestionAsked(questionAsked("question1", 1, "Question", "Answer"))
+
+    expect(game.config.maxPlayers).toBe(10)
+    expect(game.moderator).toBeNull()
+    expect(game.currentRound?.roundConfig).toEqual({useBuzzer: false, secondsToAnswer: 30})
+    expect(game.currentQuestion?.question.imagePath).toBeNull()
+    expect(game.currentQuestion?.question.answerImagePath).toBeNull()
+  });
+
   test('started game should have status STARTED', () => {
     const event: GameCreatedEvent = gameCreatedEvent()
     let game = new Game(event)
@@ -153,7 +177,7 @@ function gameCreatedEvent(): GameCreatedEvent {
       questionSetId: "questionSet1",
     },
     creator: "player1",
-    moderator: undefined,
+    moderator: null,
     rounds: [
       {
         name: "Round 1",
@@ -202,11 +226,9 @@ function questionAsked(id: string, number: number, phrase: string, answer: strin
     questionMode: GameQuestionMode.BUZZER,
     question: {
       type: QuestionType.FREE_INPUT,
+      id: id,
       phrase: phrase,
-      imagePath: undefined,
-      answerImagePath: undefined,
       correctAnswer: answer,
-      answerOptions: []
     },
   }
 }

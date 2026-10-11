@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   id("org.springframework.boot") version "3.5.13"
   id("io.spring.dependency-management") version "1.1.7"
@@ -9,6 +7,7 @@ plugins {
   kotlin("plugin.spring") version "2.3.20"
   kotlin("plugin.jpa") version "2.3.20"
   id("io.holixon.emn.kotlin-schema") version "0.0.1-SNAPSHOT"
+  id("io.holixon.emn.verify") version "0.0.1-SNAPSHOT"
 }
 
 group = "org.quizmania"
@@ -29,6 +28,7 @@ kotlin {
 }
 
 repositories {
+  mavenLocal()
   mavenCentral()
 }
 
@@ -36,10 +36,16 @@ emnSchemaKotlin {
   emnFiles.from(file("../doc/quizmania-blueprint.emn"))
   rootPackageName.set("org.quizmania.api")
   annotationEnhancers.set(listOf("axon5", "jackson"))
+  specifications {
+    generate = true
+    fixtureProvider = "org.quizmania.test.QuizmaniaFixtureProvider"
+  }
 }
 
 dependencies {
   implementation(platform("org.testcontainers:testcontainers-bom:2.0.4")) //import bom
+
+  implementation("io.holixon.emn:emn-verify-annotations:0.0.1-SNAPSHOT")
 
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -88,8 +94,26 @@ dependencies {
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-tasks.withType<KotlinCompile> {
+val packageFrontend by tasks.registering(Sync::class) {
+  group = "distribution"
+  description = "Builds the frontend and packages it into the backend's static resources."
   dependsOn(":frontend:appNpmBuild")
+  from(rootProject.layout.projectDirectory.dir("frontend/dist"))
+  into(layout.projectDirectory.dir("src/main/resources/public"))
+}
+
+tasks.named("processResources") {
+  mustRunAfter(packageFrontend)
+}
+
+tasks.register("assembleWithFrontend") {
+  group = "distribution"
+  description = "Builds the executable backend JAR with the packaged frontend."
+  dependsOn(packageFrontend, "bootJar")
+}
+
+tasks.matching { it.name in setOf("jib", "jibDockerBuild", "jibBuildTar") }.configureEach {
+  dependsOn(packageFrontend, "processResources")
 }
 
 tasks.withType<Test> {
@@ -103,6 +127,18 @@ tasks.withType<JacocoReport> {
     html.required.set(true)
   }
 }
+
+emnVerify {
+  emnFiles.from(file("../doc/quizmania-blueprint.emn"))
+  ignoredIssues {
+    ignoreMissingReadModel("AskFirstQuestionAutomationQuery")
+    ignoreMissingReadModel("CloseQuestionAutomationQuery")
+    ignoreMissingReadModel("GameState")
+    ignoreMissingReadModel("OpenQuestion")
+    ignoreMissingReadModel("QuestionScoreboardQuery")
+    ignoreMissingReadModel("StartRoundAutomationQuery")
+    ignoreMissingReadModel("UnscoredQuestionsQuery")
+  }}
 
 jacoco {
   toolVersion = "0.8.15"

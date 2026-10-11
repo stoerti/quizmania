@@ -1,0 +1,16 @@
+[
+  {
+    "id": "choice01",
+    "type": "CHOICE",
+    "phrase": "How many Nazgul are there?",
+    "correctAnswer": "9",
+    "answerOptions": ["3", "7", "9", "42"]
+  },
+  {
+    "id": "choice02",
+    "type": "CHOICE",
+    "phrase": "What is the capital of Germany?",
+    "correctAnswer": "Berlin",
+    "answerOptions": ["Hamburg", "Berlin", "Munich", "Frankfurt"]
+  }
+]

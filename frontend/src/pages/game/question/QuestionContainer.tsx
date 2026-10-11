@@ -9,11 +9,11 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 export type MultipleChoiceAnswerContainerProps = {
-  gameQuestion: GameQuestion
+  answerOptions: string[]
   onAnswerQuestion: (answer: string) => void
 }
 
-export const MultipleChoiceAnswerContainer = ({gameQuestion, onAnswerQuestion}: MultipleChoiceAnswerContainerProps) => {
+export const MultipleChoiceAnswerContainer = ({answerOptions, onAnswerQuestion}: MultipleChoiceAnswerContainerProps) => {
   const [selected, setSelected] = useState([] as string[])
   const theme = useTheme()
 
@@ -32,7 +32,7 @@ export const MultipleChoiceAnswerContainer = ({gameQuestion, onAnswerQuestion}: 
 
   return <Stack spacing={2} direction="column" justifyContent="center" alignItems="center" useFlexGap
                 flexWrap="wrap">
-    {gameQuestion.question.answerOptions.map((answer, index) => {
+    {answerOptions.map((answer, index) => {
         const isSelected = selected.includes(answer)
         if (isSelected) {
           return <Button key={index} variant="contained" sx={{width: '80%', maxWidth: '300px'}} onClick={() => deselectAnswer(answer)}>{answer}</Button>
@@ -47,12 +47,12 @@ export const MultipleChoiceAnswerContainer = ({gameQuestion, onAnswerQuestion}: 
 }
 
 export type SortAnswerContainerProps = {
-  gameQuestion: GameQuestion
+  answerOptions: string[]
   onAnswerQuestion: (answer: string) => void
 }
 
-export const SortAnswerContainer = ({gameQuestion, onAnswerQuestion}: SortAnswerContainerProps) => {
-  const [sortedItems, setSortedItems] = useState([...gameQuestion.question.answerOptions])
+export const SortAnswerContainer = ({answerOptions, onAnswerQuestion}: SortAnswerContainerProps) => {
+  const [sortedItems, setSortedItems] = useState([...answerOptions])
   const theme = useTheme()
 
   // Color constants for sort button styling
@@ -176,9 +176,9 @@ export const QuestionContainer = ({gameQuestion, onAnswerQuestion}: QuestionCont
         <Button key={index} variant="contained" sx={{width: '80%', maxWidth: '300px'}} onClick={() => onAnswerQuestion(answer)}>{answer}</Button>)}
     </Stack>
   } else if (gameQuestion.question.type === QuestionType.MULTIPLE_CHOICE) {
-    answerContainer = <MultipleChoiceAnswerContainer gameQuestion={gameQuestion} onAnswerQuestion={onAnswerQuestion}/>
+    answerContainer = <MultipleChoiceAnswerContainer answerOptions={gameQuestion.question.answerOptions} onAnswerQuestion={onAnswerQuestion}/>
   } else if (gameQuestion.question.type === QuestionType.SORT) {
-    answerContainer = <SortAnswerContainer gameQuestion={gameQuestion} onAnswerQuestion={onAnswerQuestion}/>
+    answerContainer = <SortAnswerContainer answerOptions={gameQuestion.question.answerOptions} onAnswerQuestion={onAnswerQuestion}/>
   } else if (gameQuestion.question.type === QuestionType.FREE_INPUT) {
     answerContainer = <Box component="form" noValidate onSubmit={handleSubmit} sx={{
       my: 4, mx: 4, display: 'flex', flexDirection: 'column', alignItems: 'center',
@@ -209,4 +209,3 @@ export const QuestionContainer = ({gameQuestion, onAnswerQuestion}: QuestionCont
     </div>
   )
 }
-

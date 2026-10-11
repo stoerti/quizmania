@@ -11,7 +11,7 @@ export const QuestionPhrasePanel = ({gameQuestion}: QuestionPhrasePanelProps) =>
   const theme = useTheme()
 
   let questionImage
-  if (gameQuestion.question.imagePath !== 'undefined') {
+  if (gameQuestion.question.imagePath !== null) {
     questionImage = <img src={gameQuestion.question.imagePath} style={{maxWidth: '100%', maxHeight: '250px', margin: 'auto'}}/>
   }
 
