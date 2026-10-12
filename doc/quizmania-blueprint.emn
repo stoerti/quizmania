@@ -22,6 +22,108 @@
         "format": "uuid"
         }</emn:schema>
     </emn:schemaDefinition>
+    <emn:schemaDefinition id="CommandProblemCategory" name="CommandProblemCategory">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "CommandProblemCategory",
+        "type": "string",
+        "enum": [
+        "TECHNICAL",
+        "PERMISSION",
+        "BUSINESS_AGGREGATE",
+        "BUSINESS_INVALID_COMMAND"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="GameProblemContext" name="GameProblemContext">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameProblemContext",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        }
+        },
+        "required": [
+        "gameId"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="GameQuestionProblemContext" name="GameQuestionProblemContext">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameQuestionProblemContext",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="GameQuestionPlayerProblemContext" name="GameQuestionPlayerProblemContext">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameQuestionPlayerProblemContext",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "gameId": {
+        "$ref": "GameId"
+        },
+        "gameQuestionId": {
+        "$ref": "GameQuestionId"
+        },
+        "gamePlayerId": {
+        "$ref": "GamePlayerId"
+        }
+        },
+        "required": [
+        "gameId",
+        "gameQuestionId",
+        "gamePlayerId"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
+    <emn:schemaDefinition id="CommandProblem" name="CommandProblem">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "CommandProblem",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+        "type": {
+        "type": "string"
+        },
+        "category": {
+        "$ref": "CommandProblemCategory"
+        },
+        "title": {
+        "type": "string"
+        },
+        "detail": {
+        "type": [
+        "string",
+        "null"
+        ]
+        },
+        "context": {
+        "type": "object"
+        }
+        },
+        "required": [
+        "type",
+        "category",
+        "title",
+        "context"
+        ]
+        }</emn:schema>
+    </emn:schemaDefinition>
     <emn:schemaDefinition id="GameRoundId" name="GameRoundId">
       <emn:schema schemaFormat="application/schema+json">{
         "$id": "GameRoundId",
@@ -1663,7 +1765,537 @@
       <emn:eventTypeRef>PlayerJoinedGameEvent</emn:eventTypeRef>
       <emn:eventTypeRef>GameStartedEvent</emn:eventTypeRef>
     </emn:eventSequenceType>
-    <emn:errorType id="CommandExecutionException" name="CommandExecutionException" />
+    <emn:errorType id="InvalidConfigProblem" name="Invalid configuration">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "InvalidConfigProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:game:invalidConfig"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "The given GameConfig is invalid"
+        },
+        "context": {
+        "$ref": "GameProblemContext"
+        }
+        },
+        "required": [
+        "detail"
+        ]
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="UsernameTakenProblem" name="Username taken">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "UsernameTakenProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:game:usernameTaken"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "The given username already exists in the game"
+        },
+        "context": {
+        "$ref": "GameProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="GameAlreadyFullProblem" name="Game already full">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameAlreadyFullProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:game:alreadyFull"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Game already full"
+        },
+        "context": {
+        "$ref": "GameProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="GameNotStartedProblem" name="Game not started">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameNotStartedProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:game:notStarted"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Game has not started"
+        },
+        "context": {
+        "$ref": "GameProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="GameAlreadyStartedProblem" name="Game already started">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameAlreadyStartedProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:game:alreadyStarted"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Game has already started"
+        },
+        "context": {
+        "$ref": "GameProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="GameAlreadyEndedProblem" name="Game already ended">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "GameAlreadyEndedProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:game:alreadyEnded"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Game has already ended"
+        },
+        "context": {
+        "$ref": "GameProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="RoundAlreadyStartedProblem" name="Round already started">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "RoundAlreadyStartedProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:game:roundAlreadyStarted"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Round has already started"
+        },
+        "context": {
+        "$ref": "GameProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="RoundAlreadyClosedProblem" name="Round already closed">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "RoundAlreadyClosedProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:game:alreadyEnded"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Round has already ended"
+        },
+        "context": {
+        "$ref": "GameProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="OtherQuestionStillOpenProblem" name="Other question still open">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "OtherQuestionStillOpenProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:game:questionStillOpen"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Another question is still open"
+        },
+        "context": {
+        "$ref": "GameProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="PlayerNotFoundProblem" name="Player not found">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "PlayerNotFoundProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:game:playerNotFound"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Player not found in game"
+        },
+        "context": {
+        "$ref": "GameProblemContext"
+        }
+        },
+        "required": [
+        "detail"
+        ]
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="QuestionNotFoundProblem" name="Question not found">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionNotFoundProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:game:questionNotFound"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Question not found in game"
+        },
+        "context": {
+        "$ref": "GameProblemContext"
+        }
+        },
+        "required": [
+        "detail"
+        ]
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="QuestionAlreadyClosedProblem" name="Question already closed">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionAlreadyClosedProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:question:alreadyClosed"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Question is already closed"
+        },
+        "context": {
+        "$ref": "GameQuestionProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="QuestionAlreadyAnsweredProblem" name="Question already answered">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionAlreadyAnsweredProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:question:alreadyAnswered"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Player has already answered the question"
+        },
+        "context": {
+        "$ref": "GameQuestionPlayerProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="AnswerNotFoundProblem" name="Answer not found">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "AnswerNotFoundProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:question:answerNotFound"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Player answer not found in question"
+        },
+        "context": {
+        "$ref": "GameQuestionPlayerProblemContext"
+        }
+        },
+        "required": [
+        "detail"
+        ]
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="QuestionAlreadyBuzzedProblem" name="Question already buzzed">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionAlreadyBuzzedProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:question:alreadyBuzzed"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Player has already buzzed the question"
+        },
+        "context": {
+        "$ref": "GameQuestionPlayerProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="QuestionInBuzzerModeProblem" name="Question in buzzer mode">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionInBuzzerModeProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:question:buzzerMode"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Question is in buzzer mode"
+        },
+        "context": {
+        "$ref": "GameQuestionProblemContext"
+        }
+        },
+        "required": [
+        "detail"
+        ]
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="QuestionNotInBuzzerModeProblem" name="Question not in buzzer mode">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionNotInBuzzerModeProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:question:noBuzzerMode"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Question is not in buzzer mode"
+        },
+        "context": {
+        "$ref": "GameQuestionProblemContext"
+        }
+        },
+        "required": [
+        "detail"
+        ]
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="NoBuzzerWinnerProblem" name="No buzzer winner">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "NoBuzzerWinnerProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:question:noBuzzerWinner"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "THe current question has no buzzer winner"
+        },
+        "context": {
+        "$ref": "GameQuestionProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
+    <emn:errorType id="QuestionAlreadyRatedProblem" name="Question already rated">
+      <emn:schema schemaFormat="application/schema+json">{
+        "$id": "QuestionAlreadyRatedProblem",
+        "allOf": [
+        {
+        "$ref": "CommandProblem"
+        },
+        {
+        "type": "object",
+        "properties": {
+        "type": {
+        "const": "urn:quizmania:question:alreadyRated"
+        },
+        "category": {
+        "const": "BUSINESS_INVALID_COMMAND"
+        },
+        "title": {
+        "const": "Question is already rated"
+        },
+        "context": {
+        "$ref": "GameQuestionProblemContext"
+        }
+        }
+        }
+        ]
+        }</emn:schema>
+    </emn:errorType>
     <emn:eventSequenceType id="EventSequenceType_started_round_two_players" name="Started Round with two Players">
       <emn:eventTypeRef>GameCreatedEvent</emn:eventTypeRef>
       <emn:eventTypeRef>PlayerJoinedGameEvent</emn:eventTypeRef>
@@ -2244,9 +2876,18 @@
       </emn:command>
     </emn:when>
     <emn:then id="Specification_1ymg4bi_then">
-      <emn:error id="Error_11pma4m" typeRef="CommandExecutionException" />
+      <emn:error id="Error_11pma4m" typeRef="UsernameTakenProblem">
+        <emn:value>{
+          "type": "urn:quizmania:game:usernameTaken",
+          "category": "BUSINESS_INVALID_COMMAND",
+          "title": "The given username already exists in the game",
+          "context": {
+          "gameId": "game1"
+          }
+          }</emn:value>
+      </emn:error>
     </emn:then>
-  </emn:specification>S
+  </emn:specification>
   <emn:specification id="Specification_player_joins_full_game" name="Player joins full game" sliceRef="Slice_join_game">
     <emn:given id="Specification_0i04dbj_given">
       <emn:event id="Event_0lrk0gh" typeRef="GameCreatedEvent">
@@ -2291,7 +2932,16 @@
       </emn:command>
     </emn:when>
     <emn:then id="Specification_0i04dbj_then">
-      <emn:error id="Error_game_already_full" typeRef="CommandExecutionException" />
+      <emn:error id="Error_game_already_full" typeRef="GameAlreadyFullProblem">
+        <emn:value>{
+          "type": "urn:quizmania:game:alreadyFull",
+          "category": "BUSINESS_INVALID_COMMAND",
+          "title": "Game already full",
+          "context": {
+          "gameId": "game1"
+          }
+          }</emn:value>
+      </emn:error>
     </emn:then>
   </emn:specification>
   <emn:specification id="Specification_start_game" name="Start a game" sliceRef="Slice_0visy19">
@@ -2342,6 +2992,49 @@
           "gameId": "game1"
           }</emn:value>
       </emn:event>
+      <emn:event id="Event_start_game_round" typeRef="RoundStartedEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "gameRoundId": "round1",
+          "roundNumber": 1,
+          "roundName": "Round 1",
+          "roundConfig": {
+          "useBuzzer": false,
+          "secondsToAnswer": 30
+          },
+          "questions": [
+          "choice01",
+          "choice02"
+          ]
+          }</emn:value>
+      </emn:event>
+      <emn:event id="Event_start_game_question" typeRef="QuestionAskedEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "gameQuestionId": "gameQuestion1",
+          "roundNumber": 1,
+          "roundQuestionNumber": 1,
+          "questionMode": "COLLECTIVE",
+          "questionTimestamp": "2026-01-01T10:00:00Z",
+          "timeToAnswer": 30000,
+          "question": {
+          "id": "choice01",
+          "type": "CHOICE",
+          "phrase": "How many Nazgul are there?",
+          "correctAnswer": "9",
+          "answerOptions": [
+          "3",
+          "7",
+          "9",
+          "42"
+          ]
+          },
+          "gameRoundId": "round1",
+          "eligiblePlayerIds": [
+          "player1"
+          ]
+          }</emn:value>
+      </emn:event>
     </emn:then>
   </emn:specification>
   <emn:specification id="Specification_start_empty_game" name="Start an empty game" sliceRef="Slice_0visy19">
@@ -2379,7 +3072,54 @@
           }</emn:value>
       </emn:command>
     </emn:when>
-    <emn:then id="Then_1sogl82" />
+    <emn:then id="Then_1sogl82">
+      <emn:event id="Event_start_empty_game" typeRef="GameStartedEvent">
+        <emn:value>{
+          "gameId": "game1"
+          }</emn:value>
+      </emn:event>
+      <emn:event id="Event_start_empty_game_round" typeRef="RoundStartedEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "gameRoundId": "round1",
+          "roundNumber": 1,
+          "roundName": "Round 1",
+          "roundConfig": {
+          "useBuzzer": false,
+          "secondsToAnswer": 30
+          },
+          "questions": [
+          "choice01",
+          "choice02"
+          ]
+          }</emn:value>
+      </emn:event>
+      <emn:event id="Event_start_empty_game_question" typeRef="QuestionAskedEvent">
+        <emn:value>{
+          "gameId": "game1",
+          "gameQuestionId": "gameQuestion1",
+          "roundNumber": 1,
+          "roundQuestionNumber": 1,
+          "questionMode": "COLLECTIVE",
+          "questionTimestamp": "2026-01-01T10:00:00Z",
+          "timeToAnswer": 30000,
+          "question": {
+          "id": "choice01",
+          "type": "CHOICE",
+          "phrase": "How many Nazgul are there?",
+          "correctAnswer": "9",
+          "answerOptions": [
+          "3",
+          "7",
+          "9",
+          "42"
+          ]
+          },
+          "gameRoundId": "round1",
+          "eligiblePlayerIds": []
+          }</emn:value>
+      </emn:event>
+    </emn:then>
   </emn:specification>
   <emn:specification id="Specification_start_game_twice" name="Start a game twice" sliceRef="Slice_0visy19">
     <emn:given id="Given_0boy8xi">
@@ -2428,7 +3168,18 @@
           }</emn:value>
       </emn:command>
     </emn:when>
-    <emn:then id="Then_0xnxr1f" />
+    <emn:then id="Then_0xnxr1f">
+      <emn:error id="Error_game_already_started" typeRef="GameAlreadyStartedProblem">
+        <emn:value>{
+          "type": "urn:quizmania:game:alreadyStarted",
+          "category": "BUSINESS_INVALID_COMMAND",
+          "title": "Game has already started",
+          "context": {
+          "gameId": "game1"
+          }
+          }</emn:value>
+      </emn:error>
+    </emn:then>
   </emn:specification>
   <emn:eventSequenceDefinition id="EventSequenceDefinition_0a9dx4h" typeRef="EventSequenceType_started_round_two_players">
     <emn:variableDefinition name="GAME_ID">game1</emn:variableDefinition>
@@ -2618,6 +3369,10 @@
       <emndi:EMNShape id="Specification_0i04dbj_then_di" emnElement="Specification_0i04dbj_then">
         <dc:Bounds x="900" y="2560" width="280" height="160" />
       </emndi:EMNShape>
+      <emndi:EMNShape id="Error_game_already_full_di" emnElement="Error_game_already_full">
+        <dc:Bounds x="940" y="2580" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
       <emndi:EMNShape id="Specification_1ymg4bi_di" emnElement="Specification_player_joins_game_twice">
         <dc:Bounds x="890" y="1295" width="300" height="695" />
       </emndi:EMNShape>
@@ -2641,6 +3396,10 @@
       </emndi:EMNShape>
       <emndi:EMNShape id="Specification_1ymg4bi_then_di" emnElement="Specification_1ymg4bi_then">
         <dc:Bounds x="900" y="1820" width="280" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Error_11pma4m_di" emnElement="Error_11pma4m">
+        <dc:Bounds x="940" y="1840" width="200" height="120" />
+        <emndi:EMNLabel />
       </emndi:EMNShape>
       <emndi:EMNShape id="Specification_1b8bhtp_di" emnElement="Specification_player_joins">
         <dc:Bounds x="890" y="685" width="300" height="565" />
@@ -2846,7 +3605,7 @@
         <dc:Bounds x="5400" y="460" width="200" height="120" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Specification_0lyauec_di" emnElement="Specification_start_game">
-        <dc:Bounds x="1530" y="685" width="290" height="705" />
+        <dc:Bounds x="1530" y="685" width="290" height="985" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Specification_0lyauec_given_di" emnElement="Specification_0lyauec_given">
         <dc:Bounds x="1540" y="725" width="270" height="315" />
@@ -2866,57 +3625,81 @@
         <dc:Bounds x="1580" y="1070" width="200" height="120" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Specification_0lyauec_then_di" emnElement="Specification_0lyauec_then">
-        <dc:Bounds x="1540" y="1220" width="270" height="160" />
+        <dc:Bounds x="1540" y="1220" width="270" height="440" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Event_0vw8elh_di" emnElement="Event_0vw8elh">
         <dc:Bounds x="1580" y="1240" width="200" height="120" />
         <emndi:EMNLabel />
       </emndi:EMNShape>
+      <emndi:EMNShape id="Event_start_game_round_di" emnElement="Event_start_game_round">
+        <dc:Bounds x="1580" y="1380" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_start_game_question_di" emnElement="Event_start_game_question">
+        <dc:Bounds x="1580" y="1520" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
       <emndi:EMNShape id="Specification_start_empty_game_di" emnElement="Specification_start_empty_game">
-        <dc:Bounds x="1530" y="1435" width="290" height="550" />
+        <dc:Bounds x="1530" y="1715" width="290" height="830" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Given_111j8me_di" emnElement="Given_111j8me">
-        <dc:Bounds x="1540" y="1475" width="270" height="160" />
+        <dc:Bounds x="1540" y="1755" width="270" height="160" />
       </emndi:EMNShape>
-      <emndi:EMNShape id="Event_0yfh7ko_di" emnElement="Event_0mp4fe8">
-        <dc:Bounds x="1580" y="1498" width="200" height="120" />
+      <emndi:EMNShape id="Event_0mp4fe8_di" emnElement="Event_0mp4fe8">
+        <dc:Bounds x="1580" y="1778" width="200" height="120" />
         <emndi:EMNLabel />
       </emndi:EMNShape>
       <emndi:EMNShape id="When_1w40o79_di" emnElement="When_1w40o79">
-        <dc:Bounds x="1540" y="1645" width="270" height="160" />
+        <dc:Bounds x="1540" y="1925" width="270" height="160" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Command_0rrkcxd_di" emnElement="Command_0rrkcxd">
-        <dc:Bounds x="1580" y="1665" width="200" height="120" />
+        <dc:Bounds x="1580" y="1945" width="200" height="120" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Then_1sogl82_di" emnElement="Then_1sogl82">
-        <dc:Bounds x="1540" y="1815" width="270" height="160" />
+        <dc:Bounds x="1540" y="2095" width="270" height="440" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_start_empty_game_di" emnElement="Event_start_empty_game">
+        <dc:Bounds x="1580" y="2115" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_start_empty_game_round_di" emnElement="Event_start_empty_game_round">
+        <dc:Bounds x="1580" y="2255" width="200" height="120" />
+        <emndi:EMNLabel />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Event_start_empty_game_question_di" emnElement="Event_start_empty_game_question">
+        <dc:Bounds x="1580" y="2395" width="200" height="120" />
+        <emndi:EMNLabel />
       </emndi:EMNShape>
       <emndi:EMNShape id="Specification_15k8ghj_di" emnElement="Specification_start_game_twice">
-        <dc:Bounds x="1530" y="2027" width="290" height="825" />
+        <dc:Bounds x="1530" y="2587" width="290" height="825" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Given_0boy8xi_di" emnElement="Given_0boy8xi">
-        <dc:Bounds x="1540" y="2067" width="270" height="435" />
+        <dc:Bounds x="1540" y="2627" width="270" height="435" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Event_1d3addu_di" emnElement="Event_1d3addu">
-        <dc:Bounds x="1580" y="2090" width="200" height="120" />
+        <dc:Bounds x="1580" y="2650" width="200" height="120" />
         <emndi:EMNLabel />
       </emndi:EMNShape>
-      <emndi:EMNShape id="Event_0atj30z_di" emnElement="Event_0qd6phw">
-        <dc:Bounds x="1580" y="2222" width="200" height="120" />
+      <emndi:EMNShape id="Event_0qd6phw_di" emnElement="Event_0qd6phw">
+        <dc:Bounds x="1580" y="2782" width="200" height="120" />
         <emndi:EMNLabel />
       </emndi:EMNShape>
-      <emndi:EMNShape id="Event_0vw8elh_di" emnElement="Event_1pe1fi4">
-        <dc:Bounds x="1580" y="2360" width="200" height="120" />
+      <emndi:EMNShape id="Event_1pe1fi4_di" emnElement="Event_1pe1fi4">
+        <dc:Bounds x="1580" y="2920" width="200" height="120" />
         <emndi:EMNLabel />
       </emndi:EMNShape>
       <emndi:EMNShape id="When_1g6wksd_di" emnElement="When_1g6wksd">
-        <dc:Bounds x="1540" y="2512" width="270" height="160" />
+        <dc:Bounds x="1540" y="3072" width="270" height="160" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Command_0r5cd9h_di" emnElement="Command_0r5cd9h">
-        <dc:Bounds x="1580" y="2532" width="200" height="120" />
+        <dc:Bounds x="1580" y="3092" width="200" height="120" />
       </emndi:EMNShape>
       <emndi:EMNShape id="Then_0xnxr1f_di" emnElement="Then_0xnxr1f">
-        <dc:Bounds x="1540" y="2682" width="270" height="160" />
+        <dc:Bounds x="1540" y="3242" width="270" height="160" />
+      </emndi:EMNShape>
+      <emndi:EMNShape id="Error_game_already_started_di" emnElement="Error_game_already_started">
+        <dc:Bounds x="1580" y="3262" width="200" height="120" />
+        <emndi:EMNLabel />
       </emndi:EMNShape>
       <emndi:EMNShape id="Specification_0rt35pe_di" emnElement="Specification_answer_collective_question">
         <dc:Bounds x="3320" y="727" width="300" height="703" />

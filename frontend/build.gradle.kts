@@ -3,7 +3,7 @@ import com.github.gradle.node.npm.task.NpmTask
 plugins {
   base
   id("com.github.node-gradle.node") version "7.1.0"
-  id("io.holixon.emn.schema-export") version "0.0.1-SNAPSHOT"
+  id("io.holixon.emn") version "0.0.1-SNAPSHOT"
 }
 
 group = "org.quizmania"
@@ -55,9 +55,13 @@ tasks.register<NpmTask>("generateEmnTypes") {
   outputs.file(layout.buildDirectory.file("generated/sources/emn/quizmania-api.ts"))
 }
 
-emnSchemaExport {
+emn {
   emnFiles.from(file("../doc/quizmania-blueprint.emn"))
-  sourceRoot.set(file("../").canonicalPath)
+
+  schemaExport {
+    enabled.set(true)
+    sourceRoot.set(file("../").canonicalPath)
+  }
 }
 
 node {

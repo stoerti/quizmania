@@ -6,8 +6,7 @@ plugins {
   kotlin("jvm") version "2.3.20"
   kotlin("plugin.spring") version "2.3.20"
   kotlin("plugin.jpa") version "2.3.20"
-  id("io.holixon.emn.kotlin-schema") version "0.0.1-SNAPSHOT"
-  id("io.holixon.emn.verify") version "0.0.1-SNAPSHOT"
+  id("io.holixon.emn") version "0.0.1-SNAPSHOT"
 }
 
 group = "org.quizmania"
@@ -32,13 +31,33 @@ repositories {
   mavenCentral()
 }
 
-emnSchemaKotlin {
+emn {
   emnFiles.from(file("../doc/quizmania-blueprint.emn"))
   rootPackageName.set("org.quizmania.api")
-  annotationEnhancers.set(listOf("axon5", "jackson"))
+
+  kotlin {
+    enabled.set(true)
+    annotationEnhancers.set(listOf("axon5", "jackson"))
+  }
+
   specifications {
-    generate = true
-    fixtureProvider = "org.quizmania.test.QuizmaniaFixtureProvider"
+    enabled.set(true)
+    fixtureProvider.set("org.quizmania.test.QuizmaniaFixtureProvider")
+    errorVerifier.set("org.quizmania.test.QuizmaniaErrorVerifier")
+  }
+
+  verification {
+    enabled.set(true)
+    failOnWarnings.set(false)
+    ignoredIssues {
+      ignoreMissingReadModel("AskFirstQuestionAutomationQuery")
+      ignoreMissingReadModel("CloseQuestionAutomationQuery")
+      ignoreMissingReadModel("GameState")
+      ignoreMissingReadModel("OpenQuestion")
+      ignoreMissingReadModel("QuestionScoreboardQuery")
+      ignoreMissingReadModel("StartRoundAutomationQuery")
+      ignoreMissingReadModel("UnscoredQuestionsQuery")
+    }
   }
 }
 
@@ -127,18 +146,6 @@ tasks.withType<JacocoReport> {
     html.required.set(true)
   }
 }
-
-emnVerify {
-  emnFiles.from(file("../doc/quizmania-blueprint.emn"))
-  ignoredIssues {
-    ignoreMissingReadModel("AskFirstQuestionAutomationQuery")
-    ignoreMissingReadModel("CloseQuestionAutomationQuery")
-    ignoreMissingReadModel("GameState")
-    ignoreMissingReadModel("OpenQuestion")
-    ignoreMissingReadModel("QuestionScoreboardQuery")
-    ignoreMissingReadModel("StartRoundAutomationQuery")
-    ignoreMissingReadModel("UnscoredQuestionsQuery")
-  }}
 
 jacoco {
   toolVersion = "0.8.15"
